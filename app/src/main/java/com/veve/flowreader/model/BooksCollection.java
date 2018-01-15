@@ -26,11 +26,6 @@ public class BooksCollection {
         //How to read config from memory?
         //So far there will be fake books list
         bookCollection.addBook(new SampleDjvuBook());
-        bookCollection.addBook(new SampleDjvuBook());
-        bookCollection.addBook(new SampleDjvuBook());
-        bookCollection.addBook(new SampleDjvuBook());
-        bookCollection.addBook(new SampleDjvuBook());
-        bookCollection.addBook(new SampleDjvuBook());
     }
 
     public static BooksCollection getInstance() {

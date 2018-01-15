@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.veve.flowreader.views.MainActivity">
+    tools:context="com.veve.flowreader.views.BrowseFilesActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -20,14 +20,13 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context="com.veve.flowreader.views.MainActivity"
-        tools:showIn="@layout/activity_main">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <ListView
             android:id="@android:id/list"
@@ -38,11 +37,11 @@
     </android.support.constraint.ConstraintLayout>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/home"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@drawable/ic_book" />
+        app:srcCompat="@android:drawable/ic_dialog_dialer" />
 
 </android.support.design.widget.CoordinatorLayout>

@@ -6,6 +6,14 @@ package com.veve.flowreader.model;
 
 public interface Book {
 
+    public void setCurrentPageNumber(int pageNumber);
+
+    public int getCurrentPageNumber();
+
+    public BookPage getPage(int pageNumber);
+
+    public int getPagesCount();
+
     public String getName();
 
     public long getId();
