@@ -8,4 +8,12 @@
     tools:context="com.veve.flowreader.views.PageActivity"
     tools:showIn="@layout/activity_page">
 
+    <SurfaceView
+        android:id="@+id/page"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        >
+
+    </SurfaceView>
+
 </android.support.constraint.ConstraintLayout>
