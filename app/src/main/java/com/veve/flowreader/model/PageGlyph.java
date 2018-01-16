@@ -9,6 +9,6 @@ import android.graphics.Point;
 
 public interface PageGlyph {
 
-    public Point draw(Point startPoint, Canvas canvas, float zoom);
+    public Point draw(DevicePageContext context);
 
 }
