@@ -1,6 +1,6 @@
 package com.veve.flowreader.model;
 
-import com.veve.flowreader.model.impl.SampleDjvuBook;
+import com.veve.flowreader.model.impl.MockBook;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ public class BooksCollection {
         }
         //How to read config from memory?
         //So far there will be fake books list
-        bookCollection.addBook(new SampleDjvuBook());
+        bookCollection.addBook(new MockBook());
     }
 
     public static BooksCollection getInstance() {

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -19,15 +18,16 @@ import android.widget.TextView;
 
 import com.veve.flowreader.R;
 import com.veve.flowreader.model.Book;
-import com.veve.flowreader.model.BooksCollection;
+import com.veve.flowreader.model.impl.MockBook;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.i(this.getClass().getName(), "MainActivity.onCreate()");
+        Log.i(this.getClass().getName(), "MainActivity.onCreate()" + Thread.currentThread());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intentOne = new Intent(MainActivity.this, BrowseFilesActivity.class);
+                intentOne.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intentOne);
             }
         });
@@ -47,8 +48,9 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.d(this.getClass().getName(), i + " clicked");
+                Log.d(this.getClass().getName(), i + " clicked" + Thread.currentThread());
                 Intent intentTwo = new Intent(MainActivity.this, PageActivity.class);
+                intentTwo.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intentTwo);
             }
         });
@@ -79,13 +81,14 @@ public class MainActivity extends AppCompatActivity {
     public class BookListAdapter extends BaseAdapter {
 
         private BookListAdapter instance;
-        private BooksCollection bookCollection;
         private List<Book> booksList;
 
         private BookListAdapter() {
             Log.i(this.getClass().getName(), "Constructing BookListAdapter");
-            bookCollection = BooksCollection.getInstance();
-            booksList = bookCollection.getBooks();
+            //booksList = BooksCollection.getInstance().getBooks();
+            booksList = new ArrayList<Book>();
+            booksList.add(new MockBook());
+            notifyDataSetChanged();
         }
 
         @Override
@@ -111,6 +114,16 @@ public class MainActivity extends AppCompatActivity {
             TextView textView = (TextView)((ConstraintLayout)convertView).getChildAt(0);
                 textView.setText(booksList.get(position).getName());
             return convertView;
+        }
+
+        @Override
+        public int hashCode() {
+            return 1;
+        }
+
+        @Override
+        public boolean equals(Object object) {
+            return true;
         }
 
     }

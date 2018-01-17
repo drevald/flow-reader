@@ -9,6 +9,6 @@ import android.graphics.Point;
 
 public interface PageGlyph {
 
-    public Point draw(DevicePageContext context);
+    public void draw(DevicePageContext context);
 
 }

@@ -7,7 +7,7 @@ import com.veve.flowreader.model.BookPage;
  * Created by ddreval on 12.01.2018.
  */
 
-public class SampleDjvuBook implements Book {
+public class MockBook implements Book {
 
     @Override
     public void setCurrentPageNumber(int pageNumber) {
@@ -21,7 +21,7 @@ public class SampleDjvuBook implements Book {
 
     @Override
     public BookPage getPage(int pageNumber) {
-        return new SamplePageImpl();
+        return new MockPageImpl();
     }
 
     @Override

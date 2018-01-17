@@ -21,7 +21,9 @@ import com.veve.flowreader.R;
 import com.veve.flowreader.model.Book;
 import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.BooksCollection;
+import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyph;
+import com.veve.flowreader.model.impl.DevicePageContextImpl;
 
 public class PageActivity extends AppCompatActivity {
 
@@ -49,32 +51,43 @@ public class PageActivity extends AppCompatActivity {
         surfaceHolder.addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
-                Log.i("Tag?", "Surface created");
+                Log.i("Tag?" + Thread.currentThread(), "Surface created");
                 Canvas canvas = holder.lockCanvas();
+                DevicePageContext context = new DevicePageContextImpl();
+                context.setCanvas(canvas);
+                context.setStartPoint(new Point(0, 0));
+                context.setZoom(1);
                 if(canvas==null) {
-                    Log.i("SurfaceHolder.Callback", "canvas is null");
+                    Log.i("SurfaceHolder.Callback" + Thread.currentThread(), "canvas is null");
                 } else {
-                    Log.i("SurfaceHolder.Callback", "canvas width is " + canvas.getWidth() + " canvas height is " + canvas.getHeight());
+                    Log.i("SurfaceHolder.Callback" + Thread.currentThread(), "canvas width is " + canvas.getWidth() + " canvas height is " + canvas.getHeight());
 
-                    Book book = BooksCollection.getInstance().getBooks().get(1);
+                    Book book = BooksCollection.getInstance().getBooks().get(0);
                     BookPage bookPage = book.getPage(book.getCurrentPageNumber());
                     PageGlyph pageGlyph;
-                    Point startPoint = new Point(0, 0);
+
                     while((pageGlyph = bookPage.getNextGlyph()) != null) {
-                        startPoint = pageGlyph.draw(startPoint, canvas, 1);
+                        pageGlyph.draw(context);
                     }
+
+                    int counter = 0;
+//                    while(counter++ < 10) {
+//                        bookPage.getNextGlyph().draw(context);
+//                    }
+
+
                     holder.unlockCanvasAndPost(canvas);
                 }
             }
 
             @Override
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-                Log.i("SurfaceHolder.Callback", "Surface changed");
+                Log.i("SurfaceHolder.Callback" + Thread.currentThread(), "Surface changed");
             }
 
             @Override
             public void surfaceDestroyed(SurfaceHolder holder) {
-                Log.i("SurfaceHolder.Callback", "Surface destroyed");
+                Log.i("SurfaceHolder.Callback" + Thread.currentThread(), "Surface destroyed");
             }
         });
 
