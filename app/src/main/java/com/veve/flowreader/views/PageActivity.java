@@ -48,18 +48,38 @@ public class PageActivity extends AppCompatActivity {
         SurfaceView surfaceView = (SurfaceView)findViewById(R.id.page);
         SurfaceHolder surfaceHolder = surfaceView.getHolder();
 
+        surfaceView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                Log.i(getClass().getName(), String.format("Layout changed. View is %s. Params are %d, %d, %d, %d, %d, %d, %d, %d", v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom));
+            }
+        });
+
+        surfaceView.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener() {
+            @Override
+            public void onViewAttachedToWindow(View v) {
+                Log.i(getClass().getName(), "onViewAttachedToWindow(%s)".format(v.toString()));
+            }
+
+            @Override
+            public void onViewDetachedFromWindow(View v) {
+                Log.i(getClass().getName(), "onViewDetachedFromWindow(%s)".format(v.toString()));
+            }
+        });
+//
         surfaceHolder.addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
-                Log.i("Tag?" + Thread.currentThread(), "Surface created");
+                Log.i(getClass().getName(), "Surface created");
                 Canvas canvas = holder.lockCanvas();
+                //DevicePageContext context = new DevicePageContextImpl(canvas);
+
                 DevicePageContext context = new DevicePageContextImpl();
                 context.setCanvas(canvas);
                 context.setStartPoint(new Point(0, 0));
                 context.setZoom(1);
-                if(canvas==null) {
-                    Log.i("SurfaceHolder.Callback" + Thread.currentThread(), "canvas is null");
-                } else {
+
+                if(canvas!=null) {
                     Log.i("SurfaceHolder.Callback" + Thread.currentThread(), "canvas width is " + canvas.getWidth() + " canvas height is " + canvas.getHeight());
                     Book book = BooksCollection.getInstance().getBooks().get(0);
                     BookPage bookPage = book.getPage(book.getCurrentPageNumber());

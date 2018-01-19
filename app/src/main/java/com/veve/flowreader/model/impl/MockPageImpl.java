@@ -13,7 +13,7 @@ public class MockPageImpl implements BookPage {
 
     private static final int MAX_GLYPHS = 1000;
 
-    private static int position = 0;
+    private int position = 0;
 
     public MockPageImpl() {
         position = 0;
@@ -24,6 +24,11 @@ public class MockPageImpl implements BookPage {
         if (++position < SAGA.length())
             return new MockPageGlyphImpl(SAGA.toUpperCase().substring(position, position+1));
         return null;
+    }
+
+    @Override
+    public void reset() {
+        position = 0;
     }
 
     final static String SAGA = "Úlfur hét maður, sonur Bjálfa og Hallberu, dóttur Úlfs hins óarga. " +

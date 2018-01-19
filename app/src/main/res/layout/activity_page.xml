@@ -30,29 +30,30 @@
         tools:context="com.veve.flowreader.views.PageActivity"
         tools:showIn="@layout/activity_page">
 
-        <!--<ScrollView-->
-            <!--android:id="@+id/scroll"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:background="#99CCFF">-->
+        <ScrollView
+            android:id="@+id/scroll"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:background="#99CCFF">
 
-            <!--<LinearLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:orientation="vertical" >-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
 
                 <SurfaceView
                     android:id="@+id/page"
-                    android:layout_height="match_parent"
+                    android:layout_height="2000dp"
                     android:layout_width="match_parent" />
 
-            <!--</LinearLayout>-->
+                <SurfaceView
+                    android:id="@+id/page1"
+                    android:layout_height="2000dp"
+                    android:layout_width="match_parent" />
 
-        <!--</ScrollView>-->
+            </LinearLayout>
 
-
-
-
+        </ScrollView>
 
     </android.support.constraint.ConstraintLayout>
 

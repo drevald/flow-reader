@@ -30,7 +30,6 @@ public class MockPageGlyphImpl implements PageGlyph {
 
     @Override
     public void draw(DevicePageContext context) {
-        Log.i("Page" + Thread.currentThread(), "Drawing page");
         Point startPoint = context.getStartPoint();
         Canvas canvas = context.getCanvas();
         if(getWidth(context) + startPoint.x > canvas.getWidth()) {

@@ -17,6 +17,16 @@ public class DevicePageContextImpl implements DevicePageContext {
 
     private float zoom;
 
+    public DevicePageContextImpl() {
+
+    }
+
+    public DevicePageContextImpl(Canvas canvas) {
+        this.canvas = canvas;
+        this.zoom = zoom;
+        this.startPoint = new Point(0, 0);
+    }
+
     @Override
     public Point getStartPoint() {
         return startPoint;
