@@ -22,7 +22,7 @@ public class MockPageImpl implements BookPage {
     @Override
     public PageGlyph getNextGlyph() {
         if (++position < SAGA.length())
-            return new MockPageGlyphImpl(SAGA.substring(position, position+1));
+            return new MockPageGlyphImpl(SAGA.toUpperCase().substring(position, position+1));
         return null;
     }
 

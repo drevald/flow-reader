@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Log.d(this.getClass().getName(), i + " clicked" + Thread.currentThread());
+                //Intent intentTwo = new Intent(MainActivity.this, PageActivity.class);
                 Intent intentTwo = new Intent(MainActivity.this, PageActivity.class);
                 intentTwo.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intentTwo);

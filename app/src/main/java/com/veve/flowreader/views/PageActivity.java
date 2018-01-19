@@ -61,21 +61,12 @@ public class PageActivity extends AppCompatActivity {
                     Log.i("SurfaceHolder.Callback" + Thread.currentThread(), "canvas is null");
                 } else {
                     Log.i("SurfaceHolder.Callback" + Thread.currentThread(), "canvas width is " + canvas.getWidth() + " canvas height is " + canvas.getHeight());
-
                     Book book = BooksCollection.getInstance().getBooks().get(0);
                     BookPage bookPage = book.getPage(book.getCurrentPageNumber());
                     PageGlyph pageGlyph;
-
                     while((pageGlyph = bookPage.getNextGlyph()) != null) {
                         pageGlyph.draw(context);
                     }
-
-                    int counter = 0;
-//                    while(counter++ < 10) {
-//                        bookPage.getNextGlyph().draw(context);
-//                    }
-
-
                     holder.unlockCanvasAndPost(canvas);
                 }
             }
@@ -89,6 +80,7 @@ public class PageActivity extends AppCompatActivity {
             public void surfaceDestroyed(SurfaceHolder holder) {
                 Log.i("SurfaceHolder.Callback" + Thread.currentThread(), "Surface destroyed");
             }
+
         });
 
     }

@@ -6,20 +6,20 @@
     android:layout_height="match_parent"
     tools:context="com.veve.flowreader.views.PageActivity">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+    <!--<android.support.design.widget.AppBarLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:theme="@style/AppTheme.AppBarOverlay">-->
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        <!--<android.support.v7.widget.Toolbar-->
+            <!--android:id="@+id/toolbar"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="?attr/actionBarSize"-->
+            <!--android:background="?attr/colorPrimary"-->
+            <!--app:popupTheme="@style/AppTheme.PopupOverlay"-->
+            <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"/>-->
 
-    </android.support.design.widget.AppBarLayout>
+    <!--</android.support.design.widget.AppBarLayout>-->
 
     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -30,12 +30,29 @@
         tools:context="com.veve.flowreader.views.PageActivity"
         tools:showIn="@layout/activity_page">
 
-    <SurfaceView
-        android:id="@+id/page"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent">
+        <!--<ScrollView-->
+            <!--android:id="@+id/scroll"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:background="#99CCFF">-->
 
-    </SurfaceView>
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="vertical" >-->
+
+                <SurfaceView
+                    android:id="@+id/page"
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent" />
+
+            <!--</LinearLayout>-->
+
+        <!--</ScrollView>-->
+
+
+
+
 
     </android.support.constraint.ConstraintLayout>
 
