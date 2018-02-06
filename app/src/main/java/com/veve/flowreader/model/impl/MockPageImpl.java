@@ -1,9 +1,19 @@
 package com.veve.flowreader.model.impl;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Point;
+
 import com.veve.flowreader.model.BookPage;
+import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyph;
 
 import java.util.Random;
+
+import static android.graphics.Bitmap.Config.ARGB_8888;
 
 /**
  * Created by ddreval on 15.01.2018.
@@ -29,6 +39,41 @@ public class MockPageImpl implements BookPage {
     @Override
     public void reset() {
         position = 0;
+    }
+
+    @Override
+    public Bitmap getAsBitmap(DevicePageContext context) {
+        PageGlyph pageGlyph = null;
+
+        while((pageGlyph = getNextGlyph()) != null) {
+            pageGlyph.virtualDraw(context);
+        }
+
+        Point remotestPoint = context.getRemotestPoint();
+//                    BitmapFactory.Options options = new BitmapFactory.Options();
+//            options.inPreferredConfig = ARGB_8888;
+
+//        Bitmap bitmap = Bitmap.createBitmap(600, 3400, ARGB_8888);
+        Bitmap bitmap = Bitmap.createBitmap(context.getWidth(), remotestPoint.y, ARGB_8888);
+
+//        Bitmap bitmap = Bitmap.createBitmap(240, 360, ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+
+        reset();
+        context.resetPosition();
+        context.setCanvas(canvas);
+        while((pageGlyph = getNextGlyph()) != null) {
+            pageGlyph.draw(context);
+        }
+
+
+//
+//        Bitmap bitmap = Bitmap.createBitmap(240, 360, ARGB_8888);
+//        Canvas canvas = new Canvas(bitmap);
+//        Paint paint = new Paint(Color.RED);
+//        canvas.drawCircle(20, 20, 80, paint);
+
+        return bitmap;
     }
 
     final static String SAGA = "Úlfur hét maður, sonur Bjálfa og Hallberu, dóttur Úlfs hins óarga. " +

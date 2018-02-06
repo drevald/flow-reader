@@ -26,7 +26,7 @@ public class MockBook implements Book {
 
     @Override
     public int getPagesCount() {
-        return 0;
+        return 1;
     }
 
     @Override

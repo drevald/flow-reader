@@ -1,5 +1,7 @@
 package com.veve.flowreader.model;
 
+import android.graphics.Bitmap;
+
 /**
  * Created by ddreval on 15.01.2018.
  */
@@ -18,5 +20,12 @@ public interface BookPage {
      * to read from the beginning
      */
     public void reset();
+
+    /**
+     * Returnd raster representation of page for given context
+     * @param context
+     * @return
+     */
+    public Bitmap getAsBitmap(DevicePageContext context);
 
 }

@@ -6,56 +6,11 @@
     android:layout_height="match_parent"
     tools:context="com.veve.flowreader.views.PageActivity">
 
-    <!--<android.support.design.widget.AppBarLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:theme="@style/AppTheme.AppBarOverlay">-->
-
-        <!--<android.support.v7.widget.Toolbar-->
-            <!--android:id="@+id/toolbar"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="?attr/actionBarSize"-->
-            <!--android:background="?attr/colorPrimary"-->
-            <!--app:popupTheme="@style/AppTheme.PopupOverlay"-->
-            <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"/>-->
-
-    <!--</android.support.design.widget.AppBarLayout>-->
-
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context="com.veve.flowreader.views.PageActivity"
-        tools:showIn="@layout/activity_page">
-
-        <ScrollView
-            android:id="@+id/scroll"
-            android:layout_height="match_parent"
+        <GridView
+            android:id="@+id/grid"
             android:layout_width="match_parent"
-            android:background="#99CCFF">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" >
-
-                <SurfaceView
-                    android:id="@+id/page"
-                    android:layout_height="2000dp"
-                    android:layout_width="match_parent" />
-
-                <SurfaceView
-                    android:id="@+id/page1"
-                    android:layout_height="2000dp"
-                    android:layout_width="match_parent" />
-
-            </LinearLayout>
-
-        </ScrollView>
-
-    </android.support.constraint.ConstraintLayout>
+            android:layout_height="match_parent"
+            android:columnCount="1"></GridView>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/home"

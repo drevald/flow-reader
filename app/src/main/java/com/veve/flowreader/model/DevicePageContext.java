@@ -21,4 +21,12 @@ public interface DevicePageContext {
 
     public void setZoom(float zoom);
 
+    public int getWidth();
+
+    public Point getRemotestPoint();
+
+    public void setRemotestPoint(Point point);
+
+    public void resetPosition();
+
 }

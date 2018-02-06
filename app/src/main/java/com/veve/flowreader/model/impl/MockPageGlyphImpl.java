@@ -2,6 +2,7 @@ package com.veve.flowreader.model.impl;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -32,12 +33,30 @@ public class MockPageGlyphImpl implements PageGlyph {
     public void draw(DevicePageContext context) {
         Point startPoint = context.getStartPoint();
         Canvas canvas = context.getCanvas();
+
+        //canvas.drawRect(0, 100, 400, 200, new Paint(Color.RED));
+
         if(getWidth(context) + startPoint.x > canvas.getWidth()) {
             startPoint.set(0, startPoint.y + getHeight(context));
         }
         canvas.drawText(str, startPoint.x, startPoint.y, paint);
+        //Log.i("tag", "canvas.drawText("+str+", "+startPoint.x+", "+startPoint.y+", "+paint+");");
         Point endPoint = new Point(startPoint.x + getWidth(context), startPoint.y);
         context.setStartPoint(endPoint);
+        Point remotestPoint = new Point(startPoint.x + getWidth(context), startPoint.y+getHeight(context));
+        context.setRemotestPoint(remotestPoint);
+    }
+
+    @Override
+    public void virtualDraw(DevicePageContext context) {
+        Point startPoint = context.getStartPoint();
+        if(getWidth(context) + startPoint.x > context.getWidth()) {
+            startPoint.set(0, startPoint.y + getHeight(context));
+        }
+        Point endPoint = new Point(startPoint.x + getWidth(context), startPoint.y);
+        context.setStartPoint(endPoint);
+        Point remotestPoint = new Point(startPoint.x + getWidth(context), startPoint.y+getHeight(context));
+        context.setRemotestPoint(remotestPoint);
     }
 
     protected int getWidth(DevicePageContext context) {

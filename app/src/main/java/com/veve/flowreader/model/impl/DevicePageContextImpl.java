@@ -11,20 +11,35 @@ import com.veve.flowreader.model.DevicePageContext;
 
 public class DevicePageContextImpl implements DevicePageContext {
 
+    private static final int DEFAULT_ZOOM = 1;
+
     private Point startPoint;
+
+    private Point remotestPoint;
 
     private Canvas canvas;
 
     private float zoom;
 
+    private int width;
+
     public DevicePageContextImpl() {
 
     }
 
+    public DevicePageContextImpl(int width) {
+        this.zoom = DEFAULT_ZOOM;
+        this.width = width;
+        this.startPoint = new Point(0, 0);
+        this.remotestPoint = new Point(0, 0);
+    }
+
     public DevicePageContextImpl(Canvas canvas) {
         this.canvas = canvas;
-        this.zoom = zoom;
+        this.width = canvas.getWidth();
+        this.zoom = DEFAULT_ZOOM;
         this.startPoint = new Point(0, 0);
+        this.remotestPoint = new Point(0, 0);
     }
 
     @Override
@@ -57,4 +72,20 @@ public class DevicePageContextImpl implements DevicePageContext {
         this.zoom = zoom;
     }
 
+    @Override
+    public int getWidth() {return this.width;}
+
+    @Override
+    public Point getRemotestPoint() {return this.remotestPoint;}
+
+    @Override
+    public void setRemotestPoint(Point remotestPoint) {
+        this.remotestPoint = remotestPoint;
+    }
+
+    @Override
+    public void resetPosition() {
+        this.startPoint = new Point(0, 0);
+        this.remotestPoint = new Point(0, 0);
+    }
 }
