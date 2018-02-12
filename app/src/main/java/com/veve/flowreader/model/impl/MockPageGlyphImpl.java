@@ -20,13 +20,15 @@ import java.util.Random;
 public class MockPageGlyphImpl implements PageGlyph {
 
     String str;
+
+    public static int defaultFontSize = 48;
     public static Rect rect = new Rect();
     public static Paint paint = new Paint();
     private static Paint paint1 = new Paint();
 
     public MockPageGlyphImpl(String aStr) {
         str = aStr;
-        paint.setTextSize(48);
+        paint.setTextSize(defaultFontSize);
         paint.setFakeBoldText(true);
         paint1.setStyle(Paint.Style.STROKE);
     }
@@ -42,6 +44,7 @@ public class MockPageGlyphImpl implements PageGlyph {
             startPoint.set(0, startPoint.y + getHeight(context));
             Log.i("MockGlyph.Draw","New line with y=" + startPoint.y + " + after " + str);
         }
+        paint.setTextSize(defaultFontSize * context.getZoom());
         canvas.drawText(str, startPoint.x, startPoint.y + getHeight(context), paint);
         canvas.drawRect(startPoint.x, startPoint.y, startPoint.x+getWidth(context), startPoint.y+ getHeight(context), paint1);
         canvas.drawText("O",0, 0, paint);
@@ -63,21 +66,15 @@ public class MockPageGlyphImpl implements PageGlyph {
     }
 
     protected int getWidth(DevicePageContext context) {
+        paint.setTextSize(defaultFontSize * context.getZoom());
         paint.getTextBounds(str, 0, 1, rect);
-//        if(context.getCanvas() != null)
-//            context.getCanvas().drawRect(
-//                    context.getStartPoint().x,
-//                    context.getStartPoint().y,
-//                    context.getStartPoint().x+rect.width()*context.getZoom(),
-//                    context.getStartPoint().y+rect.height()*context.getZoom(),
-//                    paint1);
-        return (int)(rect.width() * context.getZoom());
+        return (int)(rect.width());
     }
 
     protected int getHeight(DevicePageContext context) {
+        paint.setTextSize(defaultFontSize * context.getZoom());
         paint.getTextBounds(str, 0, 1, rect);
-        //Log.i("GLYPH","getHeight = " + rect.height() * context.getZoom());
-        return (int)(rect.height() * context.getZoom());
+        return (int)(rect.height());
     }
 
 }
