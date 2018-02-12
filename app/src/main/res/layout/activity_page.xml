@@ -4,13 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ccffcc"
     tools:context="com.veve.flowreader.views.PageActivity">
 
-        <GridView
-            android:id="@+id/grid"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:columnCount="1"></GridView>
+    <GridView
+        android:id="@+id/grid"
+        android:background="#ffccff"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:columnCount="1"></GridView>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/home"

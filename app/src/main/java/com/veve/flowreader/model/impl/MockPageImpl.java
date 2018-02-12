@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.util.Log;
 
 import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.DevicePageContext;
@@ -34,8 +35,12 @@ public class MockPageImpl implements BookPage {
 
     @Override
     public PageGlyph getNextGlyph() {
-        if (++position < content.length())
-            return new MockPageGlyphImpl(content.toUpperCase().substring(position, position+1));
+        if (position++ < content.length())
+            return new MockPageGlyphImpl(
+                    content
+//                            .toUpperCase()
+                            .substring(position-1, position)
+            );
         return null;
     }
 
@@ -46,29 +51,37 @@ public class MockPageImpl implements BookPage {
 
     @Override
     public Bitmap getAsBitmap(DevicePageContext context) {
+
+        Log.i("getAsBitmap", ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+
         PageGlyph pageGlyph = null;
 
         while((pageGlyph = getNextGlyph()) != null) {
             pageGlyph.virtualDraw(context);
         }
+        Log.i("PageImpl", "width = " + context.getWidth()
+                + " remotestPoint x = " + context.getRemotestPoint().x
+                + " remotestPoint y = " + context.getRemotestPoint().y);
 
         Point remotestPoint = context.getRemotestPoint();
-//                    BitmapFactory.Options options = new BitmapFactory.Options();
-//            options.inPreferredConfig = ARGB_8888;
-
-//        Bitmap bitmap = Bitmap.createBitmap(600, 3400, ARGB_8888);
         Bitmap bitmap = Bitmap.createBitmap(context.getWidth(), remotestPoint.y, ARGB_8888);
-
-//        Bitmap bitmap = Bitmap.createBitmap(240, 360, ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
-
         reset();
         context.resetPosition();
         context.setCanvas(canvas);
+
         while((pageGlyph = getNextGlyph()) != null) {
             pageGlyph.draw(context);
         }
 
+        Paint paint =  new Paint();
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(10);
+        paint.setColor(Color.GREEN);
+        canvas.drawRect(0, 0, context.getWidth(), remotestPoint.y, paint);
+
+        context.resetPosition();
+        context.setCanvas(canvas);
 
 //
 //        Bitmap bitmap = Bitmap.createBitmap(240, 360, ARGB_8888);
@@ -76,6 +89,7 @@ public class MockPageImpl implements BookPage {
 //        Paint paint = new Paint(Color.RED);
 //        canvas.drawCircle(20, 20, 80, paint);
 
+        Log.i("getAsBitmap", "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
         return bitmap;
     }
 

@@ -2,6 +2,7 @@ package com.veve.flowreader.model.impl;
 
 import android.graphics.Canvas;
 import android.graphics.Point;
+import android.util.Log;
 
 import com.veve.flowreader.model.DevicePageContext;
 
@@ -11,7 +12,7 @@ import com.veve.flowreader.model.DevicePageContext;
 
 public class DevicePageContextImpl implements DevicePageContext {
 
-    private static final int DEFAULT_ZOOM = 1;
+    private static final int DEFAULT_ZOOM = 3;
 
     private Point startPoint;
 
@@ -87,5 +88,7 @@ public class DevicePageContextImpl implements DevicePageContext {
     public void resetPosition() {
         this.startPoint = new Point(0, 0);
         this.remotestPoint = new Point(0, 0);
+        Log.i("Context", String.format("Reset as StartPoint(%d. %d) RemotePoint(%d. %d)",
+                startPoint.x, startPoint.y, remotestPoint.x, remotestPoint.y));
     }
 }
