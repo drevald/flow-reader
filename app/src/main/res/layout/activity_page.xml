@@ -4,15 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ccffcc"
     tools:context="com.veve.flowreader.views.PageActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
 
     <GridView
         android:id="@+id/grid"
-        android:background="#ffccff"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:columnCount="1"></GridView>
+        android:columnCount="1"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"></GridView>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/home"

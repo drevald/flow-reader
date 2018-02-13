@@ -22,7 +22,7 @@ public interface BookPage {
     public void reset();
 
     /**
-     * Returnd raster representation of page for given context
+     * Returns raster representation of page for the given context
      * @param context
      * @return
      */

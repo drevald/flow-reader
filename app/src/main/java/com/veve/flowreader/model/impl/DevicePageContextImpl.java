@@ -12,7 +12,7 @@ import com.veve.flowreader.model.DevicePageContext;
 
 public class DevicePageContextImpl implements DevicePageContext {
 
-    private static final float DEFAULT_ZOOM = 0.3f;
+    private static final float DEFAULT_ZOOM = 1f;
 
     private Point startPoint;
 

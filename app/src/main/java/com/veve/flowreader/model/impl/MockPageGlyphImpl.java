@@ -38,17 +38,13 @@ public class MockPageGlyphImpl implements PageGlyph {
         Point startPoint = context.getStartPoint();
         Canvas canvas = context.getCanvas();
 
-        //canvas.drawRect(0, 100, 400, 200, new Paint(Color.RED));
 
         if(getWidth(context) + startPoint.x > canvas.getWidth()) {
             startPoint.set(0, startPoint.y + getHeight(context));
-            Log.i("MockGlyph.Draw","New line with y=" + startPoint.y + " + after " + str);
         }
         paint.setTextSize(defaultFontSize * context.getZoom());
         canvas.drawText(str, startPoint.x, startPoint.y + getHeight(context), paint);
-        canvas.drawRect(startPoint.x, startPoint.y, startPoint.x+getWidth(context), startPoint.y+ getHeight(context), paint1);
         canvas.drawText("O",0, 0, paint);
-//        Log.i("tag", "canvas.drawText("+str+", "+startPoint.x+", "+startPoint.y+", "+paint+");");
         context.getStartPoint().set(startPoint.x + getWidth(context), startPoint.y);
         context.getRemotestPoint().set(startPoint.x + getWidth(context), startPoint.y+getHeight(context));
     }
@@ -56,10 +52,8 @@ public class MockPageGlyphImpl implements PageGlyph {
     @Override
     public void virtualDraw(DevicePageContext context) {
         Point startPoint = context.getStartPoint();
-        Log.i("CR","y=" + startPoint.y );
         if(getWidth(context) + startPoint.x > context.getWidth()) {
             startPoint.set(0, startPoint.y + getHeight(context));
-            Log.i("MockGlyph.Virt","New line with y=" + startPoint.y + " + after " + str);
         }
         context.getStartPoint().set(startPoint.x + getWidth(context), startPoint.y);
         context.getRemotestPoint().set(startPoint.x + getWidth(context), startPoint.y+getHeight(context));
