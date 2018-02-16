@@ -13,12 +13,6 @@ public interface PageGlyph {
      * Draws glyph on page and updates context to place  next glyph
      * @param context
      */
-    public void draw(DevicePageContext context);
-
-    /**
-     * Recalculates glyph position without actually draing it
-     * @param context
-     */
-    public void virtualDraw(DevicePageContext context);
+    public void draw(DevicePageContext context, boolean show);
 
 }

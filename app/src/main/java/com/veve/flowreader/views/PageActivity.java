@@ -82,6 +82,26 @@ public class PageActivity extends AppCompatActivity {
                 pageAdapter.notifyDataSetChanged();
                 break;
             }
+            case R.id.decrease_kerning: {
+                context.setKerning(0.8f*context.getKerning());
+                pageAdapter.notifyDataSetChanged();
+                break;
+            }
+            case R.id.increase_kerning: {
+                context.setKerning(1.25f*context.getKerning());
+                pageAdapter.notifyDataSetChanged();
+                break;
+            }
+            case R.id.decrease_leading: {
+                context.setLeading(0.8f*context.getLeading());
+                pageAdapter.notifyDataSetChanged();
+                break;
+            }
+            case R.id.increase_leading: {
+                context.setLeading(1.25f*context.getLeading());
+                pageAdapter.notifyDataSetChanged();
+                break;
+            }
         }
         return true;
     }

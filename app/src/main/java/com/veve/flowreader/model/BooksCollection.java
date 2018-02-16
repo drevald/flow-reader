@@ -1,6 +1,6 @@
 package com.veve.flowreader.model;
 
-import com.veve.flowreader.model.impl.MockBook;
+import com.veve.flowreader.model.impl.mocksimple.MockBook;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -29,4 +29,12 @@ public interface DevicePageContext {
 
     public void resetPosition();
 
+    public float getKerning();
+
+    public void setKerning(float kerning);
+
+    public float getLeading();
+
+    public void setLeading(float leading);
+
 }
