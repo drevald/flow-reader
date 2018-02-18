@@ -1,5 +1,6 @@
 package com.veve.flowreader.model;
 
+import com.veve.flowreader.model.impl.mockraster.MockRasterBook;
 import com.veve.flowreader.model.impl.mocksimple.MockBook;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public class BooksCollection {
         }
         //How to read config from memory?
         //So far there will be fake books list
-        bookCollection.addBook(new MockBook());
+        bookCollection.addBook(new MockRasterBook());
     }
 
     public static BooksCollection getInstance() {

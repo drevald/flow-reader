@@ -1,5 +1,7 @@
 package com.veve.flowreader.model.impl.mockraster;
 
+import android.util.Log;
+
 import com.veve.flowreader.model.Book;
 import com.veve.flowreader.model.BookPage;
 
@@ -12,14 +14,16 @@ import java.util.List;
 
 public class MockRasterBook implements Book {
 
-    private List<BookPage> pages;
+    private BookPage page;
 
-    private int pagesTotal = 10;
+//    private List<BookPage> pages;
+
+    private int pagesTotal = 600;
 
     private int currentPage = 0;
 
     public MockRasterBook() {
-        pages = new ArrayList<BookPage>();
+        page = new MockRasterBookPage();
     }
 
     @Override
@@ -34,22 +38,18 @@ public class MockRasterBook implements Book {
 
     @Override
     public BookPage getPage(int pageNumber) {
-        BookPage page = pages.get(pageNumber);
-        if (page == null) {
-            page = new MockRasterBookPage();
-            pages.add(pageNumber, page);
-        }
+        Log.i(getClass().getName(), "Getting page #" + pageNumber);
         return page;
     }
 
     @Override
     public int getPagesCount() {
-        return 0;
+        return pagesTotal;
     }
 
     @Override
     public String getName() {
-        return null;
+        return "Sample raster book";
     }
 
     @Override

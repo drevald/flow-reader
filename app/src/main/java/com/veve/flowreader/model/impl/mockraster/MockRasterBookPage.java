@@ -1,10 +1,18 @@
 package com.veve.flowreader.model.impl.mockraster;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Point;
+import android.util.Log;
 
 import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyph;
+import com.veve.flowreader.model.impl.DevicePageContextImpl;
+
+import static android.graphics.Bitmap.Config.ARGB_8888;
 
 /**
  * Created by ddreval on 2/16/2018.
@@ -12,19 +20,74 @@ import com.veve.flowreader.model.PageGlyph;
 
 class MockRasterBookPage implements BookPage {
 
+    private int position = 0;
+
+    public MockRasterBookPage() {
+        this.position = 0;
+    }
+
     @Override
     public PageGlyph getNextGlyph() {
+        if (position++ < 1000)
+            return MockRasterBookPageGlyph.getInstance(); //new MockRasterBookPageGlyph();
         return null;
     }
 
     @Override
     public void reset() {
-
+        position = 0;
     }
 
     @Override
     public Bitmap getAsBitmap(DevicePageContext context) {
-        return null;
+
+        PageGlyph pageGlyph = null;
+        Log.i(getClass().getName(), String.format("position=%d", position));
+        while((pageGlyph = getNextGlyph()) != null) {
+            pageGlyph.draw(context, false);
+        }
+        Point remotestPoint = context.getRemotestPoint();
+        Log.i(getClass().getName(), String.format("w=%d h=%d, position=%d", context.getWidth(), remotestPoint.y, position));
+        Bitmap bitmap = Bitmap.createBitmap(context.getWidth(), remotestPoint.y, ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        reset();
+        context.resetPosition();
+        context.setCanvas(canvas);
+
+        while((pageGlyph = getNextGlyph()) != null) {
+            pageGlyph.draw(context, true);
+        }
+
+        Paint paint =  new Paint();
+        paint.setStyle(Paint.Style.STROKE);
+        canvas.drawRect(0, 0, context.getWidth(), remotestPoint.y, paint);
+        reset();
+        context.resetPosition();
+        context.setCanvas(canvas);
+        return bitmap;
+
     }
+
+//    Bitmap bitmap = Bitmap.createBitmap(400, 400, ARGB_8888);
+//
+////        Canvas canvas = new Canvas(bitmap);
+////        canvas.drawCircle(50, 50, 50, new Paint());
+//
+//    Canvas canvas = new Canvas(bitmap);
+//        context.resetPosition();
+//        context.setCanvas(canvas);
+//    PageGlyph pageGlyph;
+//    Paint paint = new Paint();
+//        paint.setStyle(Paint.Style.STROKE);
+//        paint.setStrokeWidth(10);
+//
+//
+//        canvas.drawRect(canvas.getClipBounds(), paint);
+//
+//    position = 350;
+//
+//        while (position-- > 0)
+//            new MockRasterBookPageGlyph().draw(context, true);
+
 
 }

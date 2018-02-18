@@ -2,15 +2,21 @@ package com.veve.flowreader.views;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -23,6 +29,10 @@ import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.impl.DevicePageContextImpl;
 
 import android.view.ViewTreeObserver.*;
+import android.widget.TextView;
+
+import static android.view.View.GONE;
+import static android.view.View.INVISIBLE;
 
 public class PageActivity extends AppCompatActivity {
 
@@ -119,18 +129,28 @@ public class PageActivity extends AppCompatActivity {
 
         DevicePageContext pageContext;
 
+        Book book;
+
         Bitmap[] bitmaps;
 
-        public BookGridAdapter(DevicePageContext context) {
+        Bitmap bitmap;
 
+        ImageView viewOne, viewTwo;
+
+        View stubView;
+
+        public BookGridAdapter(DevicePageContext context) {
             this.pageContext = context;
-            Book book = BooksCollection.getInstance().getBooks().get(0);
+            this.viewOne = new ImageView(PageActivity.this.getApplicationContext());
+            this.viewTwo = new ImageView(PageActivity.this.getApplicationContext());
+            this.stubView = new TextView(PageActivity.this.getApplicationContext());
+            book = BooksCollection.getInstance().getBooks().get(0);
             bitmaps = new Bitmap[book.getPagesCount()];
-            for (int i=0; i<book.getPagesCount(); i++) {
-                BookPage bookPage = book.getPage(i);
-                bitmaps[i] = bookPage.getAsBitmap(pageContext);
-            }
-            notifyDataSetChanged();
+//            for (int i=0; i<book.getPagesCount(); i++) {
+//                BookPage bookPage = book.getPage(i);
+//                bitmaps[i] = bookPage.getAsBitmap(pageContext);
+//            }
+//            notifyDataSetChanged();
 
         }
 
@@ -151,20 +171,64 @@ public class PageActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            ImageView view = new ImageView(PageActivity.this.getApplicationContext());
-            view.setImageBitmap(bitmaps[position]);
+//            ImageView view = new ImageView(PageActivity.this.getApplicationContext());
+//            view.setImageBitmap(bitmaps[position]);
+
+//            TextView view = new TextView(PageActivity.this.getApplicationContext());
+//            view.setText(String.format("%d", position));
+//            view.setTextColor(Color.LTGRAY);
+//            view.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER);
+//            view.setHeight(600);
+//            view.setTextSize(200);
+//            view.setFocusable(true);
+//            view.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//                @Override
+//                public void onFocusChange(View v, boolean hasFocus) {
+//                    Log.d(getClass().getName(), String.format("Focused %S", ((TextView)v).getText()));
+//                }
+//            });
+
+//            try {
+//                bitmap.recycle();
+//            } catch (Exception e) {
+//                Log.e(getClass().getName(), e.getMessage());
+//            }
+
+            BookPage bookPage = book.getPage(position);
+            bitmap = bookPage.getAsBitmap(pageContext);
+
+            ImageView view = null;
+
+            if(position % 2 == 0) {
+                view = viewTwo;
+                Drawable drawable = viewOne.getDrawable();
+                if (drawable != null) {
+                    //((BitmapDrawable)drawable).getBitmap().recycle();
+                    //Log.d(getClass().getName(), "Bitmap 1 successfully dumped");
+                }
+            } else {
+                view = viewOne;
+                Drawable drawable = viewTwo.getDrawable();
+                if (drawable != null) {
+                    //((BitmapDrawable)drawable).getBitmap().recycle();
+                    //Log.d(getClass().getName(), "Bitmap 2 successfully dumped");
+                }
+            }
+
+            view.setImageBitmap(bitmap);
+             Log.d(getClass().getName(), String.format("Getting view #%d", position));
             return view;
         }
 
         @Override
         public void notifyDataSetChanged() {
             super.notifyDataSetChanged();
-            Book book = BooksCollection.getInstance().getBooks().get(0);
-            bitmaps = new Bitmap[book.getPagesCount()];
-            for (int i=0; i<book.getPagesCount(); i++) {
-                BookPage bookPage = book.getPage(i);
-                bitmaps[i] = bookPage.getAsBitmap(pageContext);
-            }
+//            Book book = BooksCollection.getInstance().getBooks().get(0);
+//            bitmaps = new Bitmap[book.getPagesCount()];
+//            for (int i=0; i<book.getPagesCount(); i++) {
+//                BookPage bookPage = book.getPage(i);
+//                bitmaps[i] = bookPage.getAsBitmap(pageContext);
+//            }
         }
     }
 
