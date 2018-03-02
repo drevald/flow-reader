@@ -20,16 +20,13 @@
 
     </android.support.design.widget.AppBarLayout>
 
-
-    <GridView
-        android:id="@+id/grid"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:columnCount="1"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"></GridView>
+        android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/home"
+        android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"

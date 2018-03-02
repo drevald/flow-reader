@@ -39,7 +39,7 @@ public class MockRasterBook implements Book {
     @Override
     public BookPage getPage(int pageNumber) {
         Log.i(getClass().getName(), "Getting page #" + pageNumber);
-        return page;
+        return new MockRasterBookPage(pageNumber);
     }
 
     @Override

@@ -20,16 +20,24 @@ import static android.graphics.Bitmap.Config.ARGB_8888;
 
 class MockRasterBookPage implements BookPage {
 
+    private int pageNumber;
+
     private int position = 0;
 
     public MockRasterBookPage() {
         this.position = 0;
     }
 
+    public MockRasterBookPage(int pageNumber) {
+        this.position = 0;
+        this.pageNumber = pageNumber;
+    }
+
     @Override
     public PageGlyph getNextGlyph() {
-        if (position++ < 1000)
+        if (position++ < 1000) {
             return MockRasterBookPageGlyph.getInstance(); //new MockRasterBookPageGlyph();
+        }
         return null;
     }
 
