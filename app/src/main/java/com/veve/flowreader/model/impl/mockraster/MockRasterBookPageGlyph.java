@@ -5,6 +5,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.Rect;
+import android.support.constraint.solver.widgets.Rectangle;
 import android.util.Log;
 
 import com.veve.flowreader.model.DevicePageContext;
@@ -63,14 +65,20 @@ class MockRasterBookPageGlyph implements PageGlyph {
         Canvas canvas = context.getCanvas();
         int __height = bitmap.getHeight();
         int __width = bitmap.getWidth();
-        if(__width + startPoint.x > context.getWidth()) {
-            startPoint.set(0, startPoint.y + __height + (int)(context.getLeading()* context.getZoom()));
+        if(__width * context.getZoom() + startPoint.x > context.getWidth()) {
+            startPoint.set(0, startPoint.y + (int)(__height * context.getZoom()) + (int)(context.getLeading()* context.getZoom()));
         }
+        Rect __srcRect = new Rect(0, 0, __width, __height);
+        Rect __dstRect = new Rect(startPoint.x , startPoint.y,
+                startPoint.x +(int)(__width * context.getZoom()),
+                startPoint.y + (int)(__height * context.getZoom()));
         if(show) {
-            canvas.drawBitmap(bitmap, startPoint.x, startPoint.y, paint);
+            //canvas.drawBitmap(bitmap, startPoint.x, startPoint.y, paint);
+            canvas.drawBitmap(bitmap, __srcRect, __dstRect, paint);
+
         }
-        context.getStartPoint().set(startPoint.x + __width, startPoint.y);
-        context.getRemotestPoint().set(startPoint.x + __width, startPoint.y + __height);
+        context.getStartPoint().set(startPoint.x + __dstRect.width(), startPoint.y);
+        context.getRemotestPoint().set(startPoint.x + __dstRect.width(), startPoint.y + __dstRect.height());
         bitmap = null;
     }
 

@@ -34,6 +34,8 @@ import com.veve.flowreader.model.impl.DevicePageContextImpl;
 
 public class PageActivity extends AppCompatActivity {
 
+    TextView pager;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.page_menu, menu);
@@ -47,6 +49,8 @@ public class PageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_page);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        pager = findViewById(R.id.pager);
 
         FloatingActionButton home = findViewById(R.id.home);
         home.setOnClickListener(new View.OnClickListener() {
@@ -69,6 +73,19 @@ public class PageActivity extends AppCompatActivity {
                             new PageActivity.TestListAdapter(
                                     new DevicePageContextImpl(recyclerView.getWidth())));
                 }
+            }
+        });
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                Log.i(getClass().getName(), String.format("%S %d", recyclerView.toString(), newState));
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                Log.i(getClass().getName(), String.format("%S %d %d", recyclerView.toString(), dx, dy));
             }
         });
 
@@ -114,6 +131,11 @@ public class PageActivity extends AppCompatActivity {
         return true;
     }
 
+    public void setPageNumber(int pageNumber) {
+        pager.setText(String.format("Page #%d", pageNumber));
+    }
+
+
     class TestListAdapter extends RecyclerView.Adapter {
 
         Book book;
@@ -139,6 +161,7 @@ public class PageActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            PageActivity.this.setPageNumber(position);
             Log.d(getClass().getName(), String.format("onBindViewHolder #%d", position));
             BookPage bookPage = book.getPage(position);
             Bitmap bitmap = bookPage.getAsBitmap(context);
