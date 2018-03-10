@@ -28,4 +28,8 @@ public interface BookPage {
      */
     public Bitmap getAsBitmap(DevicePageContext context);
 
+    public int getWidth();
+
+    public int getHeight();
+
 }

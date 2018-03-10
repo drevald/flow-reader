@@ -1,0 +1,3 @@
+libdjvulibre_la-DjVuGlobalMemory.lo: DjVuGlobalMemory.cpp ../config.h
+
+../config.h:

@@ -61,7 +61,8 @@ public class BrowseFilesActivity extends ListActivity {
                     if (!file.getName().toLowerCase().endsWith(".djvu")) {
                         Snackbar.make(view, "Only DJVU files supported", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                     } else {
-                        Intent ii = new Intent(BrowseFilesActivity.this, MainActivity.class);
+                        Intent ii = new Intent(BrowseFilesActivity.this, PageViewActivity.class);
+                        ii.putExtra("filename", file.getAbsolutePath());
                         startActivity(ii);
                     }
                 } else if (!fileListAdapter.currentFiles.get(i).canRead()) {
@@ -82,7 +83,7 @@ public class BrowseFilesActivity extends ListActivity {
         public FileListAdapter() {
             super();
             try {
-                rootDir = new File(new URI("file:/"));
+                rootDir = new File("/");
                 currentDirectory = rootDir;
                 currentFiles = new ArrayList<File>();
                 currentFiles.addAll(Arrays.asList(currentDirectory.listFiles()));

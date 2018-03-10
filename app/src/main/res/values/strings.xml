@@ -6,4 +6,5 @@
     <string name="title_activity_recycler_page">RecyclerPageActivity</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="title_activity_recyclebale_page">RecyclebalePageActivity</string>
+    <string name="title_activity_page_view">PageViewActivity</string>
 </resources>

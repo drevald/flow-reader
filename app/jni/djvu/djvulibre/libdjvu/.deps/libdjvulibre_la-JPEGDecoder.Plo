@@ -1,0 +1,3 @@
+libdjvulibre_la-JPEGDecoder.lo: JPEGDecoder.cpp ../config.h
+
+../config.h:

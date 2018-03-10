@@ -1,0 +1,237 @@
+libdjvulibre_la-ddjvuapi.lo: ddjvuapi.cpp ../config.h \
+  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.2/include/stddef.h \
+  /usr/include/stdlib.h /usr/include/Availability.h \
+  /usr/include/AvailabilityInternal.h /usr/include/_types.h \
+  /usr/include/sys/_types.h /usr/include/sys/cdefs.h \
+  /usr/include/sys/_symbol_aliasing.h \
+  /usr/include/sys/_posix_availability.h /usr/include/machine/_types.h \
+  /usr/include/i386/_types.h /usr/include/sys/wait.h \
+  /usr/include/sys/signal.h /usr/include/sys/appleapiopts.h \
+  /usr/include/machine/signal.h /usr/include/i386/signal.h \
+  /usr/include/i386/_structs.h /usr/include/sys/_structs.h \
+  /usr/include/machine/_structs.h /usr/include/mach/i386/_structs.h \
+  /usr/include/sys/resource.h /usr/include/machine/endian.h \
+  /usr/include/i386/endian.h /usr/include/sys/_endian.h \
+  /usr/include/libkern/_OSByteOrder.h \
+  /usr/include/libkern/i386/_OSByteOrder.h /usr/include/alloca.h \
+  /usr/include/machine/types.h /usr/include/i386/types.h \
+  /usr/include/stdio.h /usr/include/string.h /usr/include/strings.h \
+  /usr/include/ctype.h /usr/include/runetype.h /usr/include/locale.h \
+  /usr/include/_locale.h GException.h DjVuGlobal.h \
+  /usr/include/c++/4.2.1/new /usr/include/c++/4.2.1/cstddef \
+  /usr/include/c++/4.2.1/bits/c++config.h \
+  /usr/include/c++/4.2.1/bits/os_defines.h /usr/include/unistd.h \
+  /usr/include/sys/unistd.h /usr/include/sys/select.h \
+  /usr/include/sys/_select.h /usr/include/c++/4.2.1/bits/cpu_defines.h \
+  /usr/include/c++/4.2.1/exception GSmartPointer.h atomic.h GThreads.h \
+  /usr/include/sys/types.h /usr/include/sys/time.h /usr/include/time.h \
+  /usr/include/_structs.h /usr/include/pthread.h \
+  /usr/include/pthread_impl.h /usr/include/sched.h GContainer.h \
+  ByteStream.h Arrays.h IFFByteStream.h GString.h \
+  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.2/include/stdarg.h \
+  /usr/include/wchar.h /usr/include/_wctype.h \
+  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.2/include/stdint.h \
+  /usr/include/stdint.h BSByteStream.h ZPCodec.h GBitmap.h GPixmap.h \
+  GScaler.h GRect.h DjVuPort.h GURL.h DataPool.h DjVuInfo.h IW44Image.h \
+  DjVuImage.h DjVuFile.h DjVuPalette.h DjVuAnno.h DjVuFileCache.h \
+  DjVuDocument.h DjVuDumpHelper.h DjVuMessageLite.h DjVuMessage.h \
+  DjVmNav.h DjVuText.h GMapAreas.h DjVuToPS.h DjVmDir.h DjVmDir0.h \
+  DjVuNavDir.h DjVmDoc.h miniexp.h ddjvuapi.h
+
+../config.h:
+
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.2/include/stddef.h:
+
+/usr/include/stdlib.h:
+
+/usr/include/Availability.h:
+
+/usr/include/AvailabilityInternal.h:
+
+/usr/include/_types.h:
+
+/usr/include/sys/_types.h:
+
+/usr/include/sys/cdefs.h:
+
+/usr/include/sys/_symbol_aliasing.h:
+
+/usr/include/sys/_posix_availability.h:
+
+/usr/include/machine/_types.h:
+
+/usr/include/i386/_types.h:
+
+/usr/include/sys/wait.h:
+
+/usr/include/sys/signal.h:
+
+/usr/include/sys/appleapiopts.h:
+
+/usr/include/machine/signal.h:
+
+/usr/include/i386/signal.h:
+
+/usr/include/i386/_structs.h:
+
+/usr/include/sys/_structs.h:
+
+/usr/include/machine/_structs.h:
+
+/usr/include/mach/i386/_structs.h:
+
+/usr/include/sys/resource.h:
+
+/usr/include/machine/endian.h:
+
+/usr/include/i386/endian.h:
+
+/usr/include/sys/_endian.h:
+
+/usr/include/libkern/_OSByteOrder.h:
+
+/usr/include/libkern/i386/_OSByteOrder.h:
+
+/usr/include/alloca.h:
+
+/usr/include/machine/types.h:
+
+/usr/include/i386/types.h:
+
+/usr/include/stdio.h:
+
+/usr/include/string.h:
+
+/usr/include/strings.h:
+
+/usr/include/ctype.h:
+
+/usr/include/runetype.h:
+
+/usr/include/locale.h:
+
+/usr/include/_locale.h:
+
+GException.h:
+
+DjVuGlobal.h:
+
+/usr/include/c++/4.2.1/new:
+
+/usr/include/c++/4.2.1/cstddef:
+
+/usr/include/c++/4.2.1/bits/c++config.h:
+
+/usr/include/c++/4.2.1/bits/os_defines.h:
+
+/usr/include/unistd.h:
+
+/usr/include/sys/unistd.h:
+
+/usr/include/sys/select.h:
+
+/usr/include/sys/_select.h:
+
+/usr/include/c++/4.2.1/bits/cpu_defines.h:
+
+/usr/include/c++/4.2.1/exception:
+
+GSmartPointer.h:
+
+atomic.h:
+
+GThreads.h:
+
+/usr/include/sys/types.h:
+
+/usr/include/sys/time.h:
+
+/usr/include/time.h:
+
+/usr/include/_structs.h:
+
+/usr/include/pthread.h:
+
+/usr/include/pthread_impl.h:
+
+/usr/include/sched.h:
+
+GContainer.h:
+
+ByteStream.h:
+
+Arrays.h:
+
+IFFByteStream.h:
+
+GString.h:
+
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.2/include/stdarg.h:
+
+/usr/include/wchar.h:
+
+/usr/include/_wctype.h:
+
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.2/include/stdint.h:
+
+/usr/include/stdint.h:
+
+BSByteStream.h:
+
+ZPCodec.h:
+
+GBitmap.h:
+
+GPixmap.h:
+
+GScaler.h:
+
+GRect.h:
+
+DjVuPort.h:
+
+GURL.h:
+
+DataPool.h:
+
+DjVuInfo.h:
+
+IW44Image.h:
+
+DjVuImage.h:
+
+DjVuFile.h:
+
+DjVuPalette.h:
+
+DjVuAnno.h:
+
+DjVuFileCache.h:
+
+DjVuDocument.h:
+
+DjVuDumpHelper.h:
+
+DjVuMessageLite.h:
+
+DjVuMessage.h:
+
+DjVmNav.h:
+
+DjVuText.h:
+
+GMapAreas.h:
+
+DjVuToPS.h:
+
+DjVmDir.h:
+
+DjVmDir0.h:
+
+DjVuNavDir.h:
+
+DjVmDoc.h:
+
+miniexp.h:
+
+ddjvuapi.h:
