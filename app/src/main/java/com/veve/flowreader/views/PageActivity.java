@@ -2,12 +2,10 @@ package com.veve.flowreader.views;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,11 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.veve.flowreader.R;
@@ -33,6 +27,14 @@ import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.impl.DevicePageContextImpl;
 
 public class PageActivity extends AppCompatActivity {
+
+    TextView pager;
+
+    Toolbar toolbar;
+
+    AppBarLayout bar;
+
+    CoordinatorLayout topLayout;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -45,8 +47,12 @@ public class PageActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_page);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
+        bar = findViewById(R.id.bar);
+        topLayout = findViewById(R.id.topLayout);
         setSupportActionBar(toolbar);
+
+        pager = findViewById(R.id.pager);
 
         FloatingActionButton home = findViewById(R.id.home);
         home.setOnClickListener(new View.OnClickListener() {
@@ -55,6 +61,25 @@ public class PageActivity extends AppCompatActivity {
                 Intent i = new Intent(PageActivity.this, MainActivity.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(i);
+            }
+        });
+
+        FloatingActionButton show = findViewById(R.id.show);
+        show.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (bar.getVisibility() == View.VISIBLE) {
+                    bar.setVisibility(View.GONE);
+                    setSupportActionBar(null);
+                } else {
+                    bar.setVisibility(View.VISIBLE);
+                }
+                topLayout.requestLayout();
+                topLayout.forceLayout();
+                topLayout.invalidate();
+                //topLayout.onInvalidate();
+                //setContentView(R.layout.activity_page);
+
             }
         });
 
@@ -69,6 +94,21 @@ public class PageActivity extends AppCompatActivity {
                             new PageActivity.TestListAdapter(
                                     new DevicePageContextImpl(recyclerView.getWidth())));
                 }
+            }
+        });
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                Log.i(getClass().getName(), String.format("%S %d", recyclerView.toString(), newState));
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                Log.i(getClass().getName(), String.format("%S %d %d", recyclerView.toString(), dx, dy));
             }
         });
 
@@ -114,6 +154,11 @@ public class PageActivity extends AppCompatActivity {
         return true;
     }
 
+    public void setPageNumber(int pageNumber, int totalPages) {
+        pager.setText(String.format("Page #%d of %d", pageNumber + 1, totalPages));
+    }
+
+
     class TestListAdapter extends RecyclerView.Adapter {
 
         Book book;
@@ -133,12 +178,12 @@ public class PageActivity extends AppCompatActivity {
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             Log.d(getClass().getName(), "onCreateViewHolder");
             ImageView view = new ImageView(PageActivity.this.getApplicationContext());
-
             return new TextViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            PageActivity.this.setPageNumber(position, book.getPagesCount());
             Log.d(getClass().getName(), String.format("onBindViewHolder #%d", position));
             BookPage bookPage = book.getPage(position);
             Bitmap bitmap = bookPage.getAsBitmap(context);
@@ -149,6 +194,7 @@ public class PageActivity extends AppCompatActivity {
         public int getItemCount() {
             return 600;
         }
+
     }
 
     class TextViewHolder extends RecyclerView.ViewHolder {
