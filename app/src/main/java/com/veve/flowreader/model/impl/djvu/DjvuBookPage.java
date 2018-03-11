@@ -33,6 +33,14 @@ public class DjvuBookPage implements BookPage {
 
     }
 
+    private int[] tranformBytes(byte[] imageBytes, int width, int height) {
+        int[] bitmapPixels = new int[width * height];
+        for (int i = 0, size = bitmapPixels.length; i < size; ++i) {
+            bitmapPixels[i] = Color.rgb(imageBytes[3*i], imageBytes[3*i+1],imageBytes[3*i+2]);
+        }
+        return bitmapPixels;
+    }
+
     @Override
     public Bitmap getAsBitmap(DevicePageContext context) {
 
@@ -40,13 +48,8 @@ public class DjvuBookPage implements BookPage {
         int width = getWidth();
         int height = getHeight();
         Bitmap.Config bitmapConfig = Bitmap.Config.ARGB_8888;
-
-        int[] bitmapPixels = new int[width * height];
-        for (int i = 0, size = bitmapPixels.length; i < size; ++i) {
-
-            bitmapPixels[i] = Color.rgb(imageBytes[3*i], imageBytes[3*i+1],imageBytes[3*i+2]);
-        }
         Bitmap bitmap = Bitmap.createBitmap(width, height, bitmapConfig);
+        int[] bitmapPixels = tranformBytes(imageBytes, width, height);
         bitmap.setPixels(bitmapPixels, 0, width, 0, 0, width, height);
         return bitmap;
     }

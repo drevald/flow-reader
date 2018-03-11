@@ -137,8 +137,8 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
     jbyteArray array = env->NewByteArray(size);
     env->SetByteArrayRegion(array, 0, size, (jbyte*)pixels);
     free(pixels);
-    free(page);
-    free(format);
+    //free(page);
+    //free(format);
 
     return array;
 }
