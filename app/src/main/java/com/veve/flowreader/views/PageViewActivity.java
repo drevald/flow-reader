@@ -12,6 +12,7 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.veve.flowreader.R;
 import com.veve.flowreader.model.Book;
@@ -35,6 +36,8 @@ public class PageViewActivity extends AppCompatActivity {
     private FloatingActionButton fab;
     private ImageView iv;
     private int mPpageNo;
+    private ProgressBar spinner;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +48,8 @@ public class PageViewActivity extends AppCompatActivity {
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         cache = new SparseArray<Bitmap>();
+        spinner = findViewById(R.id.progressBar1);
+        spinner.setVisibility(View.VISIBLE);
 
         String newString = getStringExtra(savedInstanceState);
 
@@ -52,6 +57,7 @@ public class PageViewActivity extends AppCompatActivity {
         djvuBook = new DjvuBook(fileName);
         context = new DjvuDevicePageContext();
         iv = findViewById(R.id.page_image);
+        iv.setVisibility(View.INVISIBLE);
         final AtomicInteger pageNumber = new AtomicInteger(INITIAL_PAGE_NUMBER);
 
         LoadPageTask loadPageTask = new LoadPageTask();
@@ -71,6 +77,8 @@ public class PageViewActivity extends AppCompatActivity {
                 loadPageTask.execute(pageNo);
                 LoadPageTask loadPageTask1 = new LoadPageTask();
                 loadPageTask1.execute(pageNo+1);
+                spinner.setVisibility(View.VISIBLE);
+                iv.setVisibility(View.INVISIBLE);
                 mPpageNo++;
             }
         });
@@ -128,6 +136,8 @@ public class PageViewActivity extends AppCompatActivity {
             fab.setVisibility(View.VISIBLE);
             if (mPpageNo == requestedPageNo) {
                 iv.setImageBitmap(bitmap);
+                spinner.setVisibility(View.INVISIBLE);
+                iv.setVisibility(View.VISIBLE);
             }
         }
     }

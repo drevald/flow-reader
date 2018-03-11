@@ -8,6 +8,15 @@
     tools:context="com.veve.flowreader.views.PageViewActivity"
     tools:showIn="@layout/activity_page_view">
 
+    <ProgressBar
+        android:id="@+id/progressBar1"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
+       />
+
     <ImageView
         android:id="@+id/page_image"
         android:layout_width="match_parent"
@@ -15,6 +24,7 @@
         android:adjustViewBounds="true"
         android:background="@android:color/darker_gray"
         android:contentDescription="page image"
+        android:paddingTop="30dp"
         android:visibility="visible" />
 
 
