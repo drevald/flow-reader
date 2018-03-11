@@ -16,32 +16,6 @@ struct Document {
 };
 
 
-extern "C"
-JNIEXPORT jstring
-
-
-
-JNICALL
-Java_com_example_sergey_djvu_1viewer_MainActivity_stringFromJNI(
-        JNIEnv *env,
-        jobject /* this */) {
-
-    const char* version = ddjvu_get_version_string();
-    std::string ok("OK");
-    std::string err("ERROR");
-    FILE *file = fopen("/storage/emulated/0/Download/matstat.djvu", "r+");
-
-    if (file != NULL){
-        fclose(file);
-        return env->NewStringUTF(ok.c_str());
-
-    } else {
-        return env->NewStringUTF(strerror(errno));
-    }
-
-
-}
-
 JNIEXPORT jlong JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_openBook
         (JNIEnv* env, jobject obj, jstring path) {
 
@@ -65,21 +39,14 @@ JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_get
         (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber) {
 
     Document *document = (Document*)bookId;
-    ddjvu_context_t *ctx = document->ctx;
     ddjvu_document_t *doc = document->doc;
 
     int pageno = (int)pageNumber;
-
-    int width, height;
     ddjvu_status_t r;
     ddjvu_pageinfo_t info;
     while ((r=ddjvu_document_get_pageinfo(doc,pageno,&info))<DDJVU_JOB_OK) {
 
     }
-
-    int w = info.width;
-    int h = info.height;
-
     return (jint)info.width;
 
 }
@@ -88,21 +55,15 @@ JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_get
         (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber) {
 
     Document *document = (Document*)bookId;
-    ddjvu_context_t *ctx = document->ctx;
     ddjvu_document_t *doc = document->doc;
 
     int pageno = (int)pageNumber;
 
-    int width, height;
     ddjvu_status_t r;
     ddjvu_pageinfo_t info;
     while ((r=ddjvu_document_get_pageinfo(doc,pageno,&info))<DDJVU_JOB_OK) {
 
     }
-
-    int w = info.width;
-    int h = info.height;
-
     return (jint)info.height;
 
 }
@@ -119,11 +80,10 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
 
     ddjvu_page_t *page= ddjvu_page_create_by_pageno(doc, pageno);
 
-
     while (!ddjvu_page_decoding_done (page )) {
         ddjvu_message_wait(ctx);
         // Process available messages
-        const ddjvu_message_t *msg;
+      /*  const ddjvu_message_t *msg;
         while((msg = ddjvu_message_peek(ctx)))
         {
             switch (msg->m_any.tag)
@@ -139,12 +99,9 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
                     break;
             }
             ddjvu_message_pop(ctx);
-        }
+        }*/
     }
 
-
-
-    int width, height;
     ddjvu_status_t r;
     ddjvu_pageinfo_t info;
     while ((r=ddjvu_document_get_pageinfo(doc,pageno,&info))<DDJVU_JOB_OK) {
@@ -167,10 +124,8 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
     ddjvu_format_set_row_order(format, 1);
     ddjvu_format_set_y_direction(format, 1);
 
-
     int size = w * h * PIXELS;
     char *pixels = (char*)malloc(size);
-
 
     int s = ddjvu_page_render (page, DDJVU_RENDER_COLOR,
                                &prect,
@@ -181,13 +136,10 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
 
     jbyteArray array = env->NewByteArray(size);
     env->SetByteArrayRegion(array, 0, size, (jbyte*)pixels);
-
+    free(pixels);
+    free(page);
+    free(format);
 
     return array;
-
-
-
-
-    return NULL;
 }
 
