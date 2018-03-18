@@ -9,11 +9,16 @@ import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyph;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 /**
  * Created by sergey on 10.03.18.
  */
 
 public class DjvuBookPage implements BookPage {
+
+
 
     private int pageNumber;
     private long bookId;
@@ -34,10 +39,44 @@ public class DjvuBookPage implements BookPage {
     }
 
     private int[] tranformBytes(byte[] imageBytes, int width, int height) {
+
         int[] bitmapPixels = new int[width * height];
-        for (int i = 0, size = bitmapPixels.length; i < size; ++i) {
-            bitmapPixels[i] = Color.rgb(imageBytes[3*i], imageBytes[3*i+1],imageBytes[3*i+2]);
+
+        class PageJob implements Runnable {
+
+            int from;
+            int to;
+            PageJob(int from, int to) {
+                this.from = from;
+                this.to = to;
+            }
+
+            @Override
+            public void run() {
+                for (int i = from; i < to; ++i) {
+                    bitmapPixels[i] = Color.rgb(imageBytes[3*i], imageBytes[3*i+1],imageBytes[3*i+2]);
+                }
+            }
         }
+
+        int cores = Runtime.getRuntime().availableProcessors();
+
+        ExecutorService executor = Executors.newFixedThreadPool(cores);
+        int size = bitmapPixels.length;
+
+        int end = 0;
+        for (int i=0;i<=cores;i++) {
+            int start = end;
+            end = (i*size)/cores;
+            Runnable job = new PageJob(start, end);
+            executor.execute(job);
+        }
+
+        executor.shutdown();
+
+        while (!executor.isTerminated()) {
+        }
+
         return bitmapPixels;
     }
 
