@@ -1,125 +1,128 @@
-/Users/sergey/code/flow-reader/app/obj/local/arm64-v8a/objs/djvu/djvulibre/libdjvu/JPEGDecoder.o: \
-  /Users/sergey/code/flow-reader/app/jni/djvu/djvulibre/libdjvu/JPEGDecoder.cpp \
-  /Users/sergey/code/flow-reader/app/jni/djvu/config.h \
-  /Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stdio.h \
-  /Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/_cprolog.h \
-  /Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/config/features.h \
-  /Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/_stlport_version.h \
-  /Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/config/user_config.h \
-  /Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/config/compat.h \
-  /Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/config/host.h \
-  /Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/config/_system.h \
-  /Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/config/_android.h \
-  /Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/config/_gcc.h \
-  /Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/config/stl_confix.h \
-  /Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/config/_native_headers.h \
-  /Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/_epilog.h \
-  /Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/_config_compat_post.h \
-  /Users/sergey/code/jpeg8d/jconfig.h \
-  /Users/sergey/code/jpeg8d/jpeglib.h \
-  /Users/sergey/code/jpeg8d/jmorecfg.h \
-  /Users/sergey/code/jpeg8d/jerror.h \
-  /Users/sergey/code/flow-reader/app/jni/djvu/djvulibre/libdjvu/JPEGDecoder.h \
-  /Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stddef.h \
-  /Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/string.h \
-  /Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/setjmp.h \
-  /Users/sergey/code/flow-reader/app/jni/djvu/djvulibre/libdjvu/GSmartPointer.h \
-  /Users/sergey/code/flow-reader/app/jni/djvu/djvulibre/libdjvu/DjVuGlobal.h \
-  /Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/new \
-  /Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/_prolog.h \
-  /Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/debug/_debug.h \
-  /Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/_new.h \
-  /Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/_cstddef.h \
-  /Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/../../gabi++/include/new \
-  /Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/cstddef \
-  /Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/../../gabi++/include/cstddef \
-  /Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/exception \
-  /Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/../../gabi++/include/exception \
-  /Users/sergey/Downloads/android-ndk/sources/cxx-stl//gabi++/include/gabixx_config.h \
-  /Users/sergey/code/flow-reader/app/jni/djvu/djvulibre/libdjvu/atomic.h \
-  /Users/sergey/code/flow-reader/app/jni/djvu/djvulibre/libdjvu/ByteStream.h \
-  /Users/sergey/code/flow-reader/app/jni/djvu/djvulibre/libdjvu/Arrays.h \
-  /Users/sergey/code/flow-reader/app/jni/djvu/djvulibre/libdjvu/GException.h \
-  /Users/sergey/code/flow-reader/app/jni/djvu/djvulibre/libdjvu/GPixmap.h
+D:/Downloads/flow-reader/app/obj/local/arm64-v8a/objs/djvu/djvulibre/libdjvu/JPEGDecoder.o: \
+  D:/Downloads/flow-reader/app/jni/djvu/djvulibre/libdjvu/JPEGDecoder.cpp \
+  D:/Downloads/flow-reader/app/jni/djvu\config.h \
+  d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stdio.h \
+  d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/_cprolog.h \
+  d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/config/features.h \
+  d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/_stlport_version.h \
+  d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/config/user_config.h \
+  d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/config/compat.h \
+  d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/config/host.h \
+  d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/config/_system.h \
+  d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/config/_android.h \
+  d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/config/_gcc.h \
+  d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/config/stl_confix.h \
+  d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/config/_native_headers.h \
+  d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/_epilog.h \
+  d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/_config_compat_post.h \
+  D:/Downloads/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9\jconfig.h \
+  D:/Downloads/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9\jpeglib.h \
+  D:/Downloads/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jconfig.h \
+  D:/Downloads/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jmorecfg.h \
+  D:/Downloads/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9\jerror.h \
+  D:/Downloads/flow-reader/app/jni/djvu/djvulibre/libdjvu/JPEGDecoder.h \
+  d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stddef.h \
+  d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\string.h \
+  d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\setjmp.h \
+  D:/Downloads/flow-reader/app/jni/djvu/djvulibre/libdjvu/GSmartPointer.h \
+  D:/Downloads/flow-reader/app/jni/djvu/djvulibre/libdjvu/DjVuGlobal.h \
+  d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\new \
+  d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/_prolog.h \
+  d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/debug/_debug.h \
+  d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/_new.h \
+  d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/_cstddef.h \
+  d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\../../gabi++/include/new \
+  d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\cstddef \
+  d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\../../gabi++/include/cstddef \
+  d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\exception \
+  d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\../../gabi++/include/exception \
+  d:/Android/ndk-bundle/build//../sources/cxx-stl//gabi++/include/gabixx_config.h \
+  D:/Downloads/flow-reader/app/jni/djvu/djvulibre/libdjvu/atomic.h \
+  D:/Downloads/flow-reader/app/jni/djvu/djvulibre/libdjvu/ByteStream.h \
+  D:/Downloads/flow-reader/app/jni/djvu/djvulibre/libdjvu/Arrays.h \
+  D:/Downloads/flow-reader/app/jni/djvu/djvulibre/libdjvu/GException.h \
+  D:/Downloads/flow-reader/app/jni/djvu/djvulibre/libdjvu/GPixmap.h
 
-/Users/sergey/code/flow-reader/app/jni/djvu/config.h:
+D:/Downloads/flow-reader/app/jni/djvu\config.h:
 
-/Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stdio.h:
+d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stdio.h:
 
-/Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/_cprolog.h:
+d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/_cprolog.h:
 
-/Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/config/features.h:
+d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/config/features.h:
 
-/Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/_stlport_version.h:
+d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/_stlport_version.h:
 
-/Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/config/user_config.h:
+d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/config/user_config.h:
 
-/Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/config/compat.h:
+d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/config/compat.h:
 
-/Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/config/host.h:
+d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/config/host.h:
 
-/Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/config/_system.h:
+d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/config/_system.h:
 
-/Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/config/_android.h:
+d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/config/_android.h:
 
-/Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/config/_gcc.h:
+d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/config/_gcc.h:
 
-/Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/config/stl_confix.h:
+d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/config/stl_confix.h:
 
-/Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/config/_native_headers.h:
+d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/config/_native_headers.h:
 
-/Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/_epilog.h:
+d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/_epilog.h:
 
-/Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/_config_compat_post.h:
+d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/_config_compat_post.h:
 
-/Users/sergey/code/jpeg8d/jconfig.h:
+D:/Downloads/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9\jconfig.h:
 
-/Users/sergey/code/jpeg8d/jpeglib.h:
+D:/Downloads/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9\jpeglib.h:
 
-/Users/sergey/code/jpeg8d/jmorecfg.h:
+D:/Downloads/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jconfig.h:
 
-/Users/sergey/code/jpeg8d/jerror.h:
+D:/Downloads/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jmorecfg.h:
 
-/Users/sergey/code/flow-reader/app/jni/djvu/djvulibre/libdjvu/JPEGDecoder.h:
+D:/Downloads/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9\jerror.h:
 
-/Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stddef.h:
+D:/Downloads/flow-reader/app/jni/djvu/djvulibre/libdjvu/JPEGDecoder.h:
 
-/Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/string.h:
+d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stddef.h:
 
-/Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/setjmp.h:
+d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\string.h:
 
-/Users/sergey/code/flow-reader/app/jni/djvu/djvulibre/libdjvu/GSmartPointer.h:
+d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\setjmp.h:
 
-/Users/sergey/code/flow-reader/app/jni/djvu/djvulibre/libdjvu/DjVuGlobal.h:
+D:/Downloads/flow-reader/app/jni/djvu/djvulibre/libdjvu/GSmartPointer.h:
 
-/Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/new:
+D:/Downloads/flow-reader/app/jni/djvu/djvulibre/libdjvu/DjVuGlobal.h:
 
-/Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/_prolog.h:
+d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\new:
 
-/Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/debug/_debug.h:
+d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/_prolog.h:
 
-/Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/_new.h:
+d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/debug/_debug.h:
 
-/Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/stl/_cstddef.h:
+d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/_new.h:
 
-/Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/../../gabi++/include/new:
+d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\stl/_cstddef.h:
 
-/Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/cstddef:
+d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\../../gabi++/include/new:
 
-/Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/../../gabi++/include/cstddef:
+d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\cstddef:
 
-/Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/exception:
+d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\../../gabi++/include/cstddef:
 
-/Users/sergey/Downloads/android-ndk/sources/cxx-stl/stlport/stlport/../../gabi++/include/exception:
+d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\exception:
 
-/Users/sergey/Downloads/android-ndk/sources/cxx-stl//gabi++/include/gabixx_config.h:
+d:/Android/ndk-bundle/build//../sources/cxx-stl/stlport/stlport\../../gabi++/include/exception:
 
-/Users/sergey/code/flow-reader/app/jni/djvu/djvulibre/libdjvu/atomic.h:
+d:/Android/ndk-bundle/build//../sources/cxx-stl//gabi++/include/gabixx_config.h:
 
-/Users/sergey/code/flow-reader/app/jni/djvu/djvulibre/libdjvu/ByteStream.h:
+D:/Downloads/flow-reader/app/jni/djvu/djvulibre/libdjvu/atomic.h:
 
-/Users/sergey/code/flow-reader/app/jni/djvu/djvulibre/libdjvu/Arrays.h:
+D:/Downloads/flow-reader/app/jni/djvu/djvulibre/libdjvu/ByteStream.h:
 
-/Users/sergey/code/flow-reader/app/jni/djvu/djvulibre/libdjvu/GException.h:
+D:/Downloads/flow-reader/app/jni/djvu/djvulibre/libdjvu/Arrays.h:
 
-/Users/sergey/code/flow-reader/app/jni/djvu/djvulibre/libdjvu/GPixmap.h:
+D:/Downloads/flow-reader/app/jni/djvu/djvulibre/libdjvu/GException.h:
+
+D:/Downloads/flow-reader/app/jni/djvu/djvulibre/libdjvu/GPixmap.h:

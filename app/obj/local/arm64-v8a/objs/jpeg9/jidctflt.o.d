@@ -1,23 +1,23 @@
-/Users/sergey/code/flow-reader/app/obj/local/arm64-v8a/objs/jpeg9/jidctflt.o: \
-  /Users/sergey/code/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jidctflt.c \
-  /Users/sergey/code/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jinclude.h \
-  /Users/sergey/code/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jconfig.h \
-  /Users/sergey/code/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jpeglib.h \
-  /Users/sergey/code/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jmorecfg.h \
-  /Users/sergey/code/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jpegint.h \
-  /Users/sergey/code/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jerror.h \
-  /Users/sergey/code/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jdct.h
+D:/Downloads/flow-reader/app/obj/local/arm64-v8a/objs/jpeg9/jidctflt.o: \
+  D:/Downloads/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jidctflt.c \
+  D:/Downloads/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jinclude.h \
+  D:/Downloads/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jconfig.h \
+  D:/Downloads/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jpeglib.h \
+  D:/Downloads/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jmorecfg.h \
+  D:/Downloads/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jpegint.h \
+  D:/Downloads/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jerror.h \
+  D:/Downloads/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jdct.h
 
-/Users/sergey/code/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jinclude.h:
+D:/Downloads/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jinclude.h:
 
-/Users/sergey/code/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jconfig.h:
+D:/Downloads/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jconfig.h:
 
-/Users/sergey/code/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jpeglib.h:
+D:/Downloads/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jpeglib.h:
 
-/Users/sergey/code/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jmorecfg.h:
+D:/Downloads/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jmorecfg.h:
 
-/Users/sergey/code/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jpegint.h:
+D:/Downloads/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jpegint.h:
 
-/Users/sergey/code/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jerror.h:
+D:/Downloads/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jerror.h:
 
-/Users/sergey/code/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jdct.h:
+D:/Downloads/flow-reader/app/jni/libjpeg-version-9-android/libjpeg9/jdct.h:

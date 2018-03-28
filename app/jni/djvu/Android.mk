@@ -5,7 +5,7 @@ APP_ABI := x86_64
 include $(CLEAR_VARS)
 
 LOCAL_C_INCLUDES := \
-	/Users/sergey/code/jpeg8d \
+       $(LOCAL_PATH)/../../app/jni/libjpeg-version-9-android/libjpeg9 \
 	$(LOCAL_PATH)/djvulibre/libdjvu \
 	$(LOCAL_PATH)
 
