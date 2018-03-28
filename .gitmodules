@@ -1,3 +1,0 @@
-[submodule "app/jni/libjpeg-version-9-android"]
-	path = app/jni/libjpeg-version-9-android
-	url = https://github.com/Oudun/flow-reader/flow-reader.git
