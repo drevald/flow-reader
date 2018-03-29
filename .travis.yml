@@ -12,6 +12,7 @@ before_install:
  - unzip -oq android-ndk-r16b-linux-x86_64.zip
  - rm android-ndk-r16b-linux-x86_64.zip
  - export ANDROID_NDK_HOME=$HOME/android-ndk-r16b
+ - export PATH=${ANDROID_NDK_HOME}:${PATH}
 branches:
   only:
   - master
