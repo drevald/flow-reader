@@ -22,3 +22,7 @@ before_script:
   - android-wait-for-emulator
   - adb devices
   - adb shell input keyevent 82 &
+notifications:
+  slack:
+    rooms:
+      secure: dvcoFOzz0WB6GwRlY3wiuSXSO23GbJNspbaS7VwjfbwlOMlkYSO0I/4eCxNpCLW8n4wA/XzRnYVxwvDkibh1vznnq3VgZO1VyT24sYmHQkole6BNJ68qXCS0iZFN8ik3/OYcxeOiJ1rWKsSei7VbSXvH1aJY0OIgwk88YSFOR1/ZNwPvvZkBUIHiZUwDQR4plJ/A665FtKsITSmZdgfLpekgD6uVfkzg6SYbE/DmwA8FXvNBvBkEXDW3QzAHJYzs+fhSPoDzCppSaSnV+cdgEWF077TcxZw32Xvx80nfbE9uLNFbIBQaXeSXZfhSzcy40JrawIMpL7jYLrlrghwPSeKU6z5LxBTasrcsnDAllTYOjzRgP+REOiT/72oLYshTlv8Sc91/9ERf5ScfHofTPNVcknTZWiXHcSgUuyT0WLtzHL6CuU+y7wwQdo4pNZTD1i6zRvD35Z31RotGUi7s568/hz6YyjVofG+qdjHElA6NbblmGbGXjLShavZebOh17TxcKJbHNlg9/6QR7AG/yMdpC0n+w4dsTTQ1U0FMvv9lwJdfHI3WbUf0PspSDk87QNyjbFWEqP5mEqklz1OPz1oQrR4Hvrz7FAm4jvlI54BgUiRiEUrvuPrWLFtwewEADAKjEzfBR1Nj+rabcHHP+X06lLX6343SWw5RKWrkXnQ=
