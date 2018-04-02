@@ -18,7 +18,9 @@ public class DevicePageContextImpl implements DevicePageContext {
 
     private static final float DEFAULT_LEADING = 0.5f * DEFAULT_FONT_SIZE;
 
-    private static final float DEFAULT_KERNING = 0f; // 0.1f * DEFAULT_FONT_SIZE;
+    private static final float DEFAULT_KERNING = 0.5f; // 0.1f * DEFAULT_FONT_SIZE;
+
+    private static final int DEFAULT_MARGIN = 25;
 
     private Point startPoint;
 
@@ -34,6 +36,8 @@ public class DevicePageContextImpl implements DevicePageContext {
 
     private float leading;
 
+    private int margin;
+
     public DevicePageContextImpl() {
 
     }
@@ -43,8 +47,9 @@ public class DevicePageContextImpl implements DevicePageContext {
         this.kerning = DEFAULT_KERNING;
         this.leading = DEFAULT_LEADING;
         this.width = width;
-        this.startPoint = new Point(0, 0);
-        this.remotestPoint = new Point(0, 0);
+        this.margin = DEFAULT_MARGIN;
+        this.startPoint = new Point(margin, 0);
+        this.remotestPoint = new Point(margin, 0);
     }
 
     public DevicePageContextImpl(Canvas canvas) {
@@ -53,9 +58,16 @@ public class DevicePageContextImpl implements DevicePageContext {
         this.leading = DEFAULT_LEADING;
         this.canvas = canvas;
         this.width = canvas.getWidth();
-        this.startPoint = new Point(0, 0);
-        this.remotestPoint = new Point(0, 0);
+        this.margin = DEFAULT_MARGIN;
+        this.startPoint = new Point(margin, 0);
+        this.remotestPoint = new Point(margin, 0);
     }
+
+    @Override
+    public int getMargin() {return margin;}
+
+    @Override
+    public void setMargin(int margin) {this.margin = margin;}
 
     @Override
     public Point getStartPoint() {
@@ -116,10 +128,8 @@ public class DevicePageContextImpl implements DevicePageContext {
 
     @Override
     public void resetPosition() {
-        this.startPoint = new Point(0, 0);
-        this.remotestPoint = new Point(0, 0);
-//        Log.i("Context", String.format("Reset as StartPoint(%d. %d) RemotePoint(%d. %d)",
-//                startPoint.x, startPoint.y, remotestPoint.x, remotestPoint.y));
+        this.startPoint = new Point(margin, 0);
+        this.remotestPoint = new Point(margin, 0);
     }
 
 }

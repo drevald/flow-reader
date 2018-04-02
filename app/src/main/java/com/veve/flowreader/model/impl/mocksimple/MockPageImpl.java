@@ -78,5 +78,4 @@ public class MockPageImpl implements BookPage {
     public int getHeight() {
         return 0;
     }
-
 }

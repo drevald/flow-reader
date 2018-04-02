@@ -49,41 +49,14 @@ public class MockPageGlyphImpl implements PageGlyph {
         if(show) {
             Log.d("Glyph", (String.format("Text \"%S\" at x=%d, y=%d", str, startPoint.x, startPoint.y + __height)));
             canvas.drawText(str, startPoint.x, startPoint.y + __height, paint);
-//            context.getCanvas().drawRect(
-//                    context.getStartPoint().x,
-//                    context.getStartPoint().y,
-//                    context.getStartPoint().x + __width,
-//                    context.getStartPoint().y + __height,
-//                    paint1);
         }
 
-        context.getStartPoint().set(startPoint.x + __width, startPoint.y);
+        context.getStartPoint().set(startPoint.x + __width
+                + (int)(context.getKerning()* context.getZoom()), startPoint.y);
 
-        context.getRemotestPoint().set(startPoint.x + __width, startPoint.y + __height);
-
-//        context.getStartPoint().set(startPoint.x + __width + (int)(context.getKerning()* context.getZoom()),
-//                startPoint.y);
-//
-//        context.getRemotestPoint().set(startPoint.x + __width + (int)(context.getKerning()* context.getZoom()),
-//                startPoint.y + __height);
-
-
+        context.getRemotestPoint().set(startPoint.x + __width
+                + (int)(context.getKerning()* context.getZoom()), startPoint.y + __height);
     }
-
-//    @Override
-//    public void virtualDraw(DevicePageContext context) {
-//        Point startPoint = context.getStartPoint();
-//        int __height = getHeight(context);
-//        int __width = getWidth(context);
-//        if(getWidth(context) + startPoint.x > context.getWidth()) {
-//            startPoint.set(0, startPoint.y + __height + (int)(context.getLeading()* context.getZoom()));
-//        }
-//        paint.setTextSize(defaultFontSize * context.getZoom());
-//        context.getStartPoint().set(startPoint.x + __width + (int)(context.getKerning()* context.getZoom()),
-//                startPoint.y);
-//        context.getRemotestPoint().set(startPoint.x + __width + (int)(context.getKerning()* context.getZoom()),
-//                startPoint.y + __height);
-//    }
 
     protected int getWidth(DevicePageContext context) {
         paint.setTextSize(defaultFontSize * context.getZoom());

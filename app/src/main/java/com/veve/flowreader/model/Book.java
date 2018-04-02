@@ -6,7 +6,6 @@ package com.veve.flowreader.model;
 
 public interface Book {
 
-
     /**
      * Sets curren number (original numbering) of the page.
      * @param pageNumber

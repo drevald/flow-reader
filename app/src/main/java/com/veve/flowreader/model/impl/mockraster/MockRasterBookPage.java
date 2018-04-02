@@ -76,16 +76,6 @@ class MockRasterBookPage implements BookPage {
 
     }
 
-    @Override
-    public int getWidth() {
-        return 0;
-    }
-
-    @Override
-    public int getHeight() {
-        return 0;
-    }
-
 //    Bitmap bitmap = Bitmap.createBitmap(400, 400, ARGB_8888);
 //
 ////        Canvas canvas = new Canvas(bitmap);
@@ -108,4 +98,13 @@ class MockRasterBookPage implements BookPage {
 //            new MockRasterBookPageGlyph().draw(context, true);
 
 
+    @Override
+    public int getWidth() {
+        return 0;
+    }
+
+    @Override
+    public int getHeight() {
+        return 0;
+    }
 }

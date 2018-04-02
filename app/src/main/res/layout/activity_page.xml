@@ -11,7 +11,6 @@
         android:id="@+id/bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
@@ -19,7 +18,63 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+            <android.widget.ImageButton
+                android:id="@+id/larger_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:src="@drawable/ic_larger_text"
+                style="?android:attr/borderlessButtonStyle"
+                />
+
+            <android.widget.ImageButton
+                android:id="@+id/smaller_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:src="@drawable/ic_smaller_text"
+                style="?android:attr/borderlessButtonStyle"
+                />
+
+            <android.widget.ImageButton
+                android:id="@+id/larger_kerning"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:src="@drawable/ic_larger_kerning"
+                style="?android:attr/borderlessButtonStyle"
+                />
+
+            <android.widget.ImageButton
+                android:id="@+id/smaller_kerning"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:src="@drawable/ic_smaller_kerning"
+                style="?android:attr/borderlessButtonStyle"
+                />
+
+            <android.widget.ImageButton
+                android:id="@+id/larger_leading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:src="@drawable/ic_larger_leading"
+                style="?android:attr/borderlessButtonStyle"
+                />
+
+            <android.widget.ImageButton
+                android:id="@+id/smaller_leading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:src="@drawable/ic_smaller_leading"
+                style="?android:attr/borderlessButtonStyle"
+                />
+
+        </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
 
@@ -27,6 +82,7 @@
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#ffffff"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     </android.support.v7.widget.RecyclerView>
@@ -57,5 +113,6 @@
         android:gravity="center"
         android:background="#fff">
     </TextView>
+
 
 </android.support.design.widget.CoordinatorLayout>
