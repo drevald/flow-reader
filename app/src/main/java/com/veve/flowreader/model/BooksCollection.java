@@ -23,13 +23,14 @@ public class BooksCollection {
     public static BooksCollection getInstance() {
         if (bookCollection == null) {
             bookCollection = new BooksCollection();
+            bookCollection.addBook(new MockRasterBook("Book One"));
+            bookCollection.addBook(new MockRasterBook("Book Two"));
+            bookCollection.addBook(new MockRasterBook("Book Three"));
+            bookCollection.addBook(new MockRasterBook("Book Four"));
         }
         //How to read config from memory?
         //So far there will be fake books list
-        bookCollection.addBook(new MockRasterBook("Book One"));
-        bookCollection.addBook(new MockRasterBook("Book Two"));
-        bookCollection.addBook(new MockRasterBook("Book Three"));
-        bookCollection.addBook(new MockRasterBook("Book Four"));
+
         //bookCollection.addBook(new MockRasterBook("Book Five"));
         return bookCollection;
     }
