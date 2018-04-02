@@ -1,0 +1,29 @@
+{
+  "buildFiles": [
+    "D:\\Downloads\\flow-reader\\app\\jni\\Android.mk",
+    "D:\\Downloads\\flow-reader\\app\\jni\\Application.mk"
+  ],
+  "cleanCommands": [
+    "D:\\Android\\ndk-bundle\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dD:\\Downloads\\flow-reader\\app\\jni\\Android.mk NDK_APPLICATION_MK\u003dD:\\Downloads\\flow-reader\\app\\jni\\Application.mk APP_ABI\u003darmeabi-v7a NDK_ALL_ABIS\u003darmeabi-v7a NDK_DEBUG\u003d1 APP_PLATFORM\u003dandroid-15 NDK_OUT\u003dD:/Downloads/flow-reader/app/build/intermediates/ndkBuild/debug/obj NDK_LIBS_OUT\u003dD:\\Downloads\\flow-reader\\app\\build\\intermediates\\ndkBuild\\debug\\lib clean"
+  ],
+  "libraries": {
+    "jpeg9-debug-armeabi-v7a": {
+      "artifactName": "jpeg9",
+      "buildCommand": "D:\\Android\\ndk-bundle\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dD:\\Downloads\\flow-reader\\app\\jni\\Android.mk NDK_APPLICATION_MK\u003dD:\\Downloads\\flow-reader\\app\\jni\\Application.mk APP_ABI\u003darmeabi-v7a NDK_ALL_ABIS\u003darmeabi-v7a NDK_DEBUG\u003d1 APP_PLATFORM\u003dandroid-15 NDK_OUT\u003dD:/Downloads/flow-reader/app/build/intermediates/ndkBuild/debug/obj NDK_LIBS_OUT\u003dD:\\Downloads\\flow-reader\\app\\build\\intermediates\\ndkBuild\\debug\\lib D:/Downloads/flow-reader/app/build/intermediates/ndkBuild/debug/obj/local/armeabi-v7a/libjpeg9.a",
+      "abi": "armeabi-v7a",
+      "output": "D:\\Downloads\\flow-reader\\app\\build\\intermediates\\ndkBuild\\debug\\obj\\local\\armeabi-v7a\\libjpeg9.a"
+    },
+    "native-lib-debug-armeabi-v7a": {
+      "artifactName": "native-lib",
+      "buildCommand": "D:\\Android\\ndk-bundle\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dD:\\Downloads\\flow-reader\\app\\jni\\Android.mk NDK_APPLICATION_MK\u003dD:\\Downloads\\flow-reader\\app\\jni\\Application.mk APP_ABI\u003darmeabi-v7a NDK_ALL_ABIS\u003darmeabi-v7a NDK_DEBUG\u003d1 APP_PLATFORM\u003dandroid-15 NDK_OUT\u003dD:/Downloads/flow-reader/app/build/intermediates/ndkBuild/debug/obj NDK_LIBS_OUT\u003dD:\\Downloads\\flow-reader\\app\\build\\intermediates\\ndkBuild\\debug\\lib D:/Downloads/flow-reader/app/build/intermediates/ndkBuild/debug/obj/local/armeabi-v7a/libnative-lib.so",
+      "abi": "armeabi-v7a",
+      "output": "D:\\Downloads\\flow-reader\\app\\build\\intermediates\\ndkBuild\\debug\\obj\\local\\armeabi-v7a\\libnative-lib.so"
+    },
+    "djvu-debug-armeabi-v7a": {
+      "artifactName": "djvu",
+      "buildCommand": "D:\\Android\\ndk-bundle\\ndk-build.cmd NDK_PROJECT_PATH\u003dnull APP_BUILD_SCRIPT\u003dD:\\Downloads\\flow-reader\\app\\jni\\Android.mk NDK_APPLICATION_MK\u003dD:\\Downloads\\flow-reader\\app\\jni\\Application.mk APP_ABI\u003darmeabi-v7a NDK_ALL_ABIS\u003darmeabi-v7a NDK_DEBUG\u003d1 APP_PLATFORM\u003dandroid-15 NDK_OUT\u003dD:/Downloads/flow-reader/app/build/intermediates/ndkBuild/debug/obj NDK_LIBS_OUT\u003dD:\\Downloads\\flow-reader\\app\\build\\intermediates\\ndkBuild\\debug\\lib D:/Downloads/flow-reader/app/build/intermediates/ndkBuild/debug/obj/local/armeabi-v7a/libdjvu.a",
+      "abi": "armeabi-v7a",
+      "output": "D:\\Downloads\\flow-reader\\app\\build\\intermediates\\ndkBuild\\debug\\obj\\local\\armeabi-v7a\\libdjvu.a"
+    }
+  }
+}
