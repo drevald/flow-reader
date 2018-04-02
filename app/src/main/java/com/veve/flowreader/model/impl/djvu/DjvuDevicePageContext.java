@@ -79,4 +79,14 @@ public class DjvuDevicePageContext implements DevicePageContext {
     public void setLeading(float leading) {
 
     }
+
+    @Override
+    public int getMargin() {
+        return 0;
+    }
+
+    @Override
+    public void setMargin(int margin) {
+
+    }
 }

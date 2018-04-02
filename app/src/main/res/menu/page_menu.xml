@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/increase_font" android:title="Increase Font" >
-    </item>
-    <item android:id="@+id/decrease_font" android:title="Decrease Font" />
-    <item android:id="@+id/increase_kerning" android:title="Increase Kerning" />
-    <item android:id="@+id/decrease_kerning" android:title="Decrease Kerning" />
-    <item android:id="@+id/increase_leading" android:title="Increase Leading" />
-    <item android:id="@+id/decrease_leading" android:title="Decrease Leading" />
+    <item android:id="@+id/no_margins" android:title="No Margins" ></item>
+    <item android:id="@+id/narrow_margins" android:title="Narrow Margins" ></item>
+    <item android:id="@+id/normal_margins" android:title="Normal Margins" ></item>
+    <item android:id="@+id/wide_margins" android:title="Wide Margins" ></item>
 </menu>

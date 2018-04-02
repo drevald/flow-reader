@@ -81,7 +81,7 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
     ddjvu_page_t *page= ddjvu_page_create_by_pageno(doc, pageno);
 
     while (!ddjvu_page_decoding_done (page )) {
-        ddjvu_message_wait(ctx);
+        //ddjvu_message_wait(ctx);
         // Process available messages
       /*  const ddjvu_message_t *msg;
         while((msg = ddjvu_message_peek(ctx)))

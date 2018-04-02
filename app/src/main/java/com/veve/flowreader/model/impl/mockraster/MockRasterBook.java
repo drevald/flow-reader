@@ -16,14 +16,15 @@ public class MockRasterBook implements Book {
 
     private BookPage page;
 
-//    private List<BookPage> pages;
-
     private int pagesTotal = 600;
 
     private int currentPage = 0;
 
-    public MockRasterBook() {
-        page = new MockRasterBookPage();
+    private String name;
+
+    public MockRasterBook(String name) {
+        this.name = name;
+        this.page = new MockRasterBookPage();
     }
 
     @Override
@@ -49,7 +50,7 @@ public class MockRasterBook implements Book {
 
     @Override
     public String getName() {
-        return "Sample raster book";
+        return name;
     }
 
     @Override

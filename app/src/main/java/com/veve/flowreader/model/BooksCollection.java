@@ -20,17 +20,17 @@ public class BooksCollection {
         booksList = new ArrayList<Book>();
     }
 
-    public static void init() {
+    public static BooksCollection getInstance() {
         if (bookCollection == null) {
             bookCollection = new BooksCollection();
         }
         //How to read config from memory?
         //So far there will be fake books list
-        bookCollection.addBook(new MockRasterBook());
-    }
-
-    public static BooksCollection getInstance() {
-        init();
+        bookCollection.addBook(new MockRasterBook("Book One"));
+        bookCollection.addBook(new MockRasterBook("Book Two"));
+        bookCollection.addBook(new MockRasterBook("Book Three"));
+        bookCollection.addBook(new MockRasterBook("Book Four"));
+        //bookCollection.addBook(new MockRasterBook("Book Five"));
         return bookCollection;
     }
 

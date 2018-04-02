@@ -14,8 +14,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,7 +28,7 @@ import com.veve.flowreader.model.BooksCollection;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.impl.DevicePageContextImpl;
 
-public class PageActivity extends AppCompatActivity {
+public class PageActivity extends AppCompatActivity implements View.OnClickListener {
 
     TextView pager;
 
@@ -35,6 +37,11 @@ public class PageActivity extends AppCompatActivity {
     AppBarLayout bar;
 
     CoordinatorLayout topLayout;
+
+    @Override
+    public void onClick(View v) {
+        Log.i(getClass().getName(), "Button clicked");
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -51,10 +58,9 @@ public class PageActivity extends AppCompatActivity {
         bar = findViewById(R.id.bar);
         topLayout = findViewById(R.id.topLayout);
         setSupportActionBar(toolbar);
-
         pager = findViewById(R.id.pager);
-
         FloatingActionButton home = findViewById(R.id.home);
+
         home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -65,11 +71,13 @@ public class PageActivity extends AppCompatActivity {
         });
 
         FloatingActionButton show = findViewById(R.id.show);
+
         show.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (bar.getVisibility() == View.VISIBLE) {
                     bar.setVisibility(View.GONE);
+                    bar.setMinimumHeight(0);
                     setSupportActionBar(null);
                 } else {
                     bar.setVisibility(View.VISIBLE);
@@ -77,25 +85,47 @@ public class PageActivity extends AppCompatActivity {
                 topLayout.requestLayout();
                 topLayout.forceLayout();
                 topLayout.invalidate();
-                //topLayout.onInvalidate();
-                //setContentView(R.layout.activity_page);
-
             }
         });
 
         final RecyclerView recyclerView = findViewById(R.id.list);
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));
+
         recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                Log.i("tag", ""+recyclerView.getWidth());
+                Log.i("tag", "" + recyclerView.getWidth());
                 if (recyclerView.getAdapter() == null) {
-                    recyclerView.setAdapter(
-                            new PageActivity.TestListAdapter(
-                                    new DevicePageContextImpl(recyclerView.getWidth())));
+
+                    DevicePageContext pageContext = new DevicePageContextImpl(recyclerView.getWidth());
+                    PageListAdapter pageAdapter = new PageListAdapter(pageContext);
+                    recyclerView.setAdapter(pageAdapter);
+
+                    PageMenuListener pageMenuListener = new PageMenuListener();
+
+                    ImageButton smallerTextButton = findViewById(R.id.smaller_text);
+                    smallerTextButton.setOnClickListener(pageMenuListener);
+
+                    ImageButton largerTextButton = findViewById(R.id.larger_text);
+                    largerTextButton.setOnClickListener(pageMenuListener);
+
+                    ImageButton smallerKerningButton = findViewById(R.id.smaller_kerning);
+                    smallerKerningButton.setOnClickListener(pageMenuListener);
+
+                    ImageButton largerKerningButton = findViewById(R.id.larger_kerning);
+                    largerKerningButton.setOnClickListener(pageMenuListener);
+
+                    ImageButton smallerLeadingButton = findViewById(R.id.smaller_leading);
+                    smallerLeadingButton.setOnClickListener(pageMenuListener);
+
+                    ImageButton largerLeadingButton = findViewById(R.id.larger_leading);
+                    largerLeadingButton.setOnClickListener(pageMenuListener);
+
                 }
             }
         });
+
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
@@ -112,60 +142,98 @@ public class PageActivity extends AppCompatActivity {
             }
         });
 
+
+
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         final RecyclerView recyclerView = findViewById(R.id.list);
-        PageActivity.TestListAdapter pageAdapter = (PageActivity.TestListAdapter)recyclerView.getAdapter();
+        PageActivity.PageListAdapter pageAdapter =
+                (PageActivity.PageListAdapter) recyclerView.getAdapter();
         DevicePageContext context = pageAdapter.getContext();
         switch (item.getItemId()) {
-            case R.id.decrease_font: {
-                context.setZoom(0.8f*context.getZoom());
+            case R.id.no_margins: {
+                context.setMargin(0);
                 pageAdapter.notifyDataSetChanged();
                 break;
             }
-            case R.id.increase_font: {
-                context.setZoom(1.25f*context.getZoom());
+            case R.id.narrow_margins: {
+                context.setMargin(25);
                 pageAdapter.notifyDataSetChanged();
                 break;
             }
-            case R.id.decrease_kerning: {
-                context.setKerning(0.8f*context.getKerning());
+            case R.id.normal_margins: {
+                context.setMargin(50);
                 pageAdapter.notifyDataSetChanged();
                 break;
             }
-            case R.id.increase_kerning: {
-                context.setKerning(1.25f*context.getKerning());
-                pageAdapter.notifyDataSetChanged();
-                break;
-            }
-            case R.id.decrease_leading: {
-                context.setLeading(0.8f*context.getLeading());
-                pageAdapter.notifyDataSetChanged();
-                break;
-            }
-            case R.id.increase_leading: {
-                context.setLeading(1.25f*context.getLeading());
+            case R.id.wide_margins: {
+                context.setMargin(100);
                 pageAdapter.notifyDataSetChanged();
                 break;
             }
         }
+
         return true;
+
     }
 
     public void setPageNumber(int pageNumber, int totalPages) {
         pager.setText(String.format("Page #%d of %d", pageNumber + 1, totalPages));
     }
 
+    class PageMenuListener implements OnClickListener {
+        final RecyclerView recyclerView = findViewById(R.id.list);
+        PageActivity.PageListAdapter pageAdapter =
+                (PageActivity.PageListAdapter) recyclerView.getAdapter();
+        DevicePageContext context = pageAdapter.getContext();
 
-    class TestListAdapter extends RecyclerView.Adapter {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.smaller_text: {
+                    context.setZoom(0.8f * context.getZoom());
+                    pageAdapter.notifyDataSetChanged();
+                    break;
+                }
+                case R.id.larger_text: {
+                    context.setZoom(1.25f * context.getZoom());
+                    pageAdapter.notifyDataSetChanged();
+                    break;
+                }
+                case R.id.smaller_kerning: {
+                    context.setKerning(0.8f * context.getKerning());
+                    pageAdapter.notifyDataSetChanged();
+                    break;
+                }
+                case R.id.larger_kerning: {
+                    context.setKerning(1.25f * context.getKerning());
+                    pageAdapter.notifyDataSetChanged();
+                    break;
+                }
+                case R.id.smaller_leading: {
+                    context.setLeading(0.8f * context.getLeading());
+                    pageAdapter.notifyDataSetChanged();
+                    break;
+                }
+                case R.id.larger_leading: {
+                    context.setLeading(1.25f * context.getLeading());
+                    pageAdapter.notifyDataSetChanged();
+                    break;
+                }
+            }
+        }
+    }
+
+
+    class PageListAdapter extends RecyclerView.Adapter {
 
         Book book;
 
         DevicePageContext context;
 
-        public TestListAdapter(DevicePageContext context) {
+        public PageListAdapter(DevicePageContext context) {
             this.book = BooksCollection.getInstance().getBooks().get(0);
             this.context = context;
         }
@@ -187,7 +255,7 @@ public class PageActivity extends AppCompatActivity {
             Log.d(getClass().getName(), String.format("onBindViewHolder #%d", position));
             BookPage bookPage = book.getPage(position);
             Bitmap bitmap = bookPage.getAsBitmap(context);
-            ((ImageView)holder.itemView).setImageBitmap(bitmap);
+            ((ImageView) holder.itemView).setImageBitmap(bitmap);
         }
 
         @Override

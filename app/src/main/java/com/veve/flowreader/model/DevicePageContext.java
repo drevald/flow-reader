@@ -37,4 +37,8 @@ public interface DevicePageContext {
 
     public void setLeading(float leading);
 
+    public int getMargin();
+
+    public void setMargin(int margin);
+
 }
