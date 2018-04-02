@@ -10,6 +10,8 @@ local.properties
 # Signing files
 .signing/
 
+app/.externalNativeBuild/
+
 # User-specific configurations
 .idea/libraries/
 .idea/workspace.xml
