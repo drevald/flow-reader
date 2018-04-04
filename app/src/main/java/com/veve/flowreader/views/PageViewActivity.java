@@ -1,6 +1,8 @@
 package com.veve.flowreader.views;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -159,8 +161,19 @@ public class PageViewActivity extends AppCompatActivity {
             } else {
                 newString= extras.getString(EXTRA_FILENAME_KEY);
             }
+            newString = getIntentData(newString);
         } else {
             newString= (String) savedInstanceState.getSerializable(EXTRA_FILENAME_KEY);
+            newString = getIntentData(newString);
+        }
+        return newString;
+    }
+
+    private String getIntentData(String newString) {
+        if (newString == null) {
+            Intent intent = getIntent();
+            Uri data = intent.getData();
+            newString = data.getPath();
         }
         return newString;
     }
