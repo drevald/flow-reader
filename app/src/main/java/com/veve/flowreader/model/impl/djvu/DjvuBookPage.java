@@ -1,13 +1,21 @@
 package com.veve.flowreader.model.impl.djvu;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.veve.flowreader.R;
 import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyph;
+
+import org.opencv.android.Utils;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
+import org.opencv.imgcodecs.Imgcodecs;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -87,9 +95,10 @@ public class DjvuBookPage implements BookPage {
         int width = getWidth();
         int height = getHeight();
         Bitmap.Config bitmapConfig = Bitmap.Config.ARGB_8888;
+        Mat mat = new Mat(height, width ,CvType.CV_8UC3);
+        mat.put(0,0,imageBytes, 0, imageBytes.length);
         Bitmap bitmap = Bitmap.createBitmap(width, height, bitmapConfig);
-        int[] bitmapPixels = tranformBytes(imageBytes, width, height);
-        bitmap.setPixels(bitmapPixels, 0, width, 0, 0, width, height);
+        Utils.matToBitmap(mat, bitmap);
         return bitmap;
     }
 

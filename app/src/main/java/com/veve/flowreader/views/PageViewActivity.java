@@ -21,6 +21,8 @@ import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.impl.djvu.DjvuBook;
 import com.veve.flowreader.model.impl.djvu.DjvuDevicePageContext;
 
+import org.opencv.android.OpenCVLoader;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class PageViewActivity extends AppCompatActivity {
@@ -53,6 +55,8 @@ public class PageViewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        OpenCVLoader.initDebug();
         cache = new SparseArray<Bitmap>();
         setContentView(R.layout.activity_page_view);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
