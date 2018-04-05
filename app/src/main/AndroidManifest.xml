@@ -45,6 +45,21 @@
                     android:pathPattern=".*\\.djvu"
                     android:mimeType="*/*"
                     android:scheme="file" />
+                <data
+                    android:host="*"
+                    android:pathPattern=".*\\..*\\.djvu"
+                    android:mimeType="*/*"
+                    android:scheme="file" />
+                <data
+                    android:host="*"
+                    android:pathPattern=".*\\..*\\..*\\.djvu"
+                    android:mimeType="*/*"
+                    android:scheme="file" />
+                <data
+                    android:host="*"
+                    android:pathPattern=".*\\..*\\..*\\..*\\.djvu"
+                    android:mimeType="*/*"
+                    android:scheme="file" />
             </intent-filter>
 
         </activity>

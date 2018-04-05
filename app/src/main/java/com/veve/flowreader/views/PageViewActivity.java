@@ -115,7 +115,7 @@ public class PageViewActivity extends AppCompatActivity {
 
         LoadPageTask loadPageTask = new LoadPageTask();
         loadPageTask.execute(mPageNo.get() + 1);
-        
+
     }
 
     private void previousPage() {
@@ -125,10 +125,10 @@ public class PageViewActivity extends AppCompatActivity {
             LoadPageTask loadPageTask = new LoadPageTask();
             loadPageTask.execute(oldValue);
             if (oldValue>1) {
-                     LoadPageTask loadPageTask1 = new LoadPageTask();
-                     loadPageTask1.execute(oldValue-1);
-                     spinner.setVisibility(View.VISIBLE);
-                     iv.setVisibility(View.INVISIBLE);
+                 LoadPageTask loadPageTask1 = new LoadPageTask();
+                 loadPageTask1.execute(oldValue-1);
+                 spinner.setVisibility(View.VISIBLE);
+                 iv.setVisibility(View.INVISIBLE);
               }
               mPageNo.decrementAndGet();
         }
