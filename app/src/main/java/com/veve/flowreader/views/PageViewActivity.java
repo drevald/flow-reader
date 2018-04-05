@@ -34,14 +34,13 @@ public class PageViewActivity extends AppCompatActivity {
     private static final int INDEX_INCREMENT = 1;
     private static final int INITIAL_PAGE_NUMBER = 1;
     public static final String PAGENO_EXTRA = "pageno";
-    public static final String BITMAP_EXTRA = "bitmap";
+    public static final String BITMAP_KEY = "bitmap";
+    public static final String BITMAP_EXTRA = BITMAP_KEY;
     private Book djvuBook;
     private DevicePageContext context;
     private SparseArray<Bitmap> cache;
-    private FloatingActionButton next;
-    private FloatingActionButton prev;
     private ImageView iv;
-    private int mPageNo;
+    private AtomicInteger mPageNo;
     private ProgressBar spinner;
     private String filename;
     private Bitmap bmp;
@@ -50,9 +49,9 @@ public class PageViewActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
 
-        outState.putInt(PAGENO_EXTRA, mPageNo);
+        outState.putInt(PAGENO_EXTRA, mPageNo.intValue());
         outState.putString(EXTRA_FILENAME_KEY, filename);
-        outState.putParcelable("bitmap", bmp);
+        outState.putParcelable(BITMAP_KEY, bmp);
         super.onSaveInstanceState(outState);
     }
 
@@ -61,30 +60,24 @@ public class PageViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         OpenCVLoader.initDebug();
-        cache = new SparseArray<Bitmap>();
+        cache = new SparseArray<>();
         setContentView(R.layout.activity_page_view);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        int pageNo = INITIAL_PAGE_NUMBER;
+        mPageNo = new AtomicInteger(INITIAL_PAGE_NUMBER);
         spinner = findViewById(R.id.progressBar1);
         iv = findViewById(R.id.page_image);
 
         if (savedInstanceState != null) {
-            pageNo = savedInstanceState.getInt(PAGENO_EXTRA);
-            Log.d("ROTATE", "contains " + pageNo);
+            mPageNo = new AtomicInteger(savedInstanceState.getInt(PAGENO_EXTRA));
             bmp = savedInstanceState.getParcelable(BITMAP_EXTRA);
             iv.setImageBitmap(bmp);
-            cache.put(pageNo, bmp);
+            cache.put(mPageNo.intValue(), bmp);
             spinner.setVisibility(View.INVISIBLE);
             iv.setVisibility(View.VISIBLE);
         }
 
-        final AtomicInteger pageNumber = pageNo > INITIAL_PAGE_NUMBER ? new AtomicInteger(pageNo) : new AtomicInteger(INITIAL_PAGE_NUMBER);
-
-
-        next = (FloatingActionButton) findViewById(R.id.next);
-        prev = (FloatingActionButton) findViewById(R.id.prev);
 
         spinner.setVisibility(View.VISIBLE);
 
@@ -101,13 +94,15 @@ public class PageViewActivity extends AppCompatActivity {
         iv.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
+                int width = view.getWidth();
 
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN ) {
                     actionDownBegin = motionEvent.getX();
                 } else if ( motionEvent.getAction() == MotionEvent.ACTION_UP ) {
-                    if ( motionEvent.getX() > actionDownBegin ) {
-                        Log.d("TOUCH", motionEvent.toString());
-                        nextPage(pageNumber);
+                    if ( motionEvent.getX() > actionDownBegin + width / 3  ) {
+                        nextPage();
+                    } else if (motionEvent.getX() < actionDownBegin - width / 3 ) {
+                        previousPage();
                     }
                 }
 
@@ -115,63 +110,39 @@ public class PageViewActivity extends AppCompatActivity {
             }
         });
 
-        LoadPageTask loadPageTask = new LoadPageTask();
-        next.setVisibility(View.INVISIBLE);
-        prev.setVisibility(View.INVISIBLE);
-        mPageNo = pageNumber.get();
-        loadPageTask.execute(pageNumber.getAndAdd(INDEX_INCREMENT));
-
         LoadPageTask loadPageTask1 = new LoadPageTask();
-        loadPageTask1.execute(pageNumber.get());
+        loadPageTask1.execute(mPageNo.get());
 
-        next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                nextPage(pageNumber);
-            }
-        });
-
-        prev.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                next.setVisibility(View.INVISIBLE);
-                prev.setVisibility(View.INVISIBLE);
-                int pageNo = pageNumber.decrementAndGet();
-
-
-                if (pageNo > 1  ){
-
-                    LoadPageTask loadPageTask = new LoadPageTask();
-                    loadPageTask.execute(pageNo);
-                    if (pageNo-1>=1) {
-                             LoadPageTask loadPageTask1 = new LoadPageTask();
-                             loadPageTask1.execute(pageNo-1);
-                             spinner.setVisibility(View.VISIBLE);
-                             iv.setVisibility(View.INVISIBLE);
-                      }
-
-                      mPageNo--;
-
-                }
-                else {
-                    pageNo = pageNumber.getAndAdd(INDEX_INCREMENT);
-                }
-
-            }
-        });
+        LoadPageTask loadPageTask = new LoadPageTask();
+        loadPageTask.execute(mPageNo.get() + 1);
+        
     }
 
-    private void nextPage(AtomicInteger pageNumber) {
-        next.setVisibility(View.INVISIBLE);
-        prev.setVisibility(View.INVISIBLE);
-        int pageNo = pageNumber.getAndAdd(INDEX_INCREMENT);
+    private void previousPage() {
+        int oldValue = mPageNo.intValue();
+        if (oldValue > 1){
+
+            LoadPageTask loadPageTask = new LoadPageTask();
+            loadPageTask.execute(oldValue);
+            if (oldValue>1) {
+                     LoadPageTask loadPageTask1 = new LoadPageTask();
+                     loadPageTask1.execute(oldValue-1);
+                     spinner.setVisibility(View.VISIBLE);
+                     iv.setVisibility(View.INVISIBLE);
+              }
+              mPageNo.decrementAndGet();
+        }
+    }
+
+    private void nextPage() {
+        mPageNo.incrementAndGet();
         LoadPageTask loadPageTask = new LoadPageTask();
-        loadPageTask.execute(pageNo);
+        loadPageTask.execute(mPageNo.get());
         LoadPageTask loadPageTask1 = new LoadPageTask();
-        loadPageTask1.execute(pageNo+1);
+        loadPageTask1.execute(mPageNo.get()+1);
         spinner.setVisibility(View.VISIBLE);
         iv.setVisibility(View.INVISIBLE);
-        mPageNo++;
+
     }
 
     @Nullable
@@ -234,12 +205,7 @@ public class PageViewActivity extends AppCompatActivity {
         protected void onPostExecute(Bitmap bitmap) {
             super.onPostExecute(bitmap);
 
-            next.setVisibility(View.VISIBLE);
-            if (mPageNo > 1) {
-                 prev.setVisibility(View.VISIBLE);
-            }
-
-            if (mPageNo == requestedPageNo) {
+            if (mPageNo.intValue() == requestedPageNo) {
                 bmp = bitmap;
                 iv.setImageBitmap(bitmap);
                 spinner.setVisibility(View.INVISIBLE);
