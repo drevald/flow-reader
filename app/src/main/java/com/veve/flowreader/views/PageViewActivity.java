@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -44,6 +45,7 @@ public class PageViewActivity extends AppCompatActivity {
     private ProgressBar spinner;
     private String filename;
     private Bitmap bmp;
+    private double actionDownBegin = 0;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -96,6 +98,23 @@ public class PageViewActivity extends AppCompatActivity {
 
         iv.setVisibility(View.INVISIBLE);
 
+        iv.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN ) {
+                    actionDownBegin = motionEvent.getX();
+                } else if ( motionEvent.getAction() == MotionEvent.ACTION_UP ) {
+                    if ( motionEvent.getX() > actionDownBegin ) {
+                        Log.d("TOUCH", motionEvent.toString());
+                        nextPage(pageNumber);
+                    }
+                }
+
+                return false;
+            }
+        });
+
         LoadPageTask loadPageTask = new LoadPageTask();
         next.setVisibility(View.INVISIBLE);
         prev.setVisibility(View.INVISIBLE);
@@ -108,16 +127,7 @@ public class PageViewActivity extends AppCompatActivity {
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                next.setVisibility(View.INVISIBLE);
-                prev.setVisibility(View.INVISIBLE);
-                int pageNo = pageNumber.getAndAdd(INDEX_INCREMENT);
-                LoadPageTask loadPageTask = new LoadPageTask();
-                loadPageTask.execute(pageNo);
-                LoadPageTask loadPageTask1 = new LoadPageTask();
-                loadPageTask1.execute(pageNo+1);
-                spinner.setVisibility(View.VISIBLE);
-                iv.setVisibility(View.INVISIBLE);
-                mPageNo++;
+                nextPage(pageNumber);
             }
         });
 
@@ -149,6 +159,19 @@ public class PageViewActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void nextPage(AtomicInteger pageNumber) {
+        next.setVisibility(View.INVISIBLE);
+        prev.setVisibility(View.INVISIBLE);
+        int pageNo = pageNumber.getAndAdd(INDEX_INCREMENT);
+        LoadPageTask loadPageTask = new LoadPageTask();
+        loadPageTask.execute(pageNo);
+        LoadPageTask loadPageTask1 = new LoadPageTask();
+        loadPageTask1.execute(pageNo+1);
+        spinner.setVisibility(View.VISIBLE);
+        iv.setVisibility(View.INVISIBLE);
+        mPageNo++;
     }
 
     @Nullable
