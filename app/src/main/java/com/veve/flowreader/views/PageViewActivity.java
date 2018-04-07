@@ -25,6 +25,9 @@ import com.veve.flowreader.model.impl.djvu.DjvuBook;
 import com.veve.flowreader.model.impl.djvu.DjvuDevicePageContext;
 
 import org.opencv.android.OpenCVLoader;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -207,6 +210,10 @@ public class PageViewActivity extends AppCompatActivity {
 
             if (mPageNo.intValue() == requestedPageNo) {
                 bmp = bitmap;
+
+
+
+
                 iv.setImageBitmap(bitmap);
                 spinner.setVisibility(View.INVISIBLE);
                 iv.setVisibility(View.VISIBLE);
