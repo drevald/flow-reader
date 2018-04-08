@@ -27,6 +27,11 @@ import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -109,11 +114,42 @@ public class DjvuBookPage implements BookPage {
         mat.put(0,0,imageBytes, 0, imageBytes.length);
 
 
-        Mat ones = Mat.ones(5,5, CvType.CV_8U);
         Mat dst = new Mat();
-        Imgproc.erode(mat, dst, ones, new Point(0,0), 2);
-        Imgproc.cvtColor(dst, dst, Imgproc.COLOR_BGR2GRAY);
-        Core.compare(dst,new Scalar(1), dst, Core.CMP_GT);
+
+        Imgproc.cvtColor(mat, dst, Imgproc.COLOR_BGR2GRAY);
+
+        Imgproc.adaptiveThreshold(dst, dst, 255, Imgproc.ADAPTIVE_THRESH_MEAN_C,
+                Imgproc.THRESH_BINARY, 15, 40);
+
+        Mat lines = new Mat();
+        Mat kernel = Mat.ones(5,100, CvType.CV_8UC3);
+        Imgproc.blur(dst, lines, new Size(100,5));
+
+        final List<MatOfPoint> points = new ArrayList<>();
+        final Mat hierarchy = new Mat();
+        Imgproc.findContours(lines, points, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+
+
+        Iterator<MatOfPoint> iterator = points.iterator();
+        int j = -1;
+        while (iterator.hasNext()){
+            j++;
+
+            MatOfPoint contour = iterator.next();
+            RotatedRect rect = Imgproc.minAreaRect(new MatOfPoint2f(contour.toArray()));
+            Log.d("TEST1", rect.toString());
+            //Imgproc.rectangle(mat, new Point(rect.boundingRect().x,rect.boundingRect().y),
+            //        new Point(rect.boundingRect().x+rect.boundingRect().width,rect.boundingRect().y+rect.boundingRect().height),
+            //        new Scalar(0,255,0));
+            Imgproc.drawContours(mat,points,j,new Scalar(0,255,0));
+
+        }
+
+        Imgproc.blur(dst, dst, new Size(5,1));
+
+        Core.bitwise_not(dst,dst);
+
+        Core.compare(dst,new Scalar(3), dst, Core.CMP_GT);
         Mat labeled = new Mat(dst.size(), dst.type());
 
         // Extract components
@@ -124,35 +160,32 @@ public class DjvuBookPage implements BookPage {
         // Collect regions info
         int[] rectangleInfo = new int[5];
         double[] centroidInfo = new double[2];
-        Region[] regions = null;
-        regions = new Region[rectComponents.rows() - 1];
+        List<Rect> regions = new ArrayList<>();
 
-        Log.d("VVV", rectComponents.rows( ) + " " + rectComponents.cols());
         for(int i = 1; i < rectComponents.rows(); i++) {
-
 
             // Extract bounding box
             rectComponents.row(i).get(0, 0, rectangleInfo);
             Rect rectangle = new Rect(rectangleInfo[0], rectangleInfo[1], rectangleInfo[2], rectangleInfo[3]);
-
-            // Extract centroids
-            centComponents.row(i).get(0, 0, centroidInfo);
-            Point centroid = new Point(centroidInfo[0], centroidInfo[1]);
-
-            //regions[i - 1] = new Region(rectangle.x, rectangle.y, rectangle.x + rectangle.width, rectangle.y + rectangle.height);
-            regions[i - 1] = new Region(rectangle, centroid);
-
-            Imgproc.rectangle(mat, new Point(rectangleInfo[0],rectangleInfo[1]), new Point(rectangleInfo[0]+rectangleInfo[2],rectangleInfo[1]+rectangleInfo[3]),  new Scalar(255,0,0));
-
+            regions.add(rectangle);
+            Imgproc.rectangle(mat, new Point(rectangleInfo[0],rectangleInfo[1]),
+                    new Point(rectangleInfo[0]+rectangleInfo[2],rectangleInfo[1]+rectangleInfo[3]),
+                    new Scalar(255,0,0));
+            //Imgproc.putText(mat,String.valueOf(i), new Point(rectangleInfo[0],rectangleInfo[1]), 0, 1, new Scalar(255,0,0));
         }
 
 
 
+
+
+        //for (int i=0;i<regions.size();i++) {
+         //   Rect rect = regions.get(i);
+          //  Imgproc.putText(mat,String.valueOf(i), new Point(rect.x,rect.y), 0, 1, new Scalar(255,0,0));
+        //}
+
         // Free memory
         rectComponents.release();
         centComponents.release();
-
-
 
         Bitmap bitmap = Bitmap.createBitmap(width, height, bitmapConfig);
         Utils.matToBitmap(mat, bitmap);
