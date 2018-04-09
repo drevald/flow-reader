@@ -24,14 +24,17 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
+import org.opencv.features2d.MSER;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -112,6 +115,7 @@ public class DjvuBookPage implements BookPage {
         Bitmap.Config bitmapConfig = Bitmap.Config.ARGB_8888;
         Mat mat = new Mat(height, width ,CvType.CV_8UC3);
         mat.put(0,0,imageBytes, 0, imageBytes.length);
+        int[] rectangleInfo = new int[5];
 
 
         Mat dst = new Mat();
@@ -121,67 +125,47 @@ public class DjvuBookPage implements BookPage {
         Imgproc.adaptiveThreshold(dst, dst, 255, Imgproc.ADAPTIVE_THRESH_MEAN_C,
                 Imgproc.THRESH_BINARY, 15, 40);
 
-        Mat lines = new Mat();
-        Mat kernel = Mat.ones(5,100, CvType.CV_8UC3);
-        Imgproc.blur(dst, lines, new Size(100,5));
-
-        final List<MatOfPoint> points = new ArrayList<>();
-        final Mat hierarchy = new Mat();
-        Imgproc.findContours(lines, points, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
-
-
-        Iterator<MatOfPoint> iterator = points.iterator();
-        int j = -1;
-        while (iterator.hasNext()){
-            j++;
-
-            MatOfPoint contour = iterator.next();
-            RotatedRect rect = Imgproc.minAreaRect(new MatOfPoint2f(contour.toArray()));
-            Log.d("TEST1", rect.toString());
-            //Imgproc.rectangle(mat, new Point(rect.boundingRect().x,rect.boundingRect().y),
-            //        new Point(rect.boundingRect().x+rect.boundingRect().width,rect.boundingRect().y+rect.boundingRect().height),
-            //        new Scalar(0,255,0));
-            Imgproc.drawContours(mat,points,j,new Scalar(0,255,0));
-
-        }
-
         Imgproc.blur(dst, dst, new Size(5,1));
 
         Core.bitwise_not(dst,dst);
 
         Core.compare(dst,new Scalar(3), dst, Core.CMP_GT);
+        Mat rectComponents = Mat.zeros(new Size(0, 0), 0);
+        Mat centComponents = Mat.zeros(new Size(0, 0), 0);
         Mat labeled = new Mat(dst.size(), dst.type());
 
         // Extract components
-        Mat rectComponents = Mat.zeros(new Size(0, 0), 0);
-        Mat centComponents = Mat.zeros(new Size(0, 0), 0);
+        rectComponents = Mat.zeros(new Size(0, 0), 0);
+        centComponents = Mat.zeros(new Size(0, 0), 0);
         Imgproc.connectedComponentsWithStats(dst, labeled, rectComponents, centComponents);
 
         // Collect regions info
-        int[] rectangleInfo = new int[5];
-        double[] centroidInfo = new double[2];
-        List<Rect> regions = new ArrayList<>();
+
+        List<MyRegion> regions = new ArrayList<>();
+
+        Map<Integer,List<MyRegion>> map = new HashMap<>();
 
         for(int i = 1; i < rectComponents.rows(); i++) {
 
             // Extract bounding box
             rectComponents.row(i).get(0, 0, rectangleInfo);
             Rect rectangle = new Rect(rectangleInfo[0], rectangleInfo[1], rectangleInfo[2], rectangleInfo[3]);
-            regions.add(rectangle);
+            MyRegion reg = new MyRegion();
+            reg.rect = rectangle;
+            regions.add(reg);
             Imgproc.rectangle(mat, new Point(rectangleInfo[0],rectangleInfo[1]),
                     new Point(rectangleInfo[0]+rectangleInfo[2],rectangleInfo[1]+rectangleInfo[3]),
                     new Scalar(255,0,0));
-            //Imgproc.putText(mat,String.valueOf(i), new Point(rectangleInfo[0],rectangleInfo[1]), 0, 1, new Scalar(255,0,0));
         }
 
 
+        sortRegions(regions);
 
 
-
-        //for (int i=0;i<regions.size();i++) {
-         //   Rect rect = regions.get(i);
-          //  Imgproc.putText(mat,String.valueOf(i), new Point(rect.x,rect.y), 0, 1, new Scalar(255,0,0));
-        //}
+        for (int i=0;i<regions.size();i++) {
+            MyRegion reg = regions.get(i);
+            Imgproc.putText(mat,String.valueOf(i), new Point(reg.rect.x,reg.rect.y), 0, 1, new Scalar(255,0,0));
+        }
 
         // Free memory
         rectComponents.release();
@@ -190,6 +174,70 @@ public class DjvuBookPage implements BookPage {
         Bitmap bitmap = Bitmap.createBitmap(width, height, bitmapConfig);
         Utils.matToBitmap(mat, bitmap);
         return bitmap;
+    }
+
+    private void sortRegions(List<MyRegion> regions) {
+        Collections.sort(regions, new Comparator<MyRegion>() {
+            @Override
+            public int compare(MyRegion r1, MyRegion r2) {
+
+                return Double.compare(r1.rect.x + r1.rect.width/2.0,
+                        r2.rect.x + r2.rect.width/2.0);
+            }
+        });
+
+
+        MyRegion rect = regions.get(0);
+        int right = rect.rect.x + rect.rect.width;
+
+        int x = 0;
+        for (int i=0;i<regions.size();i++) {
+            rect = regions.get(i);
+            if (rect.rect.x > right) {
+                x++;
+               right = rect.rect.x + rect.rect.width;
+
+            }
+
+            rect.x = x;
+        }
+
+
+        Collections.sort(regions, new Comparator<MyRegion>() {
+            @Override
+            public int compare(MyRegion r1, MyRegion r2) {
+                return Double.compare(r1.rect.y + r1.rect.height/2.0,
+                        r2.rect.y + r2.rect.height/2.0);
+            }
+        });
+
+
+        rect = regions.get(0);
+        int bottom = rect.rect.y + rect.rect.height;
+
+        int y = 0;
+
+        for (int i=0;i<regions.size();i++) {
+            rect = regions.get(i);
+            if (rect.rect.y > bottom) {
+
+                y++;
+                bottom = rect.rect.y + rect.rect.height;
+            }
+
+            rect.y = y;
+        }
+
+
+        Collections.sort(regions, new Comparator<MyRegion>() {
+            @Override
+            public int compare(MyRegion r1, MyRegion r2) {
+               if ( r1.y == r2.y ) {
+                   return Integer.compare(r1.x, r2.x);
+               }
+                return Integer.compare(r1.y, r2.y);
+            }
+        });
     }
 
     @Override
@@ -223,5 +271,11 @@ public class DjvuBookPage implements BookPage {
         public Point getCentroid() {
             return centroid;
         }
+    }
+
+    private static class MyRegion {
+        Rect rect;
+        int x;
+        int y;
     }
 }
