@@ -96,7 +96,7 @@ public class DjvuBookPage implements BookPage {
                     new Scalar(255,0,0));
         }
 
-        regions = sortRegions(regions);
+        regions = PageUtil.sortRegions(regions);
 
 
         for (int i=0;i<regions.size();i++) {
