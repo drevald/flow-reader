@@ -80,29 +80,28 @@ public class DjvuBookPage implements BookPage {
 
         // Collect regions info
 
-        List<Region> regions = new ArrayList<>();
+        List<PageRegion> regions = new ArrayList<>();
 
-        Map<Integer,List<Region>> map = new HashMap<>();
+        Map<Integer,List<PageRegion>> map = new HashMap<>();
 
         for(int i = 1; i < rectComponents.rows(); i++) {
 
             // Extract bounding box
             rectComponents.row(i).get(0, 0, rectangleInfo);
             Rect rectangle = new Rect(rectangleInfo[0], rectangleInfo[1], rectangleInfo[2], rectangleInfo[3]);
-            Region reg = new Region();
-            reg.rect = rectangle;
+            PageRegion reg = new PageRegion(rectangle);
             regions.add(reg);
             Imgproc.rectangle(mat, new Point(rectangleInfo[0],rectangleInfo[1]),
                     new Point(rectangleInfo[0]+rectangleInfo[2],rectangleInfo[1]+rectangleInfo[3]),
                     new Scalar(255,0,0));
         }
 
-        sortRegions(regions);
+        regions = sortRegions(regions);
 
 
         for (int i=0;i<regions.size();i++) {
-            Region reg = regions.get(i);
-            Imgproc.putText(mat,String.valueOf(i), new Point(reg.rect.x,reg.rect.y), 0, 1, new Scalar(255,0,0));
+            PageRegion reg = regions.get(i);
+            Imgproc.putText(mat,String.valueOf(i), new Point(reg.getRect().x,reg.getRect().y), 0, 1, new Scalar(255,0,0));
         }
 
         // Free memory
@@ -114,51 +113,56 @@ public class DjvuBookPage implements BookPage {
         return bitmap;
     }
 
-    private void sortRegions(List<Region> regions) {
+    public static List<PageRegion> sortRegions(List<PageRegion> regions) {
 
-        Collections.sort(regions,(Region r1, Region r2) -> {
-            return Double.compare(r1.rect.x + r1.rect.width/2.0,
-                    r2.rect.x + r2.rect.width/2.0);
+        List<PageRegion> sortedRegions = new ArrayList<>(regions);
+
+        Collections.sort(sortedRegions,(PageRegion r1, PageRegion r2) -> {
+            return Double.compare(r1.getRect().x + r1.getRect().width/2.0,
+                    r2.getRect().x + r2.getRect().width/2.0);
         });
 
-        Region rect = regions.get(0);
-        int right = rect.rect.x + rect.rect.width;
+        PageRegion rect = sortedRegions.get(0);
+        int right = rect.getRect().x + rect.getRect().width;
 
         int x = 0;
-        for (int i=0;i<regions.size();i++) {
-            rect = regions.get(i);
-            if (rect.rect.x > right) {
+        for (int i=0;i<sortedRegions.size();i++) {
+            rect = sortedRegions.get(i);
+            if (rect.getRect().x > right) {
                 x++;
-               right = rect.rect.x + rect.rect.width;
+               right = rect.getRect().x + rect.getRect().width;
             }
-            rect.x = x;
+            rect.setX(x);
         }
 
-        Collections.sort(regions, (Region r1, Region r2) -> {
-            return Double.compare(r1.rect.y + r1.rect.height/2.0,
-                    r2.rect.y + r2.rect.height/2.0);
+        Collections.sort(
+                sortedRegions, (PageRegion r1, PageRegion r2) -> {
+            return Double.compare(r1.getRect().y + r1.getRect().height/2.0,
+                    r2.getRect().y + r2.getRect().height/2.0);
         });
 
 
-        rect = regions.get(0);
-        int bottom = rect.rect.y + rect.rect.height;
+        rect = sortedRegions.get(0);
+        int bottom = rect.getRect().y + rect.getRect().height;
         int y = 0;
 
-        for (int i=0;i<regions.size();i++) {
-            rect = regions.get(i);
-            if (rect.rect.y > bottom) {
+        for (int i=0;i<sortedRegions.size();i++) {
+            rect = sortedRegions.get(i);
+            if (rect.getRect().y > bottom) {
                 y++;
-                bottom = rect.rect.y + rect.rect.height;
+                bottom = rect.getRect().y + rect.getRect().height;
             }
-            rect.y = y;
+            rect.setY(y);
         }
 
-        Collections.sort(regions, (Region r1, Region r2) -> {
-            if ( r1.y == r2.y ) {
-                return Integer.compare(r1.x, r2.x);
+        Collections.sort(sortedRegions, (PageRegion r1, PageRegion r2) -> {
+            if ( r1.getY() == r2.getY() ) {
+                return Integer.compare(r1.getX(), r2.getX());
             }
-            return Integer.compare(r1.y, r2.y);
+            return Integer.compare(r1.getY(), r2.getY());
         });
+
+        return sortedRegions;
 
     }
 
@@ -177,10 +181,4 @@ public class DjvuBookPage implements BookPage {
     private static native int getNativeWidth(long bookId, int pageNumber);
     private static native int getNativeHeight(long bookId, int pageNumber);
 
-
-    private static class Region {
-        Rect rect;
-        int x;
-        int y;
-    }
 }
