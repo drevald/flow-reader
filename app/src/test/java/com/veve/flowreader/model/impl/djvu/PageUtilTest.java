@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class DjvuBookPageTest {
+public class PageUtilTest {
 
     @Test
     public void sortRegions() {
@@ -26,7 +26,7 @@ public class DjvuBookPageTest {
             add(region1);
         }};
 
-        regions = DjvuBookPage.sortRegions(regions);
+        regions = PageUtil.sortRegions(regions);
         Assert.assertEquals(region1, regions.get(0));
         Assert.assertEquals(region2, regions.get(1));
         Assert.assertEquals(region3, regions.get(2));
