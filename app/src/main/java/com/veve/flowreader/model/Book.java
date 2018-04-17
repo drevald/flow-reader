@@ -25,4 +25,6 @@ public interface Book {
 
     public long getId();
 
+    public String getPath();
+
 }

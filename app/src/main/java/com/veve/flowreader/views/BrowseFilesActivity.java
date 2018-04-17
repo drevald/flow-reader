@@ -24,6 +24,9 @@ import android.widget.TextView;
 
 import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
+import com.veve.flowreader.model.Book;
+import com.veve.flowreader.model.BookFactory;
+import com.veve.flowreader.model.BooksCollection;
 
 import java.io.File;
 import java.net.URI;
@@ -68,9 +71,15 @@ public class BrowseFilesActivity extends ListActivity {
                     if (!file.getName().toLowerCase().endsWith(".djvu")) {
                         Snackbar.make(view, "Only DJVU files supported", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                     } else {
-                        Intent ii = new Intent(BrowseFilesActivity.this, PageViewActivity.class);
-                        ii.putExtra("filename", file.getAbsolutePath());
+                        if (BooksCollection.getInstance(getApplicationContext()).hasBook(file)) {
+                            Snackbar.make(view, "The book is already in collection",
+                                    Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                        } else {
+                            Book newBook = BookFactory.getInstance().createBook(file);
+                            BooksCollection.getInstance(getApplicationContext()).addBook(newBook);
+                            Intent ii = new Intent(BrowseFilesActivity.this, MainActivity.class);
                         startActivity(ii);
+                    }
                     }
                 } else if (!fileListAdapter.currentFiles.get(i).canRead()) {
                     Snackbar.make(view, "You could not open this", Snackbar.LENGTH_LONG).setAction("Action", null).show();
@@ -122,7 +131,10 @@ public class BrowseFilesActivity extends ListActivity {
                 rootDir = new File("/");
                 currentDirectory = rootDir;
                 currentFiles = new ArrayList<File>();
-                currentFiles.addAll(Arrays.asList(currentDirectory.listFiles()));
+                for (File file : currentDirectory.listFiles()) {
+                    if (file.canRead())
+                        currentFiles.add(file);
+                }
                 Collections.sort(currentFiles, new Comparator<File>() {
                     public int compare(File fileOne, File fileTwo) {
                         if (fileOne.isDirectory() && fileTwo.isFile()) {
@@ -144,7 +156,10 @@ public class BrowseFilesActivity extends ListActivity {
             if (newRoot.isDirectory()) {
                 if (newRoot.canRead()) {
                     currentFiles.clear();
-                    currentFiles.addAll(Arrays.asList(newRoot.listFiles()));
+                    for (File file : newRoot.listFiles()) {
+                        if (file.canRead())
+                            currentFiles.add(file);
+                    }
                     if (!rootDir.equals(newRoot))
                         currentFiles.add(0, newRoot.getParentFile());
                     currentDirectory = newRoot;

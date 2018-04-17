@@ -234,7 +234,7 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
         DevicePageContext context;
 
         public PageListAdapter(DevicePageContext context) {
-            this.book = BooksCollection.getInstance().getBooks().get(0);
+            this.book = BooksCollection.getInstance(getApplicationContext()).getBooks().get(0);
             this.context = context;
         }
 

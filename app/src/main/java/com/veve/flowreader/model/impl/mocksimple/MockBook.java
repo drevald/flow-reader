@@ -80,4 +80,8 @@ public class MockBook implements Book {
         return 0;
     }
 
+    @Override
+    public String getPath() {
+        return null;
+    }
 }

@@ -36,9 +36,9 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    BookListAdapter bookListAdapter = new BookListAdapter();
+    BookListAdapter bookListAdapter;
 
-    BookGridAdapter bookGridAdapter = new BookGridAdapter();
+    BookGridAdapter bookGridAdapter;
 
     int columnsNumber;
 
@@ -54,6 +54,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         preferences = getPreferences(MODE_PRIVATE);
+
+        bookListAdapter = new BookListAdapter();
+
+        bookGridAdapter = new BookGridAdapter();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -94,11 +98,15 @@ public class MainActivity extends AppCompatActivity {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.i(getClass().getName(), String.format("Clicked view id %d position %d id %d",
-                        view.getId(), position, id));
-                Intent intentTwo = new Intent(MainActivity.this, PageActivity.class);
-                intentTwo.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intentTwo);
+//                Log.i(getClass().getName(), String.format("Clicked view id %d position %d id %d",
+//                        view.getId(), position, id));
+//                Intent intentTwo = new Intent(MainActivity.this, PageActivity.class);
+//                intentTwo.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+//                startActivity(intentTwo);
+                Intent ii = new Intent(MainActivity.this, PageViewActivity.class);
+                Book selectedBook = (Book)parent.getItemAtPosition(position);
+                ii.putExtra("filename", selectedBook.getPath());
+                startActivity(ii);
             }
         });
 
@@ -170,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
 
         private BookListAdapter() {
             Log.i(this.getClass().getName(), "Constructing BookListAdapter");
-            booksList = BooksCollection.getInstance().getBooks();
+            booksList = BooksCollection.getInstance(getApplicationContext()).getBooks();
             notifyDataSetChanged();
         }
 
@@ -218,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
 
         private BookGridAdapter() {
             Log.i(this.getClass().getName(), "Constructing BookListAdapter");
-            booksList = BooksCollection.getInstance().getBooks();
+            booksList = BooksCollection.getInstance(getApplicationContext()).getBooks();
             notifyDataSetChanged();
         }
 
