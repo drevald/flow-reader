@@ -28,6 +28,11 @@ import com.veve.flowreader.model.BooksCollection;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.impl.DevicePageContextImpl;
 
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Mat;
+
 public class PageActivity extends AppCompatActivity implements View.OnClickListener {
 
     TextView pager;
@@ -37,6 +42,12 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
     AppBarLayout bar;
 
     CoordinatorLayout topLayout;
+
+    static {
+        if (!OpenCVLoader.initDebug()) {
+            Log.i("", "Open CV init error");
+        }
+    }
 
     @Override
     public void onClick(View v) {
@@ -99,7 +110,10 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
                 if (recyclerView.getAdapter() == null) {
 
                     DevicePageContext pageContext = new DevicePageContextImpl(recyclerView.getWidth());
-                    PageListAdapter pageAdapter = new PageListAdapter(pageContext);
+                    //Book book = BooksCollection.getInstance(getApplicationContext()).getBooks().get(0);
+                    Book book = BooksCollection.getInstance(getApplicationContext()).getBooks().get(0);
+                    //getIntent().getData();
+                    PageListAdapter pageAdapter = new PageListAdapter(pageContext, book);
                     recyclerView.setAdapter(pageAdapter);
 
                     PageMenuListener pageMenuListener = new PageMenuListener();
@@ -233,8 +247,8 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
 
         DevicePageContext context;
 
-        public PageListAdapter(DevicePageContext context) {
-            this.book = BooksCollection.getInstance(getApplicationContext()).getBooks().get(0);
+        public PageListAdapter(DevicePageContext context, Book book) {
+            this.book = book;
             this.context = context;
         }
 

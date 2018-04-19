@@ -98,12 +98,8 @@ public class MainActivity extends AppCompatActivity {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Log.i(getClass().getName(), String.format("Clicked view id %d position %d id %d",
-//                        view.getId(), position, id));
-//                Intent intentTwo = new Intent(MainActivity.this, PageActivity.class);
-//                intentTwo.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-//                startActivity(intentTwo);
-                Intent ii = new Intent(MainActivity.this, PageViewActivity.class);
+//                Intent ii = new Intent(MainActivity.this, PageViewActivity.class);
+                Intent ii = new Intent(MainActivity.this, PageActivity.class);
                 Book selectedBook = (Book)parent.getItemAtPosition(position);
                 ii.putExtra("filename", selectedBook.getPath());
                 startActivity(ii);
