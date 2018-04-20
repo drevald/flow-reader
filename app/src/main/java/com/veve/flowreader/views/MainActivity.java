@@ -102,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent ii = new Intent(MainActivity.this, PageActivity.class);
                 Book selectedBook = (Book)parent.getItemAtPosition(position);
                 ii.putExtra("filename", selectedBook.getPath());
+                ii.putExtra("position", position);
                 startActivity(ii);
             }
         });

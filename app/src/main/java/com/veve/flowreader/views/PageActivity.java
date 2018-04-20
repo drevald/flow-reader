@@ -111,7 +111,8 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
 
                     DevicePageContext pageContext = new DevicePageContextImpl(recyclerView.getWidth());
                     //Book book = BooksCollection.getInstance(getApplicationContext()).getBooks().get(0);
-                    Book book = BooksCollection.getInstance(getApplicationContext()).getBooks().get(0);
+                    int position = getIntent().getIntExtra("position", 0);
+                    Book book = BooksCollection.getInstance(getApplicationContext()).getBooks().get(position);
                     //getIntent().getData();
                     PageListAdapter pageAdapter = new PageListAdapter(pageContext, book);
                     recyclerView.setAdapter(pageAdapter);
@@ -141,22 +142,20 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
         });
 
 
-        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                Log.i(getClass().getName(), String.format("%S %d", recyclerView.toString(), newState));
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                Log.i(getClass().getName(), String.format("%S %d %d", recyclerView.toString(), dx, dy));
-            }
-        });
-
-
+//        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//
+//            @Override
+//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+//                super.onScrollStateChanged(recyclerView, newState);
+//                Log.i(getClass().getName(), String.format("%S %d", recyclerView.toString(), newState));
+//            }
+//
+//            @Override
+//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                super.onScrolled(recyclerView, dx, dy);
+//                Log.i(getClass().getName(), String.format("%S %d %d", recyclerView.toString(), dx, dy));
+//            }
+//        });
 
     }
 
