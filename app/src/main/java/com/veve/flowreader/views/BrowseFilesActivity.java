@@ -68,7 +68,7 @@ public class BrowseFilesActivity extends ListActivity {
                 Log.d(this.getClass().getName(), i + " clicked");
                 if (fileListAdapter.currentFiles.get(i).isFile()) {
                     File file = fileListAdapter.currentFiles.get(i);
-                    if (!file.getName().toLowerCase().endsWith(".djvu")) {
+                    if (!file.getName().toLowerCase().endsWith(".djvu") && !file.getName().toLowerCase().endsWith(".pdf")) {
                         Snackbar.make(view, "Only DJVU files supported", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                     } else {
                         if (BooksCollection.getInstance(getApplicationContext()).hasBook(file)) {

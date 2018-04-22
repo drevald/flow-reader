@@ -70,4 +70,8 @@ public class Document
 		String proofFile = proofNative( currentPath,  printProfile,  displayProfile,  resolution);
 		return proofFile;
 	}
+
+	public long getPointer() {
+		return pointer;
+	}
 }

@@ -1,5 +1,7 @@
 package com.veve.flowreader.model.impl.djvu;
 
+import android.util.Log;
+
 import com.veve.flowreader.model.Book;
 import com.veve.flowreader.model.BookPage;
 
@@ -28,6 +30,7 @@ public class DjvuBook implements Book {
 
     private native long openBook(String path);
     private native String openStringBook(String path);
+    private native int getNumberOfPages(long bookId);
 
 
     @Override
@@ -48,7 +51,13 @@ public class DjvuBook implements Book {
 
     @Override
     public int getPagesCount() {
-        return 0;
+        int numberOfPages = 1;
+        try {
+            numberOfPages = getNumberOfPages(bookId);
+        } catch (Throwable t) {
+            Log.d("ERROR", t.getMessage());
+        }
+        return numberOfPages;
     }
 
     @Override

@@ -193,7 +193,6 @@ public class PageViewActivity extends AppCompatActivity {
 
                 try {
                     bitmap = page.getAsBitmap(context);
-                    context.setDisplayDpi(96);
                     cache.put(pageNo, bitmap);
                     cache.remove(pageNo-2);
                 } catch (Error e) {

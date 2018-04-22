@@ -1,6 +1,7 @@
 package com.veve.flowreader.model;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.dao.BookStorage;
@@ -37,8 +38,14 @@ public class BooksCollection {
             List<BookRecord> bookRecords = bookStorage.getBooksList();
             for (BookRecord bookRecord : bookRecords) {
                 //Book storedBook = new RasterBook(bookRecord);
-                Book storedBook = new DjvuBook(bookRecord.getUrl());
-                booksList.add(storedBook);
+                try {
+                    Book storedBook = BookFactory.getInstance().createBook(new File(bookRecord.getUrl()));//new DjvuBook(bookRecord.getUrl());
+                    booksList.add(storedBook);
+                    Log.d("ERROR", bookRecord.getUrl());
+                } catch (Exception e){
+                    Log.d("ERROR", e.getMessage());
+                }
+
             }
         }
         return bookCollection;

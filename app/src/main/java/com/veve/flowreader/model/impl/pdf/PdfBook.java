@@ -46,16 +46,16 @@ public class PdfBook implements Book {
 
     @Override
     public String getName() {
-        return null;
+        return path;
     }
 
     @Override
     public long getId() {
-        return 0;
+        return document.getPointer();
     }
 
     @Override
     public String getPath() {
-        return null;
+        return path;
     }
 }
