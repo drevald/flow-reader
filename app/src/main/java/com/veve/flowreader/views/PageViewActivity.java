@@ -90,9 +90,10 @@ public class PageViewActivity extends AppCompatActivity {
         final String fileName = newString;
         setTitle(new File(fileName).getName());
         book = BookFactory.getInstance().createBook(new File(fileName));
-        context = new DjvuDevicePageContext();
+        context = new DevicePageContextImpl();
         DisplayMetrics metrics = getResources().getDisplayMetrics();
-        context.setDisplayDpi(metrics.densityDpi);
+        //context.setDisplayDpi(metrics.densityDpi);
+        context.setDisplayDpi(144);
 
         iv.setVisibility(View.INVISIBLE);
 

@@ -252,7 +252,8 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
             this.book = book;
             this.context = context;
             DisplayMetrics metrics = getResources().getDisplayMetrics();
-            context.setDisplayDpi(metrics.densityDpi);
+            //context.setDisplayDpi(metrics.densityDpi);
+            context.setDisplayDpi(144);
         }
 
         public DevicePageContext getContext() {
