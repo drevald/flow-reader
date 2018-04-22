@@ -10,6 +10,9 @@ import com.veve.flowreader.model.DevicePageContext;
  */
 
 public class DjvuDevicePageContext implements DevicePageContext {
+
+    private int displayDpi;
+
     @Override
     public Point getStartPoint() {
         return null;
@@ -88,5 +91,15 @@ public class DjvuDevicePageContext implements DevicePageContext {
     @Override
     public void setMargin(int margin) {
 
+    }
+
+    @Override
+    public int getDisplayDpi() {
+        return displayDpi;
+    }
+
+    @Override
+    public void setDisplayDpi(int displayDpi) {
+        this.displayDpi = displayDpi;
     }
 }

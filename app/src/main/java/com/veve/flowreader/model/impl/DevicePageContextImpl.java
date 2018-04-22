@@ -22,6 +22,8 @@ public class DevicePageContextImpl implements DevicePageContext {
 
     private static final int DEFAULT_MARGIN = 25;
 
+    private static final int DEFAULT_DISPLAY_DPI = 72;
+
     private Point startPoint;
 
     private Point remotestPoint;
@@ -38,6 +40,8 @@ public class DevicePageContextImpl implements DevicePageContext {
 
     private int margin;
 
+    private int displayDpi;
+
     public DevicePageContextImpl() {
 
     }
@@ -50,6 +54,7 @@ public class DevicePageContextImpl implements DevicePageContext {
         this.margin = DEFAULT_MARGIN;
         this.startPoint = new Point(margin, 0);
         this.remotestPoint = new Point(margin, 0);
+        this.displayDpi = DEFAULT_DISPLAY_DPI;
     }
 
     public DevicePageContextImpl(Canvas canvas) {
@@ -61,6 +66,17 @@ public class DevicePageContextImpl implements DevicePageContext {
         this.margin = DEFAULT_MARGIN;
         this.startPoint = new Point(margin, 0);
         this.remotestPoint = new Point(margin, 0);
+        this.displayDpi = DEFAULT_DISPLAY_DPI;
+    }
+
+    @Override
+    public int getDisplayDpi() {
+        return displayDpi;
+    }
+
+    @Override
+    public void setDisplayDpi(int displayDpi) {
+        this.displayDpi = displayDpi;
     }
 
     @Override

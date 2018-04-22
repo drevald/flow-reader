@@ -14,6 +14,9 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
 JNIEXPORT jlong JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_openBook
 (JNIEnv *, jobject, jstring);
 
+JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_openStringBook
+        (JNIEnv *, jobject,  jstring);
+
 /*
 * Class:     com_veve_flowreader_model_impl_djvu_DjvuBookPage
 * Method:    getNativeWidth

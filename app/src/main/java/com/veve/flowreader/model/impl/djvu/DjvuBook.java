@@ -19,7 +19,7 @@ public class DjvuBook implements Book {
 
     private String name;
 
-    private int currentPageNumber = 1;
+    private int currentPageNumber = 0;
     public DjvuBook(String path) {
        this.bookId = openBook(path);
        this.path = path;
@@ -27,6 +27,7 @@ public class DjvuBook implements Book {
     }
 
     private native long openBook(String path);
+    private native String openStringBook(String path);
 
 
     @Override

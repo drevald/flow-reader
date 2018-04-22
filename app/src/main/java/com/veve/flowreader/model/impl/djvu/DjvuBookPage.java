@@ -175,6 +175,8 @@ public class DjvuBookPage implements BookPage {
             bitmap = Bitmap.createBitmap(width, height, bitmapConfig);
             Utils.matToBitmap(mat, bitmap);
 
+
+
     }
 
 
