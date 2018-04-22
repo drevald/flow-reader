@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -202,6 +203,7 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
                 (PageActivity.PageListAdapter) recyclerView.getAdapter();
         DevicePageContext context = pageAdapter.getContext();
 
+
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
@@ -249,6 +251,8 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
         public PageListAdapter(DevicePageContext context, Book book) {
             this.book = book;
             this.context = context;
+            DisplayMetrics metrics = getResources().getDisplayMetrics();
+            context.setDisplayDpi(metrics.densityDpi);
         }
 
         public DevicePageContext getContext() {
