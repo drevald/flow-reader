@@ -105,32 +105,43 @@ public class PageViewActivity extends AppCompatActivity {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN ) {
                     actionDownBegin = motionEvent.getX();
                 } else if ( motionEvent.getAction() == MotionEvent.ACTION_UP ) {
+                    int pageNo = mPageNo.get();
                     if ( motionEvent.getX() > actionDownBegin + width / 3  ) {
-                        nextPage();
+                        if(pageNo+1<book.getPagesCount()){
+                            nextPage();
+                        }
+
                     } else if (motionEvent.getX() < actionDownBegin - width / 3 ) {
-                        previousPage();
+                        if(pageNo>0){
+                            previousPage();
+                        }
                     }
                 }
 
                 return false;
             }
         });
+        int pageNo = mPageNo.get();
+        int pageCount = book.getPagesCount();
+        if(pageNo < pageCount){
+            LoadPageTask loadPageTask1 = new LoadPageTask();
+            loadPageTask1.execute(pageNo);
+        }
 
-        LoadPageTask loadPageTask1 = new LoadPageTask();
-        loadPageTask1.execute(mPageNo.get());
-
-        LoadPageTask loadPageTask = new LoadPageTask();
-        loadPageTask.execute(mPageNo.get() + 1);
+        if(pageNo+1 < pageCount){
+            LoadPageTask loadPageTask1 = new LoadPageTask();
+            loadPageTask1.execute(pageNo+1);
+        }
 
     }
 
     private void previousPage() {
         int oldValue = mPageNo.intValue();
-        if (oldValue > 1){
+        if (oldValue > 0){
 
             LoadPageTask loadPageTask = new LoadPageTask();
             loadPageTask.execute(oldValue);
-            if (oldValue>1) {
+            if (oldValue>0) {
                  LoadPageTask loadPageTask1 = new LoadPageTask();
                  loadPageTask1.execute(oldValue-1);
                  spinner.setVisibility(View.VISIBLE);
@@ -142,10 +153,18 @@ public class PageViewActivity extends AppCompatActivity {
 
     private void nextPage() {
         mPageNo.incrementAndGet();
-        LoadPageTask loadPageTask = new LoadPageTask();
-        loadPageTask.execute(mPageNo.get());
-        LoadPageTask loadPageTask1 = new LoadPageTask();
-        loadPageTask1.execute(mPageNo.get()+1);
+        int pageNo = mPageNo.get();
+        int pageCount = book.getPagesCount();
+        if(pageNo<pageCount){
+            LoadPageTask loadPageTask = new LoadPageTask();
+            loadPageTask.execute(pageNo);
+        }
+
+        if(pageNo+1<pageCount){
+            LoadPageTask loadPageTask1 = new LoadPageTask();
+            loadPageTask1.execute(pageNo+1);
+        }
+
         spinner.setVisibility(View.VISIBLE);
         iv.setVisibility(View.INVISIBLE);
 
@@ -189,10 +208,8 @@ public class PageViewActivity extends AppCompatActivity {
             requestedPageNo = pageNo;
 
             if (cache.get(pageNo) == null) {
-
-                BookPage page = book.getPage(pageNo);
-
                 try {
+                    BookPage page = book.getPage(pageNo);
                     bitmap = page.getAsBitmap(context);
                     cache.put(pageNo, bitmap);
                     cache.remove(pageNo-2);
