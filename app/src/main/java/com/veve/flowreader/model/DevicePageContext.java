@@ -41,4 +41,8 @@ public interface DevicePageContext {
 
     public void setMargin(int margin);
 
+    public int getDisplayDpi();
+
+    public void setDisplayDpi(int displayDpi);
+
 }

@@ -95,18 +95,18 @@ public class DjvuBookPage implements BookPage {
             Rect rectangle = new Rect(rectangleInfo[0], rectangleInfo[1], rectangleInfo[2], rectangleInfo[3]);
             PageRegion reg = new PageRegion(rectangle);
             regions.add(reg);
-            Imgproc.rectangle(mat, new Point(rectangleInfo[0],rectangleInfo[1]),
-                    new Point(rectangleInfo[0]+rectangleInfo[2],rectangleInfo[1]+rectangleInfo[3]),
-                    new Scalar(255,0,0));
+            //Imgproc.rectangle(mat, new Point(rectangleInfo[0],rectangleInfo[1]),
+            //        new Point(rectangleInfo[0]+rectangleInfo[2],rectangleInfo[1]+rectangleInfo[3]),
+            //        new Scalar(255,0,0));
         }
 
         regions = PageUtil.sortRegions(regions);
 
 
-        for (int i=0;i<regions.size();i++) {
-            PageRegion reg = regions.get(i);
-            Imgproc.putText(mat,String.valueOf(i), new Point(reg.getRect().x,reg.getRect().y), 0, 1, new Scalar(255,0,0));
-        }
+        //for (int i=0;i<regions.size();i++) {
+        //    PageRegion reg = regions.get(i);
+        //    Imgproc.putText(mat,String.valueOf(i), new Point(reg.getRect().x,reg.getRect().y), 0, 1, new Scalar(255,0,0));
+        //}
 
         // Free memory
         rectComponents.release();
@@ -159,9 +159,9 @@ public class DjvuBookPage implements BookPage {
                 Rect rectangle = new Rect(rectangleInfo[0], rectangleInfo[1], rectangleInfo[2], rectangleInfo[3]);
                 PageRegion reg = new PageRegion(rectangle);
                 regions.add(reg);
-                Imgproc.rectangle(mat, new Point(rectangleInfo[0],rectangleInfo[1]),
-                        new Point(rectangleInfo[0]+rectangleInfo[2],rectangleInfo[1]+rectangleInfo[3]),
-                        new Scalar(255,0,0));
+               // Imgproc.rectangle(mat, new Point(rectangleInfo[0],rectangleInfo[1]),
+               //         new Point(rectangleInfo[0]+rectangleInfo[2],rectangleInfo[1]+rectangleInfo[3]),
+               //         new Scalar(255,0,0));
             }
 
             regions = PageUtil.sortRegions(regions);
@@ -169,7 +169,7 @@ public class DjvuBookPage implements BookPage {
 
             for (int i=0;i<regions.size();i++) {
                 PageRegion reg = regions.get(i);
-                Imgproc.putText(mat,String.valueOf(i), new Point(reg.getRect().x,reg.getRect().y), 0, 1, new Scalar(255,0,0));
+                //Imgproc.putText(mat,String.valueOf(i), new Point(reg.getRect().x,reg.getRect().y), 0, 1, new Scalar(255,0,0));
                 Rect rect = reg.getRect();
                 list.add(new android.graphics.Rect(rect.x, rect.y, rect.x+rect.width, rect.y+rect.height));
             }
@@ -179,6 +179,8 @@ public class DjvuBookPage implements BookPage {
             centComponents.release();
 
             return list;
+
+
 
     }
 

@@ -1,6 +1,7 @@
 package com.veve.flowreader.model;
 
 import com.veve.flowreader.model.impl.djvu.DjvuBook;
+import com.veve.flowreader.model.impl.pdf.PdfBook;
 
 import java.io.File;
 
@@ -24,8 +25,11 @@ public class BookFactory {
     public Book createBook(File file) {
         if (file.getName().endsWith("djvu")) {
             return new DjvuBook(file.getAbsolutePath());
-        } else {
-            return null;
+        } else if (file.getName().endsWith("pdf")){
+            return new PdfBook(file.getAbsolutePath());
+        }
+        else {
+        return null;
         }
     }
 

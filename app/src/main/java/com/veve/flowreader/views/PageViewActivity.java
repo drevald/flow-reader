@@ -6,41 +6,40 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
+
 import java.io.File;
 
 import com.veve.flowreader.R;
 import com.veve.flowreader.model.Book;
+import com.veve.flowreader.model.BookFactory;
 import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.DevicePageContext;
+import com.veve.flowreader.model.impl.DevicePageContextImpl;
 import com.veve.flowreader.model.impl.djvu.DjvuBook;
 import com.veve.flowreader.model.impl.djvu.DjvuDevicePageContext;
 
 import org.opencv.android.OpenCVLoader;
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.imgproc.Imgproc;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class PageViewActivity extends AppCompatActivity {
 
     private static final String EXTRA_FILENAME_KEY = "filename";
-    private static final int INDEX_INCREMENT = 1;
-    private static final int INITIAL_PAGE_NUMBER = 1;
+    private static final int INITIAL_PAGE_NUMBER = 0;
     public static final String PAGENO_EXTRA = "pageno";
     public static final String BITMAP_KEY = "bitmap";
     public static final String BITMAP_EXTRA = BITMAP_KEY;
-    private Book djvuBook;
+    private Book book;
     private DevicePageContext context;
     private SparseArray<Bitmap> cache;
     private ImageView iv;
@@ -64,7 +63,7 @@ public class PageViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         OpenCVLoader.initDebug();//
-
+        int dpi = getResources().getDisplayMetrics().densityDpi;
         cache = new SparseArray<>();
         setContentView(R.layout.activity_page_view);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -83,7 +82,6 @@ public class PageViewActivity extends AppCompatActivity {
             iv.setVisibility(View.VISIBLE);
         }
 
-
         spinner.setVisibility(View.VISIBLE);
 
         String newString = getStringExtra(savedInstanceState);
@@ -91,8 +89,11 @@ public class PageViewActivity extends AppCompatActivity {
 
         final String fileName = newString;
         setTitle(new File(fileName).getName());
-        djvuBook = new DjvuBook(fileName);
-        context = new DjvuDevicePageContext();
+        book = BookFactory.getInstance().createBook(new File(fileName));
+        context = new DevicePageContextImpl();
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        //context.setDisplayDpi(metrics.densityDpi);
+        context.setDisplayDpi(144);
 
         iv.setVisibility(View.INVISIBLE);
 
@@ -104,32 +105,43 @@ public class PageViewActivity extends AppCompatActivity {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN ) {
                     actionDownBegin = motionEvent.getX();
                 } else if ( motionEvent.getAction() == MotionEvent.ACTION_UP ) {
+                    int pageNo = mPageNo.get();
                     if ( motionEvent.getX() > actionDownBegin + width / 3  ) {
-                        nextPage();
+                        if(pageNo+1<book.getPagesCount()){
+                            nextPage();
+                        }
+
                     } else if (motionEvent.getX() < actionDownBegin - width / 3 ) {
-                        previousPage();
+                        if(pageNo>0){
+                            previousPage();
+                        }
                     }
                 }
 
                 return false;
             }
         });
+        int pageNo = mPageNo.get();
+        int pageCount = book.getPagesCount();
+        if(pageNo < pageCount){
+            LoadPageTask loadPageTask1 = new LoadPageTask();
+            loadPageTask1.execute(pageNo);
+        }
 
-        LoadPageTask loadPageTask1 = new LoadPageTask();
-        loadPageTask1.execute(mPageNo.get());
-
-        LoadPageTask loadPageTask = new LoadPageTask();
-        loadPageTask.execute(mPageNo.get() + 1);
+        if(pageNo+1 < pageCount){
+            LoadPageTask loadPageTask1 = new LoadPageTask();
+            loadPageTask1.execute(pageNo+1);
+        }
 
     }
 
     private void previousPage() {
         int oldValue = mPageNo.intValue();
-        if (oldValue > 1){
+        if (oldValue > 0){
 
             LoadPageTask loadPageTask = new LoadPageTask();
             loadPageTask.execute(oldValue);
-            if (oldValue>1) {
+            if (oldValue>0) {
                  LoadPageTask loadPageTask1 = new LoadPageTask();
                  loadPageTask1.execute(oldValue-1);
                  spinner.setVisibility(View.VISIBLE);
@@ -141,10 +153,18 @@ public class PageViewActivity extends AppCompatActivity {
 
     private void nextPage() {
         mPageNo.incrementAndGet();
-        LoadPageTask loadPageTask = new LoadPageTask();
-        loadPageTask.execute(mPageNo.get());
-        LoadPageTask loadPageTask1 = new LoadPageTask();
-        loadPageTask1.execute(mPageNo.get()+1);
+        int pageNo = mPageNo.get();
+        int pageCount = book.getPagesCount();
+        if(pageNo<pageCount){
+            LoadPageTask loadPageTask = new LoadPageTask();
+            loadPageTask.execute(pageNo);
+        }
+
+        if(pageNo+1<pageCount){
+            LoadPageTask loadPageTask1 = new LoadPageTask();
+            loadPageTask1.execute(pageNo+1);
+        }
+
         spinner.setVisibility(View.VISIBLE);
         iv.setVisibility(View.INVISIBLE);
 
@@ -188,10 +208,8 @@ public class PageViewActivity extends AppCompatActivity {
             requestedPageNo = pageNo;
 
             if (cache.get(pageNo) == null) {
-
-                BookPage page = djvuBook.getPage(pageNo);
-
                 try {
+                    BookPage page = book.getPage(pageNo);
                     bitmap = page.getAsBitmap(context);
                     cache.put(pageNo, bitmap);
                     cache.remove(pageNo-2);
@@ -212,10 +230,6 @@ public class PageViewActivity extends AppCompatActivity {
 
             if (mPageNo.intValue() == requestedPageNo) {
                 bmp = bitmap;
-
-
-
-
                 iv.setImageBitmap(bitmap);
                 spinner.setVisibility(View.INVISIBLE);
                 iv.setVisibility(View.VISIBLE);

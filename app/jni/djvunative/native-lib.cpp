@@ -4,6 +4,8 @@
 #include <errno.h>
 
 #include <libdjvu/ddjvuapi.h>
+#include <mupdf/fitz.h>
+#include <mupdf/pdf.h>
 
 #include "ImageLoader.h"
 
@@ -14,6 +16,15 @@ struct Document {
     ddjvu_context_t *ctx;
     ddjvu_document_t *doc;
 };
+
+JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_getNumberOfPages
+        (JNIEnv *env, jobject obj, jlong bookId) {
+
+    Document *document = (Document*)bookId;
+    ddjvu_document_t *doc = document->doc;
+    return ddjvu_document_get_pagenum(doc);
+}
+
 
 
 JNIEXPORT jlong JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_openBook
@@ -32,7 +43,7 @@ JNIEXPORT jlong JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_openBo
 JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_openStringBook
         (JNIEnv *env, jobject obj,  jstring str) {
 
-    return env->NewStringUTF("1234");
+    return env->NewStringUTF(FZ_VERSION);
 }
 
 JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeWidth
