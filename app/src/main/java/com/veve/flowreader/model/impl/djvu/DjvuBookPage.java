@@ -52,6 +52,10 @@ public class DjvuBookPage implements BookPage {
 
     @Override
     public Bitmap getAsBitmap(DevicePageContext context) {
+        return getAsBitmap();
+    }
+
+    public Bitmap getAsBitmap() {
 
         byte[] imageBytes= getBytes(bookId, pageNumber);
         int width = getWidth();
@@ -113,9 +117,11 @@ public class DjvuBookPage implements BookPage {
         return bitmap;
     }
 
-    public void process(Bitmap bitmap, List<android.graphics.Rect> glyphs) {
+    public List<android.graphics.Rect> getGlyphs() {
 
-            byte[] imageBytes= getBytes(bookId, pageNumber);
+            List<android.graphics.Rect> list = new ArrayList<android.graphics.Rect>();
+
+        byte[] imageBytes= getBytes(bookId, pageNumber);
             int width = getWidth();
             int height = getHeight();
             Bitmap.Config bitmapConfig = Bitmap.Config.ARGB_8888;
@@ -165,15 +171,14 @@ public class DjvuBookPage implements BookPage {
                 PageRegion reg = regions.get(i);
                 Imgproc.putText(mat,String.valueOf(i), new Point(reg.getRect().x,reg.getRect().y), 0, 1, new Scalar(255,0,0));
                 Rect rect = reg.getRect();
-                glyphs.add(new android.graphics.Rect(rect.x, rect.y, rect.x+rect.width, rect.y+rect.height));
+                list.add(new android.graphics.Rect(rect.x, rect.y, rect.x+rect.width, rect.y+rect.height));
             }
 
             // Free memory
             rectComponents.release();
             centComponents.release();
 
-            bitmap = Bitmap.createBitmap(width, height, bitmapConfig);
-            Utils.matToBitmap(mat, bitmap);
+            return list;
 
     }
 

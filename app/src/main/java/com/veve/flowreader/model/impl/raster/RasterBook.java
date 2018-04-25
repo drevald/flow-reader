@@ -48,17 +48,17 @@ public class RasterBook implements Book {
 
     @Override
     public int getPagesCount() {
-        return 0;
+        return djvuBook.getPagesCount();
     }
 
     @Override
     public String getName() {
-        return null;
+        return djvuBook.getName();
     }
 
     @Override
     public long getId() {
-        return 0;
+        return djvuBook.getId();
     }
 
     @Override
