@@ -4,11 +4,7 @@
 #include <errno.h>
 
 #include <libdjvu/ddjvuapi.h>
-#include <mupdf/fitz.h>
-#include <mupdf/pdf.h>
-
 #include "ImageLoader.h"
-
 
 #define PIXELS 3
 
@@ -43,7 +39,7 @@ JNIEXPORT jlong JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_openBo
 JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_openStringBook
         (JNIEnv *env, jobject obj,  jstring str) {
 
-    return env->NewStringUTF(FZ_VERSION);
+    return env->NewStringUTF("test");
 }
 
 JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeWidth

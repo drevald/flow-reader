@@ -8,11 +8,10 @@ LOCAL_CFLAGS := -DHAVE_CONFIG_H
 
 LOCAL_C_INCLUDES := \
 		$(LOCAL_PATH)/../djvu/djvulibre \
-		$(LOCAL_PATH)/../libjpeg-version-9-android/libjpeg9 \
-		$(LOCAL_PATH)/../libmupdf/include
+		$(LOCAL_PATH)/../libjpeg-version-9-android/libjpeg9
 
 
-LOCAL_STATIC_LIBRARIES := djvu libjpeg9 mupdf_core
+LOCAL_STATIC_LIBRARIES := djvu libjpeg9
 
 LOCAL_SRC_FILES := \
 	native-lib.cpp
