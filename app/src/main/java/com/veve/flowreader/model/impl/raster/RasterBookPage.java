@@ -57,15 +57,16 @@ class RasterBookPage implements BookPage {
     public Bitmap getAsBitmap(DevicePageContext context) {
 
         PageGlyph pageGlyph = null;
-//        Log.i(getClass().getName(), String.format("position=%d", position));
-//        while((pageGlyph = getNextGlyph()) != null) {
-//            pageGlyph.draw(context, false);
-//        }
-//        Point remotestPoint = context.getRemotestPoint();
-//        Log.i(getClass().getName(), String.format("w=%d h=%d, position=%d", context.getWidth(), remotestPoint.y, position));
-//        Bitmap bitmap = Bitmap.createBitmap(context.getWidth(), remotestPoint.y + (int)context.getLeading() , ARGB_8888);
 
-        Bitmap bitmap = Bitmap.createBitmap(600, 1024, ARGB_8888);
+        Log.i(getClass().getName(), String.format("position=%d", position));
+        while((pageGlyph = getNextGlyph()) != null) {
+            pageGlyph.draw(context, false);
+        }
+        Point remotestPoint = context.getRemotestPoint();
+        Log.i(getClass().getName(), String.format("w=%d h=%d, position=%d", context.getWidth(), remotestPoint.y, position));
+        Bitmap bitmap = Bitmap.createBitmap(context.getWidth(), remotestPoint.y + (int)context.getLeading() , ARGB_8888);
+
+//        Bitmap bitmap = Bitmap.createBitmap(600, 1024, ARGB_8888);
 
         Canvas canvas = new Canvas(bitmap);
         reset();
