@@ -3,9 +3,7 @@ package com.veve.flowreader.model.impl.raster;
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.model.Book;
 import com.veve.flowreader.model.BookPage;
-import com.veve.flowreader.model.PageSource;
 import com.veve.flowreader.model.impl.djvu.DjvuBook;
-import com.veve.flowreader.model.impl.pdf.PdfBook;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +14,7 @@ import java.util.List;
 
 public class RasterBook implements Book {
 
-    private Book sourceBook;
+    private DjvuBook djvuBook;
 
     private String path;
 
@@ -25,12 +23,7 @@ public class RasterBook implements Book {
     public RasterBook(BookRecord bookRecord) {
         pages = new ArrayList<BookPage>();
         path = bookRecord.getUrl();
-        if (path.toLowerCase().endsWith("djvu")) {
-            sourceBook = new DjvuBook(bookRecord.getUrl());
-        } else {
-            sourceBook = new PdfBook(bookRecord.getUrl());
-        }
-
+        djvuBook = new DjvuBook(bookRecord.getUrl());
     }
 
     @Override
@@ -45,22 +38,27 @@ public class RasterBook implements Book {
 
     @Override
     public BookPage getPage(int pageNumber) {
-        return new RasterBookPage((PageSource)sourceBook.getPage(pageNumber));
+//        BookPage page = null;
+//        if (pages.isEmpty() || pages.get(pageNumber) == null) {
+//            page = new RasterBookPage(djvuBook.getPage(pageNumber));
+//            pages.add(pageNumber, page);
+//        }
+        return new RasterBookPage(djvuBook.getPage(pageNumber));
     }
 
     @Override
     public int getPagesCount() {
-        return sourceBook.getPagesCount();
+        return djvuBook.getPagesCount();
     }
 
     @Override
     public String getName() {
-        return sourceBook.getName();
+        return djvuBook.getName();
     }
 
     @Override
     public long getId() {
-        return sourceBook.getId();
+        return djvuBook.getId();
     }
 
     @Override

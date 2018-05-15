@@ -142,6 +142,22 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+
+//        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//
+//            @Override
+//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+//                super.onScrollStateChanged(recyclerView, newState);
+//                Log.i(getClass().getName(), String.format("%S %d", recyclerView.toString(), newState));
+//            }
+//
+//            @Override
+//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                super.onScrolled(recyclerView, dx, dy);
+//                Log.i(getClass().getName(), String.format("%S %d %d", recyclerView.toString(), dx, dy));
+//            }
+//        });
+
     }
 
     @Override
@@ -262,7 +278,7 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public int getItemCount() {
-            return book.getPagesCount();
+            return 600;
         }
 
     }

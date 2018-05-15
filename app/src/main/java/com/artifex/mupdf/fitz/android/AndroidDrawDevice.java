@@ -35,9 +35,7 @@ public final class AndroidDrawDevice extends NativeDevice
 		RectI ibox = new RectI((int)fbox.x0, (int)fbox.y0, (int)fbox.x1, (int)fbox.y1);
 		int w = ibox.x1 - ibox.x0;
 		int h = ibox.y1 - ibox.y0;
-		int h1 = h > 0 ? h : 1;
-		int w1 = w > 0 ? w : 1;
-		Bitmap bmp = Bitmap.createBitmap(w1, h1, Bitmap.Config.ARGB_8888);
+		Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
 		AndroidDrawDevice dev = new AndroidDrawDevice(bmp, ibox.x0, ibox.y0);
 		page.run(dev, ctm, null);
 		dev.close();

@@ -1,27 +1,17 @@
 package com.veve.flowreader.model.impl.pdf;
 
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.Rect;
 
 import com.artifex.mupdf.fitz.Page;
 import com.artifex.mupdf.fitz.android.AndroidDrawDevice;
 import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyph;
-import com.veve.flowreader.model.PageSource;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class PdfBookPage implements BookPage, PageSource {
+public class PdfBookPage implements BookPage {
 
     private Page page;
-
     private int dpi;
-
     public PdfBookPage(Page page){
         this.page = page;
     }
@@ -42,20 +32,6 @@ public class PdfBookPage implements BookPage, PageSource {
     }
 
     @Override
-    public Bitmap getAsBitmap() {
-        return AndroidDrawDevice.drawPage(page, dpi);
-    }
-
-    @Override
-    public List<Rect> getGlyphs() {
-        List<Rect> list = new ArrayList<Rect>();
-        Bitmap bitmap = getAsBitmap();
-        Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-        list.add(rect);
-        return list;
-    }
-
-    @Override
     public int getWidth() {
         return (int)(page.getBounds().x1 - page.getBounds().x0);
     }
@@ -64,7 +40,4 @@ public class PdfBookPage implements BookPage, PageSource {
     public int getHeight() {
         return (int)(page.getBounds().y1 - page.getBounds().y0);
     }
-
-
-
 }

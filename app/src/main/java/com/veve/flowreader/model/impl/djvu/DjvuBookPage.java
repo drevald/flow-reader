@@ -6,7 +6,6 @@ import android.graphics.Color;
 import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyph;
-import com.veve.flowreader.model.PageSource;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
@@ -31,7 +30,7 @@ import java.util.concurrent.Executors;
  * Created by sergey on 10.03.18.
  */
 
-public class DjvuBookPage implements BookPage, PageSource {
+public class DjvuBookPage implements BookPage {
 
     private int pageNumber;
     private long bookId;
