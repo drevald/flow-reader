@@ -10,6 +10,7 @@ import android.util.Log;
 import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyph;
+import com.veve.flowreader.model.PageSource;
 import com.veve.flowreader.model.impl.djvu.DjvuBookPage;
 import com.veve.flowreader.model.impl.djvu.DjvuBookPageGlyph;
 
@@ -26,16 +27,16 @@ class RasterBookPage implements BookPage {
 
     List<Rect> glyphs;
 
-    DjvuBookPage djvuBookPage;
+    PageSource sourcePage;
 
     Bitmap bitmap;
 
     int position = 0;
 
-    public RasterBookPage(BookPage page) {
-        djvuBookPage = (DjvuBookPage)page;
-        bitmap = djvuBookPage.getAsBitmap();
-        glyphs = djvuBookPage.getGlyphs();
+    public RasterBookPage(PageSource page) {
+        sourcePage = page;
+        bitmap = sourcePage.getAsBitmap();
+        glyphs = sourcePage.getGlyphs();
     }
 
     @Override
