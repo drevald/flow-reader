@@ -29,7 +29,6 @@ import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
 import com.veve.flowreader.model.Book;
 import com.veve.flowreader.model.BooksCollection;
-import com.veve.flowreader.model.impl.mocksimple.MockBook;
 
 import java.util.ArrayList;
 import java.util.List;

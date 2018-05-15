@@ -66,8 +66,6 @@ class RasterBookPage implements BookPage {
         Log.i(getClass().getName(), String.format("w=%d h=%d, position=%d", context.getWidth(), remotestPoint.y, position));
         Bitmap bitmap = Bitmap.createBitmap(context.getWidth(), remotestPoint.y + (int)context.getLeading() , ARGB_8888);
 
-//        Bitmap bitmap = Bitmap.createBitmap(600, 1024, ARGB_8888);
-
         Canvas canvas = new Canvas(bitmap);
         reset();
         context.resetPosition();
@@ -77,16 +75,10 @@ class RasterBookPage implements BookPage {
             pageGlyph.draw(context, true);
         }
 
-//        Paint paint =  new Paint();
-//        paint.setStyle(Paint.Style.STROKE);
-//        canvas.drawRect(0, 0, context.getWidth(), remotestPoint.y + (int)context.getLeading(), paint);
         reset();
         context.resetPosition();
         context.setCanvas(canvas);
         return bitmap;
-
-//        Bitmap bitmap = Bitmap.createBitmap(600, 1024, ARGB_8888);
-//        return bitmap;
 
     }
 
