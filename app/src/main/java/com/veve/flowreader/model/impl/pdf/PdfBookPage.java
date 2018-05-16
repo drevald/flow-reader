@@ -12,6 +12,7 @@ import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyph;
 import com.veve.flowreader.model.PageSource;
+import com.veve.flowreader.model.impl.DevicePageContextImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,8 +44,9 @@ public class PdfBookPage implements BookPage, PageSource {
 
     @Override
     public Bitmap getAsBitmap() {
-        Bitmap bitmap = AndroidDrawDevice.drawPage(page, dpi);
-        return bitmap;
+        DevicePageContext context = new DevicePageContextImpl();
+        context.setDisplayDpi(72);
+        return getAsBitmap(context);
     }
 
     @Override
