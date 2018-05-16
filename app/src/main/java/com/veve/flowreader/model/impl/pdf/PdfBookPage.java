@@ -43,7 +43,8 @@ public class PdfBookPage implements BookPage, PageSource {
 
     @Override
     public Bitmap getAsBitmap() {
-        return AndroidDrawDevice.drawPage(page, dpi);
+        Bitmap bitmap = AndroidDrawDevice.drawPage(page, dpi);
+        return bitmap;
     }
 
     @Override

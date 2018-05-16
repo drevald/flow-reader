@@ -278,7 +278,7 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public int getItemCount() {
-            return 600;
+            return book.getPagesCount();
         }
 
     }
