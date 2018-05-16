@@ -35,7 +35,6 @@ public class BooksCollection {
             List<BookRecord> bookRecords = bookStorage.getBooksList();
             for (BookRecord bookRecord : bookRecords) {
                 Book storedBook = new RasterBook(bookRecord);
-                //Book storedBook = new DjvuBook(bookRecord.getUrl());
                 booksList.add(storedBook);
             }
         }

@@ -30,6 +30,7 @@ import com.veve.flowreader.R;
 import com.veve.flowreader.model.Book;
 import com.veve.flowreader.model.BooksCollection;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
