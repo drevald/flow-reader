@@ -22,11 +22,18 @@ public interface BookPage {
     public void reset();
 
     /**
-     * Returns raster representation of page for the given context
+     * Returns raster representation of reflowed page for the given context
      * @param context
      * @return
      */
     public Bitmap getAsBitmap(DevicePageContext context);
+
+    /**
+     * Returns raster representation of original page for the given context
+     * @param context
+     * @return
+     */
+    public Bitmap getAsOriginalBitmap(DevicePageContext context);
 
     public int getWidth();
 

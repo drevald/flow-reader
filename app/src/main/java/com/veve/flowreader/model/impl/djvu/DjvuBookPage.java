@@ -181,11 +181,12 @@ public class DjvuBookPage implements BookPage, PageSource {
 
             return list;
 
-
-
     }
 
-
+    @Override
+    public Bitmap getAsOriginalBitmap(DevicePageContext context) {
+        return getAsBitmap();
+    }
 
     @Override
     public int getWidth() {

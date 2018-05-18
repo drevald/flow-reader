@@ -140,6 +140,12 @@ public class PdfBookPage implements BookPage, PageSource {
 
     }
 
+
+    @Override
+    public Bitmap getAsOriginalBitmap(DevicePageContext context) {
+        return getAsBitmap();
+    }
+
     @Override
     public int getWidth() {
         return (int)(page.getBounds().x1 - page.getBounds().x0);

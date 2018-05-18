@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +23,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
 import com.veve.flowreader.model.Book;
 import com.veve.flowreader.model.BookPage;
@@ -33,6 +35,9 @@ import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
+
+import static com.veve.flowreader.Constants.VIEW_MODE_ORIGINAL;
+import static com.veve.flowreader.Constants.VIEW_MODE_PHONE;
 
 public class PageActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -65,8 +70,8 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
+        viewMode = Constants.VIEW_MODE_PHONE;
         setContentView(R.layout.activity_page);
         toolbar = findViewById(R.id.toolbar);
         bar = findViewById(R.id.bar);
@@ -81,24 +86,6 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
                 Intent i = new Intent(PageActivity.this, MainActivity.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(i);
-            }
-        });
-
-        FloatingActionButton show = findViewById(R.id.show);
-
-        show.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (bar.getVisibility() == View.VISIBLE) {
-                    bar.setVisibility(View.GONE);
-                    bar.setMinimumHeight(0);
-                    setSupportActionBar(null);
-                } else {
-                    bar.setVisibility(View.VISIBLE);
-                }
-                topLayout.requestLayout();
-                topLayout.forceLayout();
-                topLayout.invalidate();
             }
         });
 
@@ -118,6 +105,7 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
                     Book book = BooksCollection.getInstance(getApplicationContext()).getBooks().get(position);
                     //getIntent().getData();
                     PageListAdapter pageAdapter = new PageListAdapter(pageContext, book);
+
                     recyclerView.setAdapter(pageAdapter);
 
                     PageMenuListener pageMenuListener = new PageMenuListener();
@@ -145,20 +133,28 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
         });
 
 
-//        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//
-//            @Override
-//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                super.onScrollStateChanged(recyclerView, newState);
-//                Log.i(getClass().getName(), String.format("%S %d", recyclerView.toString(), newState));
-//            }
-//
-//            @Override
-//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                super.onScrolled(recyclerView, dx, dy);
-//                Log.i(getClass().getName(), String.format("%S %d %d", recyclerView.toString(), dx, dy));
-//            }
-//        });
+    FloatingActionButton show = findViewById(R.id.show);
+
+    show.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if (viewMode == VIEW_MODE_ORIGINAL) {
+                viewMode = VIEW_MODE_PHONE;
+                show.setImageResource(R.drawable.ic_phone);
+                Snackbar.make(view, "Using re-flowed page layout now", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            } else if (viewMode == VIEW_MODE_PHONE) {
+                viewMode = VIEW_MODE_ORIGINAL;
+                show.setImageResource(R.drawable.ic_book);
+                Snackbar.make(view, "Using original page layout now", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+            recyclerView.getRecycledViewPool().clear();
+            recyclerView.setAdapter(null);
+            recyclerView.invalidate();
+
+        }
+    });
 
     }
 
@@ -274,7 +270,11 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
             PageActivity.this.setPageNumber(position, book.getPagesCount());
             Log.d(getClass().getName(), String.format("onBindViewHolder #%d", position));
             BookPage bookPage = book.getPage(position);
-            Bitmap bitmap = bookPage.getAsBitmap(context);
+            Bitmap bitmap;
+            if (viewMode == Constants.VIEW_MODE_PHONE)
+                bitmap = bookPage.getAsBitmap(context);
+            else
+                bitmap = bookPage.getAsOriginalBitmap(context);
             ((ImageView) holder.itemView).setImageBitmap(bitmap);
         }
 

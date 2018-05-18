@@ -84,6 +84,11 @@ class RasterBookPage implements BookPage {
     }
 
     @Override
+    public Bitmap getAsOriginalBitmap(DevicePageContext context) {
+        return bitmap;
+    }
+
+    @Override
     public int getWidth() {
         return 0;
     }

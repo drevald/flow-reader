@@ -25,3 +25,6 @@ app/.externalNativeBuild/
 .idea/scopes/scope_settings.xml
 .idea/vcs.xml
 *.iml
+
+.idea/dbnavigator.xml
+#app/src/main/jni/
