@@ -44,6 +44,8 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
 
     CoordinatorLayout topLayout;
 
+    int viewMode;
+
     static {
         if (!OpenCVLoader.initDebug()) {
             Log.i("", "Open CV init error");
