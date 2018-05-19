@@ -94,6 +94,7 @@ public class PageUtil {
                     list.add(pr);
                 }
             }
+            list.add(sortedRegions.get(sortedRegions.size()-1));
 
         } else {
             list = sortedRegions;
