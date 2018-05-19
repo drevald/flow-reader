@@ -39,8 +39,8 @@ public class PageUtil {
 
         Collections.sort(
                 sortedRegions, (PageRegion r1, PageRegion r2) -> {
-                    return Double.compare(r1.getRect().y + r1.getRect().height/2.0,
-                            r2.getRect().y + r2.getRect().height/2.0);
+                    return Double.compare(r1.getRect().y,
+                            r2.getRect().y);
                 });
 
 
@@ -65,6 +65,7 @@ public class PageUtil {
         });
 
         return insertSpaces(sortedRegions);
+        //return sortedRegions;
 
 
     }
