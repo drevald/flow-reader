@@ -1,8 +1,17 @@
 package com.veve.flowreader.model.impl.djvu;
 
+import android.support.annotation.NonNull;
+import android.util.Log;
+
+import com.artifex.mupdf.fitz.Page;
+
+import org.opencv.core.Rect;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PageUtil {
 
@@ -55,7 +64,39 @@ public class PageUtil {
             return Integer.compare(r1.getY(), r2.getY());
         });
 
-        return sortedRegions;
+        return insertSpaces(sortedRegions);
 
+
+    }
+
+    @NonNull
+    private static List<PageRegion> insertSpaces(List<PageRegion> sortedRegions) {
+        List<PageRegion> list = new ArrayList<>();
+        if (sortedRegions.size() > 1) {
+            for (int i=0;i<sortedRegions.size()-1;i++){
+
+                PageRegion pageRegion = sortedRegions.get(i);
+
+                list.add(pageRegion);
+                PageRegion l = sortedRegions.get(i);
+                PageRegion r = sortedRegions.get(i+1);
+                int diffx = r.getRect().x - (l.getRect().x + l.getRect().width);
+                int diffy = r.getRect().y + r.getRect().height  - l.getRect().y;
+
+                if (diffx > 0 && diffy > 0) {
+                    Rect rg = new Rect();
+                    rg.x = l.getRect().x + l.getRect().width;
+                    rg.y = l.getRect().y;
+                    rg.width = diffx;
+                    rg.height = r.getRect().y + r.getRect().height - l.getRect().y;
+                    PageRegion pr = new PageRegion(rg);
+                    list.add(pr);
+                }
+            }
+
+        } else {
+            list = sortedRegions;
+        }
+        return list;
     }
 }
