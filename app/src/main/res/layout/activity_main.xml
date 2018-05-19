@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:src="@drawable/ic_books_list"
+            app:srcCompat="@drawable/ic_books_list"
             style="?android:attr/borderlessButtonStyle"/>
 
         <android.widget.ImageButton
@@ -32,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:src="@drawable/ic_books_grid"
+            app:srcCompat="@drawable/ic_books_grid"
             style="?android:attr/borderlessButtonStyle"/>
 
         </android.support.v7.widget.Toolbar>
