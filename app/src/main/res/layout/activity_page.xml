@@ -101,7 +101,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|start"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        app:srcCompat="@drawable/ic_phone" />
 
     <TextView
         android:id="@+id/pager"
@@ -113,6 +113,5 @@
         android:gravity="center"
         android:background="#fff">
     </TextView>
-
 
 </android.support.design.widget.CoordinatorLayout>
