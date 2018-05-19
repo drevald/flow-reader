@@ -70,6 +70,11 @@ public class MockPageImpl implements BookPage {
     }
 
     @Override
+    public Bitmap getAsOriginalBitmap(DevicePageContext context) {
+        return null;
+    }
+
+    @Override
     public int getWidth() {
         return 0;
     }
