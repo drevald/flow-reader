@@ -6,8 +6,6 @@ import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.dao.BookStorage;
 import com.veve.flowreader.dao.sqlite.BookStorageImpl;
 import com.veve.flowreader.model.impl.djvu.DjvuBook;
-import com.veve.flowreader.model.impl.mockraster.MockRasterBook;
-import com.veve.flowreader.model.impl.mocksimple.MockBook;
 import com.veve.flowreader.model.impl.raster.RasterBook;
 
 import java.io.File;
@@ -37,7 +35,6 @@ public class BooksCollection {
             List<BookRecord> bookRecords = bookStorage.getBooksList();
             for (BookRecord bookRecord : bookRecords) {
                 Book storedBook = new RasterBook(bookRecord);
-                //Book storedBook = new DjvuBook(bookRecord.getUrl());
                 booksList.add(storedBook);
             }
         }
