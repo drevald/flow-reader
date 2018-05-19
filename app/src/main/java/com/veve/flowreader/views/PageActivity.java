@@ -100,12 +100,9 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
                 if (recyclerView.getAdapter() == null) {
 
                     DevicePageContext pageContext = new DevicePageContextImpl(recyclerView.getWidth());
-                    //Book book = BooksCollection.getInstance(getApplicationContext()).getBooks().get(0);
                     int position = getIntent().getIntExtra("position", 0);
                     Book book = BooksCollection.getInstance(getApplicationContext()).getBooks().get(position);
-                    //getIntent().getData();
                     PageListAdapter pageAdapter = new PageListAdapter(pageContext, book);
-
                     recyclerView.setAdapter(pageAdapter);
 
                     PageMenuListener pageMenuListener = new PageMenuListener();
@@ -131,7 +128,6 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
         });
-
 
     FloatingActionButton show = findViewById(R.id.show);
 
