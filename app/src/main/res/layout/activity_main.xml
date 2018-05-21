@@ -19,28 +19,27 @@
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
-        <android.widget.ImageButton
-            android:id="@+id/books_list"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            app:srcCompat="@drawable/ic_books_list"
-            style="?android:attr/borderlessButtonStyle"/>
+            <android.widget.ImageButton
+                android:id="@+id/books_list"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                app:srcCompat="@drawable/ic_books_list" />
 
-        <android.widget.ImageButton
-            android:id="@+id/books_grid"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            app:srcCompat="@drawable/ic_books_grid"
-            style="?android:attr/borderlessButtonStyle"/>
+            <android.widget.ImageButton
+                android:id="@+id/books_grid"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                app:srcCompat="@drawable/ic_books_grid" />
 
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.constraint.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
@@ -49,15 +48,15 @@
         tools:context="com.veve.flowreader.views.MainActivity"
         tools:showIn="@layout/activity_main">
 
-        <android.widget.GridView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
+        <android.widget.GridView
             android:id="@+id/grid"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:layout_width="368dp"
+            android:layout_height="495dp"
             android:background="#ffffff"
-            tools:context="org.studies.android.activities.GridLayoutActivity"/>
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            tools:context="org.studies.android.activities.GridLayoutActivity"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="8dp" />
 
     </android.support.constraint.ConstraintLayout>
 
@@ -67,6 +66,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@drawable/ic_book" />
+        app:srcCompat="@drawable/ic_book_add" />
 
 </android.support.design.widget.CoordinatorLayout>

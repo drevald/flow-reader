@@ -1,6 +1,5 @@
 package com.veve.flowreader.model.impl.djvu;
 
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.artifex.mupdf.fitz.Page;
@@ -69,7 +68,6 @@ public class PageUtil {
 
     }
 
-    @NonNull
     private static List<PageRegion> insertSpaces(List<PageRegion> sortedRegions) {
         List<PageRegion> list = new ArrayList<>();
         if (sortedRegions.size() > 1) {
