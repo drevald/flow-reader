@@ -27,10 +27,11 @@ public class PageUtilTest {
         }};
 
         regions = PageUtil.sortRegions(regions);
+        
         Assert.assertEquals(region1, regions.get(0));
-        Assert.assertEquals(region2, regions.get(1));
-        Assert.assertEquals(region3, regions.get(2));
-        Assert.assertEquals(region4, regions.get(3));
+        Assert.assertEquals(region2, regions.get(2));
+        Assert.assertEquals(region3, regions.get(3));
+        Assert.assertEquals(region4, regions.get(5));
 
     }
 }

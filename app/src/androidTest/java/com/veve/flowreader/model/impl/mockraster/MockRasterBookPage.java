@@ -76,6 +76,11 @@ class MockRasterBookPage implements BookPage {
 
     }
 
+    @Override
+    public Bitmap getAsOriginalBitmap(DevicePageContext context) {
+        return null;
+    }
+
 //    Bitmap bitmap = Bitmap.createBitmap(400, 400, ARGB_8888);
 //
 ////        Canvas canvas = new Canvas(bitmap);

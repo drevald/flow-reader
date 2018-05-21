@@ -64,54 +64,6 @@ public class DjvuBookPage implements BookPage, PageSource {
         Bitmap.Config bitmapConfig = Bitmap.Config.ARGB_8888;
         Mat mat = new Mat(height, width ,CvType.CV_8UC3);
         mat.put(0,0,imageBytes, 0, imageBytes.length);
-        int[] rectangleInfo = new int[5];
-
-        Mat dst = new Mat();
-        Imgproc.cvtColor(mat, dst, Imgproc.COLOR_BGR2GRAY);
-
-        Imgproc.adaptiveThreshold(dst, dst, 255, Imgproc.ADAPTIVE_THRESH_MEAN_C,
-                Imgproc.THRESH_BINARY, 15, 40);
-
-        Imgproc.blur(dst, dst, new Size(5,3));
-        Core.bitwise_not(dst,dst);
-
-        Core.compare(dst,new Scalar(3), dst, Core.CMP_GT);
-        Mat labeled = new Mat(dst.size(), dst.type());
-
-        // Extract components
-        Mat rectComponents = Mat.zeros(new Size(0, 0), 0);
-        Mat centComponents = Mat.zeros(new Size(0, 0), 0);
-        Imgproc.connectedComponentsWithStats(dst, labeled, rectComponents, centComponents);
-
-        // Collect regions info
-
-        List<PageRegion> regions = new ArrayList<>();
-
-        Map<Integer,List<PageRegion>> map = new HashMap<>();
-
-        for(int i = 1; i < rectComponents.rows(); i++) {
-
-            // Extract bounding box
-            rectComponents.row(i).get(0, 0, rectangleInfo);
-            Rect rectangle = new Rect(rectangleInfo[0], rectangleInfo[1], rectangleInfo[2], rectangleInfo[3]);
-            PageRegion reg = new PageRegion(rectangle);
-            regions.add(reg);
-            //Imgproc.rectangle(mat, new Point(rectangleInfo[0],rectangleInfo[1]),
-            //        new Point(rectangleInfo[0]+rectangleInfo[2],rectangleInfo[1]+rectangleInfo[3]),
-            //        new Scalar(255,0,0));
-        }
-
-        regions = PageUtil.sortRegions(regions);
-
-
-        //for (int i=0;i<regions.size();i++) {
-        //    PageRegion reg = regions.get(i);
-        //    Imgproc.putText(mat,String.valueOf(i), new Point(reg.getRect().x,reg.getRect().y), 0, 1, new Scalar(255,0,0));
-        //}
-
-        // Free memory
-        rectComponents.release();
-        centComponents.release();
 
         Bitmap bitmap = Bitmap.createBitmap(width, height, bitmapConfig);
         Utils.matToBitmap(mat, bitmap);
@@ -136,7 +88,11 @@ public class DjvuBookPage implements BookPage, PageSource {
             Imgproc.adaptiveThreshold(dst, dst, 255, Imgproc.ADAPTIVE_THRESH_MEAN_C,
                     Imgproc.THRESH_BINARY, 15, 40);
 
-            Imgproc.blur(dst, dst, new Size(5,3));
+            //Imgproc.blur(dst, dst, new Size(5,3));
+            Mat element = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new  Size(5, 1));
+            Imgproc.erode(dst,dst,element, new Point(0,0), 1);
+            Imgproc.dilate(dst,dst,element);
+            Imgproc.blur(dst, dst, new Size(3,5));
             Core.bitwise_not(dst,dst);
 
             Core.compare(dst,new Scalar(3), dst, Core.CMP_GT);
@@ -151,18 +107,18 @@ public class DjvuBookPage implements BookPage, PageSource {
 
             List<PageRegion> regions = new ArrayList<>();
 
-            Map<Integer,List<PageRegion>> map = new HashMap<>();
-
             for(int i = 1; i < rectComponents.rows(); i++) {
 
                 // Extract bounding box
                 rectComponents.row(i).get(0, 0, rectangleInfo);
                 Rect rectangle = new Rect(rectangleInfo[0], rectangleInfo[1], rectangleInfo[2], rectangleInfo[3]);
                 PageRegion reg = new PageRegion(rectangle);
-                regions.add(reg);
-               // Imgproc.rectangle(mat, new Point(rectangleInfo[0],rectangleInfo[1]),
-               //         new Point(rectangleInfo[0]+rectangleInfo[2],rectangleInfo[1]+rectangleInfo[3]),
-               //         new Scalar(255,0,0));
+                if (rectangle.height < height/2 &&  rectangle.width < width/2) {
+                    regions.add(reg);
+                }
+                //Imgproc.rectangle(mat, new Point(rectangleInfo[0],rectangleInfo[1]),
+                //        new Point(rectangleInfo[0]+rectangleInfo[2],rectangleInfo[1]+rectangleInfo[3]),
+                //        new Scalar(255,0,0));
             }
 
             regions = PageUtil.sortRegions(regions);
@@ -170,7 +126,7 @@ public class DjvuBookPage implements BookPage, PageSource {
 
             for (int i=0;i<regions.size();i++) {
                 PageRegion reg = regions.get(i);
-                //Imgproc.putText(mat,String.valueOf(i), new Point(reg.getRect().x,reg.getRect().y), 0, 1, new Scalar(255,0,0));
+               // Imgproc.putText(mat,String.valueOf(i), new Point(reg.getRect().x,reg.getRect().y), 0, 1, new Scalar(255,0,0));
                 Rect rect = reg.getRect();
                 list.add(new android.graphics.Rect(rect.x, rect.y, rect.x+rect.width, rect.y+rect.height));
             }
@@ -178,6 +134,10 @@ public class DjvuBookPage implements BookPage, PageSource {
             // Free memory
             rectComponents.release();
             centComponents.release();
+            mat.release();
+            dst.release();
+            labeled.release();
+
 
             return list;
 

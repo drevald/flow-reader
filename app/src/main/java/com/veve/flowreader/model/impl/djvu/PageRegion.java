@@ -31,4 +31,13 @@ public class PageRegion {
     public Rect getRect() {
         return rect;
     }
+
+    @Override
+    public String toString() {
+        return "PageRegion{" +
+                "rect=" + rect +
+                ", x=" + x +
+                ", y=" + y +
+                '}';
+    }
 }
