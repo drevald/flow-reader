@@ -33,18 +33,18 @@ public class ExampleInstrumentedTest {
         assertEquals("com.veve.flowreader", appContext.getPackageName());
     }
 
-    @Test
-    public void testPdf() throws Exception {
-        PdfBook pdfBook = new PdfBook("/sdcard/shared-mime-info-spec.pdf");
-        BookPage pdfBookPage = pdfBook.getPage(0);
-        assertEquals(pdfBookPage.getHeight(), 789);
-        assertEquals(pdfBookPage.getWidth(), 609);
-        DevicePageContext context = new DevicePageContextImpl();
-        context.setDisplayDpi(72);
-        Bitmap bitmap = pdfBookPage.getAsBitmap(context);
-        assertEquals(bitmap.getHeight(), 789);
-        assertEquals(bitmap.getWidth(), 609);
-    }
+//    @Test
+//    public void testPdf() throws Exception {
+//        PdfBook pdfBook = new PdfBook("/sdcard/shared-mime-info-spec.pdf");
+//        BookPage pdfBookPage = pdfBook.getPage(0);
+//        assertEquals(pdfBookPage.getHeight(), 789);
+//        assertEquals(pdfBookPage.getWidth(), 609);
+//        DevicePageContext context = new DevicePageContextImpl();
+//        context.setDisplayDpi(72);
+//        Bitmap bitmap = pdfBookPage.getAsBitmap(context);
+//        assertEquals(bitmap.getHeight(), 789);
+//        assertEquals(bitmap.getWidth(), 609);
+//    }
 
 
 }
