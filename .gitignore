@@ -18,4 +18,4 @@ app/.externalNativeBuild/
 *.iml
 
 .idea/dbnavigator.xml
-#app/src/main/jni/
+app/src/main/jni/
