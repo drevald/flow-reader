@@ -1,10 +1,17 @@
 <resources>
     <string name="app_name">FlowReader</string>
     <string name="action_settings">More Settings</string>
-    <string name="title_activity_browse_files">BrowseFilesActivity</string>
-    <string name="title_activity_page">PageActivity</string>
-    <string name="title_activity_recycler_page">RecyclerPageActivity</string>
-    <string name="title_activity_main2">Main2Activity</string>
-    <string name="title_activity_recyclebale_page">RecyclebalePageActivity</string>
+    <string name="title_activity_browse_files">Choose book file</string>
+    <string name="title_activity_page">Page</string>
     <string name="title_activity_page_view">Flow-Reader</string>
+    <string name="ui_page_count">Page %1$d of %2$d</string>
+    <string name="ui_reflow_page">Re-flowed page</string>
+    <string name="ui_original_page">Original page</string>
+    <string name="ui_unsupported_format">Only DJVU or PDF format is supported</string>
+    <string name="ui_book_already_added">The book is already in collection</string>
+    <string name="ui_no_permission">You have no permission to this file</string>
+    <string name="ui_no_margins">No margins</string>
+    <string name="ui_narrow_margins">Narrow margins</string>
+    <string name="ui_normal_margins">Normal margins</string>
+    <string name="ui_wide_margins">Wide margins</string>
 </resources>

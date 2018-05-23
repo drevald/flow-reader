@@ -137,18 +137,17 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
             if (viewMode == VIEW_MODE_ORIGINAL) {
                 viewMode = VIEW_MODE_PHONE;
                 show.setImageResource(R.drawable.ic_phone);
-                Snackbar.make(view, "Using re-flowed page layout now", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, getString(R.string.ui_reflow_page), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             } else if (viewMode == VIEW_MODE_PHONE) {
                 viewMode = VIEW_MODE_ORIGINAL;
                 show.setImageResource(R.drawable.ic_book);
-                Snackbar.make(view, "Using original page layout now", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, getString(R.string.ui_original_page), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
             recyclerView.getRecycledViewPool().clear();
             recyclerView.setAdapter(null);
             recyclerView.invalidate();
-
         }
     });
 
@@ -188,7 +187,7 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void setPageNumber(int pageNumber, int totalPages) {
-        pager.setText(String.format("Page #%d of %d", pageNumber + 1, totalPages));
+        pager.setText(getString(R.string.ui_page_count, pageNumber + 1, totalPages));
     }
 
     class PageMenuListener implements OnClickListener {
@@ -196,7 +195,6 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
         PageActivity.PageListAdapter pageAdapter =
                 (PageActivity.PageListAdapter) recyclerView.getAdapter();
         DevicePageContext context = pageAdapter.getContext();
-
 
         @Override
         public void onClick(View v) {

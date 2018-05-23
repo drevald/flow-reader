@@ -68,11 +68,13 @@ public class BrowseFilesActivity extends ListActivity {
                 Log.d(this.getClass().getName(), i + " clicked");
                 if (fileListAdapter.currentFiles.get(i).isFile()) {
                     File file = fileListAdapter.currentFiles.get(i);
-                    if (!file.getName().toLowerCase().endsWith(".djvu") && !file.getName().toLowerCase().endsWith(".pdf")) {
-                        Snackbar.make(view, "Only DJVU files supported", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                    if (!file.getName().toLowerCase().endsWith(".djvu")
+                            && !file.getName().toLowerCase().endsWith(".pdf")) {
+                        Snackbar.make(view, getString(R.string.ui_unsupported_format),
+                                Snackbar.LENGTH_LONG).setAction("Action", null).show();
                     } else {
                         if (BooksCollection.getInstance(getApplicationContext()).hasBook(file)) {
-                            Snackbar.make(view, "The book is already in collection",
+                            Snackbar.make(view, getString(R.string.ui_book_already_added),
                                     Snackbar.LENGTH_LONG).setAction("Action", null).show();
                         } else {
                             Book newBook = BookFactory.getInstance().createBook(file);
@@ -82,7 +84,8 @@ public class BrowseFilesActivity extends ListActivity {
                     }
                     }
                 } else if (!fileListAdapter.currentFiles.get(i).canRead()) {
-                    Snackbar.make(view, "You could not open this", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                    Snackbar.make(view, getString(R.string.ui_no_permission),
+                            Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 }
                 fileListAdapter.setRoot(i);
             }

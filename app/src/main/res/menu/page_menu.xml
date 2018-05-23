@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/no_margins" android:title="No Margins" ></item>
-    <item android:id="@+id/narrow_margins" android:title="Narrow Margins" ></item>
-    <item android:id="@+id/normal_margins" android:title="Normal Margins" ></item>
-    <item android:id="@+id/wide_margins" android:title="Wide Margins" ></item>
+    <item android:id="@+id/no_margins" android:title="@string/ui_no_margins" ></item>
+    <item android:id="@+id/narrow_margins" android:title="@string/ui_narrow_margins" ></item>
+    <item android:id="@+id/normal_margins" android:title="@string/ui_normal_margins" ></item>
+    <item android:id="@+id/wide_margins" android:title="@string/ui_wide_margins" ></item>
 </menu>

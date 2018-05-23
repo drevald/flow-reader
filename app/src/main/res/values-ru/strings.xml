@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Флоу Ридер</string>
+    <string name="action_settings">Другие настройки</string>
+    <string name="title_activity_browse_files">Выбрать файл</string>
+    <string name="title_activity_page">Страница</string>
+    <string name="title_activity_page_view">Флоу-Ридер</string>
+    <string name="ui_page_count">Страница %1$d из %2$d</string>
+    <string name="ui_reflow_page">Переверстанная страница</string>
+    <string name="ui_original_page">Оигинальная страница</string>
+    <string name="ui_unsupported_format">Поддерживается только DJVU или PDF формат</string>
+    <string name="ui_book_already_added">Книга уже добавлена</string>
+    <string name="ui_no_permission">Нет доступа к этому файлу</string>
+    <string name="ui_no_margins">Без полей</string>
+    <string name="ui_narrow_margins">Узкие поля</string>
+    <string name="ui_normal_margins">Обычные поля</string>
+    <string name="ui_wide_margins">Широкие поля</string>
+</resources>
