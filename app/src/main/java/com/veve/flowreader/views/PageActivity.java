@@ -129,27 +129,27 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-    FloatingActionButton show = findViewById(R.id.show);
+        FloatingActionButton show = findViewById(R.id.show);
 
-    show.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            if (viewMode == VIEW_MODE_ORIGINAL) {
-                viewMode = VIEW_MODE_PHONE;
-                show.setImageResource(R.drawable.ic_phone);
-                Snackbar.make(view, getString(R.string.ui_reflow_page), Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            } else if (viewMode == VIEW_MODE_PHONE) {
-                viewMode = VIEW_MODE_ORIGINAL;
-                show.setImageResource(R.drawable.ic_book);
-                Snackbar.make(view, getString(R.string.ui_original_page), Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+        show.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (viewMode == VIEW_MODE_ORIGINAL) {
+                    viewMode = VIEW_MODE_PHONE;
+                    show.setImageResource(R.drawable.ic_phone);
+                    Snackbar.make(view, getString(R.string.ui_reflow_page), Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                } else if (viewMode == VIEW_MODE_PHONE) {
+                    viewMode = VIEW_MODE_ORIGINAL;
+                    show.setImageResource(R.drawable.ic_book);
+                    Snackbar.make(view, getString(R.string.ui_original_page), Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+                recyclerView.getRecycledViewPool().clear();
+                recyclerView.setAdapter(null);
+                recyclerView.invalidate();
             }
-            recyclerView.getRecycledViewPool().clear();
-            recyclerView.setAdapter(null);
-            recyclerView.invalidate();
-        }
-    });
+        });
 
     }
 

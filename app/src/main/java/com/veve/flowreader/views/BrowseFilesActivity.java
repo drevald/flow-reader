@@ -36,7 +36,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class BrowseFilesActivity extends ListActivity {
+public class BrowseFilesActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +46,7 @@ public class BrowseFilesActivity extends ListActivity {
 
         setContentView(R.layout.activity_browse_files);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         FloatingActionButton home = (FloatingActionButton) findViewById(R.id.home);
         home.setOnClickListener(new View.OnClickListener() {
@@ -58,9 +59,9 @@ public class BrowseFilesActivity extends ListActivity {
         });
 
         final FileListAdapter fileListAdapter = new FileListAdapter();
-        setListAdapter(fileListAdapter);
-
         ListView listView = (ListView) findViewById(android.R.id.list);
+
+        listView.setAdapter(fileListAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
