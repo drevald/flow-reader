@@ -59,9 +59,9 @@ public class BookStorageImpl implements BookStorage {
     }
 
     @Override
-    public void addBook(Book book) {
+    public void addBook(BookRecord bookRecord) {
         ContentValues values = new ContentValues();
-        values.put(BookStorageSchema.BookTable.Cols.PATH, book.getPath());
+        values.put(BookStorageSchema.BookTable.Cols.PATH, bookRecord.getUrl());
         long l = database.insert(BookStorageSchema.BookTable.NAME, null, values);
         Log.i(getClass().getName(), String.format("Inserted row number is %d", l));
     }

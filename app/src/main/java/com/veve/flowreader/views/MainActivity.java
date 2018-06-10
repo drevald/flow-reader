@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
+import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.model.Book;
 import com.veve.flowreader.model.BooksCollection;
 
@@ -170,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
     public class BookListAdapter extends BaseAdapter {
 
         private BookListAdapter instance;
-        private List<Book> booksList;
+        private List<BookRecord> booksList;
 
         private BookListAdapter() {
             Log.i(this.getClass().getName(), "Constructing BookListAdapter");
@@ -218,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
     public class BookGridAdapter extends BaseAdapter {
 
         private BookListAdapter instance;
-        private List<Book> booksList;
+        private List<BookRecord> booksList;
 
         private BookGridAdapter() {
             Log.i(this.getClass().getName(), "Constructing BookListAdapter");

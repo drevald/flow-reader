@@ -25,10 +25,13 @@ import android.widget.TextView;
 
 import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
+import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.model.Book;
 import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.BooksCollection;
 import com.veve.flowreader.model.DevicePageContext;
+import com.veve.flowreader.model.PageRenderer;
+import com.veve.flowreader.model.PageRendererFactory;
 import com.veve.flowreader.model.impl.DevicePageContextImpl;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -101,7 +104,7 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
 
                     DevicePageContext pageContext = new DevicePageContextImpl(recyclerView.getWidth());
                     int position = getIntent().getIntExtra("position", 0);
-                    Book book = BooksCollection.getInstance(getApplicationContext()).getBooks().get(position);
+                    BookRecord book = BooksCollection.getInstance(getApplicationContext()).getBooks().get(position);
                     PageListAdapter pageAdapter = new PageListAdapter(pageContext, book);
                     recyclerView.setAdapter(pageAdapter);
 
@@ -236,13 +239,16 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
 
     class PageListAdapter extends RecyclerView.Adapter {
 
-        Book book;
+        BookRecord book;
+
+        PageRenderer renderer;
 
         DevicePageContext context;
 
-        public PageListAdapter(DevicePageContext context, Book book) {
+        public PageListAdapter(DevicePageContext context, BookRecord book) {
             this.book = book;
             this.context = context;
+            this.renderer = PageRendererFactory.getRenderer(book);
             DisplayMetrics metrics = getResources().getDisplayMetrics();
             //context.setDisplayDpi(metrics.densityDpi);
             context.setDisplayDpi(144);
@@ -263,12 +269,12 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             PageActivity.this.setPageNumber(position, book.getPagesCount());
             Log.d(getClass().getName(), String.format("onBindViewHolder #%d", position));
-            BookPage bookPage = book.getPage(position);
+            //BookPage bookPage = book.getPage(position);
             Bitmap bitmap;
             if (viewMode == Constants.VIEW_MODE_PHONE)
-                bitmap = bookPage.getAsBitmap(context);
+                bitmap = renderer.renderPage(context, position);
             else
-                bitmap = bookPage.getAsOriginalBitmap(context);
+                bitmap = renderer.renderOriginalPage(context, position);
             ((ImageView) holder.itemView).setImageBitmap(bitmap);
         }
 

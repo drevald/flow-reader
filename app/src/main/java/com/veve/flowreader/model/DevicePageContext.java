@@ -45,4 +45,12 @@ public interface DevicePageContext {
 
     public void setDisplayDpi(int displayDpi);
 
+    public void setCurrentBaseLine(int baseLine);
+
+    public int getCurrentBaseLine();
+
+    public int getLineHeight();
+
+    public void setLineHeight(int lineHeight);
+
 }

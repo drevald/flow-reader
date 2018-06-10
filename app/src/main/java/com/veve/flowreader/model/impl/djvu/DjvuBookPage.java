@@ -77,7 +77,6 @@ public class DjvuBookPage implements BookPage, PageSource {
         byte[] imageBytes= getBytes(bookId, pageNumber);
             int width = getWidth();
             int height = getHeight();
-            Bitmap.Config bitmapConfig = Bitmap.Config.ARGB_8888;
             Mat mat = new Mat(height, width ,CvType.CV_8UC3);
             mat.put(0,0,imageBytes, 0, imageBytes.length);
             int[] rectangleInfo = new int[5];
@@ -113,9 +112,10 @@ public class DjvuBookPage implements BookPage, PageSource {
                 rectComponents.row(i).get(0, 0, rectangleInfo);
                 Rect rectangle = new Rect(rectangleInfo[0], rectangleInfo[1], rectangleInfo[2], rectangleInfo[3]);
                 PageRegion reg = new PageRegion(rectangle);
-                if (rectangle.height < height/2 &&  rectangle.width < width/2) {
+                if (rectangle.height < height/4) {
                     regions.add(reg);
                 }
+                
                 //Imgproc.rectangle(mat, new Point(rectangleInfo[0],rectangleInfo[1]),
                 //        new Point(rectangleInfo[0]+rectangleInfo[2],rectangleInfo[1]+rectangleInfo[3]),
                 //        new Scalar(255,0,0));

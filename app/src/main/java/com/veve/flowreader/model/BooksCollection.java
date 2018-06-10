@@ -18,41 +18,37 @@ import java.util.List;
 
 public class BooksCollection {
 
-    private static List<Book> booksList;
+    private static List<BookRecord> booksList;
 
     private static BookStorage bookStorage;
 
     private static BooksCollection bookCollection;
 
     private BooksCollection() {
-        booksList = new ArrayList<Book>();
+
     }
 
     public static BooksCollection getInstance(Context context) {
         if (bookCollection == null) {
             bookCollection = new BooksCollection();
             bookStorage = BookStorageImpl.getInstance(context);
-            List<BookRecord> bookRecords = bookStorage.getBooksList();
-            for (BookRecord bookRecord : bookRecords) {
-                Book storedBook = new RasterBook(bookRecord);
-                booksList.add(storedBook);
-            }
+            booksList = bookStorage.getBooksList();
         }
         return bookCollection;
     }
 
-    public List<Book> getBooks() {
+    public List<BookRecord> getBooks() {
         return booksList;
     }
 
-    public void addBook(Book book) {
-        booksList.add(book);
-        bookStorage.addBook(book);
+    public void addBook(BookRecord bookRecord) {
+        booksList.add(bookRecord);
+        bookStorage.addBook(bookRecord);
     }
 
     public boolean hasBook(File bookFile) {
-        for (Book book : booksList) {
-            if (book.getPath().equals(bookFile.getAbsolutePath()))
+        for (BookRecord bookRecord : booksList) {
+            if (bookRecord.getUrl().equals(bookFile.getAbsolutePath()))
                 return true;
         }
         return false;

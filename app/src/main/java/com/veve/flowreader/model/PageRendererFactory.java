@@ -1,4 +1,11 @@
 package com.veve.flowreader.model;
 
-class PageRendererFactory {
+import com.veve.flowreader.dao.BookRecord;
+
+public class PageRendererFactory {
+
+    public static PageRenderer getRenderer(BookRecord bookRecord) {
+        return null;
+    }
+
 }

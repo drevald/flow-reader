@@ -48,6 +48,10 @@ public class MockPageImpl implements BookPage {
         while((pageGlyph = getNextGlyph()) != null) {
             pageGlyph.draw(context, false);
         }
+
+        context.setCurrentBaseLine(0);
+        context.setLineHeight(0);
+
         Point remotestPoint = context.getRemotestPoint();
         Bitmap bitmap = Bitmap.createBitmap(context.getWidth(), remotestPoint.y, ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
@@ -58,6 +62,9 @@ public class MockPageImpl implements BookPage {
         while((pageGlyph = getNextGlyph()) != null) {
             pageGlyph.draw(context, true);
         }
+
+        context.setCurrentBaseLine(0);
+        context.setLineHeight(0);
 
         Paint paint =  new Paint();
         paint.setStyle(Paint.Style.STROKE);

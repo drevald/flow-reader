@@ -98,4 +98,24 @@ public class PdfDevicePageContext implements DevicePageContext {
     public void setDisplayDpi(int displayDpi) {
         this.displayDpi = displayDpi;
     }
+
+    @Override
+    public void setCurrentBaseLine(int baseLine) {
+
+    }
+
+    @Override
+    public int getCurrentBaseLine() {
+        return 0;
+    }
+
+    @Override
+    public int getLineHeight() {
+        return 0;
+    }
+
+    @Override
+    public void setLineHeight(int lineHeight) {
+
+    }
 }

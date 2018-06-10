@@ -54,6 +54,10 @@ class MockRasterBookPage implements BookPage {
         while((pageGlyph = getNextGlyph()) != null) {
             pageGlyph.draw(context, false);
         }
+
+        context.setCurrentBaseLine(0);
+        context.setLineHeight(0);
+
         Point remotestPoint = context.getRemotestPoint();
         Log.i(getClass().getName(), String.format("w=%d h=%d, position=%d", context.getWidth(), remotestPoint.y, position));
         Bitmap bitmap = Bitmap.createBitmap(context.getWidth(), remotestPoint.y + (int)context.getLeading() , ARGB_8888);
@@ -65,6 +69,9 @@ class MockRasterBookPage implements BookPage {
         while((pageGlyph = getNextGlyph()) != null) {
             pageGlyph.draw(context, true);
         }
+
+        context.setCurrentBaseLine(0);
+        context.setLineHeight(0);
 
         Paint paint =  new Paint();
         paint.setStyle(Paint.Style.STROKE);

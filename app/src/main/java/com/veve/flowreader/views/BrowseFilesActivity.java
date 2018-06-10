@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
+import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.model.Book;
 import com.veve.flowreader.model.BookFactory;
 import com.veve.flowreader.model.BooksCollection;
@@ -78,7 +79,7 @@ public class BrowseFilesActivity extends AppCompatActivity {
                             Snackbar.make(view, getString(R.string.ui_book_already_added),
                                     Snackbar.LENGTH_LONG).setAction("Action", null).show();
                         } else {
-                            Book newBook = BookFactory.getInstance().createBook(file);
+                            BookRecord newBook = BookFactory.getInstance().createBook(file);
                             BooksCollection.getInstance(getApplicationContext()).addBook(newBook);
                             Intent ii = new Intent(BrowseFilesActivity.this, MainActivity.class);
                         startActivity(ii);

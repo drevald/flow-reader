@@ -34,6 +34,8 @@ public class DevicePageContextImpl implements DevicePageContext {
 
     private int width;
 
+    private int lineHeight;
+
     private float kerning;
 
     private float leading;
@@ -41,6 +43,9 @@ public class DevicePageContextImpl implements DevicePageContext {
     private int margin;
 
     private int displayDpi;
+
+    private int currentBaseLine;
+
 
     public DevicePageContextImpl() {
 
@@ -55,6 +60,7 @@ public class DevicePageContextImpl implements DevicePageContext {
         this.startPoint = new Point(margin, 0);
         this.remotestPoint = new Point(margin, 0);
         this.displayDpi = DEFAULT_DISPLAY_DPI;
+        this.currentBaseLine = 0;
     }
 
     public DevicePageContextImpl(Canvas canvas) {
@@ -67,6 +73,7 @@ public class DevicePageContextImpl implements DevicePageContext {
         this.startPoint = new Point(margin, 0);
         this.remotestPoint = new Point(margin, 0);
         this.displayDpi = DEFAULT_DISPLAY_DPI;
+        this.currentBaseLine = 0;
     }
 
     @Override
@@ -77,6 +84,26 @@ public class DevicePageContextImpl implements DevicePageContext {
     @Override
     public void setDisplayDpi(int displayDpi) {
         this.displayDpi = displayDpi;
+    }
+
+    @Override
+    public void setCurrentBaseLine(int baseLine) {
+        this.currentBaseLine = baseLine;
+    }
+
+    @Override
+    public int getCurrentBaseLine() {
+        return currentBaseLine;
+    }
+
+    @Override
+    public int getLineHeight() {
+        return lineHeight;
+    }
+
+    @Override
+    public void setLineHeight(int lineHeight) {
+        this.lineHeight = lineHeight;
     }
 
     @Override

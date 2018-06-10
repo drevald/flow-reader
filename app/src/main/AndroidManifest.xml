@@ -31,55 +31,5 @@
             android:name=".views.PageActivity"
             android:label="@string/title_activity_page"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".views.PageViewActivity"
-            android:launchMode="singleTask"
-            android:label="@string/title_activity_page_view"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data
-                    android:host="*"
-                    android:pathPattern=".*\\.djvu"
-                    android:mimeType="*/*"
-                    android:scheme="file" />
-                <data
-                    android:host="*"
-                    android:pathPattern=".*\\..*\\.djvu"
-                    android:mimeType="*/*"
-                    android:scheme="file" />
-                <data
-                    android:host="*"
-                    android:pathPattern=".*\\..*\\..*\\.djvu"
-                    android:mimeType="*/*"
-                    android:scheme="file" />
-                <data
-                    android:host="*"
-                    android:pathPattern=".*\\..*\\..*\\..*\\.djvu"
-                    android:mimeType="*/*"
-                    android:scheme="file" />
-                <data
-                    android:host="*"
-                    android:pathPattern=".*\\.pdf"
-                    android:mimeType="*/*"
-                    android:scheme="file" />
-                <data
-                    android:host="*"
-                    android:pathPattern=".*\\..*\\.pdf"
-                    android:mimeType="*/*"
-                    android:scheme="file" />
-                <data
-                    android:host="*"
-                    android:pathPattern=".*\\..*\\..*\\.pdf"
-                    android:mimeType="*/*"
-                    android:scheme="file" />
-                <data
-                    android:host="*"
-                    android:pathPattern=".*\\..*\\..*\\..*\\.pdf"
-                    android:mimeType="*/*"
-                    android:scheme="file" />
-            </intent-filter>
-        </activity>
     </application>
 </manifest>
