@@ -1,13 +1,14 @@
 package com.veve.flowreader.model.impl.djvu;
 
+import com.veve.flowreader.model.impl.PageRegion;
+import com.veve.flowreader.model.impl.PageUtil;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.opencv.core.Rect;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 public class PageUtilTest {
 

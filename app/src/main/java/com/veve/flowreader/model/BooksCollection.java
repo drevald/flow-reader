@@ -5,11 +5,8 @@ import android.content.Context;
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.dao.BookStorage;
 import com.veve.flowreader.dao.sqlite.BookStorageImpl;
-import com.veve.flowreader.model.impl.djvu.DjvuBook;
-import com.veve.flowreader.model.impl.raster.RasterBook;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

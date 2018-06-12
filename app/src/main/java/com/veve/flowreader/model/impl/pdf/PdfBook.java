@@ -11,7 +11,6 @@ public class PdfBook implements Book {
     private int pageNumber;
     private Document document;
 
-
     public PdfBook(String path){
         document = Document.openDocument(path);
         this.path = path;
@@ -20,8 +19,6 @@ public class PdfBook implements Book {
     static {
         System.loadLibrary("mupdf_java");
     }
-
-
 
     @Override
     public void setCurrentPageNumber(int pageNumber) {
@@ -58,4 +55,5 @@ public class PdfBook implements Book {
     public String getPath() {
         return path;
     }
+
 }

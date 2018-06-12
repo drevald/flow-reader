@@ -18,9 +18,4 @@ public class PageRendererFactory {
         return new PageRendererImpl(bookSource);
     }
 
-    public static PageRenderer getMockRenderer() {
-        return new MockPageRendererImpl();
-    }
-
-
 }

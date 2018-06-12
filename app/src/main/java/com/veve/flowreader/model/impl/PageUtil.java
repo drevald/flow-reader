@@ -1,16 +1,12 @@
-package com.veve.flowreader.model.impl.djvu;
+package com.veve.flowreader.model.impl;
 
-import android.util.Log;
-
-import com.artifex.mupdf.fitz.Page;
+import com.veve.flowreader.model.impl.PageRegion;
 
 import org.opencv.core.Rect;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class PageUtil {
 

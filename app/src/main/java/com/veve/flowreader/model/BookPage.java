@@ -9,31 +9,11 @@ import android.graphics.Bitmap;
 public interface BookPage {
 
     /**
-     * Getting symbol by symbol from the page until they are over.
-     * After that null will be returned.
-     * @return
-     */
-    public PageGlyph getNextGlyph();
-
-    /**
-     * Call this method to get to the page start and be able
-     * to read from the beginning
-     */
-    public void reset();
-
-    /**
      * Returns raster representation of reflowed page for the given context
      * @param context
      * @return
      */
     public Bitmap getAsBitmap(DevicePageContext context);
-
-    /**
-     * Returns raster representation of original page for the given context
-     * @param context
-     * @return
-     */
-    public Bitmap getAsOriginalBitmap(DevicePageContext context);
 
     public int getWidth();
 

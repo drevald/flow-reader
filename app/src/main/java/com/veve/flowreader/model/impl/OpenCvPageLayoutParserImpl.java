@@ -2,17 +2,12 @@ package com.veve.flowreader.model.impl;
 
 import android.graphics.Bitmap;
 
-import com.veve.flowreader.model.BookSource;
 import com.veve.flowreader.model.PageGlyph;
 import com.veve.flowreader.model.PageLayoutParser;
-import com.veve.flowreader.model.impl.djvu.DjvuBookPageGlyph;
-import com.veve.flowreader.model.impl.djvu.PageRegion;
-import com.veve.flowreader.model.impl.djvu.PageUtil;
 
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -60,7 +55,6 @@ class OpenCvPageLayoutParserImpl implements PageLayoutParser {
         Imgproc.connectedComponentsWithStats(dst, labeled, rectComponents, centComponents);
 
         // Collect regions info
-
         List<PageRegion> regions = new ArrayList<>();
         Map<Integer,List<PageRegion>> map = new HashMap<>();
 
@@ -80,7 +74,7 @@ class OpenCvPageLayoutParserImpl implements PageLayoutParser {
             org.opencv.core.Rect rect = reg.getRect();
             //Bitmap newBitmap = Bitmap.createBitmap(bitmap, rect.x, rect.y, rect.x+rect.width,rect.y+rect.height);
             Bitmap newBitmap = Bitmap.createBitmap(bitmap, rect.x, rect.y, rect.width,rect.height);
-            list.add(new DjvuBookPageGlyph(newBitmap));
+            list.add(new PageGlyphImpl(newBitmap));
         }
 
         // Free memory

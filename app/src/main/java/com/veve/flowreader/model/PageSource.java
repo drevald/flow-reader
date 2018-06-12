@@ -9,6 +9,4 @@ public interface PageSource {
 
     public Bitmap getAsBitmap();
 
-    public List<Rect> getGlyphs();
-
 }

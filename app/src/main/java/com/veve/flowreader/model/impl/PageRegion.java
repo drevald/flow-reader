@@ -1,4 +1,4 @@
-package com.veve.flowreader.model.impl.djvu;
+package com.veve.flowreader.model.impl;
 
 import org.opencv.core.Rect;
 
