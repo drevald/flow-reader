@@ -6,6 +6,10 @@ package com.veve.flowreader.dao;
 
 public class BookRecord {
 
+    public BookRecord() {
+
+    }
+
     public BookRecord(String name, String url) {
         this.name = name;
         this.url = url;
@@ -15,7 +19,7 @@ public class BookRecord {
         this.url = url;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -35,7 +39,7 @@ public class BookRecord {
         this.name = name;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -53,6 +57,6 @@ public class BookRecord {
 
     String url;
 
-    Long id;
+    Integer id;
 
 }

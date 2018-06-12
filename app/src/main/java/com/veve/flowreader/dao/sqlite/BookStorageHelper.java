@@ -22,9 +22,10 @@ public class BookStorageHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table " + BookTable.NAME + "(" +
-                " _id integer primary key autoincrement, " +
-                BookTable.Cols.PATH +
-                ")"
+                BookTable.Cols.ID + " integer primary key autoincrement, " +
+                BookTable.Cols.PATH + "," +
+                BookTable.Cols.NAME + "," +
+                BookTable.Cols.PAGES_COUNT + ")"
         );
     }
 

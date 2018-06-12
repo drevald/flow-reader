@@ -46,7 +46,7 @@ class RasterBookPage implements BookPage {
         }
         Rect rect = glyphs.get(position++);
         Bitmap newBitmap = Bitmap.createBitmap(bitmap, rect.left, rect.top, rect.width(), rect.height());
-        return new DjvuBookPageGlyph(newBitmap, rect);
+        return new DjvuBookPageGlyph(newBitmap);
     }
 
     @Override

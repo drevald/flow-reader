@@ -100,8 +100,8 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 //                Intent ii = new Intent(MainActivity.this, PageViewActivity.class);
                 Intent ii = new Intent(MainActivity.this, PageActivity.class);
-                Book selectedBook = (Book)parent.getItemAtPosition(position);
-                ii.putExtra("filename", selectedBook.getPath());
+                BookRecord selectedBook = (BookRecord)parent.getItemAtPosition(position);
+                ii.putExtra("filename", selectedBook.getUrl());
                 ii.putExtra("position", position);
                 startActivity(ii);
             }

@@ -34,11 +34,8 @@ public class DjvuBookPageGlyph implements PageGlyph {
 
     private Bitmap bitmap;
 
-    private Rect rect;
-
-    public DjvuBookPageGlyph(Bitmap bitmap, Rect rect) {
+    public DjvuBookPageGlyph(Bitmap bitmap) {
         this.bitmap = bitmap;
-        this.rect = rect;
     }
 
     private int getBaselineShif() {
@@ -116,7 +113,7 @@ public class DjvuBookPageGlyph implements PageGlyph {
 
         context.setCurrentBaseLine(currentBaseline);
 
-        bitmap = null;
+        //bitmap = null;
     }
 
 

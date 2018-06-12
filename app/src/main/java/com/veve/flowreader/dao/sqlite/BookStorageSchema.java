@@ -9,6 +9,9 @@ public class BookStorageSchema {
             public static final String NAME = "books";
             public static final class Cols {
                 public static final String PATH = "path";
+                public static final String NAME = "name";
+                public static final String PAGES_COUNT = "pages_count";
+                public static final String ID = "id";
             }
         }
 }

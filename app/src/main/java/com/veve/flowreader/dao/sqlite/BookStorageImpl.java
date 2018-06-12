@@ -8,8 +8,6 @@ import android.util.Log;
 
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.dao.BookStorage;
-import com.veve.flowreader.dao.BookStorage.*;
-import com.veve.flowreader.model.Book;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +60,8 @@ public class BookStorageImpl implements BookStorage {
     public void addBook(BookRecord bookRecord) {
         ContentValues values = new ContentValues();
         values.put(BookStorageSchema.BookTable.Cols.PATH, bookRecord.getUrl());
+        values.put(BookStorageSchema.BookTable.Cols.NAME, bookRecord.getUrl());
+        values.put(BookStorageSchema.BookTable.Cols.PAGES_COUNT, bookRecord.getPagesCount());
         long l = database.insert(BookStorageSchema.BookTable.NAME, null, values);
         Log.i(getClass().getName(), String.format("Inserted row number is %d", l));
     }

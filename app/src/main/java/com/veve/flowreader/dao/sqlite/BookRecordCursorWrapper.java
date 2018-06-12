@@ -4,7 +4,6 @@ import android.database.Cursor;
 import android.database.CursorWrapper;
 
 import com.veve.flowreader.dao.BookRecord;
-import com.veve.flowreader.model.Book;
 
 /**
  * Created by ddreval on 4/4/2018.
@@ -16,8 +15,12 @@ public class BookRecordCursorWrapper extends CursorWrapper {
     }
 
     public BookRecord getBookRecord() {
-        String pathString = getString(getColumnIndex(BookStorageSchema.BookTable.Cols.PATH));
-        return new BookRecord(pathString);
+        BookRecord bookRecord = new BookRecord();
+        bookRecord.setName(getString(getColumnIndex(BookStorageSchema.BookTable.Cols.NAME)));
+        bookRecord.setUrl(getString(getColumnIndex(BookStorageSchema.BookTable.Cols.PATH)));
+        bookRecord.setPagesCount(getInt(getColumnIndex(BookStorageSchema.BookTable.Cols.PAGES_COUNT)));
+        bookRecord.setId(getInt(getColumnIndex(BookStorageSchema.BookTable.Cols.ID)));
+        return bookRecord;
     }
 
 }

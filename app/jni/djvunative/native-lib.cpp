@@ -19,9 +19,8 @@ JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_getNumb
     Document *document = (Document*)bookId;
     ddjvu_document_t *doc = document->doc;
     return ddjvu_document_get_pagenum(doc);
+
 }
-
-
 
 JNIEXPORT jlong JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_openBook
         (JNIEnv* env, jobject obj, jstring path) {

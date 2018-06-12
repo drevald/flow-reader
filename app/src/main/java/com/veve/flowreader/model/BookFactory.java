@@ -24,7 +24,10 @@ public class BookFactory {
     }
 
     public BookRecord createBook(File file) {
-        return new BookRecord(file.getAbsolutePath(), file.getAbsolutePath());
+        BookRecord bookRecord = new BookRecord(file.getAbsolutePath(), file.getAbsolutePath());
+        bookRecord.setPagesCount(10);
+        bookRecord.setName(file.getAbsolutePath());
+        return bookRecord;
     }
 
 }
