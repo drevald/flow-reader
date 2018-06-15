@@ -43,7 +43,7 @@ public class PdfBookPage implements BookPage {
 
     public Bitmap getAsBitmap() {
         DevicePageContext context = new DevicePageContextImpl();
-        context.setDisplayDpi(72);
+        context.setDisplayDpi(144);
         return getAsBitmap(context);
     }
 

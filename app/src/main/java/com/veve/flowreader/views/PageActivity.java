@@ -158,10 +158,12 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         final RecyclerView recyclerView = findViewById(R.id.list);
         PageActivity.PageListAdapter pageAdapter =
                 (PageActivity.PageListAdapter) recyclerView.getAdapter();
         DevicePageContext context = pageAdapter.getContext();
+
         switch (item.getItemId()) {
             case R.id.no_margins: {
                 context.setMargin(0);
@@ -194,6 +196,7 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     class PageMenuListener implements OnClickListener {
+
         final RecyclerView recyclerView = findViewById(R.id.list);
         PageActivity.PageListAdapter pageAdapter =
                 (PageActivity.PageListAdapter) recyclerView.getAdapter();

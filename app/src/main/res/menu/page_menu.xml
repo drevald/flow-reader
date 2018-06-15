@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/no_margins" android:title="@string/ui_no_margins" ></item>
-    <item android:id="@+id/narrow_margins" android:title="@string/ui_narrow_margins" ></item>
-    <item android:id="@+id/normal_margins" android:title="@string/ui_normal_margins" ></item>
-    <item android:id="@+id/wide_margins" android:title="@string/ui_wide_margins" ></item>
+    <item android:id="@+id/no_margins" android:title="@string/ui_no_margins" />
+    <item android:id="@+id/narrow_margins" android:title="@string/ui_narrow_margins" />
+    <item android:id="@+id/normal_margins" android:title="@string/ui_normal_margins" />
+    <item android:id="@+id/wide_margins" android:title="@string/ui_wide_margins" />
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/opencv_parser" android:title="Open CV Parser" />
+        <item android:id="@+id/simple_parser" android:title="Simple Parser" />
+    </group>
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/show_glyph_borders" android:title="Show Glyph Borders" />
+    </group>
 </menu>
