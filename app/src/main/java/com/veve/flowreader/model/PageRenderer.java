@@ -9,4 +9,6 @@ public interface PageRenderer {
 
     Bitmap renderOriginalPage(DevicePageContext context, int position);
 
+    public void setPageLayoutParser(PageLayoutParser parser);
+
 }

@@ -61,4 +61,12 @@ public class PageRendererImpl implements PageRenderer {
         return bookSource.getPageBytes(position);
     }
 
+    public PageLayoutParser getPageLayoutParser() {
+        return pageLayoutParser;
+    }
+
+    public void setPageLayoutParser(PageLayoutParser pageLayoutParser) {
+        this.pageLayoutParser = pageLayoutParser;
+    }
+
 }

@@ -33,11 +33,13 @@ import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageRenderer;
 import com.veve.flowreader.model.PageRendererFactory;
 import com.veve.flowreader.model.impl.DevicePageContextImpl;
+import com.veve.flowreader.model.impl.SimpleLayoutParser;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
+import com.veve.flowreader.model.impl.*;
 
 import static com.veve.flowreader.Constants.VIEW_MODE_ORIGINAL;
 import static com.veve.flowreader.Constants.VIEW_MODE_PHONE;
@@ -53,6 +55,10 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
     CoordinatorLayout topLayout;
 
     int viewMode;
+
+    PageRenderer pageRenderer;
+
+    PageListAdapter pageAdapter;
 
     static {
         if (!OpenCVLoader.initDebug()) {
@@ -160,7 +166,7 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onOptionsItemSelected(MenuItem item) {
 
         final RecyclerView recyclerView = findViewById(R.id.list);
-        PageActivity.PageListAdapter pageAdapter =
+        pageAdapter =
                 (PageActivity.PageListAdapter) recyclerView.getAdapter();
         DevicePageContext context = pageAdapter.getContext();
 
@@ -183,6 +189,18 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.wide_margins: {
                 context.setMargin(100);
                 pageAdapter.notifyDataSetChanged();
+                break;
+            }
+            case R.id.opencv_parser: {
+                pageRenderer.setPageLayoutParser(SimpleLayoutParser.getInstance());
+                pageAdapter.notifyDataSetChanged();
+                item.setChecked(true);
+                break;
+            }
+            case R.id.simple_parser: {
+                pageRenderer.setPageLayoutParser(OpenCvPageLayoutParserImpl.getInstance());
+                pageAdapter.notifyDataSetChanged();
+                item.setChecked(true);
                 break;
             }
         }
@@ -251,7 +269,7 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
         public PageListAdapter(DevicePageContext context, BookRecord book) {
             this.book = book;
             this.context = context;
-            this.renderer = PageRendererFactory.getRenderer(book);
+            this.renderer = pageRenderer;
             DisplayMetrics metrics = getResources().getDisplayMetrics();
             //context.setDisplayDpi(metrics.densityDpi);
             context.setDisplayDpi(144);

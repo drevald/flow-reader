@@ -19,6 +19,8 @@ import java.util.Locale;
 
 public class SimpleLayoutParser implements PageLayoutParser {
 
+    private static PageLayoutParser parser;
+
     private static final int STATE_BLANK = 0;
     private static final int STATE_ROW = 1;
     private static final int STATE_GLYPH_BLANK = 0;
@@ -26,6 +28,11 @@ public class SimpleLayoutParser implements PageLayoutParser {
 
     private static final float ROW_THRESHOLD = 0.05f;
     private static final float CHAR_THRESHOLD = 0.1f;
+
+
+    private SimpleLayoutParser() {
+
+    }
 
     @Override
     public List<PageGlyph> getGlyphs(Bitmap bitmap) {
@@ -123,6 +130,13 @@ public class SimpleLayoutParser implements PageLayoutParser {
         int green = (rgb >>8 ) & 0x000000FF;
         int blue = (rgb) & 0x000000FF;
         return 0.2126 * (red/255) + 0.7152 * (green/255) + 0.0722 * (blue/255);
+    }
+
+    public static PageLayoutParser getInstance() {
+        if (parser == null) {
+            parser = new SimpleLayoutParser();
+        }
+        return parser;
     }
 
 }

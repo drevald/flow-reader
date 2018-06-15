@@ -18,7 +18,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class OpenCvPageLayoutParserImpl implements PageLayoutParser {
+public class OpenCvPageLayoutParserImpl implements PageLayoutParser {
+
+    private static PageLayoutParser parser;
+
+    private OpenCvPageLayoutParserImpl() {
+
+    }
 
     @Override
     public List<PageGlyph> getGlyphs(Bitmap bitmap) {
@@ -83,6 +89,13 @@ class OpenCvPageLayoutParserImpl implements PageLayoutParser {
 
         return list;
 
+    }
+
+    public static PageLayoutParser getInstance() {
+        if (parser == null) {
+            parser = new OpenCvPageLayoutParserImpl();
+        }
+        return parser;
     }
 
 }
