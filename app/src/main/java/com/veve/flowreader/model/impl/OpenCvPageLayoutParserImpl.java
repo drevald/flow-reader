@@ -22,7 +22,7 @@ public class OpenCvPageLayoutParserImpl implements PageLayoutParser {
 
     private static PageLayoutParser parser;
 
-    private OpenCvPageLayoutParserImpl() {
+    public OpenCvPageLayoutParserImpl() {
 
     }
 
