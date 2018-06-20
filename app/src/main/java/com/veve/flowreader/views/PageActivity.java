@@ -30,6 +30,7 @@ import com.veve.flowreader.model.Book;
 import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.BooksCollection;
 import com.veve.flowreader.model.DevicePageContext;
+import com.veve.flowreader.model.PageLayoutParser;
 import com.veve.flowreader.model.PageRenderer;
 import com.veve.flowreader.model.PageRendererFactory;
 import com.veve.flowreader.model.impl.DevicePageContextImpl;
@@ -111,7 +112,8 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
                     DevicePageContext pageContext = new DevicePageContextImpl(recyclerView.getWidth());
                     int position = getIntent().getIntExtra("position", 0);
                     BookRecord book = BooksCollection.getInstance(getApplicationContext()).getBooks().get(position);
-                    PageListAdapter pageAdapter = new PageListAdapter(pageContext, book);
+                    pageRenderer = PageRendererFactory.getRenderer(book);
+                    PageListAdapter pageAdapter = new PageListAdapter(pageContext, pageRenderer, book);
                     recyclerView.setAdapter(pageAdapter);
 
                     PageMenuListener pageMenuListener = new PageMenuListener();
@@ -192,14 +194,16 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             }
             case R.id.opencv_parser: {
-//                pageRenderer.setPageLayoutParser(SimpleLayoutParser.getInstance());
-//                pageAdapter.notifyDataSetChanged();
+                PageLayoutParser openCvParser = OpenCvPageLayoutParserImpl.getInstance();
+                pageRenderer.setPageLayoutParser(openCvParser);
+                pageAdapter.notifyDataSetChanged();
                 item.setChecked(true);
                 break;
             }
             case R.id.simple_parser: {
-//                pageRenderer.setPageLayoutParser(OpenCvPageLayoutParserImpl.getInstance());
-//                pageAdapter.notifyDataSetChanged();
+                PageLayoutParser simpleParser = SimpleLayoutParser.getInstance();
+                pageRenderer.setPageLayoutParser(simpleParser);
+                pageAdapter.notifyDataSetChanged();
                 item.setChecked(true);
                 break;
             }
@@ -265,6 +269,12 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
         PageRenderer renderer;
 
         DevicePageContext context;
+
+        public PageListAdapter(DevicePageContext context, PageRenderer renderer, BookRecord book) {
+            this.book = book;
+            this.renderer = renderer;
+            this.context = context;
+        }
 
         public PageListAdapter(DevicePageContext context, BookRecord book) {
             this.book = book;
