@@ -192,14 +192,14 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             }
             case R.id.opencv_parser: {
-                pageRenderer.setPageLayoutParser(SimpleLayoutParser.getInstance());
-                pageAdapter.notifyDataSetChanged();
+//                pageRenderer.setPageLayoutParser(SimpleLayoutParser.getInstance());
+//                pageAdapter.notifyDataSetChanged();
                 item.setChecked(true);
                 break;
             }
             case R.id.simple_parser: {
-                pageRenderer.setPageLayoutParser(OpenCvPageLayoutParserImpl.getInstance());
-                pageAdapter.notifyDataSetChanged();
+//                pageRenderer.setPageLayoutParser(OpenCvPageLayoutParserImpl.getInstance());
+//                pageAdapter.notifyDataSetChanged();
                 item.setChecked(true);
                 break;
             }
@@ -269,7 +269,7 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
         public PageListAdapter(DevicePageContext context, BookRecord book) {
             this.book = book;
             this.context = context;
-            this.renderer = pageRenderer;
+            this.renderer = PageRendererFactory.getRenderer(book);
             DisplayMetrics metrics = getResources().getDisplayMetrics();
             //context.setDisplayDpi(metrics.densityDpi);
             context.setDisplayDpi(144);

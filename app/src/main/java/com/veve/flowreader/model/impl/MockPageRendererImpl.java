@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.veve.flowreader.model.DevicePageContext;
+import com.veve.flowreader.model.PageLayoutParser;
 import com.veve.flowreader.model.PageRenderer;
 
 public class MockPageRendererImpl implements PageRenderer {
@@ -26,4 +27,10 @@ public class MockPageRendererImpl implements PageRenderer {
     public Bitmap renderOriginalPage(DevicePageContext context, int position) {
         return bitmap;
     }
+
+    @Override
+    public void setPageLayoutParser(PageLayoutParser parser) {
+
+    }
+
 }

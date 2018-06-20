@@ -22,8 +22,7 @@ public class PageRendererImpl implements PageRenderer {
     BookSource bookSource;
 
     public PageRendererImpl(BookSource bookSource) {
-        //pageLayoutParser = new OpenCvPageLayoutParserImpl();
-        pageLayoutParser = new SimpleLayoutParser();
+        pageLayoutParser = SimpleLayoutParser.getInstance();
         this.bookSource = bookSource;
     }
 
