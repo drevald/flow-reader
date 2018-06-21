@@ -51,6 +51,13 @@ public class MainActivity extends AppCompatActivity {
     private static final int GRID_VIEW = 1;
 
     @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        bookListAdapter.notifyDataSetChanged();
+        bookGridAdapter.notifyDataSetChanged();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         preferences = getPreferences(MODE_PRIVATE);
@@ -212,6 +219,12 @@ public class MainActivity extends AppCompatActivity {
         public boolean equals(Object object) {
             return true;
         }
+
+//        @Override
+//        public void notifyDataSetChanged() {
+//            super.notifyDataSetChanged();
+//            booksList = BooksCollection.getInstance(getApplicationContext()).getBooks();
+//        }
 
     }
 

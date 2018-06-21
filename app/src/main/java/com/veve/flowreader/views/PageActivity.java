@@ -28,6 +28,7 @@ import com.veve.flowreader.R;
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.model.Book;
 import com.veve.flowreader.model.BookPage;
+import com.veve.flowreader.model.BookSource;
 import com.veve.flowreader.model.BooksCollection;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageLayoutParser;
@@ -61,6 +62,8 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
 
     PageListAdapter pageAdapter;
 
+    BookRecord book;
+
     static {
         if (!OpenCVLoader.initDebug()) {
             Log.i("", "Open CV init error");
@@ -81,6 +84,10 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        int position = getIntent().getIntExtra("position", 0);
+        book = BooksCollection.getInstance(getApplicationContext()).getBooks().get(position);
+
         viewMode = Constants.VIEW_MODE_PHONE;
         setContentView(R.layout.activity_page);
         toolbar = findViewById(R.id.toolbar);
@@ -110,8 +117,6 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
                 if (recyclerView.getAdapter() == null) {
 
                     DevicePageContext pageContext = new DevicePageContextImpl(recyclerView.getWidth());
-                    int position = getIntent().getIntExtra("position", 0);
-                    BookRecord book = BooksCollection.getInstance(getApplicationContext()).getBooks().get(position);
                     pageRenderer = PageRendererFactory.getRenderer(book);
                     PageListAdapter pageAdapter = new PageListAdapter(pageContext, pageRenderer, book);
                     recyclerView.setAdapter(pageAdapter);
@@ -205,6 +210,13 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
                 pageRenderer.setPageLayoutParser(simpleParser);
                 pageAdapter.notifyDataSetChanged();
                 item.setChecked(true);
+                break;
+            }
+            case R.id.delete_book: {
+                BooksCollection.getInstance(getApplicationContext()).deleteBook(book.getId());
+                Intent i = new Intent(PageActivity.this, MainActivity.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(i);
                 break;
             }
         }

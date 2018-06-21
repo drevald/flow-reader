@@ -13,6 +13,8 @@ public interface BookStorage {
 
     public List<BookRecord> getBooksList();
 
-    public void addBook(BookRecord bookRecord);
+    public int addBook(BookRecord bookRecord);
+
+    public void deleteBook(int bookId);
 
 }

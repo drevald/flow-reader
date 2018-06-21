@@ -39,7 +39,12 @@ public class BookStorageImpl implements BookStorage {
         try {
             wrapper.moveToFirst();
             while (!wrapper.isAfterLast()) {
-                books.add(wrapper.getBookRecord());
+                BookRecord bookRecord = wrapper.getBookRecord();
+                books.add(bookRecord);
+                Log.i(getClass().getName(),
+                        String.format("id:%d name:%s url:%s pages:%d",
+                                bookRecord.getId(), bookRecord.getName(), bookRecord.getUrl(),
+                                bookRecord.getPagesCount()));
                 wrapper.moveToNext();
             }
         } finally
@@ -57,13 +62,14 @@ public class BookStorageImpl implements BookStorage {
     }
 
     @Override
-    public void addBook(BookRecord bookRecord) {
+    public int addBook(BookRecord bookRecord) {
         ContentValues values = new ContentValues();
         values.put(BookStorageSchema.BookTable.Cols.PATH, bookRecord.getUrl());
         values.put(BookStorageSchema.BookTable.Cols.NAME, bookRecord.getUrl());
         values.put(BookStorageSchema.BookTable.Cols.PAGES_COUNT, bookRecord.getPagesCount());
         long l = database.insert(BookStorageSchema.BookTable.NAME, null, values);
         Log.i(getClass().getName(), String.format("Inserted row number is %d", l));
+        return (int)l;
     }
 
     private BookRecordCursorWrapper queryBooks(String whereClause, String[] whereArgs) {
@@ -77,6 +83,11 @@ public class BookStorageImpl implements BookStorage {
                 null // orderBy
         );
         return new BookRecordCursorWrapper(cursor);
+    }
+
+    @Override
+    public void deleteBook(int bookId) {
+        database.execSQL("DELETE FROM " + BookStorageSchema.BookTable.NAME + " WHERE id = " + bookId);
     }
 
 }

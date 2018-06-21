@@ -51,6 +51,11 @@ public class BookRecord {
         this.pagesCount = pagesCount;
     }
 
+    public String toString() {
+        return String.format(
+                "id:%d name:%s url:%s pages:%d", getId(), getName(), getUrl(), getPagesCount());
+    }
+
     Integer pagesCount;
 
     String name;

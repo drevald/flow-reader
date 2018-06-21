@@ -1,5 +1,7 @@
 package com.veve.flowreader.model;
 
+import android.util.Log;
+
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.model.impl.djvu.DjvuBook;
 import com.veve.flowreader.model.impl.djvu.DjvuBookSource;
@@ -36,8 +38,16 @@ public class BookFactory {
     }
 
     public BookRecord createBook(File file) {
+        BookSource bookSource = getSource(file);
         BookRecord bookRecord = new BookRecord(file.getAbsolutePath(), file.getAbsolutePath());
-        bookRecord.setPagesCount(10);
+        try {
+            Thread.currentThread().sleep(1000);
+        } catch (InterruptedException ie) {
+            Log.e(getClass().getName(), ie.getLocalizedMessage());
+        }
+        Log.v(getClass().getName(), String.format("Pages count 1 %d", bookSource.getPagesCount()));
+        bookRecord.setPagesCount(bookSource.getPagesCount());
+        Log.v(getClass().getName(), String.format("Pages count 2 %d", bookSource.getPagesCount()));
         bookRecord.setName(file.getAbsolutePath());
         return bookRecord;
     }

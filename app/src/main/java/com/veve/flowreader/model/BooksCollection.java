@@ -1,6 +1,7 @@
 package com.veve.flowreader.model;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.dao.BookStorage;
@@ -39,8 +40,17 @@ public class BooksCollection {
     }
 
     public void addBook(BookRecord bookRecord) {
+        for (BookRecord record : getBooks()) {
+            Log.v(getClass().getName(),
+                    "Before addition of id " + bookRecord.getId() + ""+ record.toString());
+        }
+        int id = bookStorage.addBook(bookRecord);
+        bookRecord.setId(id);
         booksList.add(bookRecord);
-        bookStorage.addBook(bookRecord);
+        for (BookRecord record : getBooks()) {
+            Log.v(getClass().getName(),
+                    "After addition of id " + bookRecord.getId() + ""+ record.toString());
+        }
     }
 
     public boolean hasBook(File bookFile) {
@@ -49,6 +59,26 @@ public class BooksCollection {
                 return true;
         }
         return false;
+    }
+
+    public void deleteBook (int bookId) {
+        for (BookRecord record : getBooks()) {
+            Log.v(getClass().getName(),
+                    "Before deletion of id " + bookId + ""+ record.toString());
+        }
+        bookStorage.deleteBook(bookId);
+        BookRecord bookToDelete = null;
+        for (BookRecord bookRecord : booksList) {
+            if (bookRecord.getId() == bookId) {
+                bookToDelete = bookRecord;
+                break;
+            }
+        }
+        booksList.remove(bookToDelete);
+        for (BookRecord record : getBooks()) {
+            Log.v(getClass().getName(),
+                    "After deletion of id " + bookId + ""+ record.toString());
+        }
     }
 
 }
