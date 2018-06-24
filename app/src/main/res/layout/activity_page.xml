@@ -86,6 +86,12 @@
 
     </android.support.v7.widget.RecyclerView>
 
+<!--<LinearLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_gravity="bottom|end"-->
+    <!--android:orientation="horizontal">-->
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/home"
         android:layout_width="wrap_content"
@@ -112,5 +118,18 @@
         android:gravity="center"
         android:background="#fff">
     </TextView>
+
+    <!--<SeekBar-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:textSize="24sp"-->
+        <!--android:padding="24dp"-->
+        <!--android:layout_gravity="bottom"-->
+        <!--android:gravity="center">-->
+    <!--</SeekBar>-->
+
+<!--</LinearLayout>-->
+
+
 
 </android.support.design.widget.CoordinatorLayout>
