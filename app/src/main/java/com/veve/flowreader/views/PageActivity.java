@@ -1,5 +1,6 @@
 package com.veve.flowreader.views;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -15,12 +16,14 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.veve.flowreader.Constants;
@@ -43,6 +46,7 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
 import com.veve.flowreader.model.impl.*;
 
+import static android.view.View.VISIBLE;
 import static com.veve.flowreader.Constants.VIEW_MODE_ORIGINAL;
 import static com.veve.flowreader.Constants.VIEW_MODE_PHONE;
 
@@ -64,6 +68,8 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
 
     BookRecord book;
 
+    SeekBar seekBar;
+
     static {
         if (!OpenCVLoader.initDebug()) {
             Log.i("", "Open CV init error");
@@ -81,6 +87,7 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
         return true;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,7 +102,38 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
         topLayout = findViewById(R.id.topLayout);
         setSupportActionBar(toolbar);
         pager = findViewById(R.id.pager);
+        seekBar = findViewById(R.id.slider);
+        seekBar.setMax(book.getPagesCount());
         FloatingActionButton home = findViewById(R.id.home);
+
+        pager.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                pager.setVisibility(View.GONE);
+                seekBar.setVisibility(VISIBLE);
+                return true;
+            }
+        });
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                Log.d(getClass().getName(), String.format("onProgressChanged. %d %%", progress));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                Log.d(getClass().getName(), "onStartTrackingTouch");
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                Log.d(getClass().getName(), "onStopTrackingTouch");
+                setPageNumber((int)seekBar.getProgress(), seekBar.getMax());
+                seekBar.setVisibility(View.GONE);
+                pager.setVisibility(VISIBLE);
+            }
+        });
 
         home.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -227,6 +265,8 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
 
     public void setPageNumber(int pageNumber, int totalPages) {
         pager.setText(getString(R.string.ui_page_count, pageNumber + 1, totalPages));
+        seekBar.setProgress(pageNumber + 1);
+
     }
 
     class PageMenuListener implements OnClickListener {
