@@ -29,6 +29,8 @@ import android.widget.TextView;
 import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
 import com.veve.flowreader.dao.BookRecord;
+import com.veve.flowreader.dao.BookStorage;
+import com.veve.flowreader.dao.sqlite.BookStorageImpl;
 import com.veve.flowreader.model.Book;
 import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.BookSource;
@@ -70,6 +72,8 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
 
     SeekBar seekBar;
 
+    int currentPage;
+
     static {
         if (!OpenCVLoader.initDebug()) {
             Log.i("", "Open CV init error");
@@ -84,6 +88,8 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.page_menu, menu);
+        MenuItem menuItem = menu.findItem(R.id.opencv_parser);
+        menuItem.setChecked(true);
         return true;
     }
 
@@ -94,6 +100,7 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
 
         int position = getIntent().getIntExtra("position", 0);
         book = BooksCollection.getInstance(getApplicationContext()).getBooks().get(position);
+        currentPage = 0;
 
         viewMode = Constants.VIEW_MODE_PHONE;
         setContentView(R.layout.activity_page);
@@ -202,6 +209,7 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
                 recyclerView.getRecycledViewPool().clear();
                 recyclerView.setAdapter(null);
                 recyclerView.invalidate();
+                recyclerView.scrollToPosition(currentPage);
             }
         });
 
@@ -266,7 +274,11 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
     public void setPageNumber(int pageNumber, int totalPages) {
         pager.setText(getString(R.string.ui_page_count, pageNumber + 1, totalPages));
         seekBar.setProgress(pageNumber + 1);
-
+        RecyclerView recyclerView = findViewById(R.id.list);
+        recyclerView.scrollToPosition(pageNumber);
+        currentPage = pageNumber;
+        book.setCurrentPage(currentPage);
+        BookStorageImpl.getInstance(getApplicationContext()).updateBook(book);
     }
 
     class PageMenuListener implements OnClickListener {
@@ -335,6 +347,7 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
             DisplayMetrics metrics = getResources().getDisplayMetrics();
             //context.setDisplayDpi(metrics.densityDpi);
             context.setDisplayDpi(144);
+            setPageNumber(book.getCurrentPage(), book.getPagesCount());
         }
 
         public DevicePageContext getContext() {

@@ -25,7 +25,8 @@ public class BookStorageHelper extends SQLiteOpenHelper {
                 BookTable.Cols.ID + " integer primary key autoincrement, " +
                 BookTable.Cols.PATH + "," +
                 BookTable.Cols.NAME + "," +
-                BookTable.Cols.PAGES_COUNT + ")"
+                BookTable.Cols.PAGES_COUNT + "," +
+                BookTable.Cols.CURRENT_PAGE + ")"
         );
     }
 

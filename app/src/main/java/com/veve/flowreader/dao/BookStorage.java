@@ -17,4 +17,5 @@ public interface BookStorage {
 
     public void deleteBook(int bookId);
 
+    public void updateBook(BookRecord bookRecord);
 }

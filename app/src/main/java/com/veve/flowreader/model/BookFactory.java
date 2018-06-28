@@ -45,10 +45,10 @@ public class BookFactory {
         } catch (InterruptedException ie) {
             Log.e(getClass().getName(), ie.getLocalizedMessage());
         }
-        Log.v(getClass().getName(), String.format("Pages count 1 %d", bookSource.getPagesCount()));
         bookRecord.setPagesCount(bookSource.getPagesCount());
-        Log.v(getClass().getName(), String.format("Pages count 2 %d", bookSource.getPagesCount()));
         bookRecord.setName(file.getAbsolutePath());
+        bookRecord.setCurrentPage(0);
+        Log.v(getClass().getName(), String.format("Book created %s", bookSource.toString()));
         return bookRecord;
     }
 

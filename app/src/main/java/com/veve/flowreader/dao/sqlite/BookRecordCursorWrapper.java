@@ -19,6 +19,7 @@ public class BookRecordCursorWrapper extends CursorWrapper {
         bookRecord.setName(getString(getColumnIndex(BookStorageSchema.BookTable.Cols.NAME)));
         bookRecord.setUrl(getString(getColumnIndex(BookStorageSchema.BookTable.Cols.PATH)));
         bookRecord.setPagesCount(getInt(getColumnIndex(BookStorageSchema.BookTable.Cols.PAGES_COUNT)));
+        bookRecord.setCurrentPage(getInt(getColumnIndex(BookStorageSchema.BookTable.Cols.CURRENT_PAGE)));
         bookRecord.setId(getInt(getColumnIndex(BookStorageSchema.BookTable.Cols.ID)));
         return bookRecord;
     }

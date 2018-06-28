@@ -67,9 +67,22 @@ public class BookStorageImpl implements BookStorage {
         values.put(BookStorageSchema.BookTable.Cols.PATH, bookRecord.getUrl());
         values.put(BookStorageSchema.BookTable.Cols.NAME, bookRecord.getUrl());
         values.put(BookStorageSchema.BookTable.Cols.PAGES_COUNT, bookRecord.getPagesCount());
+        values.put(BookStorageSchema.BookTable.Cols.CURRENT_PAGE, bookRecord.getCurrentPage());
         long l = database.insert(BookStorageSchema.BookTable.NAME, null, values);
         Log.i(getClass().getName(), String.format("Inserted row number is %d", l));
         return (int)l;
+    }
+
+    @Override
+    public void updateBook(BookRecord bookRecord) {
+        ContentValues values = new ContentValues();
+        values.put(BookStorageSchema.BookTable.Cols.PATH, bookRecord.getUrl());
+        values.put(BookStorageSchema.BookTable.Cols.NAME, bookRecord.getUrl());
+        values.put(BookStorageSchema.BookTable.Cols.CURRENT_PAGE, bookRecord.getPagesCount());
+        values.put(BookStorageSchema.BookTable.Cols.PAGES_COUNT, bookRecord.getPagesCount());
+        String whereClause = BookStorageSchema.BookTable.Cols.ID.concat("=?");
+        String[] whereArgs = new String[] {String.valueOf(bookRecord.getId())};
+        database.update(BookStorageSchema.BookTable.NAME, values, whereClause, whereArgs);
     }
 
     private BookRecordCursorWrapper queryBooks(String whereClause, String[] whereArgs) {

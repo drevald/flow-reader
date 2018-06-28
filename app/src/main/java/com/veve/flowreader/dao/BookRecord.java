@@ -56,6 +56,16 @@ public class BookRecord {
                 "id:%d name:%s url:%s pages:%d", getId(), getName(), getUrl(), getPagesCount());
     }
 
+    public Integer getCurrentPage() {
+        return currentPage;
+    }
+
+    public void setCurrentPage(Integer currentPage) {
+        this.currentPage = currentPage;
+    }
+
+    Integer currentPage;
+
     Integer pagesCount;
 
     String name;
