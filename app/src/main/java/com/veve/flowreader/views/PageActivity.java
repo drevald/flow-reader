@@ -367,10 +367,12 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
             Log.d(getClass().getName(), String.format("onBindViewHolder #%d", position));
             //BookPage bookPage = book.getPage(position);
             Bitmap bitmap;
+            Log.d(getClass().getName(), String.format("Start rendering page %d", position));
             if (viewMode == Constants.VIEW_MODE_PHONE)
                 bitmap = renderer.renderPage(context, position);
             else
                 bitmap = renderer.renderOriginalPage(context, position);
+            Log.d(getClass().getName(), String.format("End rendering page %d", position));
             ((ImageView) holder.itemView).setImageBitmap(bitmap);
         }
 

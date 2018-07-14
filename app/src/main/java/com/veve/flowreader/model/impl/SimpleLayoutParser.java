@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.util.Log;
 
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyph;
@@ -66,7 +67,7 @@ public class SimpleLayoutParser implements PageLayoutParser {
                 greyscale = getGrayscale(rgb);
                 sum += greyscale;
             }
-            System.out.print(i+ "\t"+(rowHeight-sum)/rowHeight + "\n");
+            Log.v(getClass().getName(),i + "\t" + (rowHeight - sum) / rowHeight + "\n");
             if (glyphState == STATE_GLYPH_BLANK) {
                 if ((rowHeight-sum)/rowHeight > CHAR_THRESHOLD) {
                     glyphState = STATE_GLYPH_STARTED;
@@ -104,7 +105,7 @@ public class SimpleLayoutParser implements PageLayoutParser {
                     greyscale = getGrayscale(rgb);
                     sum += greyscale;
                 } catch (Exception e) {
-                    System.out.println("i:"+i+",j:"+j);
+                    Log.e(getClass().getName(),"i:"+i+",j:"+j);
                 }
             }
 
