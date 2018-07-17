@@ -28,13 +28,18 @@ public class PageRendererImpl implements PageRenderer {
 
     @Override
     public Bitmap renderPage(DevicePageContext context, int position) {
+        Log.d(getClass().getName(), "1");
 
         Log.i(getClass().getName(), String.format("position=%d", position));
         List<PageGlyph> pageGlyphList = pageLayoutParser.getGlyphs(bookSource.getPageBytes(position));
 
+        Log.d(getClass().getName(),"2");
+
         for(PageGlyph pageGlyph : pageGlyphList) {
             pageGlyph.draw(context, false);
         }
+
+        Log.d(getClass().getName(), "3");
 
         context.setCurrentBaseLine(0);
         Point remotestPoint = context.getRemotestPoint();

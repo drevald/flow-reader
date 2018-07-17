@@ -364,7 +364,6 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             PageActivity.this.setPageNumber(position, book.getPagesCount());
-            Log.d(getClass().getName(), String.format("onBindViewHolder #%d", position));
             //BookPage bookPage = book.getPage(position);
             Bitmap bitmap;
             Log.d(getClass().getName(), String.format("Start rendering page %d", position));

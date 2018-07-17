@@ -38,6 +38,8 @@ public class SimpleLayoutParser implements PageLayoutParser {
     @Override
     public List<PageGlyph> getGlyphs(Bitmap bitmap) {
 
+        Log.d(getClass().getName(), "getGlyphs started");
+
         List<Row> rows = getRows(bitmap);
 
         List<PageGlyph> glyphs = new ArrayList<PageGlyph>();
@@ -45,6 +47,8 @@ public class SimpleLayoutParser implements PageLayoutParser {
         for (Row row : rows) {
             glyphs.addAll(getGlyphs(row, bitmap));
         }
+
+        Log.d(getClass().getName(), "getGlyphs ended");
 
         return glyphs;
 
