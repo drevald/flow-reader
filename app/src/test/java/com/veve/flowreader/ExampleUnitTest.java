@@ -23,9 +23,9 @@ import static org.junit.Assert.*;
  */
 public class ExampleUnitTest {
 
-    static {
-        System.loadLibrary("native-lib");
-    }
+//    static {
+//        System.loadLibrary("native-lib");
+//    }
 
     @Test
     public void addition_isCorrect() throws Exception {
