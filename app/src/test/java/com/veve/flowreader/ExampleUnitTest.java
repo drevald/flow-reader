@@ -33,12 +33,12 @@ public class ExampleUnitTest {
     }
 
 
-    @Test
-    public void testDjvu() throws Exception {
-        BookSource bookSource = new DjvuBookSource("src/main/res/raw/djvu_sample.djvu");
-        PageRenderer renderer = new PageRendererImpl(bookSource);
-        DevicePageContext context = new DevicePageContextImpl();
-        renderer.renderPage(context, 1);
-    }
+//    @Test
+//    public void testDjvu() throws Exception {
+//        BookSource bookSource = new DjvuBookSource("src/main/res/raw/djvu_sample.djvu");
+//        PageRenderer renderer = new PageRendererImpl(bookSource);
+//        DevicePageContext context = new DevicePageContextImpl();
+//        renderer.renderPage(context, 1);
+//    }
 
 }
