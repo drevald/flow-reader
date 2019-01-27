@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="5pt"
-        android:textSize="18px"
+        android:textSize="18sp"
         />
 
 </android.support.constraint.ConstraintLayout>
