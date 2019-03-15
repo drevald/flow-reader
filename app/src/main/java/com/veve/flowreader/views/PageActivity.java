@@ -30,7 +30,6 @@ import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.dao.BookStorage;
-import com.veve.flowreader.dao.sqlite.BookStorageImpl;
 import com.veve.flowreader.model.Book;
 import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.BookSource;
@@ -39,14 +38,11 @@ import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageLayoutParser;
 import com.veve.flowreader.model.PageRenderer;
 import com.veve.flowreader.model.PageRendererFactory;
-import com.veve.flowreader.model.impl.DevicePageContextImpl;
-import com.veve.flowreader.model.impl.SimpleLayoutParser;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
-import com.veve.flowreader.model.impl.*;
 
 import static android.view.View.VISIBLE;
 import static com.veve.flowreader.Constants.VIEW_MODE_ORIGINAL;
@@ -161,7 +157,7 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
                 Log.i("tag", "" + recyclerView.getWidth());
                 if (recyclerView.getAdapter() == null) {
 
-                    DevicePageContext pageContext = new DevicePageContextImpl(recyclerView.getWidth());
+                    DevicePageContext pageContext = new DevicePageContext(recyclerView.getWidth());
                     pageRenderer = PageRendererFactory.getRenderer(book);
                     PageListAdapter pageAdapter = new PageListAdapter(pageContext, pageRenderer, book);
                     recyclerView.setAdapter(pageAdapter);
@@ -244,20 +240,6 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
                 pageAdapter.notifyDataSetChanged();
                 break;
             }
-            case R.id.opencv_parser: {
-                PageLayoutParser openCvParser = OpenCvPageLayoutParserImpl.getInstance();
-                pageRenderer.setPageLayoutParser(openCvParser);
-                pageAdapter.notifyDataSetChanged();
-                item.setChecked(true);
-                break;
-            }
-            case R.id.simple_parser: {
-                PageLayoutParser simpleParser = SimpleLayoutParser.getInstance();
-                pageRenderer.setPageLayoutParser(simpleParser);
-                pageAdapter.notifyDataSetChanged();
-                item.setChecked(true);
-                break;
-            }
             case R.id.delete_book: {
                 BooksCollection.getInstance(getApplicationContext()).deleteBook(book.getId());
                 Intent i = new Intent(PageActivity.this, MainActivity.class);
@@ -278,7 +260,7 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
         recyclerView.scrollToPosition(pageNumber);
         currentPage = pageNumber;
         book.setCurrentPage(currentPage);
-        BookStorageImpl.getInstance(getApplicationContext()).updateBook(book);
+//        BookStorage.getInstance(getApplicationContext()).updateBook(book);
     }
 
     class PageMenuListener implements OnClickListener {

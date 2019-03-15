@@ -5,9 +5,9 @@ import android.util.Log;
 
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.dao.BookStorage;
-import com.veve.flowreader.dao.sqlite.BookStorageImpl;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,8 +29,7 @@ public class BooksCollection {
     public static BooksCollection getInstance(Context context) {
         if (bookCollection == null) {
             bookCollection = new BooksCollection();
-            bookStorage = BookStorageImpl.getInstance(context);
-            booksList = bookStorage.getBooksList();
+            booksList = new ArrayList<BookRecord>();
         }
         return bookCollection;
     }

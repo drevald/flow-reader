@@ -7,50 +7,114 @@ import android.graphics.Point;
  * Created by ddreval on 16.01.2018.
  */
 
-public interface DevicePageContext {
+public class DevicePageContext {
 
-    public Point getStartPoint();
+    private Point startPoint;
+    private Canvas canvas;
+    private float zoom;
+    private int width;
+    private Point remotestPoint;
+    private float kerning;
+    private float leading;
+    private int margin;
+    private int displayDpi;
+    private int lineHeight;
+    private int currentBaseLine;
 
-    public void setStartPoint(Point point);
+    public DevicePageContext(int width) {
+        this.width = width;
+    }
 
-    public Canvas getCanvas();
+    public Point getStartPoint() {
+        return startPoint;
+    }
 
-    public void setCanvas(Canvas canvas);
+    public void setStartPoint(Point startPoint) {
+        this.startPoint = startPoint;
+    }
 
-    public float getZoom();
+    public Canvas getCanvas() {
+        return canvas;
+    }
 
-    public void setZoom(float zoom);
+    public void setCanvas(Canvas canvas) {
+        this.canvas = canvas;
+    }
 
-    public int getWidth();
+    public float getZoom() {
+        return zoom;
+    }
 
-    public Point getRemotestPoint();
+    public void setZoom(float zoom) {
+        this.zoom = zoom;
+    }
 
-    public void setRemotestPoint(Point point);
+    public int getWidth() {
+        return width;
+    }
 
-    public void resetPosition();
+    public void setWidth(int width) {
+        this.width = width;
+    }
 
-    public float getKerning();
+    public Point getRemotestPoint() {
+        return remotestPoint;
+    }
 
-    public void setKerning(float kerning);
+    public void setRemotestPoint(Point remotestPoint) {
+        this.remotestPoint = remotestPoint;
+    }
 
-    public float getLeading();
+    public float getKerning() {
+        return kerning;
+    }
 
-    public void setLeading(float leading);
+    public void setKerning(float kerning) {
+        this.kerning = kerning;
+    }
 
-    public int getMargin();
+    public float getLeading() {
+        return leading;
+    }
 
-    public void setMargin(int margin);
+    public void setLeading(float leading) {
+        this.leading = leading;
+    }
 
-    public int getDisplayDpi();
+    public int getMargin() {
+        return margin;
+    }
 
-    public void setDisplayDpi(int displayDpi);
+    public void setMargin(int margin) {
+        this.margin = margin;
+    }
 
-    public void setCurrentBaseLine(int baseLine);
+    public int getDisplayDpi() {
+        return displayDpi;
+    }
 
-    public int getCurrentBaseLine();
+    public void setDisplayDpi(int displayDpi) {
+        this.displayDpi = displayDpi;
+    }
 
-    public int getLineHeight();
+    public int getLineHeight() {
+        return lineHeight;
+    }
 
-    public void setLineHeight(int lineHeight);
+    public void setLineHeight(int lineHeight) {
+        this.lineHeight = lineHeight;
+    }
+
+    public int getCurrentBaseLine() {
+        return currentBaseLine;
+    }
+
+    public void setCurrentBaseLine(int currentBaseLine) {
+        this.currentBaseLine = currentBaseLine;
+    }
+
+    public void resetPosition() {
+        startPoint.set(0, 0);
+    }
 
 }

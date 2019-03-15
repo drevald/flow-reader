@@ -33,11 +33,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
     sourceSets.main {
         jniLibs.srcDir 'jni/djvunative'
     }
-
     splits {
         abi {
             enable true
@@ -46,17 +44,16 @@ android {
             universalApk false
         }
     }
-
     externalNativeBuild {
         ndkBuild {
             path 'jni/Android.mk'
         }
     }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    buildToolsVersion '28.0.3'
 }
 
 dependencies {

@@ -3,10 +3,6 @@ package com.veve.flowreader.model;
 import android.util.Log;
 
 import com.veve.flowreader.dao.BookRecord;
-import com.veve.flowreader.model.impl.djvu.DjvuBook;
-import com.veve.flowreader.model.impl.djvu.DjvuBookSource;
-import com.veve.flowreader.model.impl.pdf.PdfBook;
-import com.veve.flowreader.model.impl.pdf.PdfBookSource;
 
 import java.io.File;
 
@@ -28,13 +24,7 @@ public class BookFactory {
     }
 
     public BookSource getSource(File file) {
-        BookSource bookSource = null;
-        if(file.getPath().endsWith("djvu")) {
-            bookSource = new DjvuBookSource(file.getPath());
-        } else if (file.getPath().endsWith("pdf")) {
-            bookSource = new PdfBookSource(file.getPath());
-        }
-        return bookSource;
+        return null;
     }
 
     public BookRecord createBook(File file) {
