@@ -21,6 +21,9 @@ public class DevicePageContext {
     private int lineHeight;
     private int currentBaseLine;
 
+    public DevicePageContext() {
+    }
+
     public DevicePageContext(int width) {
         this.width = width;
     }

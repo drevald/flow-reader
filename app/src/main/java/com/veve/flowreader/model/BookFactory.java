@@ -28,18 +28,7 @@ public class BookFactory {
     }
 
     public BookRecord createBook(File file) {
-        BookSource bookSource = getSource(file);
-        BookRecord bookRecord = new BookRecord(file.getAbsolutePath(), file.getAbsolutePath());
-        try {
-            Thread.currentThread().sleep(1000);
-        } catch (InterruptedException ie) {
-            Log.e(getClass().getName(), ie.getLocalizedMessage());
-        }
-        bookRecord.setPagesCount(bookSource.getPagesCount());
-        bookRecord.setName(file.getAbsolutePath());
-        bookRecord.setCurrentPage(0);
-        Log.v(getClass().getName(), String.format("Book created %s", bookSource.toString()));
-        return bookRecord;
+        return new BookRecord();
     }
 
 }

@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
@@ -49,6 +50,7 @@ public class BrowseFilesActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //GET BACK BUTTON
         FloatingActionButton home = (FloatingActionButton) findViewById(R.id.home);
         home.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,39 +61,12 @@ public class BrowseFilesActivity extends AppCompatActivity {
             }
         });
 
+
+        // FILES LIST
         final FileListAdapter fileListAdapter = new FileListAdapter();
         ListView listView = (ListView) findViewById(android.R.id.list);
-
         listView.setAdapter(fileListAdapter);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.d(this.getClass().getName(), i + " clicked");
-                if (fileListAdapter.currentFiles.get(i).isFile()) {
-                    File file = fileListAdapter.currentFiles.get(i);
-                    if (!file.getName().toLowerCase().endsWith(".djvu")
-                            && !file.getName().toLowerCase().endsWith(".pdf")) {
-                        Snackbar.make(view, getString(R.string.ui_unsupported_format),
-                                Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                    } else {
-                        if (BooksCollection.getInstance(getApplicationContext()).hasBook(file)) {
-                            Snackbar.make(view, getString(R.string.ui_book_already_added),
-                                    Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                        } else {
-                            BookRecord newBook = BookFactory.getInstance().createBook(file);
-                            BooksCollection.getInstance(getApplicationContext()).addBook(newBook);
-                            Intent ii = new Intent(BrowseFilesActivity.this, MainActivity.class);
-                        startActivity(ii);
-                    }
-                    }
-                } else if (!fileListAdapter.currentFiles.get(i).canRead()) {
-                    Snackbar.make(view, getString(R.string.ui_no_permission),
-                            Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                }
-                fileListAdapter.setRoot(i);
-            }
-        });
+        listView.setOnItemClickListener(new FileListener(fileListAdapter));
     }
 
     private void requestPermissions() {
@@ -122,6 +97,9 @@ public class BrowseFilesActivity extends AppCompatActivity {
             // Permission has already been granted
         }
     }
+
+
+///    ADAPTERS    ///////////////////////////////////////////
 
     class FileListAdapter extends BaseAdapter {
 
@@ -155,7 +133,7 @@ public class BrowseFilesActivity extends AppCompatActivity {
             }
         }
 
-        public void setRoot(int index) {
+        private void setRoot(int index) {
             Log.d(this.getClass().getName(), "setRoot");
             File newRoot = currentFiles.get(index);
             if (newRoot.isDirectory()) {
@@ -221,4 +199,48 @@ public class BrowseFilesActivity extends AppCompatActivity {
 
     }
 
+///   LISTENERS    ///////////////////////////////////////////
+
+    public class FileListener implements AdapterView.OnItemClickListener {
+
+        FileListAdapter fileListAdapter;
+
+        public FileListener(FileListAdapter fileListAdapter) {
+            this.fileListAdapter = fileListAdapter;
+        }
+
+        @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            Log.d(this.getClass().getName(), i + " clicked");
+            if (fileListAdapter.currentFiles.get(i).isFile()) {
+                File file = fileListAdapter.currentFiles.get(i);
+                if (!file.getName().toLowerCase().endsWith(".djvu")
+                        && !file.getName().toLowerCase().endsWith(".pdf")) {
+                    Snackbar.make(view, getString(R.string.ui_unsupported_format),
+                            Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                } else {
+                    if (BooksCollection.getInstance(getApplicationContext()).hasBook(file)) {
+                        Snackbar.make(view, getString(R.string.ui_book_already_added),
+                                Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                    } else {
+                        BookRecord newBook = BookFactory.getInstance().createBook(file);
+                        newBook.setCurrentPage(0);
+                        newBook.setPagesCount(100);
+                        newBook.setName(file.getName());
+                        newBook.setUrl(file.getAbsolutePath());
+                        BooksCollection.getInstance(getApplicationContext()).addBook(newBook);
+                        Intent ii = new Intent(BrowseFilesActivity.this, MainActivity.class);
+                        startActivity(ii);
+                    }
+                }
+            } else if (!fileListAdapter.currentFiles.get(i).canRead()) {
+                Snackbar.make(view, getString(R.string.ui_no_permission),
+                        Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            }
+            fileListAdapter.setRoot(i);
+        }
+
+    }
+
 }
+

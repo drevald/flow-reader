@@ -38,6 +38,7 @@ import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageLayoutParser;
 import com.veve.flowreader.model.PageRenderer;
 import com.veve.flowreader.model.PageRendererFactory;
+import com.veve.flowreader.model.impl.DevicePageContextImpl;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
@@ -157,7 +158,7 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
                 Log.i("tag", "" + recyclerView.getWidth());
                 if (recyclerView.getAdapter() == null) {
 
-                    DevicePageContext pageContext = new DevicePageContext(recyclerView.getWidth());
+                    DevicePageContext pageContext = new DevicePageContextImpl(recyclerView.getWidth());
                     pageRenderer = PageRendererFactory.getRenderer(book);
                     PageListAdapter pageAdapter = new PageListAdapter(pageContext, pageRenderer, book);
                     recyclerView.setAdapter(pageAdapter);

@@ -44,12 +44,6 @@ public class MainActivity extends AppCompatActivity {
 
     SharedPreferences preferences;
 
-    private static final String VIEW_TYPE = "VIEW_TYPE";
-
-    private static final int LIST_VIEW = 0;
-
-    private static final int GRID_VIEW = 1;
-
     @Override
     protected void onPostResume() {
         super.onPostResume();
@@ -72,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         Log.i("MainActivity", "Is toolbar visible" + getSupportActionBar().isShowing());
 
+
+        ////////////    ADD BOOKS BUTTON     /////////////////////////////////////////////////////
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,14 +80,14 @@ public class MainActivity extends AppCompatActivity {
 
         final GridView gridView = findViewById(R.id.grid);
 
-        if (!preferences.contains(VIEW_TYPE)) {
+        if (!preferences.contains(Constants.VIEW_TYPE)) {
             Log.d(getClass().getName(), "View type preference missing. Setting list as default");
             SharedPreferences.Editor editor = preferences.edit();
-            editor.putInt(VIEW_TYPE, GRID_VIEW);
+            editor.putInt(Constants.VIEW_TYPE, Constants.GRID_VIEW_TYPE);
             editor.apply();
         }
 
-        if (preferences.getInt(VIEW_TYPE, LIST_VIEW) == LIST_VIEW) {
+        if (preferences.getInt(Constants.VIEW_TYPE, Constants.LIST_VIEW_TYPE) == Constants.LIST_VIEW_TYPE) {
             Log.d(getClass().getName(), "Preference view is list");
             gridView.setNumColumns(1);
             gridView.setAdapter(bookListAdapter);
@@ -118,13 +114,16 @@ public class MainActivity extends AppCompatActivity {
             public void onGlobalLayout() {
                 columnsNumber = (int) (gridView.getWidth()/
                         (Constants.BOOK_THUMB_WIDTH + 2 * Constants.BOOK_THUMB_HOR_PADDING));
-                if(preferences.getInt(VIEW_TYPE, LIST_VIEW) == LIST_VIEW){
+                if(preferences.getInt(Constants.VIEW_TYPE, Constants.LIST_VIEW_TYPE) == Constants.LIST_VIEW_TYPE){
                     gridView.setNumColumns(1);
                 } else {
                     gridView.setNumColumns(columnsNumber);
                 }
             }
         });
+
+
+        /////    SWITCH TO LIST VIEW     ///////////////////////////////
 
         ImageButton listBooksButton = findViewById(R.id.books_list);
         listBooksButton.setOnClickListener(new View.OnClickListener() {
@@ -134,10 +133,13 @@ public class MainActivity extends AppCompatActivity {
                 gridView.setNumColumns(1);
                 gridView.setAdapter(bookListAdapter);
                 SharedPreferences.Editor editor = preferences.edit();
-                editor.putInt(VIEW_TYPE, LIST_VIEW);
+                editor.putInt(Constants.VIEW_TYPE, Constants.LIST_VIEW_TYPE);
                 editor.apply();
             }
         });
+
+
+        //////   SWITCH TO GRID VIEW   ////////////////////////////////
 
         ImageButton gridBooksButton = findViewById(R.id.books_grid);
         gridBooksButton.setOnClickListener(new View.OnClickListener() {
@@ -147,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
                 gridView.setNumColumns(columnsNumber);
                 gridView.setAdapter(bookGridAdapter);
                 SharedPreferences.Editor editor = preferences.edit();
-                editor.putInt(VIEW_TYPE, GRID_VIEW);
+                editor.putInt(Constants.VIEW_TYPE, Constants.GRID_VIEW_TYPE);
                 editor.apply();
             }
         });
@@ -173,6 +175,10 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
+
+///////////////////////   ADAPTERS   ///////////////////////////////////////////////////////////////
 
     public class BookListAdapter extends BaseAdapter {
 
@@ -220,12 +226,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
-//        @Override
-//        public void notifyDataSetChanged() {
-//            super.notifyDataSetChanged();
-//            booksList = BooksCollection.getInstance(getApplicationContext()).getBooks();
-//        }
-
     }
 
     public class BookGridAdapter extends BaseAdapter {
@@ -268,7 +268,6 @@ public class MainActivity extends AppCompatActivity {
             textView.setText(booksList.get(position).getName());
             textView.setTextSize(12);
             textView.setTextColor(Color.WHITE);
-
             return convertView;
         }
 
@@ -283,5 +282,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
 
 }
