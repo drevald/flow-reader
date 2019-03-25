@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -340,8 +341,10 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             Log.d(getClass().getName(), "onCreateViewHolder");
-            ImageView view = new ImageView(PageActivity.this.getApplicationContext());
-            return new TextViewHolder(view);
+            //ImageView view = new ImageView(PageActivity.this.getApplicationContext());
+            LinearLayout layout = new LinearLayout(getApplicationContext());
+            layout.setOrientation(LinearLayout.VERTICAL);
+            return new TextViewHolder(layout);
         }
 
         @Override
@@ -355,7 +358,11 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
             else
                 bitmap = renderer.renderOriginalPage(context, position);
             Log.d(getClass().getName(), String.format("End rendering page %d", position));
-            ((ImageView) holder.itemView).setImageBitmap(bitmap);
+            //((ImageView) holder.itemView).setImageBitmap(bitmap);
+            ImageView imageView = new ImageView(getApplicationContext());
+            imageView.setImageBitmap(bitmap);
+            ((LinearLayout) holder.itemView).removeAllViews();
+            ((LinearLayout) holder.itemView).addView(imageView);
         }
 
         @Override
