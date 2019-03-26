@@ -72,6 +72,8 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
 
     int currentPage;
 
+    final static int IMAGE_VIEW_HEIGHT_LIMIT = 8000;
+
     static {
         if (!OpenCVLoader.initDebug()) {
             Log.i("", "Open CV init error");
@@ -358,11 +360,28 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
             else
                 bitmap = renderer.renderOriginalPage(context, position);
             Log.d(getClass().getName(), String.format("End rendering page %d", position));
-            //((ImageView) holder.itemView).setImageBitmap(bitmap);
-            ImageView imageView = new ImageView(getApplicationContext());
-            imageView.setImageBitmap(bitmap);
             ((LinearLayout) holder.itemView).removeAllViews();
-            ((LinearLayout) holder.itemView).addView(imageView);
+
+            int offset = 0;
+            int bitmapHeight = bitmap.getHeight();
+
+            for (offset = 0; offset < bitmapHeight; offset += IMAGE_VIEW_HEIGHT_LIMIT) {
+                Log.d(getClass().getName(), String.format("Adding bitmap with offset %d", offset));
+                int height = Math.min(bitmapHeight, offset + IMAGE_VIEW_HEIGHT_LIMIT);
+                // java.lang.IllegalArgumentException: y + height must be <= bitmap.height()
+                // public static Bitmap createBitmap(@NonNull Bitmap source, int x, int y, int width, int height)
+                Bitmap limitedBitmap = Bitmap.createBitmap(bitmap, 0, offset, context.getWidth(), height - offset);
+                ImageView imageView = new ImageView(getApplicationContext());
+                imageView.setImageBitmap(limitedBitmap);
+                ((LinearLayout) holder.itemView).addView(imageView);
+            }
+
+
+//            for (Bitmap bitmap : bitmap) {
+//                ImageView imageView = new ImageView(getApplicationContext());
+//                imageView.setImageBitmap(bitmap);
+//                ((LinearLayout) holder.itemView).addView(imageView);
+//            }
         }
 
         @Override
