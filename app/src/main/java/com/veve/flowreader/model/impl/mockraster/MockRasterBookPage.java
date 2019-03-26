@@ -78,6 +78,13 @@ class MockRasterBookPage implements BookPage {
         reset();
         context.resetPosition();
         context.setCanvas(canvas);
+
+        try {
+            Thread.sleep(30000);
+        } catch (Exception e) {
+            Log.d(getClass().getName(), e.getLocalizedMessage());
+        }
+
         return bitmap;
 
     }
