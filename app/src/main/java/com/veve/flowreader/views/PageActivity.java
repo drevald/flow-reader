@@ -3,6 +3,7 @@ package com.veve.flowreader.views;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -12,7 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,30 +21,22 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
 import com.veve.flowreader.dao.BookRecord;
-import com.veve.flowreader.dao.BookStorage;
-import com.veve.flowreader.model.Book;
-import com.veve.flowreader.model.BookPage;
-import com.veve.flowreader.model.BookSource;
 import com.veve.flowreader.model.BooksCollection;
 import com.veve.flowreader.model.DevicePageContext;
-import com.veve.flowreader.model.PageLayoutParser;
 import com.veve.flowreader.model.PageRenderer;
 import com.veve.flowreader.model.PageRendererFactory;
 import com.veve.flowreader.model.impl.DevicePageContextImpl;
 
-import org.opencv.android.BaseLoaderCallback;
-import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
-import org.opencv.core.Mat;
 
 import static android.view.View.VISIBLE;
 import static com.veve.flowreader.Constants.VIEW_MODE_ORIGINAL;
@@ -53,24 +45,18 @@ import static com.veve.flowreader.Constants.VIEW_MODE_PHONE;
 public class PageActivity extends AppCompatActivity implements View.OnClickListener {
 
     TextView pager;
-
     Toolbar toolbar;
-
     AppBarLayout bar;
-
     CoordinatorLayout topLayout;
-
-    int viewMode;
-
     PageRenderer pageRenderer;
-
     PageListAdapter pageAdapter;
-
     BookRecord book;
-
     SeekBar seekBar;
-
+    ProgressBar progressBar;
+    RecyclerView recyclerView;
+    FloatingActionButton home;
     int currentPage;
+    int viewMode;
 
     final static int IMAGE_VIEW_HEIGHT_LIMIT = 8000;
 
@@ -111,107 +97,18 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
         pager = findViewById(R.id.pager);
         seekBar = findViewById(R.id.slider);
         seekBar.setMax(book.getPagesCount());
-        FloatingActionButton home = findViewById(R.id.home);
+        home = findViewById(R.id.home);
+        recyclerView = findViewById(R.id.list);
+        progressBar = findViewById(R.id.progress);
 
-        pager.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                pager.setVisibility(View.GONE);
-                seekBar.setVisibility(VISIBLE);
-                return true;
-            }
-        });
-
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                Log.d(getClass().getName(), String.format("onProgressChanged. %d %%", progress));
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                Log.d(getClass().getName(), "onStartTrackingTouch");
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                Log.d(getClass().getName(), "onStopTrackingTouch");
-                setPageNumber((int)seekBar.getProgress(), seekBar.getMax());
-                seekBar.setVisibility(View.GONE);
-                pager.setVisibility(VISIBLE);
-            }
-        });
-
-        home.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(PageActivity.this, MainActivity.class);
-                i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(i);
-            }
-        });
-
-        final RecyclerView recyclerView = findViewById(R.id.list);
-
+        pager.setOnTouchListener(new PagerTouchListener());
+        seekBar.setOnSeekBarChangeListener(new PagerListener());
+        home.setOnClickListener(new HomeButtonListener());
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getApplicationContext()));
-
-        recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                Log.i("tag", "" + recyclerView.getWidth());
-                if (recyclerView.getAdapter() == null) {
-
-                    DevicePageContext pageContext = new DevicePageContextImpl(recyclerView.getWidth());
-                    pageRenderer = PageRendererFactory.getRenderer(book);
-                    PageListAdapter pageAdapter = new PageListAdapter(pageContext, pageRenderer, book);
-                    recyclerView.setAdapter(pageAdapter);
-
-                    PageMenuListener pageMenuListener = new PageMenuListener();
-
-                    ImageButton smallerTextButton = findViewById(R.id.smaller_text);
-                    smallerTextButton.setOnClickListener(pageMenuListener);
-
-                    ImageButton largerTextButton = findViewById(R.id.larger_text);
-                    largerTextButton.setOnClickListener(pageMenuListener);
-
-                    ImageButton smallerKerningButton = findViewById(R.id.smaller_kerning);
-                    smallerKerningButton.setOnClickListener(pageMenuListener);
-
-                    ImageButton largerKerningButton = findViewById(R.id.larger_kerning);
-                    largerKerningButton.setOnClickListener(pageMenuListener);
-
-                    ImageButton smallerLeadingButton = findViewById(R.id.smaller_leading);
-                    smallerLeadingButton.setOnClickListener(pageMenuListener);
-
-                    ImageButton largerLeadingButton = findViewById(R.id.larger_leading);
-                    largerLeadingButton.setOnClickListener(pageMenuListener);
-
-                }
-            }
-        });
+        recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new RecycleLayoutListener());
 
         FloatingActionButton show = findViewById(R.id.show);
-
-        show.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (viewMode == VIEW_MODE_ORIGINAL) {
-                    viewMode = VIEW_MODE_PHONE;
-                    show.setImageResource(R.drawable.ic_phone);
-                    Snackbar.make(view, getString(R.string.ui_reflow_page), Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                } else if (viewMode == VIEW_MODE_PHONE) {
-                    viewMode = VIEW_MODE_ORIGINAL;
-                    show.setImageResource(R.drawable.ic_book);
-                    Snackbar.make(view, getString(R.string.ui_original_page), Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                }
-                recyclerView.getRecycledViewPool().clear();
-                recyclerView.setAdapter(null);
-                recyclerView.invalidate();
-                recyclerView.scrollToPosition(currentPage);
-            }
-        });
+        show.setOnClickListener(new ShowListener());
 
     }
 
@@ -257,14 +154,96 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    public void setPageNumber(int pageNumber, int totalPages) {
+    private void setPageNumber(int pageNumber, int totalPages) {
         pager.setText(getString(R.string.ui_page_count, pageNumber + 1, totalPages));
         seekBar.setProgress(pageNumber + 1);
         RecyclerView recyclerView = findViewById(R.id.list);
         recyclerView.scrollToPosition(pageNumber);
         currentPage = pageNumber;
         book.setCurrentPage(currentPage);
-//        BookStorage.getInstance(getApplicationContext()).updateBook(book);
+    }
+
+//////////////////////////   LISTENERS  ////////////////////////////////////////////////////
+
+    class PagerTouchListener implements View.OnTouchListener {
+        @Override
+        public boolean onTouch(View view, MotionEvent event) {
+            view.performClick();
+            pager.setVisibility(View.GONE);
+            seekBar.setVisibility(VISIBLE);
+            return true;
+        }
+    }
+
+    class PagerListener implements SeekBar.OnSeekBarChangeListener {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            Log.d(getClass().getName(), String.format("onProgressChanged. %d %%", progress));
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+            Log.d(getClass().getName(), "onStartTrackingTouch");
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            Log.d(getClass().getName(), "onStopTrackingTouch");
+            setPageNumber(seekBar.getProgress(), seekBar.getMax());
+            seekBar.setVisibility(View.GONE);
+            pager.setVisibility(VISIBLE);
+        }
+    }
+
+    class HomeButtonListener implements OnClickListener {
+        @Override
+        public void onClick(View view) {
+            Intent i = new Intent(PageActivity.this, MainActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(i);
+        }
+    }
+
+    class RecycleLayoutListener implements ViewTreeObserver.OnGlobalLayoutListener {
+        @Override
+        public void onGlobalLayout() {
+            Log.i("tag", "" + recyclerView.getWidth());
+            if (recyclerView.getAdapter() == null) {
+                DevicePageContext pageContext = new DevicePageContextImpl(recyclerView.getWidth());
+                pageRenderer = PageRendererFactory.getRenderer(book);
+                PageListAdapter pageAdapter = new PageListAdapter(pageContext, pageRenderer, book);
+                recyclerView.setAdapter(pageAdapter);
+                PageMenuListener pageMenuListener = new PageMenuListener();
+                findViewById(R.id.smaller_text).setOnClickListener(pageMenuListener);
+                findViewById(R.id.larger_text).setOnClickListener(pageMenuListener);
+                findViewById(R.id.smaller_kerning).setOnClickListener(pageMenuListener);
+                findViewById(R.id.larger_kerning).setOnClickListener(pageMenuListener);
+                findViewById(R.id.smaller_leading).setOnClickListener(pageMenuListener);
+                findViewById(R.id.larger_leading).setOnClickListener(pageMenuListener);
+            }
+        }
+    }
+
+    class ShowListener implements OnClickListener {
+        @Override
+        public void onClick(View view) {
+            ImageView show = (ImageView)view;
+            if (viewMode == VIEW_MODE_ORIGINAL) {
+                viewMode = VIEW_MODE_PHONE;
+                show.setImageResource(R.drawable.ic_phone);
+                Snackbar.make(view, getString(R.string.ui_reflow_page), Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            } else if (viewMode == VIEW_MODE_PHONE) {
+                viewMode = VIEW_MODE_ORIGINAL;
+                show.setImageResource(R.drawable.ic_book);
+                Snackbar.make(view, getString(R.string.ui_original_page), Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+            recyclerView.getRecycledViewPool().clear();
+            recyclerView.setAdapter(null);
+            recyclerView.invalidate();
+            recyclerView.scrollToPosition(currentPage);
+        }
     }
 
     class PageMenuListener implements OnClickListener {
@@ -312,28 +291,17 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
+
     class PageListAdapter extends RecyclerView.Adapter {
 
         BookRecord book;
-
         PageRenderer renderer;
-
         DevicePageContext context;
 
-        public PageListAdapter(DevicePageContext context, PageRenderer renderer, BookRecord book) {
+        PageListAdapter(DevicePageContext context, PageRenderer renderer, BookRecord book) {
             this.book = book;
             this.renderer = renderer;
             this.context = context;
-        }
-
-        public PageListAdapter(DevicePageContext context, BookRecord book) {
-            this.book = book;
-            this.context = context;
-            this.renderer = PageRendererFactory.getRenderer(book);
-            DisplayMetrics metrics = getResources().getDisplayMetrics();
-            //context.setDisplayDpi(metrics.densityDpi);
-            context.setDisplayDpi(144);
-            setPageNumber(book.getCurrentPage(), book.getPagesCount());
         }
 
         public DevicePageContext getContext() {
@@ -343,7 +311,6 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             Log.d(getClass().getName(), "onCreateViewHolder");
-            //ImageView view = new ImageView(PageActivity.this.getApplicationContext());
             LinearLayout layout = new LinearLayout(getApplicationContext());
             layout.setOrientation(LinearLayout.VERTICAL);
             return new TextViewHolder(layout);
@@ -352,36 +319,49 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             PageActivity.this.setPageNumber(position, book.getPagesCount());
-            //BookPage bookPage = book.getPage(position);
-            Bitmap bitmap;
-            Log.d(getClass().getName(), String.format("Start rendering page %d", position));
-            if (viewMode == Constants.VIEW_MODE_PHONE)
-                bitmap = renderer.renderPage(context, position);
-            else
-                bitmap = renderer.renderOriginalPage(context, position);
-            Log.d(getClass().getName(), String.format("End rendering page %d", position));
-            ((LinearLayout) holder.itemView).removeAllViews();
 
-            int offset = 0;
-            int bitmapHeight = bitmap.getHeight();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Log.v(getClass().getName(), "Start showing progress");
+                    recyclerView.setVisibility(View.INVISIBLE);
+                    progressBar.setVisibility(View.VISIBLE);
+                }
+            });
 
-            for (offset = 0; offset < bitmapHeight; offset += IMAGE_VIEW_HEIGHT_LIMIT) {
-                Log.d(getClass().getName(), String.format("Adding bitmap with offset %d", offset));
-                int height = Math.min(bitmapHeight, offset + IMAGE_VIEW_HEIGHT_LIMIT);
-                // java.lang.IllegalArgumentException: y + height must be <= bitmap.height()
-                // public static Bitmap createBitmap(@NonNull Bitmap source, int x, int y, int width, int height)
-                Bitmap limitedBitmap = Bitmap.createBitmap(bitmap, 0, offset, context.getWidth(), height - offset);
-                ImageView imageView = new ImageView(getApplicationContext());
-                imageView.setImageBitmap(limitedBitmap);
-                ((LinearLayout) holder.itemView).addView(imageView);
+
+            LinearLayout holderView = (LinearLayout) holder.itemView;
+            holderView.removeAllViews();        // UI code goes here
+            Log.v(getClass().getName(), "Setting progress bar");
+
+            try {
+
+                Log.v(getClass().getName(), "Start setting bitmap");
+                BitmapGetter bitmapGetter = new BitmapGetter(renderer);
+                bitmapGetter.execute(position, viewMode, context);
+
+                Bitmap bitmap = bitmapGetter.get();
+                int bitmapHeight = bitmap.getHeight();
+
+                holderView.removeAllViews();        // UI code goes here
+                for (int offset = 0; offset < bitmapHeight; offset += IMAGE_VIEW_HEIGHT_LIMIT) {
+                    Log.d(getClass().getName(), String.format("Adding bitmap with offset %d", offset));
+                    int height = Math.min(bitmapHeight, offset + IMAGE_VIEW_HEIGHT_LIMIT);
+                    Bitmap limitedBitmap = Bitmap.createBitmap(bitmap, 0, offset, context.getWidth(), height - offset);
+                    ImageView imageView = new ImageView(getApplicationContext());
+                    imageView.setImageBitmap(limitedBitmap);
+                    ((LinearLayout) holder.itemView).addView(imageView);
+                }
+
+                Log.v(getClass().getName(), "End setting bitmap");
+
+                recyclerView.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.INVISIBLE);
+
+            } catch (Exception e) {
+                Log.d(getClass().getName(), "Failed to get bitmap");
             }
 
-
-//            for (Bitmap bitmap : bitmap) {
-//                ImageView imageView = new ImageView(getApplicationContext());
-//                imageView.setImageBitmap(bitmap);
-//                ((LinearLayout) holder.itemView).addView(imageView);
-//            }
         }
 
         @Override
@@ -391,8 +371,31 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    static class BitmapGetter extends AsyncTask<Object, Void, Bitmap> {
+
+        PageRenderer renderer;
+
+        BitmapGetter(PageRenderer renderer) {
+            this.renderer = renderer;
+        }
+
+        @Override
+        protected Bitmap doInBackground(Object... objects) {
+            int position = (Integer)objects[0];
+            int viewMode = (Integer)objects[1];
+            DevicePageContext context = (DevicePageContext)objects[2];
+            Bitmap bitmap;
+            Log.d(getClass().getName(), String.format("Start rendering page %d", position));
+            if (viewMode == Constants.VIEW_MODE_PHONE)
+                bitmap = renderer.renderPage(context, position);
+            else
+                bitmap = renderer.renderOriginalPage(context, position);
+            return bitmap;
+        }
+    }
+
     class TextViewHolder extends RecyclerView.ViewHolder {
-        public TextViewHolder(View itemView) {
+        TextViewHolder(View itemView) {
             super(itemView);
         }
     }
