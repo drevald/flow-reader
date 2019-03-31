@@ -79,16 +79,6 @@ public class PageActivity extends AppCompatActivity {
         return true;
     }
 
-
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_page);
-//        Toolbar toolbar = findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//    }
-
-
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,8 +178,10 @@ public class PageActivity extends AppCompatActivity {
                 startActivity(i);
                 break;
             }
+
         }
 
+        showPage(currentPage);
         return true;
 
     }
@@ -199,6 +191,7 @@ public class PageActivity extends AppCompatActivity {
         seekBar.setProgress(pageNumber + 1);
         currentPage = pageNumber;
         book.setCurrentPage(currentPage);
+        showPage(currentPage);
     }
 
 ////////////////////////////   LISTENERS  ////////////////////////////////////////////////////
@@ -249,12 +242,12 @@ public class PageActivity extends AppCompatActivity {
 //            context = new DevicePageContextImpl(v.getWidth());
             pageRenderer = PageRendererFactory.getRenderer(book);
             PageMenuListener pageMenuListener = new PageMenuListener();
-//            findViewById(R.id.smaller_text).setOnClickListener(pageMenuListener);
-//            findViewById(R.id.larger_text).setOnClickListener(pageMenuListener);
-//            findViewById(R.id.smaller_kerning).setOnClickListener(pageMenuListener);
-//            findViewById(R.id.larger_kerning).setOnClickListener(pageMenuListener);
-//            findViewById(R.id.smaller_leading).setOnClickListener(pageMenuListener);
-//            findViewById(R.id.larger_leading).setOnClickListener(pageMenuListener);
+            findViewById(R.id.smaller_text).setOnClickListener(pageMenuListener);
+            findViewById(R.id.larger_text).setOnClickListener(pageMenuListener);
+            findViewById(R.id.smaller_kerning).setOnClickListener(pageMenuListener);
+            findViewById(R.id.larger_kerning).setOnClickListener(pageMenuListener);
+            findViewById(R.id.smaller_leading).setOnClickListener(pageMenuListener);
+            findViewById(R.id.larger_leading).setOnClickListener(pageMenuListener);
         }
     }
 
@@ -280,35 +273,34 @@ public class PageActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View v) {
-//            switch (v.getId()) {
-//                case R.id.smaller_text: {
-//                    context.setZoom(0.8f * context.getZoom());
-//                    break;
-//                }
-//                case R.id.larger_text: {
-//                    context.setZoom(1.25f * context.getZoom());
-//                    break;
-//                }
-//                case R.id.smaller_kerning: {
-//                    context.setKerning(0.8f * context.getKerning());
-//                    break;
-//                }
-//                case R.id.larger_kerning: {
-//                    context.setKerning(1.25f * context.getKerning());
-//                    break;
-//                }
-//                case R.id.smaller_leading: {
-//                    context.setLeading(0.8f * context.getLeading());
-//                    break;
-//                }
-//                case R.id.larger_leading: {
-//                    context.setLeading(1.25f * context.getLeading());
-//                    break;
-//                }
-//            }
+            switch (v.getId()) {
+                case R.id.smaller_text: {
+                    context.setZoom(0.8f * context.getZoom());
+                    break;
+                }
+                case R.id.larger_text: {
+                    context.setZoom(1.25f * context.getZoom());
+                    break;
+                }
+                case R.id.smaller_kerning: {
+                    context.setKerning(0.8f * context.getKerning());
+                    break;
+                }
+                case R.id.larger_kerning: {
+                    context.setKerning(1.25f * context.getKerning());
+                    break;
+                }
+                case R.id.smaller_leading: {
+                    context.setLeading(0.8f * context.getLeading());
+                    break;
+                }
+                case R.id.larger_leading: {
+                    context.setLeading(1.25f * context.getLeading());
+                    break;
+                }
+            }
 
             pageActivity.showPage(currentPage);
-            //((PageActivity)v.getParent()).showPage(currentPage);
 
         }
 
