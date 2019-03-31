@@ -19,6 +19,7 @@
             android:layout_height="?android:attr/actionBarSize"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
+
             <android.support.v7.widget.AppCompatImageButton
                 android:id="@+id/larger_text"
                 android:layout_width="wrap_content"
@@ -83,15 +84,16 @@
         android:visibility="visible"
         android:layout_height="match_parent" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/list"
+    <LinearLayout
+        android:id="@+id/page"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#ffffff"
         android:visibility="invisible"
+        android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    </android.support.v7.widget.RecyclerView>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

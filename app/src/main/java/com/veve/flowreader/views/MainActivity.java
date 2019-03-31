@@ -1,9 +1,7 @@
 package com.veve.flowreader.views;
 
-import android.content.ComponentCallbacks;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
@@ -11,8 +9,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.OrientationEventListener;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,16 +18,13 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
 import com.veve.flowreader.dao.BookRecord;
-import com.veve.flowreader.model.Book;
 import com.veve.flowreader.model.BooksCollection;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -102,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent ii = new Intent(MainActivity.this, PageActivity.class);
+                //Intent ii = new Intent(MainActivity.this, Main2Activity.class);
                 BookRecord selectedBook = (BookRecord)parent.getItemAtPosition(position);
                 ii.putExtra("filename", selectedBook.getUrl());
                 ii.putExtra("position", position);
