@@ -25,6 +25,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -105,11 +106,13 @@ public class PageActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progress);
         page = findViewById(R.id.page);
 
-        page.addOnLayoutChangeListener(new LayoutListener());
+        //page.addOnLayoutChangeListener(new LayoutListener());
         seekBar.setMax(book.getPagesCount());
         pager.setOnTouchListener(new PagerTouchListener());
         seekBar.setOnSeekBarChangeListener(new PagerListener());
         home.setOnClickListener(new HomeButtonListener());
+
+        topLayout.addOnLayoutChangeListener(new LayoutListener());
 
         Display display = getWindowManager().getDefaultDisplay();
         context = new DevicePageContextImpl(display.getWidth());
