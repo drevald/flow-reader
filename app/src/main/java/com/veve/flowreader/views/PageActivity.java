@@ -118,40 +118,8 @@ public class PageActivity extends AppCompatActivity {
         context = new DevicePageContextImpl(display.getWidth());
 
         pageActivity = this;
-        showPage(currentPage);
+        setPageNumber(currentPage);
 
-    }
-//
-    public void showPage(int pageNumber) {
-
-        try {
-
-            Log.v(getClass().getName(), "Start setting bitmap");
-            BitmapGetter bitmapGetter = new BitmapGetter(pageRenderer);
-            bitmapGetter.execute(pageNumber, viewMode, context);
-
-            Bitmap bitmap = bitmapGetter.get();
-            int bitmapHeight = bitmap.getHeight();
-
-            page.removeAllViews();        // UI code goes here
-            for (int offset = 0; offset < bitmapHeight; offset += IMAGE_VIEW_HEIGHT_LIMIT) {
-                Log.d(getClass().getName(), String.format("Adding bitmap with offset %d", offset));
-                int height = Math.min(bitmapHeight, offset + IMAGE_VIEW_HEIGHT_LIMIT);
-                Bitmap limitedBitmap = Bitmap.createBitmap(bitmap, 0, offset, context.getWidth(),
-                        height - offset);
-                ImageView imageView = new ImageView(getApplicationContext());
-                imageView.setImageBitmap(limitedBitmap);
-                page.addView(imageView);
-            }
-
-            Log.v(getClass().getName(), "End setting bitmap");
-
-            page.setVisibility(View.VISIBLE);
-            progressBar.setVisibility(View.INVISIBLE);
-
-        } catch (Exception e) {
-            Log.d(getClass().getName(), "Failed to get bitmap");
-        }
     }
 
     @Override
@@ -184,17 +152,18 @@ public class PageActivity extends AppCompatActivity {
 
         }
 
-        showPage(currentPage);
+        setPageNumber(currentPage);
         return true;
 
     }
 
-    private void setPageNumber(int pageNumber, int totalPages) {
-        pager.setText(getString(R.string.ui_page_count, pageNumber + 1, totalPages));
+    private void setPageNumber(int pageNumber) {
+        pager.setText(getString(R.string.ui_page_count, pageNumber + 1, book.getPagesCount()));
         seekBar.setProgress(pageNumber + 1);
         currentPage = pageNumber;
-        book.setCurrentPage(currentPage);
-        showPage(currentPage);
+        book.setCurrentPage(pageNumber);
+        PageLoader pageLoader = new PageLoader();
+        pageLoader.execute(pageNumber);
     }
 
 ////////////////////////////   LISTENERS  ////////////////////////////////////////////////////
@@ -223,7 +192,7 @@ public class PageActivity extends AppCompatActivity {
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
             Log.d(getClass().getName(), "onStopTrackingTouch");
-            setPageNumber(seekBar.getProgress(), seekBar.getMax());
+            setPageNumber(seekBar.getProgress());
             seekBar.setVisibility(View.GONE);
             pager.setVisibility(VISIBLE);
         }
@@ -242,7 +211,6 @@ public class PageActivity extends AppCompatActivity {
 
         @Override
         public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-//            context = new DevicePageContextImpl(v.getWidth());
             pageRenderer = PageRendererFactory.getRenderer(book);
             PageMenuListener pageMenuListener = new PageMenuListener();
             findViewById(R.id.smaller_text).setOnClickListener(pageMenuListener);
@@ -303,40 +271,63 @@ public class PageActivity extends AppCompatActivity {
                 }
             }
 
-            pageActivity.showPage(currentPage);
+            pageActivity.setPageNumber(currentPage);
 
         }
 
 
     }
 
-    static class BitmapGetter extends AsyncTask<Object, Void, Bitmap> {
 
-        PageRenderer renderer;
-
-        BitmapGetter(PageRenderer renderer) {
-            this.renderer = renderer;
-        }
+    class PageLoader extends AsyncTask<Integer, Void, Void> {
 
         @Override
-        protected Bitmap doInBackground(Object... objects) {
-            int position = (Integer)objects[0];
-            int viewMode = (Integer)objects[1];
-            DevicePageContext context = (DevicePageContext)objects[2];
+        protected Void doInBackground(Integer... integers) {
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    page.setVisibility(View.INVISIBLE);
+                    progressBar.setVisibility(View.VISIBLE);
+                }
+            });
+
+            int pageNumber = integers[0];
+
             Bitmap bitmap;
-            Log.d(getClass().getName(), String.format("Start rendering page %d", position));
+
             if (viewMode == Constants.VIEW_MODE_PHONE)
-                bitmap = renderer.renderPage(context, position);
+                bitmap = pageRenderer.renderPage(context, pageNumber);
             else
-                bitmap = renderer.renderOriginalPage(context, position);
-            return bitmap;
+                bitmap = pageRenderer.renderOriginalPage(context, pageNumber);
+            int bitmapHeight = bitmap.getHeight();
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    page.removeAllViews();        // UI code goes here
+                    for (int offset = 0; offset < bitmapHeight; offset += IMAGE_VIEW_HEIGHT_LIMIT) {
+                        Log.d(getClass().getName(), String.format("Adding bitmap with offset %d", offset));
+                        int height = Math.min(bitmapHeight, offset + IMAGE_VIEW_HEIGHT_LIMIT);
+                        Bitmap limitedBitmap = Bitmap.createBitmap(bitmap, 0, offset, context.getWidth(),
+                                height - offset);
+                        ImageView imageView = new ImageView(getApplicationContext());
+                        imageView.setImageBitmap(limitedBitmap);
+                        page.addView(imageView);
+                    }
+
+                    Log.v(getClass().getName(), "End setting bitmap");
+
+                    page.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
+            });
+
+            return null;
+
         }
+
     }
 
-    class TextViewHolder extends RecyclerView.ViewHolder {
-        TextViewHolder(View itemView) {
-            super(itemView);
-        }
-    }
 
 }
