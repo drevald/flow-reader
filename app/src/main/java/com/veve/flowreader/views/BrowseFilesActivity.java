@@ -225,8 +225,6 @@ public class BrowseFilesActivity extends AppCompatActivity {
                     } else {
                         BookRecord newBook = BookFactory.getInstance().createBook(file);
                         newBook.setCurrentPage(0);
-                        newBook.setPagesCount(100);
-                        newBook.setName(file.getName());
                         newBook.setUrl(file.getAbsolutePath());
                         BooksCollection.getInstance(getApplicationContext()).addBook(newBook);
                         Intent ii = new Intent(BrowseFilesActivity.this, MainActivity.class);
