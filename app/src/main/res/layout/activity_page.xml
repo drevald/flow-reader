@@ -123,9 +123,9 @@
             android:id="@+id/pager"
             android:layout_height="wrap_content"
             android:layout_width="fill_parent"
-            android:textSize="24sp"
+            android:textSize="12sp"
             android:textAlignment="center"
-            android:padding="24dp"
+            android:padding="12dp"
             android:layout_gravity="bottom|center"
             android:background="#fff"
             android:layout_weight = "1"/>
