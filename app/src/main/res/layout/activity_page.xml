@@ -86,7 +86,9 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/scroll">
+        android:paddingTop="10sp"
+        android:id="@+id/scroll"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:id="@+id/page"
@@ -95,7 +97,7 @@
             android:background="#ffffff"
             android:visibility="invisible"
             android:orientation="vertical"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+            />
 
     </ScrollView>
 
@@ -104,7 +106,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:orientation="horizontal"
-        android:background="#fff">
+        android:background="#fff"
+        >
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/show"
