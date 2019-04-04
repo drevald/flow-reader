@@ -93,7 +93,7 @@
         <LinearLayout
             android:id="@+id/page"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:background="#ffffff"
             android:visibility="invisible"
             android:orientation="vertical"
@@ -116,27 +116,20 @@
             android:layout_gravity="bottom|start"
             android:layout_margin="@dimen/fab_margin"
             app:srcCompat="@drawable/ic_phone"
-            android:layout_weight = "0"
-            android:background="#fff"/>
+            android:layout_weight = "0"/>
 
         <TextView
             android:id="@+id/pager"
-            android:layout_height="wrap_content"
-            android:layout_width="fill_parent"
-            android:textSize="12sp"
-            android:textAlignment="center"
-            android:padding="12dp"
-            android:layout_gravity="bottom|center"
-            android:background="#fff"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:gravity="center"
             android:layout_weight = "1"/>
 
         <SeekBar
             android:id="@+id/slider"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_width="match_parent"
-            android:textSize="24sp"
-            android:padding="24dp"
-            android:layout_gravity="bottom|center"
+            android:layout_gravity="center"
             android:visibility="gone"
             android:layout_weight = "1"/>
 

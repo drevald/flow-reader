@@ -70,8 +70,6 @@ public class PageActivity extends AppCompatActivity {
         }
     }
 
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.page_menu, menu);
@@ -89,14 +87,12 @@ public class PageActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
         int position = getIntent().getIntExtra("position", 0);
         book = BooksCollection.getInstance(getApplicationContext()).getBooks().get(position);
         pageRenderer = PageRendererFactory.getRenderer(book);
         currentPage = 0;
 
         viewMode = Constants.VIEW_MODE_PHONE;
-
 
         bar = findViewById(R.id.bar);
         topLayout = findViewById(R.id.topLayout);
@@ -143,9 +139,11 @@ public class PageActivity extends AppCompatActivity {
                 break;
             }
             case R.id.delete_book: {
-                BooksCollection.getInstance(getApplicationContext()).deleteBook(book.getId());
+                long bookId = book.getId();
+                BooksCollection.getInstance(getApplicationContext()).deleteBook(bookId);
                 Intent i = new Intent(PageActivity.this, MainActivity.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                i.putExtra(Constants.BOOK_ID, bookId);
                 startActivity(i);
                 break;
             }

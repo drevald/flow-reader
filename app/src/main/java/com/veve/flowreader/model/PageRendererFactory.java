@@ -19,6 +19,7 @@ public class PageRendererFactory {
         } else {
             return new MockRenderer(bookRecord);
         }
+
     }
 
 }

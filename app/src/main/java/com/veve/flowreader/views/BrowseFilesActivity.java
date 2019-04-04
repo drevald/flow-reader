@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -238,6 +239,14 @@ public class BrowseFilesActivity extends AppCompatActivity {
             fileListAdapter.setRoot(i);
         }
 
+    }
+
+    class BookCreatorTask extends AsyncTask<File, Void, Void> {
+        @Override
+        protected Void doInBackground(File... files) {
+
+            return null;
+        }
     }
 
 }

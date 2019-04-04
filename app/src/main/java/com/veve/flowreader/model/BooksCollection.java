@@ -47,7 +47,7 @@ public class BooksCollection {
     }
 
     public void deleteBook (long bookId) {
-        daoAccess.deleteBook(bookId);
+        new BookDeleteTask(daoAccess).execute(bookId);
     }
 
     public boolean hasBook (File file) {
@@ -76,6 +76,22 @@ public class BooksCollection {
 }
 
 ///////////////////////   DB TASKS   ////////////////////////////////////////////
+
+class BookDeleteTask extends AsyncTask<Long, Void, Void> {
+
+    private DaoAccess daoAccess;
+
+    BookDeleteTask(DaoAccess daoAccess) {
+        this.daoAccess = daoAccess;
+    }
+
+    @Override
+    protected Void doInBackground(Long... longs) {
+        daoAccess.deleteBook(longs[0]);
+        return null;
+    }
+
+}
 
 class BookAddTask extends AsyncTask<BookRecord, Void, Long> {
 

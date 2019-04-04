@@ -19,4 +19,7 @@ public interface Constants {
     public static final int LIST_VIEW_TYPE = 0;
     public static final int GRID_VIEW_TYPE = 1;
 
+
+    public static final String BOOK_ID = "BOOK_ID";
+
 }

@@ -38,6 +38,15 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences preferences;
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        long bookId = intent.getLongExtra(Constants.BOOK_ID, 0);
+        if (bookId > 0) {
+            bookGridAdapter.removeBook(bookId);
+            bookListAdapter.removeBook(bookId);
+        }
+    }
+
+        @Override
     protected void onPostResume() {
         super.onPostResume();
         bookListAdapter.notifyDataSetChanged();
@@ -185,6 +194,15 @@ public class MainActivity extends AppCompatActivity {
             notifyDataSetChanged();
         }
 
+        public void removeBook(long bookId) {
+            for (BookRecord record : booksList) {
+                if (record.getId() == bookId) {
+                    booksList.remove(record);
+                }
+            }
+            notifyDataSetChanged();
+        }
+
         @Override
         public int getCount() {
             return booksList.size();
@@ -230,6 +248,15 @@ public class MainActivity extends AppCompatActivity {
         private BookGridAdapter() {
             Log.i(this.getClass().getName(), "Constructing BookListAdapter");
             booksList = BooksCollection.getInstance(getApplicationContext()).getBooks();
+            notifyDataSetChanged();
+        }
+
+        public void removeBook(long bookId) {
+            for (BookRecord record : booksList) {
+                if (record.getId() == bookId) {
+                    booksList.remove(record);
+                }
+            }
             notifyDataSetChanged();
         }
 
