@@ -40,12 +40,16 @@ import com.veve.flowreader.model.impl.DevicePageContextImpl;
 
 import org.opencv.android.OpenCVLoader;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import static android.view.View.VISIBLE;
 import static com.veve.flowreader.Constants.VIEW_MODE_ORIGINAL;
 import static com.veve.flowreader.Constants.VIEW_MODE_PHONE;
 
 public class PageActivity extends AppCompatActivity {
 
+    Set<AsyncTask> runningTasks;
     TextView pager;
     Toolbar toolbar;
     AppBarLayout bar;
@@ -59,6 +63,7 @@ public class PageActivity extends AppCompatActivity {
     LinearLayout page;
     DevicePageContext context;
     PageActivity pageActivity;
+    ScrollView scroll;
     int currentPage;
     int viewMode;
 
@@ -83,6 +88,9 @@ public class PageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
+        runningTasks = new HashSet<AsyncTask>();
+
         setContentView(R.layout.activity_page);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -101,12 +109,15 @@ public class PageActivity extends AppCompatActivity {
         home = findViewById(R.id.home);
         progressBar = findViewById(R.id.progress);
         page = findViewById(R.id.page);
+        show = findViewById(R.id.show);
+        scroll = findViewById(R.id.scroll);
 
         //page.addOnLayoutChangeListener(new LayoutListener());
         seekBar.setMax(book.getPagesCount());
         pager.setOnTouchListener(new PagerTouchListener());
         seekBar.setOnSeekBarChangeListener(new PagerListener());
         home.setOnClickListener(new HomeButtonListener());
+        show.setOnClickListener(new ShowListener());
 
         topLayout.addOnLayoutChangeListener(new LayoutListener());
 
@@ -161,7 +172,19 @@ public class PageActivity extends AppCompatActivity {
         currentPage = pageNumber;
         book.setCurrentPage(pageNumber);
         PageLoader pageLoader = new PageLoader();
+        kickOthers(pageLoader);
         pageLoader.execute(pageNumber);
+    }
+
+    private void kickOthers(PageLoader pageLoader) {
+        for (AsyncTask task : runningTasks) {
+            if(!task.isCancelled()) {
+                task.cancel(true);
+                Log.d(getClass().getName(), "Cancelling taks #" + task.hashCode());
+            }
+        }
+        runningTasks.add(pageLoader);
+        Log.d(getClass().getName(), "Adding taks #" + pageLoader.hashCode());
     }
 
 ////////////////////////////   LISTENERS  ////////////////////////////////////////////////////
@@ -235,6 +258,7 @@ public class PageActivity extends AppCompatActivity {
                 Snackbar.make(view, getString(R.string.ui_original_page), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
+            pageActivity.setPageNumber(currentPage);
         }
     }
 
@@ -280,12 +304,26 @@ public class PageActivity extends AppCompatActivity {
     class PageLoader extends AsyncTask<Integer, Void, Void> {
 
         @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            runningTasks.remove(this);
+            Log.d(getClass().getName(), "Task #" + hashCode() + " removed on completion");
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            runningTasks.remove(this);
+            Log.d(getClass().getName(), "Task #" + hashCode() + " removed on cancellation");
+        }
+
+        @Override
         protected Void doInBackground(Integer... integers) {
 
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    page.setVisibility(View.INVISIBLE);
+                    scroll.setVisibility(View.INVISIBLE);
                     progressBar.setVisibility(View.VISIBLE);
                 }
             });
@@ -303,20 +341,25 @@ public class PageActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    page.removeAllViews();        // UI code goes here
-                    for (int offset = 0; offset < bitmapHeight; offset += IMAGE_VIEW_HEIGHT_LIMIT) {
-                        Log.d(getClass().getName(), String.format("Adding bitmap with offset %d", offset));
-                        int height = Math.min(bitmapHeight, offset + IMAGE_VIEW_HEIGHT_LIMIT);
-                        Bitmap limitedBitmap = Bitmap.createBitmap(bitmap, 0, offset, context.getWidth(),
-                                height - offset);
-                        ImageView imageView = new ImageView(getApplicationContext());
-                        imageView.setImageBitmap(limitedBitmap);
-                        page.addView(imageView);
+                    if (bitmap.getWidth() >= context.getWidth()) {
+                        page.removeAllViews();        // UI code goes here
+                        for (int offset = 0; offset < bitmapHeight; offset += IMAGE_VIEW_HEIGHT_LIMIT) {
+                            int height = Math.min(bitmapHeight, offset + IMAGE_VIEW_HEIGHT_LIMIT);
+                            Log.d(getClass().getName(),
+                                    String.format(" Bitmap.createBitmap(bitmap, 0, %d, %d, %d)",
+                                            offset, context.getWidth(), height - offset));
+                            Log.d(getClass().getName(),
+                                    String.format("bitmap size is width : %d height :%d",
+                                            bitmap.getWidth(), bitmap.getHeight()));
+                            Bitmap limitedBitmap = Bitmap.createBitmap(bitmap, 0, offset, context.getWidth(),
+                                    height - offset);
+                            ImageView imageView = new ImageView(getApplicationContext());
+                            imageView.setImageBitmap(limitedBitmap);
+                            page.addView(imageView);
+                        }
+                        Log.v(getClass().getName(), "End setting bitmap");
                     }
-
-                    Log.v(getClass().getName(), "End setting bitmap");
-
-                    page.setVisibility(View.VISIBLE);
+                    scroll.setVisibility(View.VISIBLE);
                     progressBar.setVisibility(View.INVISIBLE);
                 }
             });
