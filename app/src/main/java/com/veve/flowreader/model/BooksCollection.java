@@ -72,10 +72,58 @@ public class BooksCollection {
         }
     }
 
+    public void updateBook(BookRecord bookRecord) {
+        BookUpdateTask bookUpdateTask = new BookUpdateTask(daoAccess);
+        bookUpdateTask.execute(bookRecord);
+    }
+
+    public BookRecord getBook(long bookId) {
+        BookGetterTask bookGetterTask = new BookGetterTask(daoAccess);
+        bookGetterTask.execute(bookId);
+        try {
+            return bookGetterTask.get();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+
 
 }
 
 ///////////////////////   DB TASKS   ////////////////////////////////////////////
+
+class BookUpdateTask extends AsyncTask<BookRecord, Void, Void> {
+
+    private DaoAccess daoAccess;
+
+    public BookUpdateTask(DaoAccess daoAccess) {
+        this.daoAccess = daoAccess;
+    }
+
+    @Override
+    protected Void doInBackground(BookRecord... bookRecords) {
+        daoAccess.updateBook(bookRecords[0]);
+        return null;
+    }
+
+}
+
+class BookGetterTask extends AsyncTask<Long, Void, BookRecord> {
+
+    private DaoAccess daoAccess;
+
+    public BookGetterTask(DaoAccess daoAccess) {
+        this.daoAccess = daoAccess;
+    }
+
+    @Override
+    protected BookRecord doInBackground(Long ... longs) {
+        daoAccess.getBook(longs[0]);
+        return null;
+    }
+
+}
 
 class BookDeleteTask extends AsyncTask<Long, Void, Void> {
 

@@ -25,4 +25,18 @@ public interface DaoAccess {
     @Insert
     long addBook(BookRecord bookRecord);
 
+    @Query("SELECT currentPage FROM BookRecord WHERE id =:bookId")
+    int getCurrentPage(long bookId);
+
+    @Query("UPDATE BookRecord SET currentPage =:currentPage WHERE id =:bookId")
+    int setCurrentPage(long bookId, int currentPage);
+
+    @Update
+    void updateBook(BookRecord bookRecord);
+
+    @Query("SELECT * FROM BookRecord WHERE id = :bookId")
+    BookRecord getBook(Long bookId);
+
+
+
 }

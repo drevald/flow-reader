@@ -252,11 +252,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public void removeBook(long bookId) {
+            BookRecord recordToDelete = null;
             for (BookRecord record : booksList) {
                 if (record.getId() == bookId) {
-                    booksList.remove(record);
+                    recordToDelete = record;
+                    break;
                 }
             }
+            booksList.remove(recordToDelete);
             notifyDataSetChanged();
         }
 

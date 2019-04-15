@@ -33,10 +33,20 @@ public class BookFactory {
         BookRecord bookRecord = new BookRecord();
         if (file.getName().toLowerCase().endsWith("djvu")) {
             Book book = new DjvuBook(file.getPath());
+            try {
+                Thread.sleep(10000);
+            } catch (Exception e) {
+
+            }
             bookRecord.setPagesCount(book.getPagesCount());
             bookRecord.setName(book.getName());
         } else if (file.getName().toLowerCase().endsWith("pdf")) {
             Book book = new PdfBook(file.getPath());
+            try {
+                Thread.sleep(10000);
+            } catch (Exception e) {
+
+            }
             bookRecord.setPagesCount(book.getPagesCount());
             bookRecord.setName(book.getName());
         }

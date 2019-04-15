@@ -19,6 +19,7 @@ public class BookRecord {
     private String url;
 
     public BookRecord() {
+        this(null, 0, 0, null, null);
     }
 
     @Ignore

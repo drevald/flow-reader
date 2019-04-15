@@ -66,6 +66,7 @@ public class PageActivity extends AppCompatActivity {
     ScrollView scroll;
     int currentPage;
     int viewMode;
+    BooksCollection booksCollection;
 
     final static int IMAGE_VIEW_HEIGHT_LIMIT = 8000;
 
@@ -96,9 +97,10 @@ public class PageActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         int position = getIntent().getIntExtra("position", 0);
-        book = BooksCollection.getInstance(getApplicationContext()).getBooks().get(position);
+        booksCollection = BooksCollection.getInstance(getApplicationContext());
+        book = booksCollection.getBooks().get(position);
         pageRenderer = PageRendererFactory.getRenderer(book);
-        currentPage = 0;
+        currentPage = book.getCurrentPage();
 
         viewMode = Constants.VIEW_MODE_PHONE;
 
@@ -128,6 +130,8 @@ public class PageActivity extends AppCompatActivity {
         setPageNumber(currentPage);
 
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -171,6 +175,7 @@ public class PageActivity extends AppCompatActivity {
         seekBar.setProgress(pageNumber + 1);
         currentPage = pageNumber;
         book.setCurrentPage(pageNumber);
+        booksCollection.updateBook(book);
         PageLoader pageLoader = new PageLoader();
         kickOthers(pageLoader);
         pageLoader.execute(pageNumber);

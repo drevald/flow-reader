@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -112,7 +113,10 @@ public class BrowseFilesActivity extends AppCompatActivity {
         public FileListAdapter() {
             super();
             try {
-                rootDir = new File("/sdcard");
+                //rootDir = Environment.getRootDirectory(); //new File("/sdcard");
+//                rootDir = new File("/storage/emulated/0/Download/");
+                rootDir = new File("/storage/emulated/0/");
+//                rootDir = new File("/");
                 currentDirectory = rootDir;
                 currentFiles = new ArrayList<File>();
                 for (File file : currentDirectory.listFiles()) {
@@ -179,7 +183,7 @@ public class BrowseFilesActivity extends AppCompatActivity {
             }
             TextView textView = (TextView) ((ConstraintLayout) convertView).getChildAt(0);
             File selectedFile = currentFiles.get(position);
-            textView.setText(selectedFile.getAbsolutePath());
+            textView.setText(selectedFile.getName());
             if (!selectedFile.canRead()) {
                 textView.setTextColor(Constants.LIGHT_PINK);
             } else if (selectedFile.canWrite()) {
