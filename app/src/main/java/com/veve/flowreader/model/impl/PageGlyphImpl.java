@@ -96,7 +96,7 @@ public class PageGlyphImpl implements PageGlyph {
         if(__width * context.getZoom() + startPoint.x > context.getWidth() - context.getMargin()) {
             startPoint.set(context.getMargin(), startPoint.y + (int)(__height * context.getZoom())
                     + (int)(context.getLeading()* context.getZoom()));
-            currentBaseline += context.getLineHeight();
+            currentBaseline += context.getLineHeight() * context.getZoom();
         }
         Rect __srcRect = new Rect(0, 0, __width, __height);
         Rect __dstRect = new Rect(startPoint.x ,

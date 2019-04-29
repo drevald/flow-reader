@@ -113,10 +113,8 @@ public class BrowseFilesActivity extends AppCompatActivity {
         public FileListAdapter() {
             super();
             try {
-                //rootDir = Environment.getRootDirectory(); //new File("/sdcard");
-//                rootDir = new File("/storage/emulated/0/Download/");
-                rootDir = new File("/storage/emulated/0/");
-//                rootDir = new File("/");
+//                rootDir = new File("/storage/emulated/0/");
+                rootDir = new File("/");
                 currentDirectory = rootDir;
                 currentFiles = new ArrayList<File>();
                 for (File file : currentDirectory.listFiles()) {

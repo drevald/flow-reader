@@ -274,26 +274,32 @@ public class PageActivity extends AppCompatActivity {
             switch (v.getId()) {
                 case R.id.smaller_text: {
                     context.setZoom(0.8f * context.getZoom());
+                    Log.v(getClass().getName(), "Zoom set to " + context.getZoom());
                     break;
                 }
                 case R.id.larger_text: {
                     context.setZoom(1.25f * context.getZoom());
+                    Log.v(getClass().getName(), "Zoom set to " + context.getZoom());
                     break;
                 }
                 case R.id.smaller_kerning: {
                     context.setKerning(0.8f * context.getKerning());
+                    Log.v(getClass().getName(), "Kerning set to " + context.getKerning());
                     break;
                 }
                 case R.id.larger_kerning: {
                     context.setKerning(1.25f * context.getKerning());
+                    Log.v(getClass().getName(), "Kerning set to " + context.getKerning());
                     break;
                 }
                 case R.id.smaller_leading: {
                     context.setLeading(0.8f * context.getLeading());
+                    Log.v(getClass().getName(), "Leading set to " + context.getLeading());
                     break;
                 }
                 case R.id.larger_leading: {
                     context.setLeading(1.25f * context.getLeading());
+                    Log.v(getClass().getName(), "Leading set to " + context.getLeading());
                     break;
                 }
             }
