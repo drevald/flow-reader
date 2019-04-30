@@ -23,6 +23,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:onClick="browseInternalMemory"
+                style="?android:attr/borderlessButtonStyle"
                 app:srcCompat="@drawable/ic_internal_memory" />
 
             <android.support.v7.widget.AppCompatImageButton
@@ -31,6 +32,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:onClick="browseExternalMemory"
+                style="?android:attr/borderlessButtonStyle"
                 app:srcCompat="@drawable/ic_external_memory" />
 
         </android.support.v7.widget.Toolbar>

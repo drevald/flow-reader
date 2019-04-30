@@ -264,13 +264,16 @@ public class BrowseFilesActivity extends AppCompatActivity {
 
     public void browseInternalMemory(View view) {
         //fileListAdapter.setRoot(INTERNAL_ROOT);
-        fileListAdapter.setRoot(getApplicationContext().getFilesDir().getAbsolutePath());
+        //fileListAdapter.setRoot(getApplicationContext().getFilesDir().getAbsolutePath());
+        //fileListAdapter.setRoot("/storage/sdcard0/");
+        fileListAdapter.setRoot("/storage/emulated/0/");
         fileListAdapter.notifyDataSetChanged();
     }
 
     public void browseExternalMemory(View view) {
         //fileListAdapter.setRoot(EXTERNAL_ROOT);
-        fileListAdapter.setRoot(Environment.getExternalStorageDirectory().getAbsolutePath());
+        //fileListAdapter.setRoot(Environment.getExternalStorageDirectory().getAbsolutePath());
+        fileListAdapter.setRoot("/storage/emulated/1/");
         fileListAdapter.notifyDataSetChanged();
     }
 
