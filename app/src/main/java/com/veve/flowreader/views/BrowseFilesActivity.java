@@ -42,6 +42,12 @@ import java.util.List;
 
 public class BrowseFilesActivity extends AppCompatActivity {
 
+    private static final String INTERNAL_ROOT = "/storage/sdcard0/";
+
+    private static final String EXTERNAL_ROOT = "/storage/sdcard1/";
+
+    FileListAdapter fileListAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +71,7 @@ public class BrowseFilesActivity extends AppCompatActivity {
 
 
         // FILES LIST
-        final FileListAdapter fileListAdapter = new FileListAdapter();
+        fileListAdapter = new FileListAdapter();
         ListView listView = (ListView) findViewById(android.R.id.list);
         listView.setAdapter(fileListAdapter);
         listView.setOnItemClickListener(new FileListener(fileListAdapter));
@@ -112,9 +118,12 @@ public class BrowseFilesActivity extends AppCompatActivity {
 
         public FileListAdapter() {
             super();
+            setRoot(INTERNAL_ROOT);
+        }
+
+        protected void setRoot(String path) {
             try {
-//                rootDir = new File("/storage/emulated/0/");
-                rootDir = new File("/");
+                rootDir = new File(path);
                 currentDirectory = rootDir;
                 currentFiles = new ArrayList<File>();
                 for (File file : currentDirectory.listFiles()) {
@@ -131,7 +140,7 @@ public class BrowseFilesActivity extends AppCompatActivity {
                     }
                 });
             } catch (Exception e) {
-                Log.e(this.getClass().getName(), e.getMessage());
+//                Log.e(this.getClass().getName(), e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -250,6 +259,21 @@ public class BrowseFilesActivity extends AppCompatActivity {
             return null;
         }
     }
+
+    ///////////////////////////////////////////////
+
+    public void browseInternalMemory(View view) {
+        //fileListAdapter.setRoot(INTERNAL_ROOT);
+        fileListAdapter.setRoot(getApplicationContext().getFilesDir().getAbsolutePath());
+        fileListAdapter.notifyDataSetChanged();
+    }
+
+    public void browseExternalMemory(View view) {
+        //fileListAdapter.setRoot(EXTERNAL_ROOT);
+        fileListAdapter.setRoot(Environment.getExternalStorageDirectory().getAbsolutePath());
+        fileListAdapter.notifyDataSetChanged();
+    }
+
 
 }
 

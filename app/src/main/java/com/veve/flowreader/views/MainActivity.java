@@ -104,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent ii = new Intent(MainActivity.this, PageActivity.class);
-                //Intent ii = new Intent(MainActivity.this, Main2Activity.class);
                 BookRecord selectedBook = (BookRecord)parent.getItemAtPosition(position);
                 ii.putExtra("filename", selectedBook.getUrl());
                 ii.putExtra("position", position);
@@ -291,7 +290,8 @@ public class MainActivity extends AppCompatActivity {
             TextView textView = convertView.findViewById(R.id.book);
             textView.setText(booksList.get(position).getName());
             textView.setTextSize(12);
-            textView.setTextColor(Color.WHITE);
+            textView.setTextColor(Color.CYAN);
+            textView.setBackgroundColor(Color.YELLOW);
             return convertView;
         }
 
