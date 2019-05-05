@@ -22,28 +22,20 @@ public class PageRendererImpl implements PageRenderer {
     BookSource bookSource;
 
     public PageRendererImpl(BookSource bookSource) {
-        pageLayoutParser = OpenCvPageLayoutParserImpl.getInstance();
+        pageLayoutParser = PageSegmenter.getInstance();
         this.bookSource = bookSource;
     }
 
     @Override
     public Bitmap renderPage(DevicePageContext context, int position) {
-        Log.d(getClass().getName(), "1");
-
-        Log.i(getClass().getName(), String.format("position=%d", position));
         List<PageGlyph> pageGlyphList = pageLayoutParser.getGlyphs(bookSource.getPageBytes(position));
-
-        Log.d(getClass().getName(),"2");
 
         for(PageGlyph pageGlyph : pageGlyphList) {
             pageGlyph.draw(context, false);
         }
 
-        Log.d(getClass().getName(), "3");
-
         context.setCurrentBaseLine(0);
         Point remotestPoint = context.getRemotestPoint();
-        Log.i(getClass().getName(), String.format("w=%d h=%d, position=%d", context.getWidth(), remotestPoint.y, position));
         Bitmap bitmap = Bitmap.createBitmap(context.getWidth(), remotestPoint.y + (int)context.getLeading() , ARGB_8888);
 
         Canvas canvas = new Canvas(bitmap);

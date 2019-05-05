@@ -245,7 +245,7 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             }
             case R.id.opencv_parser: {
-                PageLayoutParser openCvParser = OpenCvPageLayoutParserImpl.getInstance();
+                PageLayoutParser openCvParser = PageSegmenter.getInstance();
                 pageRenderer.setPageLayoutParser(openCvParser);
                 pageAdapter.notifyDataSetChanged();
                 item.setChecked(true);
