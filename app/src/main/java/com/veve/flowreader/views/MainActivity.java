@@ -239,9 +239,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
     public class BookGridAdapter extends BaseAdapter {
 
-        private BookListAdapter instance;
+        private BookGridAdapter instance;
         private List<BookRecord> booksList;
 
         private BookGridAdapter() {
@@ -283,16 +285,17 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup container) {
-            if (convertView == null) {
-                convertView = getLayoutInflater().inflate(R.layout.items_list, container, false);
-            }
-            convertView = getLayoutInflater().inflate(R.layout.book_preview, container, false);
+//            if (convertView == null) {
+//                convertView = getLayoutInflater().inflate(R.layout.items_list, container, false);
+//            }
+//            convertView = getLayoutInflater().inflate(R.layout.book_preview, container, false);
             TextView textView = convertView.findViewById(R.id.book);
             textView.setText(booksList.get(position).getName());
             textView.setTextSize(12);
             textView.setTextColor(Color.CYAN);
             textView.setBackgroundColor(Color.YELLOW);
-            return convertView;
+//            return convertView;
+            return textView;
         }
 
         @Override
@@ -307,5 +310,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 }
