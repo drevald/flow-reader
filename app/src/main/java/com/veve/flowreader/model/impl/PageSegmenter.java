@@ -83,6 +83,7 @@ public class PageSegmenter implements PageLayoutParser {
             int bu = lineLimit.getUpperBaseline();
 
             Mat lineimage = new Mat(image, new Rect(0, u, width, l-u));
+            Imgproc.threshold(lineimage, lineimage,0,255, Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU);
             Mat horHist = new Mat();
             Core.reduce(lineimage, horHist, 0, Core.REDUCE_SUM, CvType.CV_32F);
 
@@ -269,7 +270,7 @@ public class PageSegmenter implements PageLayoutParser {
 
         for (double[] p : centers) {
 
-            int k = 15;
+            int k = 30;
 
             IndexKMeans.SearchParams searchParams = new IndexKMeans.SearchParams();
             searchParams.maxNeighbors = k;
