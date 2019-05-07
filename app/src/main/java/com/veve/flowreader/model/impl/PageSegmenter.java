@@ -267,39 +267,44 @@ public class PageSegmenter implements PageLayoutParser {
         EdgeFactory<Tuple<Double,Double>, DefaultEdge> edgeFactory = new ClassBasedEdgeFactory<Tuple<Double,Double>, DefaultEdge>(DefaultEdge.class);
         UndirectedGraph<Tuple<Double,Double>,DefaultEdge> graph = new SimpleGraph<Tuple<Double,Double>, DefaultEdge>(edgeFactory);
 
+        int n = centers.length;
 
-        for (double[] p : centers) {
+        int k = 30;
 
-            int k = 30;
+        double[][] queries = new double[n][2];
 
-            IndexKMeans.SearchParams searchParams = new IndexKMeans.SearchParams();
-            searchParams.maxNeighbors = k;
-            searchParams.eps = 0.0f;
+        int[][] indices = new int[n][k];
+        double[][] distances = new double[n][k];
 
-            double[][] queries = new double[1][2];
-            queries[0][0] = p[0];
-            queries[0][1] = p[1];
-            int[][] indices = new int[1][k];
-            double[][] distances = new double[1][k];
-            index.knnSearch(queries, indices, distances, searchParams);
+        IndexKMeans.SearchParams searchParams = new IndexKMeans.SearchParams();
+        searchParams.maxNeighbors = k;
+        searchParams.eps = 0.0f;
 
+        for (int i=0; i<n; i++) {
+            double[] p = centers[i];
+            queries[i][0] = p[0];
+            queries[i][1] = p[1];
+        }
+
+        index.knnSearch(queries, indices, distances, searchParams);
+
+        for (int i=0; i<n; i++) {
+            double[] p = centers[i];
             List<Tuple<Double,Double>> neighbors = new ArrayList<>();
 
             Tuple<Double,Double> rightNb = null;
             double mindist = Double.MAX_VALUE;
 
             for (int j = 0; j < k; j++) {
-                int ind = indices[0][j];
+                int ind = indices[i][j];
                 double[] nb = centers[ind];
                 if (nb[0] - p[0] != 0) {
-                    // dist = (nb[1] - p[1]) ** 2 / (nb[0] - p[0]) + (nb[0] - p[0])
                     double dist = ((nb[1] - p[1]) * (nb[1] - p[1])) / (nb[0] - p[0]) + (nb[0] - p[0]);
                     if (dist < mindist && nb[0] > p[0] && Math.abs((nb[1] - p[1])) < 3. / 4. * averageHeight) {
                         mindist = dist;
                         rightNb = new Tuple<>(nb[0], nb[1]);
                     }
                 }
-                //neighbors.add(new Tuple<>(center[0], center[1]));
             }
 
             if (rightNb != null) {
