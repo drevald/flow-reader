@@ -2,6 +2,7 @@ package com.veve.flowreader.model.impl;
 
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.veve.flowreader.algorithm.Enclosure;
 import com.veve.flowreader.algorithm.Tuple;
@@ -37,6 +38,7 @@ import java.util.Map;
 import java.util.Set;
 
 import flann.index.IndexBase;
+import flann.index.IndexKDTree;
 import flann.index.IndexKMeans;
 import flann.metric.Metric;
 import flann.metric.MetricEuclideanSquared;
@@ -74,7 +76,9 @@ public class PageSegmenter implements PageLayoutParser {
         Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, kernelSize);
         Imgproc.dilate(image, image, kernel, new Point(0,0), 2);
 
+        long start = System.currentTimeMillis();
         List<LineLimit> lineLimits = getLineLimits();
+
 
         for (LineLimit lineLimit : lineLimits) {
             int l = lineLimit.getLower();
@@ -117,6 +121,7 @@ public class PageSegmenter implements PageLayoutParser {
 
         image.release();
         mat.release();
+        Log.d("DURATION", "" + (System.currentTimeMillis() - start));
 
         return returnValue;
     }
@@ -260,8 +265,8 @@ public class PageSegmenter implements PageLayoutParser {
 
         Metric metric = new MetricEuclidean();
 
-        IndexKMeans.BuildParams buildParams = new IndexKMeans.BuildParams();
-        IndexBase index = new IndexKMeans(metric, centers, buildParams);
+        IndexKDTree.BuildParams buildParams = new IndexKDTree.BuildParams(1);
+        IndexBase index = new IndexKDTree(metric, centers, buildParams);
         index.buildIndex();
 
         EdgeFactory<Tuple<Double,Double>, DefaultEdge> edgeFactory = new ClassBasedEdgeFactory<Tuple<Double,Double>, DefaultEdge>(DefaultEdge.class);
