@@ -35,44 +35,23 @@ public class PageGlyphImpl implements PageGlyph {
 
     private Bitmap bitmap;
 
+    private int baseLineShift;
+
+    private int averageHeight;
+
     public PageGlyphImpl(Bitmap bitmap) {
         this.bitmap = bitmap;
+        this.baseLineShift = 0;
+        this.averageHeight = 36;
+    }
+
+    public PageGlyphImpl(Bitmap bitmap, int baseLineShift, int averageHight) {
+        this.bitmap = bitmap;
+        this.baseLineShift = baseLineShift;
+        this.averageHeight = averageHight;
     }
 
     private int getBaselineShif() {
-
-        Mat mat = new Mat(bitmap.getHeight(), bitmap.getWidth(), CvType.CV_8SC3);
-        Bitmap bmp32 = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-        Utils.bitmapToMat(bmp32, mat);
-
-        Mat dst = new Mat(bitmap.getHeight(), bitmap.getWidth(), CvType.CV_32SC1);
-        Imgproc.cvtColor(mat, dst, Imgproc.COLOR_BGR2GRAY);
-        Core.rotate(dst, dst, Core.ROTATE_90_CLOCKWISE);
-        Imgproc.adaptiveThreshold(dst, dst, 255, Imgproc.ADAPTIVE_THRESH_MEAN_C,
-                Imgproc.THRESH_BINARY, 15, 40);
-
-        Mat invertcolormatrix= new Mat(dst.rows(),dst.cols(), dst.type(), new Scalar(255,255,255));
-        Core.subtract(invertcolormatrix, dst, dst);
-
-        Mat hist = new Mat();
-        Core.reduce(dst, hist, 0, Core.REDUCE_SUM, CvType.CV_32SC1);
-        int h = bitmap.getHeight();
-
-        int baseLineShift = 0;
-
-        for (int i = 0; i<2*h/5; i++) {
-            double[] doubles = hist.get(0, i);
-            double d1 = doubles[0];
-            doubles = hist.get(0, i+1);
-            double d2 = doubles[0];
-            if (d1 > 0 && (d2/d1)> 2) {
-                baseLineShift = i;
-            }
-        }
-
-        hist.release();
-        dst.release();
-        mat.release();
         return baseLineShift;
     }
 
@@ -91,7 +70,7 @@ public class PageGlyphImpl implements PageGlyph {
         int currentBaseline = context.getCurrentBaseLine();
         if (currentBaseline == 0) {
             currentBaseline = (int)(__height * 1.3);
-            context.setLineHeight(36);
+            context.setLineHeight(averageHeight);
         }
         //checking if currect glyph is within page content
         if(__width * context.getZoom() + startPoint.x > context.getWidth() - context.getMargin()) {

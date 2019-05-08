@@ -18,6 +18,15 @@ JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_getNumb
 
     Document *document = (Document*)bookId;
     ddjvu_document_t *doc = document->doc;
+    ddjvu_context_t *ctx = document->ctx;
+
+    ddjvu_message_wait(ctx);
+    ddjvu_message_t *msg;
+    while (msg = ddjvu_message_peek(ctx)) {
+        ddjvu_message_pop(ctx);
+    }
+
+
     return ddjvu_document_get_pagenum(doc);
 
 }
