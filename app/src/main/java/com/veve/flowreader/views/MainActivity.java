@@ -285,16 +285,16 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup container) {
-//            if (convertView == null) {
-//                convertView = getLayoutInflater().inflate(R.layout.items_list, container, false);
-//            }
-//            convertView = getLayoutInflater().inflate(R.layout.book_preview, container, false);
-            TextView textView = convertView.findViewById(R.id.book);
+            if (convertView == null) {
+                convertView = getLayoutInflater().inflate(R.layout.items_list, container, false);
+            }
+            //convertView = getLayoutInflater().inflate(R.layout.book_preview, container, false);
+            //TextView textView = convertView.findViewById(R.id.book);
+            TextView textView = new TextView(getApplicationContext());
             textView.setText(booksList.get(position).getName());
             textView.setTextSize(12);
             textView.setTextColor(Color.CYAN);
             textView.setBackgroundColor(Color.YELLOW);
-//            return convertView;
             return textView;
         }
 

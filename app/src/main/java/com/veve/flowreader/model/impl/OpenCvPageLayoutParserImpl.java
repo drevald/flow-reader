@@ -33,17 +33,12 @@ public class OpenCvPageLayoutParserImpl implements PageLayoutParser {
         Log.d(getClass().getName(), "getGlyphs started");
 
         List<PageGlyph> list = new ArrayList<PageGlyph>();
-        Log.d(getClass().getName(), "01");
 
         int iBytes = bitmap.getWidth() * bitmap.getHeight() * 4;
-        Log.d(getClass().getName(), "02");
 
         ByteBuffer buffer = ByteBuffer.allocate(iBytes);
-        Log.d(getClass().getName(), "03");
 
         bitmap.copyPixelsToBuffer(buffer);
-
-        Log.d(getClass().getName(), "1");
 
         byte[] imageBytes= buffer.array();
         int width = bitmap.getWidth();

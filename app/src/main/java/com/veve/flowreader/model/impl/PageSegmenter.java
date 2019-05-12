@@ -56,6 +56,8 @@ public class PageSegmenter implements PageLayoutParser {
     @Override
     public List<PageGlyph> getGlyphs(Bitmap bitmap) {
 
+        Log.d(getClass().getName(), "getGlyphs started");
+
         int iBytes = bitmap.getWidth() * bitmap.getHeight() * 4;
         ByteBuffer buffer = ByteBuffer.allocate(iBytes);
         byte[] imageBytes= buffer.array();
@@ -122,6 +124,7 @@ public class PageSegmenter implements PageLayoutParser {
         image.release();
         mat.release();
         Log.d("DURATION", "" + (System.currentTimeMillis() - start));
+        Log.d(getClass().getName(), "getGlyphs ended");
 
         return returnValue;
     }

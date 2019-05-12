@@ -37,6 +37,9 @@ import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageRenderer;
 import com.veve.flowreader.model.PageRendererFactory;
 import com.veve.flowreader.model.impl.DevicePageContextImpl;
+import com.veve.flowreader.model.impl.OpenCvPageLayoutParserImpl;
+import com.veve.flowreader.model.impl.PageSegmenter;
+import com.veve.flowreader.model.impl.SimpleLayoutParser;
 
 import org.opencv.android.OpenCVLoader;
 
@@ -78,6 +81,7 @@ public class PageActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d(getClass().getName(), "onCreateOptionsMenu");
         getMenuInflater().inflate(R.menu.page_menu, menu);
         MenuItem menuItem = menu.findItem(R.id.opencv_parser);
         menuItem.setChecked(true);
@@ -87,6 +91,8 @@ public class PageActivity extends AppCompatActivity {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        Log.d(getClass().getName(), "onCreate");
 
         super.onCreate(savedInstanceState);
 
@@ -151,6 +157,24 @@ public class PageActivity extends AppCompatActivity {
             }
             case R.id.wide_margins: {
                 context.setMargin(100);
+                break;
+            }
+            case R.id.opencv_parser: {
+                pageRenderer.setPageLayoutParser(
+                        SimpleLayoutParser.getInstance());
+                setPageNumber(currentPage);
+                break;
+            }
+            case R.id.simple_parser: {
+                pageRenderer.setPageLayoutParser(
+                        OpenCvPageLayoutParserImpl.getInstance());
+                setPageNumber(currentPage);
+                break;
+            }
+            case R.id.page_segmenter: {
+                pageRenderer.setPageLayoutParser(
+                        PageSegmenter.getInstance());
+                setPageNumber(currentPage);
                 break;
             }
             case R.id.delete_book: {
