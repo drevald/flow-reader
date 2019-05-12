@@ -85,7 +85,7 @@ public class OpenCvPageLayoutParserImpl implements PageLayoutParser {
             org.opencv.core.Rect rect = reg.getRect();
             //Bitmap newBitmap = Bitmap.createBitmap(bitmap, rect.x, rect.y, rect.x+rect.width,rect.y+rect.height);
             Bitmap newBitmap = Bitmap.createBitmap(bitmap, rect.x, rect.y, rect.width,rect.height);
-            list.add(new PageGlyphImpl(newBitmap, 0, 36));
+            list.add(new PageGlyphImpl(newBitmap, 0, 36, 0, 0));
         }
 
         // Free memory

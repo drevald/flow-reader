@@ -36,6 +36,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ForkJoinTask;
+import java.util.concurrent.RecursiveTask;
 
 import flann.index.IndexBase;
 import flann.index.IndexKDTree;
@@ -56,6 +58,7 @@ public class PageSegmenter implements PageLayoutParser {
     @Override
     public List<PageGlyph> getGlyphs(Bitmap bitmap) {
 
+        long start = System.currentTimeMillis();
         int iBytes = bitmap.getWidth() * bitmap.getHeight() * 4;
         ByteBuffer buffer = ByteBuffer.allocate(iBytes);
         byte[] imageBytes= buffer.array();
@@ -75,53 +78,37 @@ public class PageSegmenter implements PageLayoutParser {
         final Size kernelSize = new Size(8, 2);
         Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, kernelSize);
         Imgproc.dilate(image, image, kernel, new Point(0,0), 2);
+        //Imgproc.threshold(image, image,0,255, Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU);
 
-        long start = System.currentTimeMillis();
         List<LineLimit> lineLimits = getLineLimits();
 
+        returnValue = new Task(lineLimits, image, mat, lineHeight).compute();
 
-        for (LineLimit lineLimit : lineLimits) {
-            int l = lineLimit.getLower();
-            int bl = lineLimit.getLowerBaseline();
-            int u = lineLimit.getUpper();
-            int bu = lineLimit.getUpperBaseline();
+        Collections.sort(returnValue, new Comparator<PageGlyph>() {
+            @Override
+            public int compare(PageGlyph pg1, PageGlyph pg2) {
+                if (pg1 instanceof  PageGlyphImpl && pg2 instanceof PageGlyphImpl) {
+                    PageGlyphImpl g1 = (PageGlyphImpl)pg1;
+                    PageGlyphImpl g2 = (PageGlyphImpl)pg2;
 
-            Mat lineimage = new Mat(image, new Rect(0, u, width, l-u));
-            Imgproc.threshold(lineimage, lineimage,0,255, Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU);
-            Mat horHist = new Mat();
-            Core.reduce(lineimage, horHist, 0, Core.REDUCE_SUM, CvType.CV_32F);
+                    if (g1.getY() < g2.getY()) {
+                        return -1;
+                    } else if (g1.getY() == g2.getY()) {
+                        return Integer.compare(g1.getX(), g2.getX());
+                    } else {
+                        return 1;
+                    }
 
-            int w = horHist.width();
-
-            for (int i=0;i<w;i++) {
-                if (horHist.get(0,i)[0] > 0) {
-                    horHist.put(0,i, 1);
-                } else {
-                    horHist.put(0,i, 0);
                 }
+                return 0;
             }
+        });
 
-            List<Tuple<Integer, Integer>> oneRuns = oneRuns(horHist);
-
-            horHist.release();
-
-            for (Tuple<Integer,Integer> r : oneRuns) {
-                int left = r.getFirst();
-                int right = r.getSecond();
-
-                Mat glyph = new Mat(mat, new Rect(left, u, right-left, l-u));
-
-                Bitmap newBitmap = Bitmap.createBitmap(right-left, l-u, Bitmap.Config.ARGB_8888);
-                Utils.matToBitmap(glyph, newBitmap);
-                glyph.release();
-                returnValue.add(new PageGlyphImpl(newBitmap, l - bl, lineHeight));
-
-            }
-        }
 
         image.release();
         mat.release();
-        Log.d("DURATION", "" + (System.currentTimeMillis() - start));
+
+        Log.d("DURATION", "compute" + (System.currentTimeMillis() - start));
 
         return returnValue;
     }
@@ -162,7 +149,6 @@ public class PageSegmenter implements PageLayoutParser {
                 return Integer.compare(l1.getLowerBaseline(), l2.getLowerBaseline());
             }
         });
-
         return lineLimits;
     }
 
@@ -322,13 +308,16 @@ public class PageSegmenter implements PageLayoutParser {
         }
 
         ConnectivityInspector<Tuple<Double,Double>,DefaultEdge> inspector
-                = new ConnectivityInspector<Tuple<Double,Double>,DefaultEdge>(graph);
+                = new ConnectivityInspector<>(graph);
+
 
         return inspector.connectedSets();
 
     }
 
     private CCResult getCCResults(Mat image) {
+
+        long start = System.currentTimeMillis();
 
         Map<Tuple<Double, Double>, Rect> rd = new HashMap<>();
 
@@ -401,6 +390,7 @@ public class PageSegmenter implements PageLayoutParser {
             centers[i] = new double[] {tuple.getFirst(), tuple.getSecond()};
         }
 
+
         return new CCResult(centers, averageHeight, rd);
     }
 
@@ -412,6 +402,82 @@ public class PageSegmenter implements PageLayoutParser {
             parser = new PageSegmenter();
         }
         return parser;
+    }
+
+    private static class Task extends RecursiveTask<List<PageGlyph>> {
+
+        private List<LineLimit> lineLimits;
+        private Mat image;
+        private Mat mat;
+        private int width;
+        private int lineHeight;
+
+        public Task(List<LineLimit> lineLimits, Mat image, Mat mat, int lineHeight) {
+            this.lineLimits = lineLimits;
+            this.image = image;
+            this.mat = mat;
+            this.width = image.width();
+            this.lineHeight = lineHeight;
+        }
+
+        @Override
+        protected List<PageGlyph> compute() {
+            List<PageGlyph> returnValue = new ArrayList<>();
+            if (lineLimits.size() < 3) {
+                for (LineLimit lineLimit : lineLimits) {
+
+                    int l = lineLimit.getLower();
+                    int bl = lineLimit.getLowerBaseline();
+                    int u = lineLimit.getUpper();
+                    int bu = lineLimit.getUpperBaseline();
+
+                    Mat lineimage = new Mat(image, new Rect(0, u, width, l-u));
+                    Imgproc.threshold(lineimage, lineimage,0,255, Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU);
+                    Mat horHist = new Mat();
+                    Core.reduce(lineimage, horHist, 0, Core.REDUCE_SUM, CvType.CV_32F);
+
+                    int w = horHist.width();
+
+                    for (int i=0;i<w;i++) {
+                        if (horHist.get(0,i)[0] > 0) {
+                            horHist.put(0,i, 1);
+                        } else {
+                            horHist.put(0,i, 0);
+                        }
+                    }
+
+                    List<Tuple<Integer, Integer>> oneRuns = oneRuns(horHist);
+
+                    horHist.release();
+
+                    for (Tuple<Integer,Integer> r : oneRuns) {
+                        int left = r.getFirst();
+                        int right = r.getSecond();
+                        Mat glyph = new Mat(mat, new Rect(left, u, right-left, l-u));
+                        Bitmap newBitmap = Bitmap.createBitmap(right-left, l-u, Bitmap.Config.ARGB_8888);
+                        Utils.matToBitmap(glyph, newBitmap);
+                        glyph.release();
+                        returnValue.add(new PageGlyphImpl(newBitmap, l - bl, lineHeight, left, bl));
+
+                    }
+
+                }
+                return returnValue;
+            } else {
+                int size = lineLimits.size();
+                int m = size/2;
+                Task left = new Task(lineLimits.subList(0,m), image, mat, lineHeight);
+                Task right = new Task(lineLimits.subList(m,size), image, mat, lineHeight);
+                left.fork();
+                List<PageGlyph> pageGlyphs = right.compute();
+                List<PageGlyph> glyphs = left.join();
+                List<PageGlyph> retVal = new ArrayList<>();
+                retVal.addAll(pageGlyphs);
+                retVal.addAll(glyphs);
+                return retVal;
+
+            }
+        }
     }
 
 

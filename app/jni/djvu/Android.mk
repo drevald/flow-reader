@@ -1,23 +1,23 @@
 LOCAL_PATH := $(call my-dir)
 
-APP_ABI := x86_64
+#APP_ABI := x86_64
 
 include $(CLEAR_VARS)
 
 LOCAL_C_INCLUDES := \
-       $(LOCAL_PATH)/../../app/jni/libjpeg-version-9-android/libjpeg9 \
+       $(LOCAL_PATH)/../libjpeg-turbo \
 	$(LOCAL_PATH)/djvulibre/libdjvu \
 	$(LOCAL_PATH)
 
 
 LOCAL_MODULE    := djvu
-LOCAL_CFLAGS    := -fexceptions -DTHREADMODEL=POSIXTHREADS -DHAVE_CONFIG_H  -DDIR_DATADIR=\"/usr/local/share\"
+LOCAL_CFLAGS    := -O2 -DNDEBUG -fexceptions -DTHREADMODEL=POSIXTHREADS -DHAVE_CONFIG_H  -DDIR_DATADIR=\"/usr/local/share\"
 
 ifeq ($(TARGET_ARCH_ABI),armeabi)
     LOCAL_ARM_MODE := arm
 endif # TARGET_ARCH_ABI == armeabi
 
-LOCAL_STATIC_LIBRARIES += libjpeg9
+LOCAL_STATIC_LIBRARIES += libjpeg
 
 LOCAL_SRC_FILES := \
 	djvulibre/libdjvu/Arrays.cpp \

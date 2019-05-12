@@ -38,10 +38,22 @@ public class PageGlyphImpl implements PageGlyph {
 
     private int averageHeight;
 
-    public PageGlyphImpl(Bitmap bitmap, int baseLineShift, int averageHight) {
+    private int x, y;
+
+    public PageGlyphImpl(Bitmap bitmap, int baseLineShift, int averageHight, int x , int y) {
         this.bitmap = bitmap;
         this.baseLineShift = baseLineShift;
         this.averageHeight = averageHight;
+        this.x = x;
+        this.y = y;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
     }
 
     private int getBaselineShif() {
