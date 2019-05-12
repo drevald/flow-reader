@@ -11,6 +11,9 @@
 #include <android/log.h>
 #include <flann/flann.hpp>
 #include "flann/util/matrix.h"
+#include <boost/graph/connected_components.hpp>
+#include <boost/graph/adjacency_list.hpp>
+
 #include "ImageLoader.h"
 
 #define APPNAME "DJVU1"
@@ -20,6 +23,10 @@
 using namespace cv;
 
 using namespace flann;
+
+using namespace boost;
+
+typedef adjacency_list < vecS, vecS, undirectedS > Graph;
 
 struct Document {
     ddjvu_context_t *ctx;
@@ -159,7 +166,7 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
     prect.h = h;
     rrect = prect;
 
-    ddjvu_format_t *format = ddjvu_format_create(DDJVU_FORMAT_BGR24, 0, NULL);
+    ddjvu_format_t *format = ddjvu_format_create(DDJVU_FORMAT_RGB24, 0, NULL);
     //static uint masks[4] = { 0xff0000, 0xff00, 0xff, 0xff000000 };
     //ddjvu_format_t * format = ddjvu_format_create ( DDJVU_FORMAT_RGBMASK32, 4, masks );
     ddjvu_format_set_row_order(format, 1);
@@ -181,7 +188,6 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
     env->SetByteArrayRegion(array, 0, size, (jbyte*)pixels);
     free(pixels);
     //free(page);
-
 
     clock_gettime(CLOCK_MONOTONIC, &end);
     elapsedSeconds = TimeSpecToSeconds(&end) - TimeSpecToSeconds(&start);
@@ -206,11 +212,26 @@ vector<line_limit> PageSegmenter::get_line_limits() {
 }
 
 vector<cc_result> PageSegmenter::get_cc_results(Mat &image) {
-    map<tuple<double,double>,Rect> rd;
+
     Mat labeled(image.size(), image.type());
     Mat rectComponents = Mat::zeros(Size(0, 0), 0);
     Mat centComponents = Mat::zeros(Size(0, 0), 0);
     connectedComponentsWithStats(image, labeled, rectComponents, centComponents);
+
+    Graph g;
+
+    add_edge(0, 1, g);
+    add_edge(1, 4, g);
+    add_edge(4, 0, g);
+    add_edge(2, 5, g);
+
+    std::vector<int> c(num_vertices(g));
+
+    int num = connected_components
+            (g, make_iterator_property_map(c.begin(), get(vertex_index, g), c[0]));
+
+
+
     vector<cc_result> v;
     return v;
 

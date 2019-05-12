@@ -17,10 +17,11 @@ LOCAL_C_INCLUDES := \
 		$(LOCAL_PATH)/../libjpeg-turbo \
 		$(LOCAL_PATH)/.. \
 		$(LOCAL_PATH)/../lz4 \
+		$(LOCAL_PATH)/../boost/include \
 		$(CVROOT)/include
 
 
-LOCAL_STATIC_LIBRARIES := djvu libjpeg liblz4  libopencv_imgproc libopencv_imgcodecs libopencv_core flann cpufeatures
+LOCAL_STATIC_LIBRARIES := djvu libjpeg liblz4  libopencv_imgproc libopencv_imgcodecs libopencv_core flann cpufeatures libboost_system libboost_graph
 
 
 LOCAL_CFLAGS += -DHAVE_CONFIG_H -std=c++11 -frtti -fexceptions -fopenmp -w -O2 -DNDEBUG
