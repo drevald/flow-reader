@@ -11,17 +11,18 @@ include $(CVROOT)/OpenCV.mk
 
 LOCAL_MODULE := native-lib
 
+APP_ALLOW_MISSING_DEPS=true
 
 LOCAL_C_INCLUDES := \
 		$(LOCAL_PATH)/../djvu/djvulibre \
-		$(LOCAL_PATH)/../libjpeg-turbo \
+        $(LOCAL_PATH)/../libjpeg-version-9-android/libjpeg9 \
 		$(LOCAL_PATH)/.. \
 		$(LOCAL_PATH)/../lz4 \
 		$(LOCAL_PATH)/../boost/include \
 		$(CVROOT)/include
 
 
-LOCAL_STATIC_LIBRARIES := djvu libjpeg liblz4  libopencv_imgproc libopencv_imgcodecs libopencv_core flann cpufeatures libboost_system libboost_graph
+LOCAL_STATIC_LIBRARIES := djvu libjpeg9 liblz4  libopencv_imgproc libopencv_imgcodecs libopencv_core flann cpufeatures libboost_system libboost_graph
 
 
 LOCAL_CFLAGS += -DHAVE_CONFIG_H -std=c++11 -frtti -fexceptions -fopenmp -w -O2 -DNDEBUG

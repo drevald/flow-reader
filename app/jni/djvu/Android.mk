@@ -5,7 +5,7 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_C_INCLUDES := \
-       $(LOCAL_PATH)/../libjpeg-turbo \
+    $(LOCAL_PATH)/../libjpeg-version-9-android/libjpeg9 \
 	$(LOCAL_PATH)/djvulibre/libdjvu \
 	$(LOCAL_PATH)
 
