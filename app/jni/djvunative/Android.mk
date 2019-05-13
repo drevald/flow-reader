@@ -11,7 +11,6 @@ include $(CVROOT)/OpenCV.mk
 
 LOCAL_MODULE := native-lib
 
-APP_ALLOW_MISSING_DEPS=true
 
 LOCAL_C_INCLUDES := \
 		$(LOCAL_PATH)/../djvu/djvulibre \

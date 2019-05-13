@@ -17,7 +17,7 @@ ifeq ($(TARGET_ARCH_ABI),armeabi)
     LOCAL_ARM_MODE := arm
 endif # TARGET_ARCH_ABI == armeabi
 
-LOCAL_STATIC_LIBRARIES += libjpeg
+LOCAL_STATIC_LIBRARIES += libjpeg9
 
 LOCAL_SRC_FILES := \
 	djvulibre/libdjvu/Arrays.cpp \

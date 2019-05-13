@@ -7,4 +7,4 @@ APP_LDFLAGS = -fopenmp
 NDK_ALL_ABIS=armeabi-v7a
 APP_OPTIM := release
 #APP_STL := c++_shared
-#NDK_TOOLCHAIN_VERSION := 4.9
+NDK_TOOLCHAIN_VERSION := 4.9
