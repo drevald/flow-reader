@@ -28,12 +28,12 @@ LOCAL_CFLAGS += -DHAVE_CONFIG_H -std=c++11 -frtti -fexceptions -fopenmp -w -O2 -
 LOCAL_LDLIBS += -llog -lstdc++ -lz -L$(SYSROOT)/usr/lib
 LOCAL_LDFLAGS += -ldl -landroid -fopenmp
 
-LOCAL_C_INCLUDES += ImageLoader.h
+LOCAL_C_INCLUDES += ImageLoader.h PageSegmenter.h Enclosure.h
 
 
 
 LOCAL_SRC_FILES := \
-	native-lib.cpp
+	native-lib.cpp PageSegmenter.cpp Enclosure.cpp
 
 
 include $(BUILD_SHARED_LIBRARY)
