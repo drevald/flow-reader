@@ -5,21 +5,59 @@
 #include "PageSegmenter.h"
 
 
-
-vector<line_limit> PageSegmenter::get_line_limits() {
-
-    Mat image;
-    cvtColor(mat, image, COLOR_BGR2GRAY);
-    bitwise_not(image,image);
+void PageSegmenter::preprocess_for_line_limits(const Mat &image) {
     threshold(image,image,0,255, THRESH_OTSU | THRESH_BINARY);
     const Mat kernel = getStructuringElement(MORPH_RECT, Size(3, 3));
     erode(image, image, kernel, Point(-1,-1), 2);
     dilate(image, image, kernel, Point(-1,-1), 2);
+}
+
+vector<std::tuple<double,double>> PageSegmenter::get_connected_components() {
+    vector<std::tuple<double,double>> return_value;
+
+    // just a try
+    float data[10][2];
+
+    for (int i=0; i<10;i++) {
+        data[i][0] = i;
+        data[i][1] = i;
+    }
+
+    Matrix<float> dataset(&data[0][0], 10, 2);
+
+    int ind[10][2];
+
+    Matrix<int> indices(&ind[0][0], 10, 2);
+
+    float d[10][2];
+
+    Matrix<float> dists(&d[0][0], 10, 2);
+
+
+    Index<L2<float>> index(dataset, KDTreeIndexParams(1));
+    index.buildIndex();
+
+    float q[1][2];
+    q[0][0] = 5.2;
+    q[0][1] = 5.3;
+
+    Matrix<float> query(&q[0][0], 1, 2);
+    // do a knn search, using 128 checks
+    index.knnSearch(query, indices, dists, 30, flann::SearchParams());
+
+    return return_value;
+}
+
+
+vector<line_limit> PageSegmenter::get_line_limits() {
+
+    const Mat& image = gray_inverted_image.clone();
+    preprocess_for_line_limits(image);
     vector<line_limit> v;
     return v;
 }
 
-vector<cc_result> PageSegmenter::get_cc_results(Mat &image) {
+vector<cc_result> PageSegmenter::get_cc_results(const Mat &image) {
 
     Mat labeled(image.size(), image.type());
     Mat rectComponents = Mat::zeros(Size(0, 0), 0);
@@ -67,50 +105,83 @@ vector<cc_result> PageSegmenter::get_cc_results(Mat &image) {
 }
 
 
+vector<std::tuple<int,int>> PageSegmenter::one_runs(const Mat& hist) {
+    int w = hist.cols;
+
+    vector<std::tuple<int,int>> return_value;
+
+    int pos = 0;
+    for (int i=0;i<w;i++) {
+        if ((i==0 && hist.at<int>(0,i) == 1) || (i> 0 && hist.at<int>(0,i) == 1 && hist.at<int>(0,i-1) == 0)) {
+            pos = i;
+        }
+
+        if ((i==w-1 && hist.at<int>(0,i) == 1) || (i<w-1 && hist.at<int>(0,i) == 1 && hist.at<int>(0,i+1) == 0 ) ) {
+            return_value.push_back(make_tuple(pos, i));
+        }
+    }
+    return return_value;
+}
+
+
 vector<glyph> PageSegmenter::get_glyphs() {
 
     // preprocess for the first step
     Mat image;
+    int width = image.cols;
     cvtColor(mat, image, COLOR_BGR2GRAY);
     bitwise_not(image,image);
     const Mat kernel = getStructuringElement(MORPH_RECT, Size(8, 2));
     dilate(image, image, kernel, Point(-1,-1), 2);
 
 
+    vector<line_limit> line_limits = get_line_limits();
+
+    vector<glyph> return_value;
+
+    for (line_limit& ll : line_limits) {
+        int l = ll.lower;
+        int bl = ll.lower_baseline;
+        int u = ll.upper;
+        int bu = ll.upper_baseline;
+
+        Mat lineimage(image, Rect(0, u, width, l-u));
+        threshold(lineimage, lineimage,0,255, THRESH_BINARY | THRESH_OTSU);
+        Mat horHist;
+        reduce(lineimage, horHist, 0, REDUCE_SUM, CV_32F);
+
+        int w = horHist.cols;
+
+        for (int i=0;i<w;i++) {
+            if (horHist.at<int>(0,i) > 0) {
+                horHist.at<int>(0,i) = 1;
+            } else {
+                horHist.at<int>(0,i) = 0;
+            }
+        }
+
+        const vector<std::tuple<int, int>> &oneRuns = one_runs(horHist);
+
+        horHist.release();
+
+        for (const std::tuple<int,int>& r : oneRuns) {
+
+            int left = get<0>(r);
+            int right = get<1>(r);
+
+            glyph g;
+            g.x = left;
+            g.y = u;
+            g.width = right-left;
+            g.height = l-u;
+            return_value.push_back(g);
+
+        }
 
 
-    // just a try
-    float data[10][2];
-
-    for (int i=0; i<10;i++) {
-        data[i][0] = i;
-        data[i][1] = i;
     }
 
-    Matrix<float> dataset(&data[0][0], 10, 2);
-
-    int ind[10][2];
-
-    Matrix<int> indices(&ind[0][0], 10, 2);
-
-    float d[10][2];
-
-    Matrix<float> dists(&d[0][0], 10, 2);
-
-
-    Index<L2<float>> index(dataset, KDTreeIndexParams(1));
-    index.buildIndex();
-
-    float q[1][2];
-    q[0][0] = 5.2;
-    q[0][1] = 5.3;
-
-    Matrix<float> query(&q[0][0], 1, 2);
-    // do a knn search, using 128 checks
-    index.knnSearch(query, indices, dists, 30, flann::SearchParams());
-
-    vector<glyph> v;
-    return v;
+    return return_value;
 }
 
 

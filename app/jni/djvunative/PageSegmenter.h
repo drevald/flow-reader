@@ -44,14 +44,20 @@ class PageSegmenter {
 public:
     PageSegmenter(Mat& mat) {
         this->mat = mat;
+        cvtColor(mat, gray_inverted_image, COLOR_BGR2GRAY);
+        bitwise_not(gray_inverted_image,gray_inverted_image);
     }
 
     vector<glyph> get_glyphs();
 
 private:
     Mat mat;
+    Mat gray_inverted_image;
     vector<line_limit> get_line_limits();
-    vector<cc_result> get_cc_results(Mat& image);
+    void preprocess_for_line_limits(const Mat &image);
+    vector<cc_result> get_cc_results(const Mat& image);
+    vector<std::tuple<int,int>> one_runs(const Mat& hist);
+    vector<std::tuple<double,double>> get_connected_components();
 };
 
 
