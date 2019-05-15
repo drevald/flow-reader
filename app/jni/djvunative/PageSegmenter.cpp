@@ -4,6 +4,27 @@
 
 #include "PageSegmenter.h"
 
+static int* calc_histogram(double* data, int size, double min, double max, int numBins) {
+    int* result = new int[numBins];
+    const double binSize = (max - min)/numBins;
+
+    for (int i=0; i<size; i++) {
+        double d = data[i];
+        int bin = (int) ((d - min) / binSize);
+        if (bin < 0) { /* this data is smaller than min */ }
+        else if (bin >= numBins) { /* this data point is bigger than max */ }
+        else {
+            result[bin] += 1;
+        }
+    }
+    return result;
+}
+
+line_limit PageSegmenter::find_baselines(vector<double_pair>& cc) {
+    line_limit ll;
+    return ll;
+}
+
 
 void PageSegmenter::preprocess_for_line_limits(const Mat &image) {
     threshold(image,image,0,255, THRESH_OTSU | THRESH_BINARY);

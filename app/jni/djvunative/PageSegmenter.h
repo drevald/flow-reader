@@ -58,6 +58,7 @@ private:
     vector<cc_result> get_cc_results(const Mat& image);
     vector<std::tuple<int,int>> one_runs(const Mat& hist);
     vector<std::tuple<double,double>> get_connected_components();
+    line_limit find_baselines(vector<double_pair>& cc);
 };
 
 
