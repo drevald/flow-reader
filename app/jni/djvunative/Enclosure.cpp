@@ -194,6 +194,21 @@ Enclosure::Enclosure(vector<array<int, 4>> &points) {
     normalize();
 }
 
+Enclosure::Enclosure(vector<Rect> &rects) {
+
+    points = vector<array<int,4>>();
+
+    for (int i=0;i<rects.size(); i++) {
+        Rect rect = rects.at(i);
+        array<int,4> a{{-rect.x, -rect.y, rect.x + rect.width, rect.y + rect.height}};
+        points.push_back(a);
+    }
+
+    std::copy(points.begin(), points.end(), std::inserter(all_, all_.end()));
+
+    normalize();
+}
+
 void Enclosure::normalize() {
     size_t size = this->points.size();
 

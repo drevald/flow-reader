@@ -122,14 +122,7 @@ cc_result PageSegmenter::get_cc_results(const Mat &image) {
     double average_height = m(0);
     double std = stdv(0);
     
-    vector<array<int,4>> rs;
-    
-    for (int i = 1; i < rectComponents.rows; i++) {
-        array<int,4> a {{ -rects.at(i-1).x, -rects.at(i-1).y, rects.at(i-1).x + rects.at(i-1).width, rects.at(i-1).y + rects.at(i-1).height }};
-        rs.push_back(a);
-    }
-    
-    Enclosure enc(rs);
+    Enclosure enc(rects);
     const set<array<int, 4>>& set = enc.solve();
 
 

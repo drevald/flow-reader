@@ -4,8 +4,9 @@
 
 #ifndef FLOW_READER_ENCLOSURE_H
 #define FLOW_READER_ENCLOSURE_H
+#include <opencv2/core/core.hpp>
 
-
+using namespace cv;
 //
 //  Enclosure.hpp
 //  StaticLibrary
@@ -56,6 +57,7 @@ struct CustomLessThan : public ArrayOrder {
 class Enclosure {
 public:
     Enclosure(vector<array<int, 4>>& points);
+    Enclosure(vector<Rect>& rects);
 
     set<array<int, 4>> solve();
 
