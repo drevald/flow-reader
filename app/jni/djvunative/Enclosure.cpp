@@ -187,6 +187,7 @@ set<array<int, 4>> Enclosure::solve() {
 }
 
 Enclosure::Enclosure(vector<array<int, 4>> &points) {
+
     this->points = points;
     std::copy(points.begin(), points.end(), std::inserter(all_, all_.end()));
 

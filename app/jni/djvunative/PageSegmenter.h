@@ -34,7 +34,7 @@ struct line_limit {
 
 
 struct cc_result {
-    int** centers;
+    double** centers;
     double  average_hight;
     map<double_pair,Rect> rd;
 };
@@ -53,9 +53,10 @@ public:
 private:
     Mat mat;
     Mat gray_inverted_image;
+    int line_height = 0;
     vector<line_limit> get_line_limits();
     void preprocess_for_line_limits(const Mat &image);
-    vector<cc_result> get_cc_results(const Mat& image);
+    cc_result get_cc_results(const Mat& image);
     vector<std::tuple<int,int>> one_runs(const Mat& hist);
     vector<std::tuple<double,double>> get_connected_components();
     line_limit find_baselines(vector<double_pair>& cc);

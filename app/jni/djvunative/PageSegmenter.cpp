@@ -3,6 +3,7 @@
 //
 
 #include "PageSegmenter.h"
+#include "Enclosure.h"
 
 static int* calc_histogram(double* data, int size, double min, double max, int numBins) {
     int* result = new int[numBins];
@@ -74,11 +75,20 @@ vector<line_limit> PageSegmenter::get_line_limits() {
 
     const Mat& image = gray_inverted_image.clone();
     preprocess_for_line_limits(image);
+
+    const cc_result cc_results = get_cc_results(image);
+    double average_height = cc_results.average_hight;
+    cc_results.centers;
+
+    this->line_height = (int)average_height * 2;
+
+
+
     vector<line_limit> v;
     return v;
 }
 
-vector<cc_result> PageSegmenter::get_cc_results(const Mat &image) {
+cc_result PageSegmenter::get_cc_results(const Mat &image) {
 
     Mat labeled(image.size(), image.type());
     Mat rectComponents = Mat::zeros(Size(0, 0), 0);
@@ -105,6 +115,23 @@ vector<cc_result> PageSegmenter::get_cc_results(const Mat &image) {
 
     }
 
+    Scalar m, stdv;
+    Mat hist(1,count, CV_64F, &heights);
+    meanStdDev(hist, m, stdv);
+
+    double average_height = m(0);
+    double std = stdv(0);
+    
+    vector<array<int,4>> rs;
+    
+    for (int i = 1; i < rectComponents.rows; i++) {
+        array<int,4> a {{ -rects.at(i-1).x, -rects.at(i-1).y, rects.at(i-1).x + rects.at(i-1).width, rects.at(i-1).y + rects.at(i-1).height }};
+        rs.push_back(a);
+    }
+    
+    Enclosure enc(rs);
+    const set<array<int, 4>>& set = enc.solve();
+
 
 	Graph g;
 
@@ -120,7 +147,7 @@ vector<cc_result> PageSegmenter::get_cc_results(const Mat &image) {
 
 
 
-    vector<cc_result> v;
+    cc_result v;
     return v;
 
 }
@@ -154,8 +181,7 @@ vector<glyph> PageSegmenter::get_glyphs() {
     bitwise_not(image,image);
     const Mat kernel = getStructuringElement(MORPH_RECT, Size(8, 2));
     dilate(image, image, kernel, Point(-1,-1), 2);
-
-
+    
     vector<line_limit> line_limits = get_line_limits();
 
     vector<glyph> return_value;
