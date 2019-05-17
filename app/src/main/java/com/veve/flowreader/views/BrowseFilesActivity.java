@@ -133,7 +133,8 @@ public class BrowseFilesActivity extends AppCompatActivity {
         public FileListAdapter() {
             super();
             try {
-                rootDir = new File("/");
+                //rootDir = new File("/");
+                rootDir = new File("/sdcard");
                 currentDirectory = rootDir;
                 currentFiles = new ArrayList<File>();
                 for (File file : currentDirectory.listFiles()) {
