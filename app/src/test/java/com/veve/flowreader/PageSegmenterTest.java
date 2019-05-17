@@ -28,11 +28,12 @@ public class PageSegmenterTest {
 
     @Test
     public void testPageSegmentor() {
+
         int width = 100;
         int height = 100;
         int bytesperpixel = 4;
         ByteBuffer buffer = ByteBuffer.allocate(width * height * bytesperpixel);
-        byte[] data = buffer.array();
+
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 int index = 4 * (i + (j * width));
@@ -42,10 +43,10 @@ public class PageSegmenterTest {
                 if (i > 30 && i < 70 && j > 30 && j < 70) {
                     color = (byte)0;        //black color
                 }
-                buffer.put(index + 0, (byte) color);
-                buffer.put(index + 1, (byte) color);
-                buffer.put(index + 2, (byte) color);
-                buffer.put(index + 3, (byte) opacity);
+                buffer.put(index + 0, color);
+                buffer.put(index + 1, color);
+                buffer.put(index + 2, color);
+                buffer.put(index + 3, opacity);
             }
         }
 
