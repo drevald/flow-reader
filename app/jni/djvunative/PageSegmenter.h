@@ -34,9 +34,8 @@ struct line_limit {
 
 
 struct cc_result {
-    double** centers;
+    std::vector<double_pair> centers;
     double  average_hight;
-    map<double_pair,Rect> rd;
 };
 
 class PageSegmenter {
@@ -53,12 +52,13 @@ public:
 private:
     Mat mat;
     Mat gray_inverted_image;
+    map<double_pair,Rect> rd;
     int line_height = 0;
     vector<line_limit> get_line_limits();
     void preprocess_for_line_limits(const Mat &image);
     cc_result get_cc_results(const Mat& image);
     vector<std::tuple<int,int>> one_runs(const Mat& hist);
-    vector<std::tuple<double,double>> get_connected_components();
+    vector<vector<std::tuple<double,double>>> get_connected_components(vector<double_pair>& center_list, double averahe_hight);
     line_limit find_baselines(vector<double_pair>& cc);
 };
 

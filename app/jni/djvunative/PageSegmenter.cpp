@@ -34,40 +34,46 @@ void PageSegmenter::preprocess_for_line_limits(const Mat &image) {
     dilate(image, image, kernel, Point(-1,-1), 2);
 }
 
-vector<std::tuple<double,double>> PageSegmenter::get_connected_components() {
+vector<vector<std::tuple<double,double>>> PageSegmenter::get_connected_components(vector<double_pair>& center_list, double averahe_hight) {
     vector<std::tuple<double,double>> return_value;
 
     // just a try
-    float data[10][2];
 
-    for (int i=0; i<10;i++) {
-        data[i][0] = i;
-        data[i][1] = i;
+    int size = center_list.size();
+    double data[size][2];
+
+    for (int i=0; i<size;i++) {
+        data[i][0] = get<0>(center_list.at(i));
+        data[i][1] = get<1>(center_list.at(i));
     }
 
-    Matrix<float> dataset(&data[0][0], 10, 2);
+    Matrix<double> dataset(&data[0][0], size, 2);
 
-    int ind[10][2];
+    int ind[size][2];
 
-    Matrix<int> indices(&ind[0][0], 10, 2);
+    int k = 30;
 
-    float d[10][2];
-
-    Matrix<float> dists(&d[0][0], 10, 2);
-
-
-    Index<L2<float>> index(dataset, KDTreeIndexParams(1));
+    Index<L2<double>> index(dataset, KDTreeIndexParams(1));
     index.buildIndex();
 
-    float q[1][2];
-    q[0][0] = 5.2;
-    q[0][1] = 5.3;
+    Matrix<int> indices(&ind[0][0], size, k);
+    double d[10][2];
+    Matrix<double> dists(&d[0][0], size, k);
 
-    Matrix<float> query(&q[0][0], 1, 2);
+    double q[size][2];
+
+    for (int i=0; i<size; i++) {
+        auto p = center_list[i];
+        q[i][0] = get<0>(p);
+        q[i][1] = get<0>(p);
+    }
+
+
+    Matrix<double> query(&q[0][0], size, 2);
     // do a knn search, using 128 checks
     index.knnSearch(query, indices, dists, 30, flann::SearchParams());
 
-    return return_value;
+    //return return_value;
 }
 
 
@@ -123,7 +129,26 @@ cc_result PageSegmenter::get_cc_results(const Mat &image) {
     double std = stdv(0);
     
     Enclosure enc(rects);
-    const set<array<int, 4>>& set = enc.solve();
+    const set<array<int, 4>>& s = enc.solve();
+
+
+    int i = 0;
+    for (auto it = s.begin(); it != s.end(); ++it)
+    {
+        array<int, 4> a = *it;
+        int x = get<0>(a);
+        int y = get<1>(a);
+        int width = get<2>(a);
+        int height = get<3>(a);
+
+        double cx = (x+width)/2.0;
+        double cy = (y+height)/2.0;
+        rd[make_tuple((x+width)/2.0, (y+height)/2.0)] = Rect(x,y,width,height);
+
+        double_pair center = make_pair(cx,cy);
+        center_list.push_back(center);
+        i++;
+     }
 
 
 	Graph g;
@@ -139,8 +164,9 @@ cc_result PageSegmenter::get_cc_results(const Mat &image) {
             (g, make_iterator_property_map(c.begin(), get(vertex_index, g), c[0]));
 
 
-
     cc_result v;
+    v.average_hight = average_height;
+    v.centers = center_list;
     return v;
 
 }
