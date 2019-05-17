@@ -27,8 +27,6 @@ static int *calc_histogram(double *data, int size, double min, double max, int n
 line_limit PageSegmenter::find_baselines(vector<double_pair> &cc) {
 
     sort(cc.begin(), cc.end(), PairXOrder());
-
-
     vector<Rect> line_rects;
 
     for (int i = 0; i < cc.size(); i++) {
@@ -126,7 +124,6 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
         q[i][1] = get<1>(p);
     }
 
-
     Matrix<double> query(&q[0][0], size, 2);
     // do a knn search, using 128 checks
     index.knnSearch(query, indices, dists, 30, flann::SearchParams());
@@ -169,14 +166,12 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
 
         }
 
-
     }
 
     std::vector<int> c(num_vertices(g));
 
     int num = connected_components
             (g, make_iterator_property_map(c.begin(), get(vertex_index, g), c[0]));
-
 
     for (int i = 0; i < c.size(); i++) {
         int cn = c[i];
@@ -200,10 +195,13 @@ vector<line_limit> PageSegmenter::get_line_limits() {
 
     const cc_result cc_results = get_cc_results(image);
     double average_height = cc_results.average_hight;
-    cc_results.centers;
+    vector<double_pair> centers = cc_results.centers;
 
-    this->line_height = (int) average_height * 2;
+    const map<int, vector<double_pair>> components = get_connected_components(centers, average_height);
 
+
+
+    line_height = (int) average_height * 2;
 
     vector<line_limit> v;
     return v;
@@ -250,8 +248,8 @@ cc_result PageSegmenter::get_cc_results(const Mat &image) {
     int i = 0;
     for (auto it = s.begin(); it != s.end(); ++it) {
         array<int, 4> a = *it;
-        int x = get<0>(a);
-        int y = get<1>(a);
+        int x = -get<0>(a);
+        int y = -get<1>(a);
         int width = get<2>(a);
         int height = get<3>(a);
 
@@ -263,7 +261,7 @@ cc_result PageSegmenter::get_cc_results(const Mat &image) {
         center_list.push_back(center);
         i++;
     }
-    
+
     Graph g;
 
     add_edge(0, 1, g);
@@ -275,8 +273,7 @@ cc_result PageSegmenter::get_cc_results(const Mat &image) {
 
     int num = connected_components
             (g, make_iterator_property_map(c.begin(), get(vertex_index, g), c[0]));
-
-
+    
     cc_result v;
     v.average_hight = average_height;
     v.centers = center_list;
