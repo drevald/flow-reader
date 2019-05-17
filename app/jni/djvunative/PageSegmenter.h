@@ -20,8 +20,9 @@ using namespace cv;
 using namespace flann;
 using namespace boost;
 
-typedef adjacency_list < vecS, vecS, undirectedS > Graph;
 typedef std::tuple<double,double> double_pair ;
+typedef adjacency_list < vecS, vecS, undirectedS, double_pair > Graph;
+typedef graph_traits<Graph>::vertex_descriptor vertex_t;
 
 
 struct glyph {
@@ -29,6 +30,14 @@ struct glyph {
 };
 
 struct line_limit {
+    line_limit(int upper, int upper_baseline, int lower_baseline, int lower) {
+        this->upper = upper;
+        this->upper_baseline = upper_baseline;
+        this->lower_baseline = lower_baseline;
+        this->lower = lower;
+
+
+    }
     int upper, upper_baseline, lower, lower_baseline;
 };
 
@@ -36,6 +45,12 @@ struct line_limit {
 struct cc_result {
     std::vector<double_pair> centers;
     double  average_hight;
+};
+
+struct PairXOrder {
+    bool operator()(double_pair const &lhs, double_pair const &rhs) const {
+        return get<0>(lhs) > get<0>(rhs);
+    }
 };
 
 class PageSegmenter {
@@ -58,7 +73,7 @@ private:
     void preprocess_for_line_limits(const Mat &image);
     cc_result get_cc_results(const Mat& image);
     vector<std::tuple<int,int>> one_runs(const Mat& hist);
-    vector<vector<std::tuple<double,double>>> get_connected_components(vector<double_pair>& center_list, double averahe_hight);
+    map<int,vector<double_pair>> get_connected_components(vector<double_pair>& center_list, double averahe_hight);
     line_limit find_baselines(vector<double_pair>& cc);
 };
 
