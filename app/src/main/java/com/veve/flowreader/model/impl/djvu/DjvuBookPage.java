@@ -5,19 +5,13 @@ import android.graphics.Bitmap;
 import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyph;
-import com.veve.flowreader.model.PageSource;
-import com.veve.flowreader.model.impl.PageRegion;
-import com.veve.flowreader.model.impl.PageUtil;
+import com.veve.flowreader.model.PageGlyphInfo;
+import com.veve.flowreader.model.impl.PageGlyphImpl;
 
 import org.opencv.android.Utils;
-import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.Point;
 import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +34,40 @@ public class DjvuBookPage implements BookPage {
     public Bitmap getAsBitmap(DevicePageContext context) {
         return getAsBitmap();
     }
+
+    @Override
+    public List<PageGlyph> getPageGlyphs(DevicePageContext context) {
+        return getPageGlyphs();
+    }
+
+    public List<PageGlyph> getPageGlyphs() {
+
+        List<PageGlyphInfo> pageGlyphInfos = new ArrayList<>();
+        byte[] imageBytes = getPageGlyphs(bookId, pageNumber, pageGlyphInfos);
+
+        int width = getWidth();
+        int height = getHeight();
+        Bitmap.Config bitmapConfig = Bitmap.Config.ARGB_8888;
+        Mat mat = new Mat(height, width ,CvType.CV_8UC3);
+        mat.put(0,0,imageBytes, 0, imageBytes.length);
+
+        List<PageGlyph> pageGlyphs = new ArrayList<>();
+
+        for (PageGlyphInfo pageGlyphInfo :pageGlyphInfos) {
+            int x = pageGlyphInfo.getX();
+            int y = pageGlyphInfo.getY();
+            int w = pageGlyphInfo.getWidth();
+            int h = pageGlyphInfo.getHeight();
+            Mat image = new Mat(mat, new Rect(x,y, w, h));
+            Bitmap bitmap = Bitmap.createBitmap(w, h, bitmapConfig);
+            Utils.matToBitmap(image, bitmap);
+            PageGlyph pg = new PageGlyphImpl(bitmap, pageGlyphInfo);
+            pageGlyphs.add(pg);
+        }
+
+        return pageGlyphs;
+    }
+
 
     public Bitmap getAsBitmap() {
 
@@ -66,6 +94,8 @@ public class DjvuBookPage implements BookPage {
     }
 
     private static native byte[] getBytes(long bookId, int pageNumber);
+
+    private static native byte[] getPageGlyphs(long bookId, int pageNumber, List<PageGlyphInfo> pageGlyphs);
 
     private static native int getNativeWidth(long bookId, int pageNumber);
     private static native int getNativeHeight(long bookId, int pageNumber);

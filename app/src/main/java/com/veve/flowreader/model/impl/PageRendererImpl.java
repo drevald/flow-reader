@@ -28,9 +28,12 @@ public class PageRendererImpl implements PageRenderer {
 
     @Override
     public Bitmap renderPage(DevicePageContext context, int position) {
-        List<PageGlyph> pageGlyphList = pageLayoutParser.getGlyphs(bookSource.getPageBytes(position));
 
-        for(PageGlyph pageGlyph : pageGlyphList) {
+        List<PageGlyph> glyphs = bookSource.getPageGlyphs(position);
+
+        //List<PageGlyph> pageGlyphList = pageLayoutParser.getGlyphs(bookSource.getPageBytes(position));
+
+        for(PageGlyph pageGlyph : glyphs) {
             pageGlyph.draw(context, false);
         }
 
@@ -42,7 +45,7 @@ public class PageRendererImpl implements PageRenderer {
         context.resetPosition();
         context.setCanvas(canvas);
 
-        for(PageGlyph pageGlyph : pageGlyphList) {
+        for(PageGlyph pageGlyph : glyphs) {
             pageGlyph.draw(context, true);
         }
 

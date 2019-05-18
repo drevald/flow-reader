@@ -4,6 +4,9 @@ import android.graphics.Bitmap;
 
 import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.BookSource;
+import com.veve.flowreader.model.PageGlyph;
+
+import java.util.List;
 
 public class DjvuBookSource implements BookSource {
 
@@ -16,7 +19,14 @@ public class DjvuBookSource implements BookSource {
     @Override
     public Bitmap getPageBytes(int pageNumber) {
         DjvuBookPage djvuBookPage = (DjvuBookPage)djvuBook.getPage(pageNumber);
+
         return djvuBookPage.getAsBitmap();
+    }
+
+    @Override
+    public List<PageGlyph> getPageGlyphs(int pageNumber) {
+        DjvuBookPage djvuBookPage = (DjvuBookPage)djvuBook.getPage(pageNumber);
+        return djvuBookPage.getPageGlyphs();
     }
 
     @Override

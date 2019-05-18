@@ -41,6 +41,11 @@ public class PdfBookPage implements BookPage {
         return AndroidDrawDevice.drawPage(page, context.getDisplayDpi());
     }
 
+    @Override
+    public List<PageGlyph> getPageGlyphs(DevicePageContext context) {
+        return null;
+    }
+
     public Bitmap getAsBitmap() {
         DevicePageContext context = new DevicePageContextImpl();
         context.setDisplayDpi(144);

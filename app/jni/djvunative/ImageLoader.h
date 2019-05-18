@@ -12,6 +12,9 @@ extern "C" {
 JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getBytes
 (JNIEnv *, jclass, jlong, jint);
 
+JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getPageGlyphs
+        (JNIEnv *, jclass, jlong, jint, jobject);
+
 JNIEXPORT jlong JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_openBook
 (JNIEnv *, jobject, jstring);
 

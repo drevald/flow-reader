@@ -5,8 +5,15 @@
 #include "PageSegmenter.h"
 #include "Enclosure.h"
 
+#include <opencv2/opencv.hpp>
+
 #include <limits>
 #include <cstdlib>
+
+#include <boost/range/algorithm/copy.hpp>
+#include <boost/range/adaptor/copied.hpp>
+#include <boost/range/adaptor/map.hpp>
+
 
 static int *calc_histogram(double *data, int size, double min, double max, int numBins) {
     int *result = new int[numBins];
@@ -76,9 +83,9 @@ line_limit PageSegmenter::find_baselines(vector<double_pair> &cc) {
             minValue = hist2[i];
         }
     }
-    line_limit line_limit(min, min + maxPos, min + minPos, max);
 
-    return line_limit;
+    //LineLimit lineLimit = new LineLimit(min, min+maxPos, min+minPos, max);
+    return line_limit(min, min + maxPos, min + minPos, max);
 
 }
 
@@ -103,18 +110,15 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
         data[i][1] = get<1>(center_list.at(i));
     }
 
-    Matrix<double> dataset(&data[0][0], size, 2);
-
-    int ind[size][2];
+    ::flann::Matrix<double> dataset(&data[0][0], size, 2);
 
     int k = 30;
 
-    Index<L2<double>> index(dataset, KDTreeIndexParams(1));
+    ::flann::Index<::flann::L2<double>> index(dataset, ::flann::KDTreeIndexParams(1));
     index.buildIndex();
 
-    Matrix<int> indices(&ind[0][0], size, k);
-    double d[10][2];
-    Matrix<double> dists(&d[0][0], size, k);
+    ::flann::Matrix<int> indices(new int[size*k], size, k);
+    ::flann::Matrix<double> dists(new double[size*k], size, k);
 
     double q[size][2];
 
@@ -124,11 +128,10 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
         q[i][1] = get<1>(p);
     }
 
-    Matrix<double> query(&q[0][0], size, 2);
-    // do a knn search, using 128 checks
-    index.knnSearch(query, indices, dists, 30, flann::SearchParams());
+    ::flann::Matrix<double> query(&q[0][0], size, 2);
+    index.knnSearch(query, indices, dists, 30, ::flann::SearchParams());
 
-    Graph g;
+    map<int,bool> verts;
 
     for (int i = 0; i < size; i++) {
         auto p = center_list[i];
@@ -157,12 +160,12 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
         if (found_neighbor) {
             double_pair point(get<0>(p), get<1>(p));
 
-            vertex_t v1 = add_vertex(g);
-            vertex_t v2 = add_vertex(g);
-            add_edge(v1, v2, g);
+            int n = center_numbers.at(point);
+            int m = center_numbers.at(right_nb);
 
-            g[v1] = point;
-            g[v2] = right_nb;
+            vertex_t v1 = vertex(n, g);
+            vertex_t v2 = vertex(m, g);
+            add_edge(v1, v2, g);
 
         }
 
@@ -175,10 +178,8 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
 
     for (int i = 0; i < c.size(); i++) {
         int cn = c[i];
-        if (return_value.find(cn) != return_value.end()) {
-
-        } else {
-            return_value.at(cn) = vector<double_pair>();
+        if (return_value.find(cn) == return_value.end()) {
+            return_value.insert(make_pair(cn, vector<double_pair>()));
         }
         return_value.at(cn).push_back(g[i]);
 
@@ -193,17 +194,28 @@ vector<line_limit> PageSegmenter::get_line_limits() {
     const Mat &image = gray_inverted_image.clone();
     preprocess_for_line_limits(image);
 
+
     const cc_result cc_results = get_cc_results(image);
     double average_height = cc_results.average_hight;
     vector<double_pair> centers = cc_results.centers;
 
     const map<int, vector<double_pair>> components = get_connected_components(centers, average_height);
 
-
-
     line_height = (int) average_height * 2;
 
+    vector<int> keys;
+
+    boost::copy(components | boost::adaptors::map_keys,
+                std::back_inserter(keys));
+
     vector<line_limit> v;
+    for (int i=0;i<keys.size(); i++) {
+        int cn = keys.at(i);
+        vector<double_pair> cc = components.at(cn);
+        line_limit ll = find_baselines(cc);
+        v.push_back(ll);
+    }
+
     return v;
 }
 
@@ -250,30 +262,21 @@ cc_result PageSegmenter::get_cc_results(const Mat &image) {
         array<int, 4> a = *it;
         int x = -get<0>(a);
         int y = -get<1>(a);
-        int width = get<2>(a);
-        int height = get<3>(a);
-
-        double cx = (x + width) / 2.0;
-        double cy = (y + height) / 2.0;
-        rd[make_tuple((x + width) / 2.0, (y + height) / 2.0)] = Rect(x, y, width, height);
-
-        double_pair center = make_pair(cx, cy);
-        center_list.push_back(center);
-        i++;
+        int width = get<2>(a) - x;
+        int height = get<3>(a) - y;
+        if (height > average_height - std && height < 2*average_height) {
+            double cx = (x + width) / 2.0;
+            double cy = (y + height) / 2.0;
+            rd[make_tuple((x + width) / 2.0, (y + height) / 2.0)] = Rect(x, y, width, height);
+            double_pair center = make_pair(cx, cy);
+            center_list.push_back(center);
+            center_numbers.insert(make_pair(center, i));
+            vertex_t v = add_vertex(g);
+            g[v] = center;
+            i++;
+        }
     }
 
-    Graph g;
-
-    add_edge(0, 1, g);
-    add_edge(1, 4, g);
-    add_edge(4, 0, g);
-    add_edge(2, 5, g);
-
-    std::vector<int> c(num_vertices(g));
-
-    int num = connected_components
-            (g, make_iterator_property_map(c.begin(), get(vertex_index, g), c[0]));
-    
     cc_result v;
     v.average_hight = average_height;
     v.centers = center_list;
@@ -307,7 +310,6 @@ vector<glyph> PageSegmenter::get_glyphs() {
 
     // preprocess for the first step
     Mat image;
-    int width = image.cols;
     cvtColor(mat, image, COLOR_BGR2GRAY);
     bitwise_not(image, image);
     const Mat kernel = getStructuringElement(MORPH_RECT, Size(8, 2));
@@ -315,8 +317,11 @@ vector<glyph> PageSegmenter::get_glyphs() {
 
     vector<line_limit> line_limits = get_line_limits();
 
+    sort(line_limits.begin(), line_limits.end(), SortLineLimits());
+
     vector<glyph> return_value;
 
+    int width = image.cols;
     for (line_limit &ll : line_limits) {
         int l = ll.lower;
         int bl = ll.lower_baseline;
@@ -352,6 +357,8 @@ vector<glyph> PageSegmenter::get_glyphs() {
             g.y = u;
             g.width = right - left;
             g.height = l - u;
+            g.baseline_shift = l - bl;
+            g.line_height = line_height;
             return_value.push_back(g);
 
         }
@@ -360,7 +367,4 @@ vector<glyph> PageSegmenter::get_glyphs() {
 
     return return_value;
 }
-
-
-
 

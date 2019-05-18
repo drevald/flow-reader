@@ -5,7 +5,7 @@
 #ifndef FLOW_READER_PAGESEGMENTER_H
 #define FLOW_READER_PAGESEGMENTER_H
 
-#include <flann/flann.hpp>
+#include "flann/flann.hpp"
 #include "flann/util/matrix.h"
 #include <boost/graph/connected_components.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -17,7 +17,7 @@
 
 using namespace std;
 using namespace cv;
-using namespace flann;
+
 using namespace boost;
 
 typedef std::tuple<double,double> double_pair ;
@@ -26,7 +26,7 @@ typedef graph_traits<Graph>::vertex_descriptor vertex_t;
 
 
 struct glyph {
-    int x, y, width, height;
+    int x, y, width, height, line_height, baseline_shift;
 };
 
 struct line_limit {
@@ -49,9 +49,17 @@ struct cc_result {
 
 struct PairXOrder {
     bool operator()(double_pair const &lhs, double_pair const &rhs) const {
-        return get<0>(lhs) > get<0>(rhs);
+        return get<0>(lhs) < get<0>(rhs);
     }
 };
+
+struct SortLineLimits {
+    bool operator()(line_limit const &lhs, line_limit const &rhs) const {
+        return lhs.lower_baseline < rhs.lower_baseline;
+    }
+
+};
+
 
 class PageSegmenter {
 
@@ -67,7 +75,9 @@ public:
 private:
     Mat mat;
     Mat gray_inverted_image;
+    map<double_pair,int> center_numbers;
     map<double_pair,Rect> rd;
+    Graph g;
     int line_height = 0;
     vector<line_limit> get_line_limits();
     void preprocess_for_line_limits(const Mat &image);

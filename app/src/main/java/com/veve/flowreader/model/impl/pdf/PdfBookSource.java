@@ -3,6 +3,9 @@ package com.veve.flowreader.model.impl.pdf;
 import android.graphics.Bitmap;
 
 import com.veve.flowreader.model.BookSource;
+import com.veve.flowreader.model.PageGlyph;
+
+import java.util.List;
 
 public class PdfBookSource implements BookSource {
 
@@ -16,6 +19,11 @@ public class PdfBookSource implements BookSource {
     public Bitmap getPageBytes(int pageNumber) {
         PdfBookPage pdfBookPage = (PdfBookPage)pdfBook.getPage(pageNumber);
         return pdfBookPage.getAsBitmap();
+    }
+
+    @Override
+    public List<PageGlyph> getPageGlyphs(int pageNumber) {
+        return null;
     }
 
     @Override
