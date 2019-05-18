@@ -61,26 +61,23 @@ line_limit PageSegmenter::find_baselines(vector<double_pair> &cc) {
 
     int size = line_rects.size();
 
-    Mat ud(size, 1, CV_64F, &upperData);
-    Mat ld(size, 1, CV_64F, &lowerData);
+    map<double,int> countsUpper;
+    map<double,int> countsLower;
 
-    map<double,int> mycounts1;
-    map<double,int> mycounts2;
 
-    std::vector<int> counts1(50, 0);
     for (int c = 0; c < size; c++) {
-        double n = ud.at<double>(c,0);
-        if (mycounts1.find(n) == mycounts1.end()){
-            mycounts1.insert(make_pair(n, 1));
+        double n = upperData[c];
+        if (countsUpper.find(n) == countsUpper.end()){
+            countsUpper.insert(make_pair(n, 1));
         } else {
-            mycounts1.at(n) +=1;
+            countsUpper.at(n) +=1;
         }
 
-        double m = ld.at<double>(c,0);
-        if (mycounts2.find(m) == mycounts2.end()){
-            mycounts2.insert(make_pair(m, 1));
+        double m = lowerData[c];
+        if (countsLower.find(m) == countsLower.end()){
+            countsLower.insert(make_pair(m, 1));
         } else {
-            mycounts2.at(m) +=1;
+            countsLower.at(m) +=1;
         }
 
     }
@@ -92,7 +89,7 @@ line_limit PageSegmenter::find_baselines(vector<double_pair> &cc) {
     int maxUpperIndex = 0;
     int maxLowerIndex = 0;
 
-    for ( auto it = mycounts1.begin(); it != mycounts1.end(); it++ )
+    for ( auto it = countsUpper.begin(); it != countsUpper.end(); it++ )
     {
         if (it->second > maxUpper) {
             maxUpper = it->second;
@@ -101,7 +98,7 @@ line_limit PageSegmenter::find_baselines(vector<double_pair> &cc) {
     }
 
 
-    for ( auto it = mycounts2.begin(); it != mycounts2.end(); it++ )
+    for ( auto it = countsLower.begin(); it != countsLower.end(); it++ )
     {
         if (it->second > maxLower) {
             maxLower = it->second;
@@ -109,8 +106,6 @@ line_limit PageSegmenter::find_baselines(vector<double_pair> &cc) {
         }
     }
 
-    ud.release();
-    ld.release();
 
     return line_limit(min, maxUpperIndex, maxLowerIndex, max);
 
