@@ -60,32 +60,59 @@ line_limit PageSegmenter::find_baselines(vector<double_pair> &cc) {
     }
 
     int size = line_rects.size();
-    int numBins = max - min;
-    int *hist1 = calc_histogram(upperData, size, min, max, numBins);
-    int *hist2 = calc_histogram(lowerData, size, min, max, numBins);
 
-    int maxPos = 0;
-    int minPos = 0;
+    Mat ud(size, 1, CV_64F, &upperData);
+    Mat ld(size, 1, CV_64F, &lowerData);
 
-    int maxValue = numeric_limits<int>::min();
-    int minValue = numeric_limits<int>::min();
+    map<double,int> mycounts1;
+    map<double,int> mycounts2;
 
-    for (int i = 0; i < numBins; i++) {
-        if (hist1[i] > maxValue) {
-            maxPos = i;
-            maxValue = hist1[i];
+    std::vector<int> counts1(50, 0);
+    for (int c = 0; c < size; c++) {
+        double n = ud.at<double>(c,0);
+        if (mycounts1.find(n) == mycounts1.end()){
+            mycounts1.insert(make_pair(n, 1));
+        } else {
+            mycounts1.at(n) +=1;
+        }
+
+        double m = ld.at<double>(c,0);
+        if (mycounts2.find(m) == mycounts2.end()){
+            mycounts2.insert(make_pair(m, 1));
+        } else {
+            mycounts2.at(m) +=1;
+        }
+
+    }
+
+    int maxUpper = numeric_limits<int>::min();
+    int maxLower = numeric_limits<int>::min();
+
+
+    int maxUpperIndex = 0;
+    int maxLowerIndex = 0;
+
+    for ( auto it = mycounts1.begin(); it != mycounts1.end(); it++ )
+    {
+        if (it->second > maxUpper) {
+            maxUpper = it->second;
+            maxUpperIndex = it->first;
         }
     }
 
-    for (int i = 0; i < numBins; i++) {
-        if (hist2[i] > minValue) {
-            minPos = i;
-            minValue = hist2[i];
+
+    for ( auto it = mycounts2.begin(); it != mycounts2.end(); it++ )
+    {
+        if (it->second > maxLower) {
+            maxLower = it->second;
+            maxLowerIndex = it->first;
         }
     }
 
-    //LineLimit lineLimit = new LineLimit(min, min+maxPos, min+minPos, max);
-    return line_limit(min, min + maxPos, min + minPos, max);
+    ud.release();
+    ld.release();
+
+    return line_limit(min, maxUpperIndex, maxLowerIndex, max);
 
 }
 
