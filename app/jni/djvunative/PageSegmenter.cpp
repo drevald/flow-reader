@@ -29,7 +29,6 @@ line_limit PageSegmenter::find_baselines(vector<double_pair> &cc) {
     int max = numeric_limits<int>::min();
     int min = numeric_limits<int>::max();
 
-    double upperData[line_rects.size()];
     double lowerData[line_rects.size()];
 
     for (int i = 0; i < line_rects.size(); i++) {
@@ -40,24 +39,14 @@ line_limit PageSegmenter::find_baselines(vector<double_pair> &cc) {
         if (rect.y + rect.height > max) {
             max = rect.y + rect.height;
         }
-        upperData[i] = rect.y;
         lowerData[i] = rect.y + rect.height;
     }
 
     int size = line_rects.size();
 
-    map<double,int> countsUpper;
     map<double,int> countsLower;
 
-
     for (int c = 0; c < size; c++) {
-        double n = upperData[c];
-        if (countsUpper.find(n) == countsUpper.end()){
-            countsUpper.insert(make_pair(n, 1));
-        } else {
-            countsUpper.at(n) +=1;
-        }
-
         double m = lowerData[c];
         if (countsLower.find(m) == countsLower.end()){
             countsLower.insert(make_pair(m, 1));
@@ -67,21 +56,8 @@ line_limit PageSegmenter::find_baselines(vector<double_pair> &cc) {
 
     }
 
-    int maxUpper = numeric_limits<int>::min();
     int maxLower = numeric_limits<int>::min();
-
-
-    int maxUpperIndex = 0;
     int maxLowerIndex = 0;
-
-    for ( auto it = countsUpper.begin(); it != countsUpper.end(); it++ )
-    {
-        if (it->second > maxUpper) {
-            maxUpper = it->second;
-            maxUpperIndex = it->first;
-        }
-    }
-
 
     for ( auto it = countsLower.begin(); it != countsLower.end(); it++ )
     {
@@ -91,8 +67,7 @@ line_limit PageSegmenter::find_baselines(vector<double_pair> &cc) {
         }
     }
 
-
-    return line_limit(min, maxUpperIndex, maxLowerIndex, max);
+    return line_limit(min, 0, maxLowerIndex, max);
 
 }
 
@@ -119,7 +94,7 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
 
     ::flann::Matrix<double> dataset(&data[0][0], size, 2);
 
-    int k = 60;
+    int k = std::min(100,size);
 
     ::flann::Index<::flann::L2<double>> index(dataset, ::flann::KDTreeIndexParams(1));
     index.buildIndex();
@@ -275,7 +250,7 @@ cc_result PageSegmenter::get_cc_results(const Mat &image) {
             double cx = (x + width) / 2.0;
             double cy = (y + height) / 2.0;
             rd[make_tuple((x + width) / 2.0, (y + height) / 2.0)] = Rect(x, y, width, height);
-            double_pair center = make_pair(cx, cy);
+            double_pair center = std::tuple<double,double>(cx, cy);
             center_list.push_back(center);
             center_numbers.insert(make_pair(center, i));
             vertex_t v = add_vertex(g);
