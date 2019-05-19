@@ -29,7 +29,7 @@ android {
         ndk {
             // Tells Gradle to build outputs for the following ABIs and package
             // them into your APK.
-            abiFilters 'armeabi-v7a'
+            abiFilters 'x86_64', 'armeabi-v7a'
         }
     }
     buildTypes {
