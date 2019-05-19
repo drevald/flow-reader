@@ -97,6 +97,53 @@ JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_get
 
 }
 
+void ThrowError(JNIEnv* env, const char* msg)
+{
+    jclass exceptionClass = env->FindClass("java/lang/RuntimeException");
+    if (!exceptionClass)
+        return;
+    if (!msg)
+        env->ThrowNew(exceptionClass, "Djvu decoding error!");
+    else env->ThrowNew(exceptionClass, msg);
+}
+
+void ThrowDjvuError(JNIEnv* env, const ddjvu_message_t* msg)
+{
+    if (!msg || !msg->m_error.message)
+        ThrowError(env, "Djvu decoding error!");
+    else ThrowError(env, msg->m_error.message);
+}
+
+void handleMessages(JNIEnv *env, ddjvu_context_t* ctx)
+{
+    const ddjvu_message_t *msg;
+    while((msg = ddjvu_message_peek(ctx)))
+    {
+        switch (msg->m_any.tag)
+        {
+            case DDJVU_ERROR:
+                ThrowDjvuError(env, msg);
+                break;
+            case DDJVU_INFO:
+                break;
+            case DDJVU_DOCINFO:
+                break;
+            default:
+                break;
+        }
+        ddjvu_message_pop(ctx);
+    }
+}
+
+
+void waitAndHandleMessages(JNIEnv *env, ddjvu_context_t* contextHandle)
+{
+    ddjvu_context_t* ctx = contextHandle;
+    // Wait for first message
+    ddjvu_message_wait(ctx);
+    // Process available messages
+    handleMessages(env, ctx);
+}
 
 JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getPageGlyphs
         (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jobject list) {
@@ -115,27 +162,6 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
 
     ddjvu_page_t *page= ddjvu_page_create_by_pageno(doc, pageno);
 
-    while (!ddjvu_page_decoding_done (page )) {
-        //ddjvu_message_wait(ctx);
-        // Process available messages
-        const ddjvu_message_t *msg;
-        while((msg = ddjvu_message_peek(ctx)))
-        {
-            switch (msg->m_any.tag)
-            {
-                case DDJVU_ERROR:
-
-                    break;
-                case DDJVU_INFO:
-                    break;
-                case DDJVU_DOCINFO:
-                    break;
-                default:
-                    break;
-            }
-            ddjvu_message_pop(ctx);
-        }
-    }
 
     ddjvu_status_t r;
     ddjvu_pageinfo_t info;
@@ -156,13 +182,16 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
     rrect = prect;
 
     ddjvu_format_t *format = ddjvu_format_create(DDJVU_FORMAT_RGB24, 0, NULL);
-    //static uint masks[4] = { 0xff0000, 0xff00, 0xff, 0xff000000 };
-    //ddjvu_format_t * format = ddjvu_format_create ( DDJVU_FORMAT_RGBMASK32, 4, masks );
     ddjvu_format_set_row_order(format, 1);
     ddjvu_format_set_y_direction(format, 1);
 
     int size = w * h * PIXELS;
     char *pixels = (char*)malloc(size);
+
+    while (!ddjvu_page_decoding_done(page))
+    {
+        waitAndHandleMessages(env, ctx);
+    }
 
     int s = ddjvu_page_render (page, DDJVU_RENDER_COLOR,
                                &prect,

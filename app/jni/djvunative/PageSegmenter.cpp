@@ -9,27 +9,12 @@
 
 #include <limits>
 #include <cstdlib>
+#include <android/log.h>
 
 #include <boost/range/algorithm/copy.hpp>
 #include <boost/range/adaptor/copied.hpp>
 #include <boost/range/adaptor/map.hpp>
 
-
-static int *calc_histogram(double *data, int size, double min, double max, int numBins) {
-    int *result = new int[numBins];
-    const double binSize = (max - min) / numBins;
-
-    for (int i = 0; i < size; i++) {
-        double d = data[i];
-        int bin = (int) ((d - min) / binSize);
-        if (bin < 0) { /* this data is smaller than min */ }
-        else if (bin >= numBins) { /* this data point is bigger than max */ }
-        else {
-            result[bin] += 1;
-        }
-    }
-    return result;
-}
 
 line_limit PageSegmenter::find_baselines(vector<double_pair> &cc) {
 
@@ -134,7 +119,7 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
 
     ::flann::Matrix<double> dataset(&data[0][0], size, 2);
 
-    int k = 30;
+    int k = 60;
 
     ::flann::Index<::flann::L2<double>> index(dataset, ::flann::KDTreeIndexParams(1));
     index.buildIndex();
@@ -151,7 +136,7 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
     }
 
     ::flann::Matrix<double> query(&q[0][0], size, 2);
-    index.knnSearch(query, indices, dists, 30, ::flann::SearchParams());
+    index.knnSearch(query, indices, dists, k, ::flann::SearchParams());
 
     map<int,bool> verts;
 
@@ -249,6 +234,7 @@ cc_result PageSegmenter::get_cc_results(const Mat &image) {
     connectedComponentsWithStats(image, labeled, rectComponents, centComponents);
 
     int count = rectComponents.rows - 1;
+
     double heights[count];
 
     vector<double_pair> center_list;
@@ -277,7 +263,6 @@ cc_result PageSegmenter::get_cc_results(const Mat &image) {
 
     Enclosure enc(rects);
     const set<array<int, 4>> &s = enc.solve();
-
 
     int i = 0;
     for (auto it = s.begin(); it != s.end(); ++it) {
@@ -386,6 +371,9 @@ vector<glyph> PageSegmenter::get_glyphs() {
         }
 
     }
+
+    mat.release();
+    image.release();
 
     return return_value;
 }
