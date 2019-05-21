@@ -18,6 +18,7 @@ import org.jgrapht.alg.ConnectivityInspector;
 import org.jgrapht.graph.ClassBasedEdgeFactory;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
+import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -57,17 +58,20 @@ public class PageSegmenter implements PageLayoutParser {
 
     @Override
     public List<PageGlyph> getGlyphs(Bitmap bitmap) {
-
-        long start = System.currentTimeMillis();
-        int iBytes = bitmap.getWidth() * bitmap.getHeight() * 4;
-        ByteBuffer buffer = ByteBuffer.allocate(iBytes);
-        byte[] imageBytes= buffer.array();
-        bitmap.copyPixelsToBuffer(buffer);
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
         mat = new Mat(height, width , CvType.CV_8UC4);
-        mat.put(0,0,imageBytes, 0, imageBytes.length);
+        Utils.bitmapToMat(bitmap, mat);
 
+        /*long start = System.currentTimeMillis();
+        int iBytes = bitmap.getWidth() * bitmap.getHeight() * 4;
+        ByteBuffer buffer = ByteBuffer.allocateDirect(iBytes);
+        byte[] imageBytes= buffer.array();
+        bitmap.copyPixelsToBuffer(buffer);
+
+        mat = new Mat(height, width , CvType.CV_8UC4);
+        mat.put(0,0,imageBytes, 0, imageBytes.length);
+*/
         List<PageGlyph> returnValue = new ArrayList<>();
 
         Mat image = new Mat();
@@ -107,8 +111,6 @@ public class PageSegmenter implements PageLayoutParser {
 
         image.release();
         mat.release();
-
-        Log.d("DURATION", "compute" + (System.currentTimeMillis() - start));
 
         return returnValue;
     }
@@ -186,29 +188,34 @@ public class PageSegmenter implements PageLayoutParser {
             lowerData[i] = rect.y + rect.height;
         }
 
-        int[] hist1 = calcHistogram(upperData,min,max,max-min);
-        int[] hist2 = calcHistogram(lowerData,min,max,max-min);
 
-        int maxPos = 0;
-        int minPos = 0;
+        //
 
-        int maxValue = Integer.MIN_VALUE;
-        int minValue = Integer.MIN_VALUE;
+        int size = lineRects.size();
+        Map<Double,Integer> countsLower = new HashMap<>();
 
-        for (int i=0;i< hist1.length; i++) {
-            if (hist1[i] > maxValue) {
-                maxPos = i;
-                maxValue = hist1[i];
+        for (int c = 0; c < size; c++) {
+            double m = lowerData[c];
+            if (!countsLower.containsKey(m)) {
+                countsLower.put(m,1);
+            } else {
+                countsLower.put(m, countsLower.get(m)+1);
             }
         }
 
-        for (int i=0;i< hist2.length; i++) {
-            if (hist2[i] > minValue) {
-                minPos = i;
-                minValue = hist2[i];
+        int maxLower = Integer.MIN_VALUE;
+        int maxLowerIndex = 0;
+
+        for (Map.Entry<Double,Integer> entry: countsLower.entrySet() ) {
+            if (entry.getValue() > maxLower) {
+                maxLower = entry.getValue();
+                maxLowerIndex = entry.getKey().intValue();
+
             }
         }
-        LineLimit lineLimit = new LineLimit(min, min+maxPos, min+minPos, max);
+
+
+        LineLimit lineLimit = new LineLimit(min, 0, maxLowerIndex, max);
 
         return lineLimit;
     }
@@ -260,7 +267,7 @@ public class PageSegmenter implements PageLayoutParser {
 
         int n = centers.length;
 
-        int k = 30;
+        int k = Math.min(100, centers.length);
 
         double[][] queries = new double[n][2];
 
@@ -329,10 +336,12 @@ public class PageSegmenter implements PageLayoutParser {
         Imgproc.connectedComponentsWithStats(image, labeled, rectComponents, centComponents);
 
 
+
         int[] rectangleInfo = new int[5];
         double[] centroidInfo = new double[2];
 
         int count = rectComponents.rows() - 1;
+
         double[] heights = new double[count];
 
         List<Tuple<Double,Double>> centerList = new ArrayList<>();
@@ -377,7 +386,7 @@ public class PageSegmenter implements PageLayoutParser {
             int x1 = rect.x;
             int y1 = rect.y;
 
-            if (rect.height > averageHeight - stddev && rect.height < 2*averageHeight) {
+            if (rect.height >= averageHeight - stddev && rect.height <= 2*averageHeight) {
                 centerList.add(new Tuple<>(x1 + rect.width/2.0, y1 + rect.height/2.0 ));
                 rd.put(new Tuple<>(x1 + rect.width/2.0, y1 + rect.height/2.0), rect);
             }
