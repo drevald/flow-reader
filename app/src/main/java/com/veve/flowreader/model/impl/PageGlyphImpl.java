@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyph;
+import com.veve.flowreader.model.PageGlyphInfo;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
@@ -39,16 +40,31 @@ public class PageGlyphImpl implements PageGlyph {
 
     private int averageHeight;
 
-    public PageGlyphImpl(Bitmap bitmap) {
+    private int x, y;
+
+
+    public PageGlyphImpl(Bitmap bitmap, PageGlyphInfo rect) {
         this.bitmap = bitmap;
-        this.baseLineShift = 0;
-        this.averageHeight = 36;
+        this.baseLineShift = rect.getBaselineShift();
+        this.averageHeight = rect.getAverageHeight();
+        this.x = rect.getX();
+        this.y = rect.getY();
     }
 
-    public PageGlyphImpl(Bitmap bitmap, int baseLineShift, int averageHight) {
+    public PageGlyphImpl(Bitmap bitmap, int baseLineShift, int averageHight, int x , int y) {
         this.bitmap = bitmap;
         this.baseLineShift = baseLineShift;
         this.averageHeight = averageHight;
+        this.x = x;
+        this.y = y;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
     }
 
     private int getBaselineShif() {

@@ -30,9 +30,7 @@ public class OpenCvPageLayoutParserImpl implements PageLayoutParser {
     @Override
     public List<PageGlyph> getGlyphs(Bitmap bitmap) {
 
-        Log.d(getClass().getName(), "getGlyphs started");
-
-        List<PageGlyph> list = new ArrayList<PageGlyph>();
+        List<PageGlyph> list = new ArrayList<>();
 
         int iBytes = bitmap.getWidth() * bitmap.getHeight() * 4;
 
@@ -48,7 +46,6 @@ public class OpenCvPageLayoutParserImpl implements PageLayoutParser {
         mat.put(0,0,imageBytes, 0, imageBytes.length);
         int[] rectangleInfo = new int[5];
 
-        Log.d(getClass().getName(), "2");
 
         Mat dst = new Mat();
         Imgproc.cvtColor(mat, dst, Imgproc.COLOR_BGR2GRAY);
@@ -58,8 +55,6 @@ public class OpenCvPageLayoutParserImpl implements PageLayoutParser {
 
         Imgproc.blur(dst, dst, new Size(5,3));
         Core.bitwise_not(dst,dst);
-
-        Log.d(getClass().getName(), "3");
 
         Core.compare(dst,new Scalar(3), dst, Core.CMP_GT);
         Mat labeled = new Mat(dst.size(), dst.type());
@@ -82,7 +77,6 @@ public class OpenCvPageLayoutParserImpl implements PageLayoutParser {
             regions.add(reg);
         }
 
-        Log.d(getClass().getName(), "4");
 
         regions = PageUtil.sortRegions(regions);
 
@@ -91,7 +85,8 @@ public class OpenCvPageLayoutParserImpl implements PageLayoutParser {
             org.opencv.core.Rect rect = reg.getRect();
             //Bitmap newBitmap = Bitmap.createBitmap(bitmap, rect.x, rect.y, rect.x+rect.width,rect.y+rect.height);
             Bitmap newBitmap = Bitmap.createBitmap(bitmap, rect.x, rect.y, rect.width,rect.height);
-            list.add(new PageGlyphImpl(newBitmap));
+            list.add(new PageGlyphImpl(newBitmap, 0, 36, 0, 0));
+
         }
 
         // Free memory

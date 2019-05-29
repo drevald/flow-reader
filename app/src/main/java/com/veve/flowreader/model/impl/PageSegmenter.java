@@ -18,6 +18,7 @@ import org.jgrapht.alg.ConnectivityInspector;
 import org.jgrapht.graph.ClassBasedEdgeFactory;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
+import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -36,6 +37,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ForkJoinTask;
+import java.util.concurrent.RecursiveTask;
 
 import flann.index.IndexBase;
 import flann.index.IndexKDTree;
@@ -55,18 +58,20 @@ public class PageSegmenter implements PageLayoutParser {
 
     @Override
     public List<PageGlyph> getGlyphs(Bitmap bitmap) {
-
-        Log.d(getClass().getName(), "getGlyphs started");
-
-        int iBytes = bitmap.getWidth() * bitmap.getHeight() * 4;
-        ByteBuffer buffer = ByteBuffer.allocate(iBytes);
-        byte[] imageBytes= buffer.array();
-        bitmap.copyPixelsToBuffer(buffer);
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
         mat = new Mat(height, width , CvType.CV_8UC4);
-        mat.put(0,0,imageBytes, 0, imageBytes.length);
+        Utils.bitmapToMat(bitmap, mat);
 
+        /*long start = System.currentTimeMillis();
+        int iBytes = bitmap.getWidth() * bitmap.getHeight() * 4;
+        ByteBuffer buffer = ByteBuffer.allocateDirect(iBytes);
+        byte[] imageBytes= buffer.array();
+        bitmap.copyPixelsToBuffer(buffer);
+
+        mat = new Mat(height, width , CvType.CV_8UC4);
+        mat.put(0,0,imageBytes, 0, imageBytes.length);
+*/
         List<PageGlyph> returnValue = new ArrayList<>();
 
         Mat image = new Mat();
@@ -77,54 +82,35 @@ public class PageSegmenter implements PageLayoutParser {
         final Size kernelSize = new Size(8, 2);
         Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, kernelSize);
         Imgproc.dilate(image, image, kernel, new Point(0,0), 2);
+        //Imgproc.threshold(image, image,0,255, Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU);
 
-        long start = System.currentTimeMillis();
         List<LineLimit> lineLimits = getLineLimits();
 
+        returnValue = new Task(lineLimits, image, mat, lineHeight).compute();
 
-        for (LineLimit lineLimit : lineLimits) {
-            int l = lineLimit.getLower();
-            int bl = lineLimit.getLowerBaseline();
-            int u = lineLimit.getUpper();
-            int bu = lineLimit.getUpperBaseline();
+        Collections.sort(returnValue, new Comparator<PageGlyph>() {
+            @Override
+            public int compare(PageGlyph pg1, PageGlyph pg2) {
+                if (pg1 instanceof  PageGlyphImpl && pg2 instanceof PageGlyphImpl) {
+                    PageGlyphImpl g1 = (PageGlyphImpl)pg1;
+                    PageGlyphImpl g2 = (PageGlyphImpl)pg2;
 
-            Mat lineimage = new Mat(image, new Rect(0, u, width, l-u));
-            Imgproc.threshold(lineimage, lineimage,0,255, Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU);
-            Mat horHist = new Mat();
-            Core.reduce(lineimage, horHist, 0, Core.REDUCE_SUM, CvType.CV_32F);
+                    if (g1.getY() < g2.getY()) {
+                        return -1;
+                    } else if (g1.getY() == g2.getY()) {
+                        return Integer.compare(g1.getX(), g2.getX());
+                    } else {
+                        return 1;
+                    }
 
-            int w = horHist.width();
-
-            for (int i=0;i<w;i++) {
-                if (horHist.get(0,i)[0] > 0) {
-                    horHist.put(0,i, 1);
-                } else {
-                    horHist.put(0,i, 0);
                 }
+                return 0;
             }
+        });
 
-            List<Tuple<Integer, Integer>> oneRuns = oneRuns(horHist);
-
-            horHist.release();
-
-            for (Tuple<Integer,Integer> r : oneRuns) {
-                int left = r.getFirst();
-                int right = r.getSecond();
-
-                Mat glyph = new Mat(mat, new Rect(left, u, right-left, l-u));
-
-                Bitmap newBitmap = Bitmap.createBitmap(right-left, l-u, Bitmap.Config.ARGB_8888);
-                Utils.matToBitmap(glyph, newBitmap);
-                glyph.release();
-                returnValue.add(new PageGlyphImpl(newBitmap, l - bl, lineHeight));
-
-            }
-        }
 
         image.release();
         mat.release();
-        Log.d("DURATION", "" + (System.currentTimeMillis() - start));
-        Log.d(getClass().getName(), "getGlyphs ended");
 
         return returnValue;
     }
@@ -165,7 +151,6 @@ public class PageSegmenter implements PageLayoutParser {
                 return Integer.compare(l1.getLowerBaseline(), l2.getLowerBaseline());
             }
         });
-
         return lineLimits;
     }
 
@@ -203,29 +188,34 @@ public class PageSegmenter implements PageLayoutParser {
             lowerData[i] = rect.y + rect.height;
         }
 
-        int[] hist1 = calcHistogram(upperData,min,max,max-min);
-        int[] hist2 = calcHistogram(lowerData,min,max,max-min);
 
-        int maxPos = 0;
-        int minPos = 0;
+        //
 
-        int maxValue = Integer.MIN_VALUE;
-        int minValue = Integer.MIN_VALUE;
+        int size = lineRects.size();
+        Map<Double,Integer> countsLower = new HashMap<>();
 
-        for (int i=0;i< hist1.length; i++) {
-            if (hist1[i] > maxValue) {
-                maxPos = i;
-                maxValue = hist1[i];
+        for (int c = 0; c < size; c++) {
+            double m = lowerData[c];
+            if (!countsLower.containsKey(m)) {
+                countsLower.put(m,1);
+            } else {
+                countsLower.put(m, countsLower.get(m)+1);
             }
         }
 
-        for (int i=0;i< hist2.length; i++) {
-            if (hist2[i] > minValue) {
-                minPos = i;
-                minValue = hist2[i];
+        int maxLower = Integer.MIN_VALUE;
+        int maxLowerIndex = 0;
+
+        for (Map.Entry<Double,Integer> entry: countsLower.entrySet() ) {
+            if (entry.getValue() > maxLower) {
+                maxLower = entry.getValue();
+                maxLowerIndex = entry.getKey().intValue();
+
             }
         }
-        LineLimit lineLimit = new LineLimit(min, min+maxPos, min+minPos, max);
+
+
+        LineLimit lineLimit = new LineLimit(min, 0, maxLowerIndex, max);
 
         return lineLimit;
     }
@@ -275,39 +265,44 @@ public class PageSegmenter implements PageLayoutParser {
         EdgeFactory<Tuple<Double,Double>, DefaultEdge> edgeFactory = new ClassBasedEdgeFactory<Tuple<Double,Double>, DefaultEdge>(DefaultEdge.class);
         UndirectedGraph<Tuple<Double,Double>,DefaultEdge> graph = new SimpleGraph<Tuple<Double,Double>, DefaultEdge>(edgeFactory);
 
+        int n = centers.length;
 
-        for (double[] p : centers) {
+        int k = Math.min(100, centers.length);
 
-            int k = 30;
+        double[][] queries = new double[n][2];
 
-            IndexKMeans.SearchParams searchParams = new IndexKMeans.SearchParams();
-            searchParams.maxNeighbors = k;
-            searchParams.eps = 0.0f;
+        int[][] indices = new int[n][k];
+        double[][] distances = new double[n][k];
 
-            double[][] queries = new double[1][2];
-            queries[0][0] = p[0];
-            queries[0][1] = p[1];
-            int[][] indices = new int[1][k];
-            double[][] distances = new double[1][k];
-            index.knnSearch(queries, indices, distances, searchParams);
+        IndexKMeans.SearchParams searchParams = new IndexKMeans.SearchParams();
+        searchParams.maxNeighbors = k;
+        searchParams.eps = 0.0f;
 
+        for (int i=0; i<n; i++) {
+            double[] p = centers[i];
+            queries[i][0] = p[0];
+            queries[i][1] = p[1];
+        }
+
+        index.knnSearch(queries, indices, distances, searchParams);
+
+        for (int i=0; i<n; i++) {
+            double[] p = centers[i];
             List<Tuple<Double,Double>> neighbors = new ArrayList<>();
 
             Tuple<Double,Double> rightNb = null;
             double mindist = Double.MAX_VALUE;
 
             for (int j = 0; j < k; j++) {
-                int ind = indices[0][j];
+                int ind = indices[i][j];
                 double[] nb = centers[ind];
                 if (nb[0] - p[0] != 0) {
-                    // dist = (nb[1] - p[1]) ** 2 / (nb[0] - p[0]) + (nb[0] - p[0])
                     double dist = ((nb[1] - p[1]) * (nb[1] - p[1])) / (nb[0] - p[0]) + (nb[0] - p[0]);
                     if (dist < mindist && nb[0] > p[0] && Math.abs((nb[1] - p[1])) < 3. / 4. * averageHeight) {
                         mindist = dist;
                         rightNb = new Tuple<>(nb[0], nb[1]);
                     }
                 }
-                //neighbors.add(new Tuple<>(center[0], center[1]));
             }
 
             if (rightNb != null) {
@@ -320,13 +315,16 @@ public class PageSegmenter implements PageLayoutParser {
         }
 
         ConnectivityInspector<Tuple<Double,Double>,DefaultEdge> inspector
-                = new ConnectivityInspector<Tuple<Double,Double>,DefaultEdge>(graph);
+                = new ConnectivityInspector<>(graph);
+
 
         return inspector.connectedSets();
 
     }
 
     private CCResult getCCResults(Mat image) {
+
+        long start = System.currentTimeMillis();
 
         Map<Tuple<Double, Double>, Rect> rd = new HashMap<>();
 
@@ -338,10 +336,12 @@ public class PageSegmenter implements PageLayoutParser {
         Imgproc.connectedComponentsWithStats(image, labeled, rectComponents, centComponents);
 
 
+
         int[] rectangleInfo = new int[5];
         double[] centroidInfo = new double[2];
 
         int count = rectComponents.rows() - 1;
+
         double[] heights = new double[count];
 
         List<Tuple<Double,Double>> centerList = new ArrayList<>();
@@ -386,7 +386,7 @@ public class PageSegmenter implements PageLayoutParser {
             int x1 = rect.x;
             int y1 = rect.y;
 
-            if (rect.height > averageHeight - stddev && rect.height < 2*averageHeight) {
+            if (rect.height >= averageHeight - stddev && rect.height <= 2*averageHeight) {
                 centerList.add(new Tuple<>(x1 + rect.width/2.0, y1 + rect.height/2.0 ));
                 rd.put(new Tuple<>(x1 + rect.width/2.0, y1 + rect.height/2.0), rect);
             }
@@ -399,6 +399,7 @@ public class PageSegmenter implements PageLayoutParser {
             centers[i] = new double[] {tuple.getFirst(), tuple.getSecond()};
         }
 
+
         return new CCResult(centers, averageHeight, rd);
     }
 
@@ -410,6 +411,82 @@ public class PageSegmenter implements PageLayoutParser {
             parser = new PageSegmenter();
         }
         return parser;
+    }
+
+    private static class Task extends RecursiveTask<List<PageGlyph>> {
+
+        private List<LineLimit> lineLimits;
+        private Mat image;
+        private Mat mat;
+        private int width;
+        private int lineHeight;
+
+        public Task(List<LineLimit> lineLimits, Mat image, Mat mat, int lineHeight) {
+            this.lineLimits = lineLimits;
+            this.image = image;
+            this.mat = mat;
+            this.width = image.width();
+            this.lineHeight = lineHeight;
+        }
+
+        @Override
+        protected List<PageGlyph> compute() {
+            List<PageGlyph> returnValue = new ArrayList<>();
+            if (lineLimits.size() < 3) {
+                for (LineLimit lineLimit : lineLimits) {
+
+                    int l = lineLimit.getLower();
+                    int bl = lineLimit.getLowerBaseline();
+                    int u = lineLimit.getUpper();
+                    int bu = lineLimit.getUpperBaseline();
+
+                    Mat lineimage = new Mat(image, new Rect(0, u, width, l-u));
+                    Imgproc.threshold(lineimage, lineimage,0,255, Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU);
+                    Mat horHist = new Mat();
+                    Core.reduce(lineimage, horHist, 0, Core.REDUCE_SUM, CvType.CV_32F);
+
+                    int w = horHist.width();
+
+                    for (int i=0;i<w;i++) {
+                        if (horHist.get(0,i)[0] > 0) {
+                            horHist.put(0,i, 1);
+                        } else {
+                            horHist.put(0,i, 0);
+                        }
+                    }
+
+                    List<Tuple<Integer, Integer>> oneRuns = oneRuns(horHist);
+
+                    horHist.release();
+
+                    for (Tuple<Integer,Integer> r : oneRuns) {
+                        int left = r.getFirst();
+                        int right = r.getSecond();
+                        Mat glyph = new Mat(mat, new Rect(left, u, right-left, l-u));
+                        Bitmap newBitmap = Bitmap.createBitmap(right-left, l-u, Bitmap.Config.ARGB_8888);
+                        Utils.matToBitmap(glyph, newBitmap);
+                        glyph.release();
+                        returnValue.add(new PageGlyphImpl(newBitmap, l - bl, lineHeight, left, bl));
+
+                    }
+
+                }
+                return returnValue;
+            } else {
+                int size = lineLimits.size();
+                int m = size/2;
+                Task left = new Task(lineLimits.subList(0,m), image, mat, lineHeight);
+                Task right = new Task(lineLimits.subList(m,size), image, mat, lineHeight);
+                left.fork();
+                List<PageGlyph> pageGlyphs = right.compute();
+                List<PageGlyph> glyphs = left.join();
+                List<PageGlyph> retVal = new ArrayList<>();
+                retVal.addAll(pageGlyphs);
+                retVal.addAll(glyphs);
+                return retVal;
+
+            }
+        }
     }
 
 
