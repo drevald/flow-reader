@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 
 import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.DevicePageContext;
-import com.veve.flowreader.model.PageGlyph;
 import com.veve.flowreader.model.PageGlyphInfo;
 import com.veve.flowreader.model.impl.AbstractBookPage;
 import java.util.List;

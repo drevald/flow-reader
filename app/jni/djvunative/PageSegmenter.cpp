@@ -168,27 +168,37 @@ vector<line_limit> PageSegmenter::get_line_limits() {
 
 
     const cc_result cc_results = get_cc_results(image);
-    double average_height = cc_results.average_hight;
-    vector<double_pair> centers = cc_results.centers;
 
-    const map<int, vector<double_pair>> components = get_connected_components(centers, average_height);
-
-    line_height = (int) average_height * 2;
-
-    vector<int> keys;
-
-    boost::copy(components | boost::adaptors::map_keys,
-                std::back_inserter(keys));
-
-    vector<line_limit> v;
-    for (int i=0;i<keys.size(); i++) {
-        int cn = keys.at(i);
-        vector<double_pair> cc = components.at(cn);
-        line_limit ll = find_baselines(cc);
+    if (cc_results.whole_page) {
+        vector<line_limit> v;
+        line_limit ll(0,0,image.rows,image.rows);
         v.push_back(ll);
+        return v;
+    } else {
+        double average_height = cc_results.average_hight;
+        vector<double_pair> centers = cc_results.centers;
+
+        const map<int, vector<double_pair>> components = get_connected_components(centers, average_height);
+
+        line_height = (int) average_height * 2;
+
+        vector<int> keys;
+
+        boost::copy(components | boost::adaptors::map_keys,
+                    std::back_inserter(keys));
+
+        vector<line_limit> v;
+        for (int i=0;i<keys.size(); i++) {
+            int cn = keys.at(i);
+            vector<double_pair> cc = components.at(cn);
+            line_limit ll = find_baselines(cc);
+            v.push_back(ll);
+        }
+
+        return v;
     }
 
-    return v;
+
 }
 
 cc_result PageSegmenter::get_cc_results(const Mat &image) {
@@ -223,33 +233,47 @@ cc_result PageSegmenter::get_cc_results(const Mat &image) {
     Mat hist(1, count, CV_64F, &heights);
     meanStdDev(hist, m, stdv);
 
+    double min, max;
+    cv::minMaxLoc(hist, &min, &max);
+
+
     double average_height = m(0);
     double std = stdv(0);
 
-    Enclosure enc(rects);
-    const set<array<int, 4>> &s = enc.solve();
+    bool whole_page = false;
 
-    int i = 0;
-    for (auto it = s.begin(); it != s.end(); ++it) {
-        array<int, 4> a = *it;
-        int x = -get<0>(a);
-        int y = -get<1>(a);
-        int width = get<2>(a) - x;
-        int height = get<3>(a) - y;
-        if (height > average_height - std && height < 2*average_height) {
-            double cx = (x + width) / 2.0;
-            double cy = (y + height) / 2.0;
-            rd[make_tuple((x + width) / 2.0, (y + height) / 2.0)] = Rect(x, y, width, height);
-            double_pair center = std::tuple<double,double>(cx, cy);
-            center_list.push_back(center);
-            center_numbers.insert(make_pair(center, i));
-            vertex_t v = add_vertex(g);
-            g[v] = center;
-            i++;
+    if (max < average_height + 5*std) {
+        Enclosure enc(rects);
+        const set<array<int, 4>> &s = enc.solve();
+
+        int i = 0;
+        for (auto it = s.begin(); it != s.end(); ++it) {
+            array<int, 4> a = *it;
+            int x = -get<0>(a);
+            int y = -get<1>(a);
+            int width = get<2>(a) - x;
+            int height = get<3>(a) - y;
+            if (height > average_height - std && height < 2*average_height) {
+                double cx = (x + width) / 2.0;
+                double cy = (y + height) / 2.0;
+                rd[make_tuple((x + width) / 2.0, (y + height) / 2.0)] = Rect(x, y, width, height);
+                double_pair center = std::tuple<double,double>(cx, cy);
+                center_list.push_back(center);
+                center_numbers.insert(make_pair(center, i));
+                vertex_t v = add_vertex(g);
+                g[v] = center;
+                i++;
+            }
         }
+
+    } else {
+        whole_page = true;
     }
 
+
+
     cc_result v;
+    v.whole_page = whole_page;
     v.average_hight = average_height;
     v.centers = center_list;
     return v;
@@ -289,57 +313,70 @@ vector<glyph> PageSegmenter::get_glyphs() {
 
     vector<line_limit> line_limits = get_line_limits();
 
-    sort(line_limits.begin(), line_limits.end(), SortLineLimits());
+    if (line_limits.size() == 1) {
+        vector<glyph> return_value;
+        glyph g;
+        g.x = 0;
+        g.y = 0;
+        g.width = image.cols;
+        g.height = image.rows;
+        return_value.push_back(g);
+        return return_value;
+    } else {
+        sort(line_limits.begin(), line_limits.end(), SortLineLimits());
 
-    vector<glyph> return_value;
+        vector<glyph> return_value;
 
-    int width = image.cols;
-    for (line_limit &ll : line_limits) {
-        int l = ll.lower;
-        int bl = ll.lower_baseline;
-        int u = ll.upper;
-        int bu = ll.upper_baseline;
+        int width = image.cols;
+        for (line_limit &ll : line_limits) {
+            int l = ll.lower;
+            int bl = ll.lower_baseline;
+            int u = ll.upper;
+            int bu = ll.upper_baseline;
 
-        Mat lineimage(image, Rect(0, u, width, l - u));
-        threshold(lineimage, lineimage, 0, 255, THRESH_BINARY | THRESH_OTSU);
-        Mat horHist;
-        reduce(lineimage, horHist, 0, REDUCE_SUM, CV_32F);
+            Mat lineimage(image, Rect(0, u, width, l - u));
+            threshold(lineimage, lineimage, 0, 255, THRESH_BINARY | THRESH_OTSU);
+            Mat horHist;
+            reduce(lineimage, horHist, 0, REDUCE_SUM, CV_32F);
 
-        int w = horHist.cols;
+            int w = horHist.cols;
 
-        for (int i = 0; i < w; i++) {
-            if (horHist.at<int>(0, i) > 0) {
-                horHist.at<int>(0, i) = 1;
-            } else {
-                horHist.at<int>(0, i) = 0;
+            for (int i = 0; i < w; i++) {
+                if (horHist.at<int>(0, i) > 0) {
+                    horHist.at<int>(0, i) = 1;
+                } else {
+                    horHist.at<int>(0, i) = 0;
+                }
             }
+
+            const vector<std::tuple<int, int>> &oneRuns = one_runs(horHist);
+
+            horHist.release();
+
+            for (const std::tuple<int, int> &r : oneRuns) {
+
+                int left = get<0>(r);
+                int right = get<1>(r);
+
+                glyph g;
+                g.x = left;
+                g.y = u;
+                g.width = right - left;
+                g.height = l - u;
+                g.baseline_shift = l - bl;
+                g.line_height = line_height;
+                return_value.push_back(g);
+
+            }
+
         }
 
-        const vector<std::tuple<int, int>> &oneRuns = one_runs(horHist);
+        mat.release();
+        image.release();
 
-        horHist.release();
-
-        for (const std::tuple<int, int> &r : oneRuns) {
-
-            int left = get<0>(r);
-            int right = get<1>(r);
-
-            glyph g;
-            g.x = left;
-            g.y = u;
-            g.width = right - left;
-            g.height = l - u;
-            g.baseline_shift = l - bl;
-            g.line_height = line_height;
-            return_value.push_back(g);
-
-        }
-
+        return return_value;
     }
 
-    mat.release();
-    image.release();
 
-    return return_value;
 }
 

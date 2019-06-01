@@ -33,6 +33,7 @@ struct line_limit {
 struct cc_result {
     std::vector<double_pair> centers;
     double  average_hight;
+    bool whole_page;
 };
 
 struct PairXOrder {

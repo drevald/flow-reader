@@ -33,40 +33,45 @@ public class PageRendererImpl implements PageRenderer {
         Log.i(getClass().getName(), String.format("position=%d", position));
         List<PageGlyph> pageGlyphList = pageLayoutParser.getGlyphs(bookSource, position);
 
-        Log.d(getClass().getName(),"2");
+        if (pageGlyphList.size() <= 1) {
+            return renderOriginalPage(context, position);
+        } else {
+            Log.d(getClass().getName(),"2");
 
-        for(PageGlyph pageGlyph : pageGlyphList) {
-            pageGlyph.draw(context, false);
+            for(PageGlyph pageGlyph : pageGlyphList) {
+                pageGlyph.draw(context, false);
+            }
+
+            Log.d(getClass().getName(), "3");
+
+            context.setCurrentBaseLine(0);
+            Point remotestPoint = context.getRemotestPoint();
+            Log.i(getClass().getName(), String.format("w=%d h=%d, position=%d", context.getWidth(), remotestPoint.y, position));
+            Bitmap bitmap = Bitmap.createBitmap(context.getWidth(), remotestPoint.y + (int)context.getLeading() , ARGB_8888);
+
+            Canvas canvas = new Canvas(bitmap);
+            context.resetPosition();
+            context.setCanvas(canvas);
+
+            for(PageGlyph pageGlyph : pageGlyphList) {
+                pageGlyph.draw(context, true);
+            }
+
+            context.resetPosition();
+            context.setCanvas(canvas);
+            return bitmap;
         }
-
-        Log.d(getClass().getName(), "3");
-
-        context.setCurrentBaseLine(0);
-        Point remotestPoint = context.getRemotestPoint();
-        Log.i(getClass().getName(), String.format("w=%d h=%d, position=%d", context.getWidth(), remotestPoint.y, position));
-        Bitmap bitmap = Bitmap.createBitmap(context.getWidth(), remotestPoint.y + (int)context.getLeading() , ARGB_8888);
-
-        Canvas canvas = new Canvas(bitmap);
-        context.resetPosition();
-        context.setCanvas(canvas);
-
-        for(PageGlyph pageGlyph : pageGlyphList) {
-            pageGlyph.draw(context, true);
-        }
-
-        context.resetPosition();
-        context.setCanvas(canvas);
-        return bitmap;
 
     }
 
     @Override
     public Bitmap renderOriginalPage(DevicePageContext context, int position) {
         Bitmap bitmap = bookSource.getPageBytes(position);
-        return Bitmap.createScaledBitmap(bitmap,
-                (int)(context.getZoom()*bitmap.getWidth()),
-                (int)(context.getZoom()*bitmap.getHeight()),
+        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap,
+                (int) (context.getZoom() * bitmap.getWidth()),
+                (int) (context.getZoom() * bitmap.getHeight()),
                 false);
+        return scaledBitmap;
     }
 
     public PageLayoutParser getPageLayoutParser() {

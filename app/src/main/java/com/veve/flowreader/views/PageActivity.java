@@ -355,10 +355,12 @@ public class PageActivity extends AppCompatActivity {
 
             Bitmap bitmap;
 
-            if (viewMode == Constants.VIEW_MODE_PHONE)
+            if (viewMode == Constants.VIEW_MODE_PHONE) {
                 bitmap = pageRenderer.renderPage(context, pageNumber);
-            else
+            } else {
                 bitmap = pageRenderer.renderOriginalPage(context, pageNumber);
+            }
+
             int bitmapHeight = bitmap.getHeight();
 
             runOnUiThread(new Runnable() {
