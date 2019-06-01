@@ -15,5 +15,11 @@ public interface Constants {
     public static int VIEW_MODE_PHONE = 0;
     public static int VIEW_MODE_ORIGINAL = 1;
     public static int VIEW_MODE_ORIGINAL_MARKED = 2;
+    public static final String VIEW_TYPE = "VIEW_TYPE";
+    public static final int LIST_VIEW_TYPE = 0;
+    public static final int GRID_VIEW_TYPE = 1;
+
+
+    public static final String BOOK_ID = "BOOK_ID";
 
 }

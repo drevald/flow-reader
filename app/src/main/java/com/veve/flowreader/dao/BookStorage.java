@@ -1,7 +1,5 @@
 package com.veve.flowreader.dao;
 
-import com.veve.flowreader.model.Book;
-
 import java.util.List;
 
 /**
@@ -13,9 +11,9 @@ public interface BookStorage {
 
     public List<BookRecord> getBooksList();
 
-    public int addBook(BookRecord bookRecord);
+    public long addBook(BookRecord bookRecord);
 
-    public void deleteBook(int bookId);
+    public void deleteBook(long bookId);
 
     public void updateBook(BookRecord bookRecord);
 }

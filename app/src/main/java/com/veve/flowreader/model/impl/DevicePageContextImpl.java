@@ -10,7 +10,7 @@ import com.veve.flowreader.model.DevicePageContext;
  * Created by ddreval on 17.01.2018.
  */
 
-public class DevicePageContextImpl implements DevicePageContext {
+public class DevicePageContextImpl extends DevicePageContext {
 
     private static final float DEFAULT_ZOOM = 1f;
 

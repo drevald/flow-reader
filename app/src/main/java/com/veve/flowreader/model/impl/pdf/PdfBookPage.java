@@ -72,7 +72,7 @@ public class PdfBookPage implements BookPage {
             pageGlyphs.add(pg);
         }
 
-        Log.d("DJVU1", "Java time "+ (System.currentTimeMillis() - start));
+        Log.d("FLOW-READER", "Java time "+ (System.currentTimeMillis() - start));
 
         return pageGlyphs;
     }

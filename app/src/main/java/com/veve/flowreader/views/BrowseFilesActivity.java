@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -17,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
@@ -39,6 +42,12 @@ import java.util.List;
 
 public class BrowseFilesActivity extends AppCompatActivity {
 
+    private static final String INTERNAL_ROOT = "/";
+
+    private static final String EXTERNAL_ROOT = "/storage/sdcard1/";
+
+    FileListAdapter fileListAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +58,7 @@ public class BrowseFilesActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        //GET BACK BUTTON
         FloatingActionButton home = (FloatingActionButton) findViewById(R.id.home);
         home.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,39 +69,12 @@ public class BrowseFilesActivity extends AppCompatActivity {
             }
         });
 
-        final FileListAdapter fileListAdapter = new FileListAdapter();
+
+        // FILES LIST
+        fileListAdapter = new FileListAdapter();
         ListView listView = (ListView) findViewById(android.R.id.list);
-
         listView.setAdapter(fileListAdapter);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.d(this.getClass().getName(), i + " clicked");
-                if (fileListAdapter.currentFiles.get(i).isFile()) {
-                    File file = fileListAdapter.currentFiles.get(i);
-                    if (!file.getName().toLowerCase().endsWith(".djvu")
-                            && !file.getName().toLowerCase().endsWith(".pdf")) {
-                        Snackbar.make(view, getString(R.string.ui_unsupported_format),
-                                Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                    } else {
-                        if (BooksCollection.getInstance(getApplicationContext()).hasBook(file)) {
-                            Snackbar.make(view, getString(R.string.ui_book_already_added),
-                                    Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                        } else {
-                            BookRecord newBook = BookFactory.getInstance().createBook(file);
-                            BooksCollection.getInstance(getApplicationContext()).addBook(newBook);
-                            Intent ii = new Intent(BrowseFilesActivity.this, MainActivity.class);
-                        startActivity(ii);
-                    }
-                    }
-                } else if (!fileListAdapter.currentFiles.get(i).canRead()) {
-                    Snackbar.make(view, getString(R.string.ui_no_permission),
-                            Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                }
-                fileListAdapter.setRoot(i);
-            }
-        });
+        listView.setOnItemClickListener(new FileListener(fileListAdapter));
     }
 
     private void requestPermissions() {
@@ -123,6 +106,9 @@ public class BrowseFilesActivity extends AppCompatActivity {
         }
     }
 
+
+///    ADAPTERS    ///////////////////////////////////////////
+
     class FileListAdapter extends BaseAdapter {
 
         private File rootDir;
@@ -132,9 +118,12 @@ public class BrowseFilesActivity extends AppCompatActivity {
 
         public FileListAdapter() {
             super();
+            setRoot(INTERNAL_ROOT);
+        }
+
+        protected void setRoot(String path) {
             try {
-                //rootDir = new File("/");
-                rootDir = new File("/sdcard");
+                rootDir = new File(path);
                 currentDirectory = rootDir;
                 currentFiles = new ArrayList<File>();
                 for (File file : currentDirectory.listFiles()) {
@@ -151,12 +140,12 @@ public class BrowseFilesActivity extends AppCompatActivity {
                     }
                 });
             } catch (Exception e) {
-                Log.e(this.getClass().getName(), e.getMessage());
+//                Log.e(this.getClass().getName(), e.getMessage());
                 e.printStackTrace();
             }
         }
 
-        public void setRoot(int index) {
+        private void setRoot(int index) {
             Log.d(this.getClass().getName(), "setRoot");
             File newRoot = currentFiles.get(index);
             if (newRoot.isDirectory()) {
@@ -201,7 +190,7 @@ public class BrowseFilesActivity extends AppCompatActivity {
             }
             TextView textView = (TextView) ((ConstraintLayout) convertView).getChildAt(0);
             File selectedFile = currentFiles.get(position);
-            textView.setText(selectedFile.getAbsolutePath());
+            textView.setText(selectedFile.getName());
             if (!selectedFile.canRead()) {
                 textView.setTextColor(Constants.LIGHT_PINK);
             } else if (selectedFile.canWrite()) {
@@ -222,4 +211,72 @@ public class BrowseFilesActivity extends AppCompatActivity {
 
     }
 
+///   LISTENERS    ///////////////////////////////////////////
+
+    public class FileListener implements AdapterView.OnItemClickListener {
+
+        FileListAdapter fileListAdapter;
+
+        public FileListener(FileListAdapter fileListAdapter) {
+            this.fileListAdapter = fileListAdapter;
+        }
+
+        @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            Log.d(this.getClass().getName(), i + " clicked");
+            if (fileListAdapter.currentFiles.get(i).isFile()) {
+                File file = fileListAdapter.currentFiles.get(i);
+                if (!file.getName().toLowerCase().endsWith(".djvu")
+                        && !file.getName().toLowerCase().endsWith(".pdf")) {
+                    Snackbar.make(view, getString(R.string.ui_unsupported_format),
+                            Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                } else {
+                    if (BooksCollection.getInstance(getApplicationContext()).hasBook(file)) {
+                        Snackbar.make(view, getString(R.string.ui_book_already_added),
+                                Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                    } else {
+                        BookRecord newBook = BookFactory.getInstance().createBook(file);
+                        newBook.setCurrentPage(0);
+                        newBook.setUrl(file.getAbsolutePath());
+                        BooksCollection.getInstance(getApplicationContext()).addBook(newBook);
+                        Intent ii = new Intent(BrowseFilesActivity.this, MainActivity.class);
+                        startActivity(ii);
+                    }
+                }
+            } else if (!fileListAdapter.currentFiles.get(i).canRead()) {
+                Snackbar.make(view, getString(R.string.ui_no_permission),
+                        Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            }
+            fileListAdapter.setRoot(i);
+        }
+
+    }
+
+    class BookCreatorTask extends AsyncTask<File, Void, Void> {
+        @Override
+        protected Void doInBackground(File... files) {
+
+            return null;
+        }
+    }
+
+    ///////////////////////////////////////////////
+
+    public void browseInternalMemory(View view) {
+        //fileListAdapter.setRoot(INTERNAL_ROOT);
+        //fileListAdapter.setRoot(getApplicationContext().getFilesDir().getAbsolutePath());
+        //fileListAdapter.setRoot("/storage/sdcard0/");
+        fileListAdapter.setRoot("/storage/emulated/0/");
+        fileListAdapter.notifyDataSetChanged();
+    }
+
+    public void browseExternalMemory(View view) {
+        //fileListAdapter.setRoot(EXTERNAL_ROOT);
+        //fileListAdapter.setRoot(Environment.getExternalStorageDirectory().getAbsolutePath());
+        fileListAdapter.setRoot("/storage/emulated/1/");
+        fileListAdapter.notifyDataSetChanged();
+    }
+
+
 }
+

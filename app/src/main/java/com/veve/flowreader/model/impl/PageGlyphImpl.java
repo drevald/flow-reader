@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
+import android.util.Log;
 
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyph;
@@ -60,6 +61,7 @@ public class PageGlyphImpl implements PageGlyph {
     public void draw(DevicePageContext context, boolean show) {
 
         int baseLineShift = getBaselineShif();
+        Log.v(getClass().getName(), "Baseline shift is " + baseLineShift);
 
         Canvas canvas = context.getCanvas();
         int __height = bitmap.getHeight();
@@ -72,11 +74,12 @@ public class PageGlyphImpl implements PageGlyph {
             currentBaseline = (int)(__height * 1.3);
             context.setLineHeight(averageHeight);
         }
-
+        //checking if currect glyph is within page content
         if(__width * context.getZoom() + startPoint.x > context.getWidth() - context.getMargin()) {
+            //if not - start new line
             startPoint.set(context.getMargin(), startPoint.y + (int)(__height * context.getZoom())
                     + (int)(context.getLeading()* context.getZoom()));
-            currentBaseline += context.getLineHeight();
+            currentBaseline += context.getLineHeight() * context.getZoom() + (int)(context.getLeading()* context.getZoom());
         }
         Rect __srcRect = new Rect(0, 0, __width, __height);
         Rect __dstRect = new Rect(startPoint.x ,

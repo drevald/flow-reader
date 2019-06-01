@@ -1,59 +1,35 @@
 package com.veve.flowreader.dao;
 
+
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
+
 /**
  * Created by ddreval on 4/3/2018.
  */
 
+@Entity
 public class BookRecord {
 
+    @PrimaryKey
+    private Long id;
+    private Integer currentPage;
+    private Integer pagesCount;
+    private String name;
+    private String url;
+
     public BookRecord() {
-
+        this(null, 0, 0, null, null);
     }
 
-    public BookRecord(String name, String url) {
-        this.name = name;
-        this.url = url;
-    }
-
-    public BookRecord(String url) {
-        this.url = url;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setId(Integer id) {
+    @Ignore
+    public BookRecord(Long id, Integer currentPage, Integer pagesCount, String name, String url) {
         this.id = id;
-    }
-
-    public Integer getPagesCount() {
-        return pagesCount;
-    }
-
-    public void setPagesCount(Integer pagesCount) {
+        this.currentPage = currentPage;
         this.pagesCount = pagesCount;
-    }
-
-    public String toString() {
-        return String.format(
-                "id:%d name:%s url:%s pages:%d", getId(), getName(), getUrl(), getPagesCount());
+        this.name = name;
+        this.url = url;
     }
 
     public Integer getCurrentPage() {
@@ -64,14 +40,36 @@ public class BookRecord {
         this.currentPage = currentPage;
     }
 
-    Integer currentPage;
+    public Integer getPagesCount() {
+        return pagesCount;
+    }
 
-    Integer pagesCount;
+    public void setPagesCount(Integer pagesCount) {
+        this.pagesCount = pagesCount;
+    }
 
-    String name;
+    public String getName() {
+        return name;
+    }
 
-    String url;
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    Integer id;
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
 }

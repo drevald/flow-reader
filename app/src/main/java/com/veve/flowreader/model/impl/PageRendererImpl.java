@@ -22,29 +22,35 @@ public class PageRendererImpl implements PageRenderer {
     BookSource bookSource;
 
     public PageRendererImpl(BookSource bookSource) {
+        pageLayoutParser = SimpleLayoutParser.getInstance();
         this.bookSource = bookSource;
     }
 
     @Override
     public Bitmap renderPage(DevicePageContext context, int position) {
+        Log.d(getClass().getName(), "1");
 
-        List<PageGlyph> glyphs = bookSource.getPageGlyphs(position);
+        Log.i(getClass().getName(), String.format("position=%d", position));
+        List<PageGlyph> pageGlyphList = pageLayoutParser.getGlyphs(bookSource.getPageBytes(position));
 
-        //List<PageGlyph> pageGlyphList = pageLayoutParser.getGlyphs(bookSource.getPageBytes(position));
+        Log.d(getClass().getName(),"2");
 
-        for(PageGlyph pageGlyph : glyphs) {
+        for(PageGlyph pageGlyph : pageGlyphList) {
             pageGlyph.draw(context, false);
         }
 
+        Log.d(getClass().getName(), "3");
+
         context.setCurrentBaseLine(0);
         Point remotestPoint = context.getRemotestPoint();
+        Log.i(getClass().getName(), String.format("w=%d h=%d, position=%d", context.getWidth(), remotestPoint.y, position));
         Bitmap bitmap = Bitmap.createBitmap(context.getWidth(), remotestPoint.y + (int)context.getLeading() , ARGB_8888);
 
         Canvas canvas = new Canvas(bitmap);
         context.resetPosition();
         context.setCanvas(canvas);
 
-        for(PageGlyph pageGlyph : glyphs) {
+        for(PageGlyph pageGlyph : pageGlyphList) {
             pageGlyph.draw(context, true);
         }
 
@@ -56,7 +62,11 @@ public class PageRendererImpl implements PageRenderer {
 
     @Override
     public Bitmap renderOriginalPage(DevicePageContext context, int position) {
-        return bookSource.getPageBytes(position);
+        Bitmap bitmap = bookSource.getPageBytes(position);
+        return Bitmap.createScaledBitmap(bitmap,
+                (int)(context.getZoom()*bitmap.getWidth()),
+                (int)(context.getZoom()*bitmap.getHeight()),
+                false);
     }
 
     public PageLayoutParser getPageLayoutParser() {
