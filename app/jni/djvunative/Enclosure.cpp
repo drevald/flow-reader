@@ -1,17 +1,5 @@
-//
-// Created by Sergey Mikhno on 2019-05-13.
-//
 
 #include "Enclosure.h"
-
-//
-//  Enclosure.cpp
-//  StaticLibrary
-//
-//  Created by Sergey Mikhno on 30.09.18.
-//  Copyright Â© 2018 Sergey Mikhno. All rights reserved.
-//
-
 
 Enclosure::~Enclosure() {
 
@@ -21,7 +9,6 @@ vector<std::tuple<array<int, 4>, array<int, 4>>>
 Enclosure::merge(vector<array<int, 4>> s1, vector<array<int, 4>> s2) {
     sort(s1.begin(), s1.end(), CustomLessThan(2));
     sort(s2.begin(), s2.end(), CustomLessThan(2));
-
 
     vector<std::tuple<array<int, 4>, char>> new_s1;
     vector<std::tuple<array<int, 4>, char>> new_s2;
@@ -157,15 +144,11 @@ set<array<int, 4>> Enclosure::solve() {
         small.insert(s);
     }
 
-
     set<array<int, 4>> diff;
     set<array<int, 4>> diff1;
-
     set<array<int, 4>> diff2;
-
     set<array<int, 4>> union_;
     set<array<int, 4>> union__;
-
 
     set_union(big.begin(), big.end(), small.begin(), small.end(),
               std::inserter(union_, union_.begin()));
@@ -196,11 +179,11 @@ Enclosure::Enclosure(vector<array<int, 4>> &points) {
 
 Enclosure::Enclosure(vector<Rect> &rects) {
 
-    points = vector<array<int,4>>();
+    points = vector<array<int, 4>>();
 
-    for (int i=0;i<rects.size(); i++) {
+    for (int i = 0; i < rects.size(); i++) {
         Rect rect = rects.at(i);
-        array<int,4> a{{-rect.x, -rect.y, rect.x + rect.width, rect.y + rect.height}};
+        array<int, 4> a{{-rect.x, -rect.y, rect.x + rect.width, rect.y + rect.height}};
         points.push_back(a);
     }
 

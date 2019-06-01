@@ -5,20 +5,8 @@
 #ifndef FLOW_READER_PAGESEGMENTER_H
 #define FLOW_READER_PAGESEGMENTER_H
 
-#include "flann/flann.hpp"
-#include "flann/util/matrix.h"
-#include <boost/graph/connected_components.hpp>
-#include <boost/graph/adjacency_list.hpp>
-#include <opencv2/core/core.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <vector>
-#include <tuple>
-#include <map>
+#include "common.h"
 
-using namespace std;
-using namespace cv;
-
-using namespace boost;
 
 typedef std::tuple<double,double> double_pair ;
 typedef adjacency_list < vecS, vecS, undirectedS, double_pair > Graph;

@@ -1,6 +1,9 @@
 package com.veve.flowreader.model.impl.djvu;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.ColorSpace;
+import android.util.Log;
 
 import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.DevicePageContext;
@@ -8,11 +11,9 @@ import com.veve.flowreader.model.PageGlyph;
 import com.veve.flowreader.model.PageGlyphInfo;
 import com.veve.flowreader.model.impl.PageGlyphImpl;
 
-import org.opencv.android.Utils;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.Rect;
 
+
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,14 +43,20 @@ public class DjvuBookPage implements BookPage {
 
     public List<PageGlyph> getPageGlyphs() {
 
+        long start = System.currentTimeMillis();
         List<PageGlyphInfo> pageGlyphInfos = new ArrayList<>();
-        byte[] imageBytes = getPageGlyphs(bookId, pageNumber, pageGlyphInfos);
 
+        Bitmap.Config bitmapConfig = Bitmap.Config.ARGB_8888;
         int width = getWidth();
         int height = getHeight();
-        Bitmap.Config bitmapConfig = Bitmap.Config.ARGB_8888;
-        Mat mat = new Mat(height, width ,CvType.CV_8UC3);
-        mat.put(0,0,imageBytes, 0, imageBytes.length);
+
+        byte[] bytes = getPageGlyphs(bookId, pageNumber, pageGlyphInfos);
+
+        final ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
+
+        Bitmap bm = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        byteBuffer.rewind();
+        bm.copyPixelsFromBuffer(byteBuffer);
 
         List<PageGlyph> pageGlyphs = new ArrayList<>();
 
@@ -58,12 +65,15 @@ public class DjvuBookPage implements BookPage {
             int y = pageGlyphInfo.getY();
             int w = pageGlyphInfo.getWidth();
             int h = pageGlyphInfo.getHeight();
-            Mat image = new Mat(mat, new Rect(x,y, w, h));
-            Bitmap bitmap = Bitmap.createBitmap(w, h, bitmapConfig);
-            Utils.matToBitmap(image, bitmap);
+            //Mat image = new Mat(mat, new Rect(x,y, w, h));
+            //Bitmap bitmap = Bitmap.createBitmap(w, h, bitmapConfig);
+            Bitmap bitmap = Bitmap.createBitmap(bm,x,y,w,h);
+            //Utils.matToBitmap(image, bitmap);
             PageGlyph pg = new PageGlyphImpl(bitmap, pageGlyphInfo);
             pageGlyphs.add(pg);
         }
+
+        Log.d("DJVU1", "Java time "+ (System.currentTimeMillis() - start));
 
         return pageGlyphs;
     }
@@ -75,12 +85,14 @@ public class DjvuBookPage implements BookPage {
         int width = getWidth();
         int height = getHeight();
         Bitmap.Config bitmapConfig = Bitmap.Config.ARGB_8888;
-        Mat mat = new Mat(height, width ,CvType.CV_8UC3);
-        mat.put(0,0,imageBytes, 0, imageBytes.length);
 
-        Bitmap bitmap = Bitmap.createBitmap(width, height, bitmapConfig);
-        Utils.matToBitmap(mat, bitmap);
-        return bitmap;
+
+        final ByteBuffer bb = ByteBuffer.wrap(imageBytes);
+
+        Bitmap bm = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        bb.rewind();
+        bm.copyPixelsFromBuffer(bb);
+        return bm;
     }
 
     @Override

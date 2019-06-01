@@ -5,46 +5,6 @@
 #include "PageSegmenter.h"
 #include "Enclosure.h"
 
-#include <opencv2/opencv.hpp>
-
-#include <limits>
-#include <cstdlib>
-#include <android/log.h>
-
-#include <boost/range/algorithm/copy.hpp>
-#include <boost/range/adaptor/copied.hpp>
-#include <boost/range/adaptor/map.hpp>
-
-static double TimeSpecToSeconds(struct timespec* ts)
-{
-    return (double)ts->tv_sec + (double)ts->tv_nsec / 1000000000.0;
-}
-
-
-struct SortByDist {
-
-    SortByDist(double_pair& p) : p(p) {
-    }
-
-    bool operator()(const double_pair& lhs, const double_pair& rhs) {
-        double x1 = get<0>(lhs);
-        double y1 = get<1>(lhs);
-
-        double x2 = get<0>(rhs);
-        double y2 = get<1>(rhs);
-
-        double d1 = (x1 - get<0>(p))*(x1 - get<0>(p)) +  (y1 - get<1>(p))*(y1 - get<1>(p));
-        double d2 = (x2 - get<0>(p))*(x2 - get<0>(p)) +  (y2 - get<1>(p))*(y2 - get<1>(p));
-
-        return d1 < d2;
-    }
-
-private:
-    double_pair p;
-
-};
-
-
 
 line_limit PageSegmenter::find_baselines(vector<double_pair> &cc) {
 
@@ -104,10 +64,9 @@ line_limit PageSegmenter::find_baselines(vector<double_pair> &cc) {
 
 void PageSegmenter::preprocess_for_line_limits(const Mat &image) {
     threshold(image, image, 0, 255, THRESH_OTSU | THRESH_BINARY);
-    //const Mat kernel = getStructuringElement(MORPH_RECT, Size(3, 3));
-    //morphologyEx(image,image,MORPH_OPEN,kernel,Point(-1,-1), 2);
-    //erode(image, image, kernel, Point(-1, -1), 2);
-    //dilate(image, image, kernel, Point(-1, -1), 2);
+    const Mat kernel = getStructuringElement(MORPH_RECT, Size(3, 3));
+    erode(image, image, kernel, Point(-1, -1), 2);
+    dilate(image, image, kernel, Point(-1, -1), 2);
 }
 
 map<int, vector<double_pair>>
@@ -124,6 +83,7 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
     }
 
     ::flann::Matrix<double> dataset(&data[0][0], size, 2);
+
     int k = std::min(100,size);
 
     ::flann::Index<::flann::L2<double>> index(dataset, ::flann::KDTreeIndexParams(1));
@@ -142,31 +102,35 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
 
     ::flann::Matrix<double> query(&q[0][0], size, 2);
     index.knnSearch(query, indices, dists, k, ::flann::SearchParams());
+
+    map<int,bool> verts;
+
     for (int i = 0; i < size; i++) {
         auto p = center_list[i];
 
-        Rect r1 = rd.at(p);
-        double upper = r1.y - r1.height/2.0;
-        double lower = r1.y + r1.height + r1.height/2.0;
+        vector<double_pair> neighbors;
+        bool found_neighbor = false;
+        double_pair right_nb;
 
-        vector<double_pair> right_nbs;
+        double mindist = numeric_limits<double>::max();
+
         for (int j = 0; j < k; j++) {
             int ind = indices[i][j];
             double_pair nb = center_list[ind];
-            Rect r2 = rd.at(nb);
-
-            if (r2.x > r1.x  &&  (r2.y > upper && r2.y + r2.height < lower)  ) {
-                right_nbs.push_back(nb);
+            if (get<0>(nb) - get<0>(p) != 0) {
+                double dist = ((get<1>(nb) - get<1>(p)) * (get<1>(nb) - get<1>(p))) /
+                              (get<0>(nb) - get<0>(p)) + (get<0>(nb) - get<0>(p));
+                if (dist < mindist && get<0>(nb) > get<0>(p) &&
+                    abs((get<1>(nb) - get<1>(p))) < 3. / 4. * average_height) {
+                    mindist = dist;
+                    right_nb = make_tuple(get<0>(nb), get<1>(nb));
+                    found_neighbor = true;
+                }
             }
         }
 
-        sort(right_nbs.begin(), right_nbs.end(), SortByDist(p));
-
-
-        if (right_nbs.size() > 0 ) {
+        if (found_neighbor) {
             double_pair point(get<0>(p), get<1>(p));
-            double_pair right_nb = right_nbs[0];
-            Rect r3 = rd.at(p);
 
             int n = center_numbers.at(point);
             int m = center_numbers.at(right_nb);
@@ -176,14 +140,13 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
             add_edge(v1, v2, g);
 
         }
-    }
 
+    }
 
     std::vector<int> c(num_vertices(g));
 
     int num = connected_components
             (g, make_iterator_property_map(c.begin(), get(vertex_index, g), c[0]));
-
 
     for (int i = 0; i < c.size(); i++) {
         int cn = c[i];
@@ -198,36 +161,17 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
 }
 
 
-
-
 vector<line_limit> PageSegmenter::get_line_limits() {
 
-
-
     const Mat &image = gray_inverted_image.clone();
-
-    struct timespec start;
-    struct timespec end;
-    double elapsedSeconds;
-    clock_gettime(CLOCK_MONOTONIC, &start);
     preprocess_for_line_limits(image);
-
-    clock_gettime(CLOCK_MONOTONIC, &end);
-    elapsedSeconds = TimeSpecToSeconds(&end) - TimeSpecToSeconds(&start);
-    char duration[30];
-    sprintf(duration, "pp duration%f", elapsedSeconds);
-    __android_log_print(ANDROID_LOG_VERBOSE, "DJVU1", "%s\n", duration);
-
-
 
 
     const cc_result cc_results = get_cc_results(image);
     double average_height = cc_results.average_hight;
     vector<double_pair> centers = cc_results.centers;
 
-
     const map<int, vector<double_pair>> components = get_connected_components(centers, average_height);
-
 
     line_height = (int) average_height * 2;
 
@@ -236,9 +180,6 @@ vector<line_limit> PageSegmenter::get_line_limits() {
     boost::copy(components | boost::adaptors::map_keys,
                 std::back_inserter(keys));
 
-
-
-
     vector<line_limit> v;
     for (int i=0;i<keys.size(); i++) {
         int cn = keys.at(i);
@@ -246,7 +187,6 @@ vector<line_limit> PageSegmenter::get_line_limits() {
         line_limit ll = find_baselines(cc);
         v.push_back(ll);
     }
-
 
     return v;
 }
@@ -286,10 +226,8 @@ cc_result PageSegmenter::get_cc_results(const Mat &image) {
     double average_height = m(0);
     double std = stdv(0);
 
-
     Enclosure enc(rects);
     const set<array<int, 4>> &s = enc.solve();
-
 
     int i = 0;
     for (auto it = s.begin(); it != s.end(); ++it) {
@@ -342,12 +280,6 @@ vector<std::tuple<int, int>> PageSegmenter::one_runs(const Mat &hist) {
 
 vector<glyph> PageSegmenter::get_glyphs() {
 
-    struct timespec start;
-    struct timespec end;
-    double elapsedSeconds;
-    clock_gettime(CLOCK_MONOTONIC, &start);
-
-
     // preprocess for the first step
     Mat image;
     cvtColor(mat, image, COLOR_BGR2GRAY);
@@ -355,24 +287,13 @@ vector<glyph> PageSegmenter::get_glyphs() {
     const Mat kernel = getStructuringElement(MORPH_RECT, Size(8, 2));
     dilate(image, image, kernel, Point(-1, -1), 2);
 
-
     vector<line_limit> line_limits = get_line_limits();
 
     sort(line_limits.begin(), line_limits.end(), SortLineLimits());
 
-    clock_gettime(CLOCK_MONOTONIC, &end);
-    elapsedSeconds = TimeSpecToSeconds(&end) - TimeSpecToSeconds(&start);
-    char duration[30];
-    sprintf(duration, "total duration%f", elapsedSeconds);
-    __android_log_print(ANDROID_LOG_VERBOSE, "DJVU1", "%s\n", duration);
-
     vector<glyph> return_value;
 
     int width = image.cols;
-    Mat horHist;
-
-    threshold(image, image, 0, 255, THRESH_BINARY | THRESH_OTSU);
-
     for (line_limit &ll : line_limits) {
         int l = ll.lower;
         int bl = ll.lower_baseline;
@@ -380,8 +301,8 @@ vector<glyph> PageSegmenter::get_glyphs() {
         int bu = ll.upper_baseline;
 
         Mat lineimage(image, Rect(0, u, width, l - u));
-        //threshold(lineimage, lineimage, 0, 255, THRESH_BINARY | THRESH_OTSU);
-
+        threshold(lineimage, lineimage, 0, 255, THRESH_BINARY | THRESH_OTSU);
+        Mat horHist;
         reduce(lineimage, horHist, 0, REDUCE_SUM, CV_32F);
 
         int w = horHist.cols;
@@ -395,6 +316,8 @@ vector<glyph> PageSegmenter::get_glyphs() {
         }
 
         const vector<std::tuple<int, int>> &oneRuns = one_runs(horHist);
+
+        horHist.release();
 
         for (const std::tuple<int, int> &r : oneRuns) {
 
@@ -413,7 +336,6 @@ vector<glyph> PageSegmenter::get_glyphs() {
         }
 
     }
-    horHist.release();
 
     mat.release();
     image.release();

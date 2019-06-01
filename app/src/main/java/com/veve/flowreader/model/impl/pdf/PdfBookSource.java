@@ -23,7 +23,9 @@ public class PdfBookSource implements BookSource {
 
     @Override
     public List<PageGlyph> getPageGlyphs(int pageNumber) {
-        return null;
+        PdfBookPage pdfBookPage = (PdfBookPage)pdfBook.getPage(pageNumber);
+        List<PageGlyph> pageGlyphs = pdfBookPage.getPageGlyphs();
+        return pageGlyphs;
     }
 
     @Override

@@ -10,20 +10,6 @@ import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyph;
 import com.veve.flowreader.model.PageGlyphInfo;
 
-import org.opencv.android.Utils;
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfFloat;
-import org.opencv.core.MatOfInt;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Created by ddreval on 19.04.2018.

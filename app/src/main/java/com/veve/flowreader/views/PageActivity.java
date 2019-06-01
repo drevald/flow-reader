@@ -42,10 +42,6 @@ import com.veve.flowreader.model.PageRendererFactory;
 import com.veve.flowreader.model.impl.DevicePageContextImpl;
 import com.veve.flowreader.model.impl.SimpleLayoutParser;
 
-import org.opencv.android.BaseLoaderCallback;
-import org.opencv.android.LoaderCallbackInterface;
-import org.opencv.android.OpenCVLoader;
-import org.opencv.core.Mat;
 import com.veve.flowreader.model.impl.*;
 
 import static android.view.View.VISIBLE;
@@ -73,12 +69,6 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
     SeekBar seekBar;
 
     int currentPage;
-
-    static {
-        if (!OpenCVLoader.initDebug()) {
-            Log.i("", "Open CV init error");
-        }
-    }
 
     @Override
     public void onClick(View v) {
@@ -245,7 +235,7 @@ public class PageActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             }
             case R.id.opencv_parser: {
-                PageLayoutParser openCvParser = PageSegmenter.getInstance();
+                PageLayoutParser openCvParser = SimpleLayoutParser.getInstance();
                 pageRenderer.setPageLayoutParser(openCvParser);
                 pageAdapter.notifyDataSetChanged();
                 item.setChecked(true);

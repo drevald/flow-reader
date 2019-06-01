@@ -27,9 +27,8 @@ import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.impl.DevicePageContextImpl;
 import com.veve.flowreader.model.impl.djvu.DjvuBook;
+import com.veve.flowreader.model.impl.pdf.PdfBook;
 
-
-import org.opencv.android.OpenCVLoader;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -63,7 +62,6 @@ public class PageViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        OpenCVLoader.initDebug();//
         int dpi = getResources().getDisplayMetrics().densityDpi;
         cache = new SparseArray<>();
         setContentView(R.layout.activity_page_view);
@@ -91,7 +89,7 @@ public class PageViewActivity extends AppCompatActivity {
         final String fileName = newString;
         setTitle(new File(fileName).getName());
         BookRecord book = BookFactory.getInstance().createBook(new File(fileName));
-        this.book = new DjvuBook(fileName); //BookFactory.getInstance().createBook(new File(fileName));
+        this.book = new PdfBook(fileName); //BookFactory.getInstance().createBook(new File(fileName));
         context = new DevicePageContextImpl();
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         //context.setDisplayDpi(metrics.densityDpi);

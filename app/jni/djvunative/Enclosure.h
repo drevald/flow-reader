@@ -1,29 +1,9 @@
-//
-// Created by Sergey Mikhno on 2019-05-13.
-//
 
 #ifndef FLOW_READER_ENCLOSURE_H
 #define FLOW_READER_ENCLOSURE_H
-#include <opencv2/core/core.hpp>
-
-using namespace cv;
-//
-//  Enclosure.hpp
-//  StaticLibrary
-//
-//  Created by Sergey Mikhno on 30.09.18.
-//  Copyright Â© 2018 Sergey Mikhno. All rights reserved.
-//
+#include "common.h"
 
 
-#include <vector>
-#include <array>
-#include <tuple>
-#include <map>
-#include <set>
-#include <iostream>
-
-using namespace std;
 
 struct ArrayOrder {
     explicit ArrayOrder(int i) : i(i) {}
@@ -33,9 +13,6 @@ struct ArrayOrder {
 protected:
     int i;
 };
-
-
-
 
 struct TupleOrder {
     bool operator()(std::tuple<array<int, 4>, char> const &lhs, std::tuple<array<int, 4>, char> const &rhs) const {
@@ -52,8 +29,6 @@ struct CustomLessThan : public ArrayOrder {
 };
 
 
-
-
 class Enclosure {
 public:
     Enclosure(vector<array<int, 4>>& points);
@@ -61,7 +36,7 @@ public:
 
     set<array<int, 4>> solve();
 
-    ~Enclosure();
+    virtual ~Enclosure();
 
 private:
     vector<array<int, 4>> points;
