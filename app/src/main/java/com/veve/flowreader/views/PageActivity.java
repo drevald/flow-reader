@@ -1,6 +1,7 @@
 package com.veve.flowreader.views;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -13,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Display;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -24,6 +26,7 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
@@ -114,6 +117,8 @@ public class PageActivity extends AppCompatActivity {
         seekBar.setOnSeekBarChangeListener(new PagerListener());
         home.setOnClickListener(new HomeButtonListener());
         show.setOnClickListener(new ShowListener());
+
+        page.setOnTouchListener(new OnDoubleTapListener(this, page));
 
         topLayout.addOnLayoutChangeListener(new LayoutListener());
 
@@ -206,17 +211,53 @@ public class PageActivity extends AppCompatActivity {
 
 ////////////////////////////   LISTENERS  ////////////////////////////////////////////////////
 
-    class PagerTouchListener implements View.OnTouchListener {
-        @Override
-        public boolean onTouch(View view, MotionEvent event) {
-            view.performClick();
-            pager.setVisibility(View.GONE);
-            seekBar.setVisibility(VISIBLE);
-            return true;
+        class PagerTouchListener implements View.OnTouchListener {
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                view.performClick();
+                pager.setVisibility(View.GONE);
+                seekBar.setVisibility(VISIBLE);
+                return true;
+            }
         }
-    }
 
-    class PagerListener implements SeekBar.OnSeekBarChangeListener {
+        class OnDoubleTapListener implements View.OnTouchListener {
+
+            private GestureDetector gestureDetector;
+
+            public OnDoubleTapListener(Context c, LinearLayout p) {
+                gestureDetector = new GestureDetector(c, new GestureDetector.SimpleOnGestureListener() {
+                    @Override
+                    public boolean onDoubleTap(MotionEvent e) {
+                        float x = e.getX();
+
+                        if (x > p.getWidth() / 2) {
+                            if (book.getCurrentPage() < book.getPagesCount()-1) {
+                                setPageNumber(book.getCurrentPage()+1);
+                            }
+                        } else {
+                            if (book.getCurrentPage() > 0) {
+                                setPageNumber(book.getCurrentPage()-1);
+                            }
+                        }
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onDown(MotionEvent e) {
+                        return true;
+                    }
+                });
+            }
+
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                return gestureDetector.onTouchEvent(motionEvent);
+            }
+        }
+
+
+        class PagerListener implements SeekBar.OnSeekBarChangeListener {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             Log.d(getClass().getName(), String.format("onProgressChanged. %d %%", progress));
