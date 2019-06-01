@@ -64,9 +64,9 @@ line_limit PageSegmenter::find_baselines(vector<double_pair> &cc) {
 
 void PageSegmenter::preprocess_for_line_limits(const Mat &image) {
     threshold(image, image, 0, 255, THRESH_OTSU | THRESH_BINARY);
-    const Mat kernel = getStructuringElement(MORPH_RECT, Size(3, 3));
-    erode(image, image, kernel, Point(-1, -1), 2);
-    dilate(image, image, kernel, Point(-1, -1), 2);
+    //const Mat kernel = getStructuringElement(MORPH_RECT, Size(3, 3));
+    //erode(image, image, kernel, Point(-1, -1), 2);
+    //dilate(image, image, kernel, Point(-1, -1), 2);
 }
 
 map<int, vector<double_pair>>

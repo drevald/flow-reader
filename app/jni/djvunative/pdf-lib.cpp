@@ -107,8 +107,8 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
 
     int pageno = (int)pageNumber;
     FPDF_PAGE page = FPDF_LoadPage(doc, pageno);
-    int width = static_cast<int>(FPDF_GetPageWidth(page))*4;
-    int height = static_cast<int>(FPDF_GetPageHeight(page))*4;
+    int width = static_cast<int>(FPDF_GetPageWidth(page))*8;
+    int height = static_cast<int>(FPDF_GetPageHeight(page))*8;
 
     int size = width * height * 4;
 

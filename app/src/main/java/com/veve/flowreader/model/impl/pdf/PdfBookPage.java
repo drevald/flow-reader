@@ -21,10 +21,6 @@ public class PdfBookPage extends AbstractBookPage implements BookPage {
         return getAsBitmap();
     }
 
-    @Override
-    public List<PageGlyph> getPageGlyphs(DevicePageContext context) {
-        return getPageGlyphs();
-    }
 
     @Override
     public byte[] getBytes(long bookId, int pageNumber) {

@@ -26,11 +26,6 @@ public abstract class AbstractBookPage implements BookPage {
         return getAsBitmap();
     }
 
-    @Override
-    public List<PageGlyph> getPageGlyphs(DevicePageContext context) {
-        return getPageGlyphs();
-    }
-
     public List<PageGlyph> getPageGlyphs() {
 
         List<PageGlyphInfo> pageGlyphInfos = new ArrayList<>();

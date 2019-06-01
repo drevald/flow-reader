@@ -78,11 +78,6 @@ public class MockPageImpl implements BookPage {
 
     }
 
-    @Override
-    public List<PageGlyph> getPageGlyphs(DevicePageContext context) {
-        return null;
-    }
-
 
     public Bitmap getAsOriginalBitmap(DevicePageContext context) {
         return null;
