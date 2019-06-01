@@ -270,6 +270,10 @@ cc_result PageSegmenter::get_cc_results(const Mat &image) {
         whole_page = true;
     }
 
+    if (center_list.size() == 0) {
+        whole_page = true;
+    }
+
 
 
     cc_result v;
