@@ -124,7 +124,7 @@ void waitAndHandleMessages(JNIEnv *env, ddjvu_context_t *contextHandle) {
     handleMessages(env, ctx);
 }
 
-JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getPageGlyphs
+JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativePageGlyphs
         (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jobject list) {
 
     struct timespec start;
@@ -204,7 +204,7 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
 
 }
 
-JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getBytes
+JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeBytes
         (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber) {
 
     struct timespec start;

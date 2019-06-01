@@ -11,6 +11,6 @@ import java.util.List;
  */
 public interface PageLayoutParser {
 
-    public List<PageGlyph> getGlyphs(Bitmap bitmap);
+    List<PageGlyph> getGlyphs(BookSource bookSource, int position);
 
 }

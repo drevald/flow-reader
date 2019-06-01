@@ -33,6 +33,7 @@ import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageRenderer;
 import com.veve.flowreader.model.PageRendererFactory;
 import com.veve.flowreader.model.impl.DevicePageContextImpl;
+import com.veve.flowreader.model.impl.OpenCVPageLayoutParser;
 import com.veve.flowreader.model.impl.SimpleLayoutParser;
 
 import java.util.HashSet;
@@ -148,7 +149,7 @@ public class PageActivity extends AppCompatActivity {
             }
             case R.id.opencv_parser: {
                 pageRenderer.setPageLayoutParser(
-                        SimpleLayoutParser.getInstance());
+                        OpenCVPageLayoutParser.getInstance());
                 setPageNumber(currentPage);
                 break;
             }

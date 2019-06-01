@@ -50,8 +50,19 @@ android {
 
     }
 
+    preBuild {
+        doFirst {
+            JavaCompile jc = android.applicationVariants.find { it.name == 'debug' ||  it.name == 'release'}.javaCompile
+            jc.options.compilerArgs = ["-Xlint:unchecked"]
+        }
+    }
+
     lintOptions {
-        abortOnError false
+        abortOnError false        // true by default
+        checkAllWarnings false
+        checkReleaseBuilds false
+        ignoreWarnings true       // false by default
+        quiet true
     }
     compileOptions {
         sourceCompatibility '1.8'

@@ -56,7 +56,7 @@ JNIEXPORT jlong JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBook_openBook
 
 }
 
-JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getPageGlyphs
+JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativePageGlyphs
         (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jobject list) {
 
     struct timespec start;
@@ -100,7 +100,7 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
 
 }
 
-JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getBytes
+JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativeBytes
         (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber) {
 
     FPDF_DOCUMENT doc = (FPDF_DOCUMENT)bookId;

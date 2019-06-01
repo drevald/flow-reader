@@ -22,7 +22,7 @@ public class PageRendererImpl implements PageRenderer {
     BookSource bookSource;
 
     public PageRendererImpl(BookSource bookSource) {
-        pageLayoutParser = SimpleLayoutParser.getInstance();
+        pageLayoutParser = OpenCVPageLayoutParser.getInstance();
         this.bookSource = bookSource;
     }
 
@@ -31,7 +31,7 @@ public class PageRendererImpl implements PageRenderer {
         Log.d(getClass().getName(), "1");
 
         Log.i(getClass().getName(), String.format("position=%d", position));
-        List<PageGlyph> pageGlyphList = pageLayoutParser.getGlyphs(bookSource.getPageBytes(position));
+        List<PageGlyph> pageGlyphList = pageLayoutParser.getGlyphs(bookSource, position);
 
         Log.d(getClass().getName(),"2");
 

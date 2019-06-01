@@ -7,6 +7,7 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.Log;
 
+import com.veve.flowreader.model.BookSource;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyph;
 import com.veve.flowreader.model.PageLayoutParser;
@@ -36,7 +37,9 @@ public class SimpleLayoutParser implements PageLayoutParser {
     }
 
     @Override
-    public List<PageGlyph> getGlyphs(Bitmap bitmap) {
+    public List<PageGlyph> getGlyphs(BookSource bookSource, int position) {
+
+        Bitmap bitmap = bookSource.getPageBytes(position);
 
         Log.d(getClass().getName(), "getGlyphs started");
 
