@@ -11,7 +11,7 @@ LOCAL_C_INCLUDES := \
 
 
 LOCAL_MODULE    := djvu
-LOCAL_CFLAGS    := -O2 -DNDEBUG -fexceptions -DTHREADMODEL=POSIXTHREADS -DHAVE_CONFIG_H  -DDIR_DATADIR=\"/usr/local/share\"
+LOCAL_CFLAGS    := -Ofast -DNDEBUG -fexceptions -DTHREADMODEL=POSIXTHREADS -DHAVE_CONFIG_H  -DDIR_DATADIR=\"/usr/local/share\"
 
 ifeq ($(TARGET_ARCH_ABI),armeabi)
     LOCAL_ARM_MODE := arm

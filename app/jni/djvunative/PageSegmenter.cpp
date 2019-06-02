@@ -6,6 +6,7 @@
 #include "Enclosure.h"
 
 
+
 line_limit PageSegmenter::find_baselines(vector<double_pair> &cc) {
 
     sort(cc.begin(), cc.end(), PairXOrder());
@@ -242,35 +243,30 @@ cc_result PageSegmenter::get_cc_results(const Mat &image) {
 
     bool whole_page = false;
 
-    if (max < average_height + 5*std) {
-        Enclosure enc(rects);
-        const set<array<int, 4>> &s = enc.solve();
+    Enclosure enc(rects);
+    const set<array<int, 4>> &s = enc.solve();
 
-        int i = 0;
-        for (auto it = s.begin(); it != s.end(); ++it) {
-            array<int, 4> a = *it;
-            int x = -get<0>(a);
-            int y = -get<1>(a);
-            int width = get<2>(a) - x;
-            int height = get<3>(a) - y;
-            if (height > average_height - std && height < 2*average_height) {
-                double cx = (x + width) / 2.0;
-                double cy = (y + height) / 2.0;
-                rd[make_tuple((x + width) / 2.0, (y + height) / 2.0)] = Rect(x, y, width, height);
-                double_pair center = std::tuple<double,double>(cx, cy);
-                center_list.push_back(center);
-                center_numbers.insert(make_pair(center, i));
-                vertex_t v = add_vertex(g);
-                g[v] = center;
-                i++;
-            }
+    int i = 0;
+    for (auto it = s.begin(); it != s.end(); ++it) {
+        array<int, 4> a = *it;
+        int x = -get<0>(a);
+        int y = -get<1>(a);
+        int width = get<2>(a) - x;
+        int height = get<3>(a) - y;
+        if (height > average_height - std && height < 2*average_height) {
+            double cx = (x + width) / 2.0;
+            double cy = (y + height) / 2.0;
+            rd[make_tuple((x + width) / 2.0, (y + height) / 2.0)] = Rect(x, y, width, height);
+            double_pair center = std::tuple<double,double>(cx, cy);
+            center_list.push_back(center);
+            center_numbers.insert(make_pair(center, i));
+            vertex_t v = add_vertex(g);
+            g[v] = center;
+            i++;
         }
-
-    } else {
-        whole_page = true;
     }
 
-    if (center_list.size() == 0) {
+    if (center_list.size() < 30) {
         whole_page = true;
     }
 
@@ -285,27 +281,6 @@ cc_result PageSegmenter::get_cc_results(const Mat &image) {
 }
 
 
-vector<std::tuple<int, int>> PageSegmenter::one_runs(const Mat &hist) {
-    int w = hist.cols;
-
-    vector<std::tuple<int, int>> return_value;
-
-    int pos = 0;
-    for (int i = 0; i < w; i++) {
-        if ((i == 0 && hist.at<int>(0, i) == 1) ||
-            (i > 0 && hist.at<int>(0, i) == 1 && hist.at<int>(0, i - 1) == 0)) {
-            pos = i;
-        }
-
-        if ((i == w - 1 && hist.at<int>(0, i) == 1) ||
-            (i < w - 1 && hist.at<int>(0, i) == 1 && hist.at<int>(0, i + 1) == 0)) {
-            return_value.push_back(make_tuple(pos, i));
-        }
-    }
-    return return_value;
-}
-
-
 vector<glyph> PageSegmenter::get_glyphs() {
 
     // preprocess for the first step
@@ -315,10 +290,13 @@ vector<glyph> PageSegmenter::get_glyphs() {
     const Mat kernel = getStructuringElement(MORPH_RECT, Size(8, 2));
     dilate(image, image, kernel, Point(-1, -1), 2);
 
-    vector<line_limit> line_limits = get_line_limits();
+    // line detection
+    bool lined_document = well_formed_page(image);
 
-    if (line_limits.size() == 1) {
-        vector<glyph> return_value;
+    // end line detection
+    vector<glyph> return_value;
+
+    if (!lined_document) {
         glyph g;
         g.x = 0;
         g.y = 0;
@@ -327,9 +305,8 @@ vector<glyph> PageSegmenter::get_glyphs() {
         return_value.push_back(g);
         return return_value;
     } else {
+        vector<line_limit> line_limits = get_line_limits();
         sort(line_limits.begin(), line_limits.end(), SortLineLimits());
-
-        vector<glyph> return_value;
 
         int width = image.cols;
         for (line_limit &ll : line_limits) {
@@ -380,7 +357,6 @@ vector<glyph> PageSegmenter::get_glyphs() {
 
         return return_value;
     }
-
 
 }
 

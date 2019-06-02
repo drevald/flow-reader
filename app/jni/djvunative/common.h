@@ -29,6 +29,7 @@
 #include <array>
 #include <set>
 #include <iostream>
+#include <algorithm>
 
 #include <libdjvu/ddjvuapi.h>
 #include <fpdfview.h>
@@ -39,9 +40,20 @@
 
 using namespace cv;
 using namespace std;
+
 using namespace boost;
 
 
 void put_glyphs(JNIEnv *env, Mat& mat, jobject& list);
 
 double TimeSpecToSeconds(struct timespec* ts);
+
+std::vector<std::tuple<int,int>> zero_runs(const Mat& hist);
+
+std::vector<std::tuple<int, int>> one_runs(const Mat& hist);
+
+std::vector<std::tuple<int, int>> one_runs_vert(const Mat &hist);
+
+float calcMHWScore(vector<int> scores);
+
+bool well_formed_page(Mat& image);

@@ -9,8 +9,8 @@
 
 
 typedef std::tuple<double,double> double_pair ;
-typedef adjacency_list < vecS, vecS, undirectedS, double_pair > Graph;
-typedef graph_traits<Graph>::vertex_descriptor vertex_t;
+typedef boost::adjacency_list < boost::vecS, boost::vecS, boost::undirectedS, double_pair > Graph;
+typedef boost::graph_traits<Graph>::vertex_descriptor vertex_t;
 
 
 struct glyph {
@@ -71,7 +71,6 @@ private:
     vector<line_limit> get_line_limits();
     void preprocess_for_line_limits(const Mat &image);
     cc_result get_cc_results(const Mat& image);
-    vector<std::tuple<int,int>> one_runs(const Mat& hist);
     map<int,vector<double_pair>> get_connected_components(vector<double_pair>& center_list, double averahe_hight);
     line_limit find_baselines(vector<double_pair>& cc);
 };

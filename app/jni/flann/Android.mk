@@ -9,7 +9,7 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/../ \
 
 
 LOCAL_MODULE    := flann
-LOCAL_CFLAGS    := -O2 -frtti -fopenmp -DNDEBUG -fexceptions -DHAVE_CONFIG_H
+LOCAL_CFLAGS    := -Ofast -frtti -fopenmp -DNDEBUG -fexceptions -DHAVE_CONFIG_H
 LOCAL_LD_FLAGS  := -fopenmp
 
 

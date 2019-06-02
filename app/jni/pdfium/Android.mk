@@ -8,7 +8,7 @@ LOCAL_MODULE_FILENAME := libmyview
 LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/include
 
-LOCAL_CFLAGS += -DHAVE_CONFIG_H -frtti -fexceptions -fopenmp -w -O2 -DNDEBUG
+LOCAL_CFLAGS += -DHAVE_CONFIG_H -frtti -fexceptions -fopenmp -w -Ofast -DNDEBUG
 
 LOCAL_SRC_FILES := \
     core/src/fxcodec/fx_zlib/zlib_v128/fx_zlib_adler32.c \

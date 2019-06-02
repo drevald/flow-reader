@@ -10,6 +10,8 @@ LOCAL_MODULE := libjpeg9
 
 #LOCAL_MODULE_FILENAME := libjpeg
 
+LOCAL_CFLAGS := -Ofast -DNDEBUG
+
 LOCAL_SRC_FILES := \
 	jcapimin.c jcapistd.c jccoefct.c jccolor.c jcdctmgr.c jchuff.c \
 	jcinit.c jcmainct.c jcmarker.c jcmaster.c jcomapi.c jcparam.c \
