@@ -2,6 +2,8 @@ package com.veve.flowreader.model.impl;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.util.Log;
 
@@ -52,6 +54,13 @@ public class PageRendererImpl implements PageRenderer {
             Canvas canvas = new Canvas(bitmap);
             context.resetPosition();
             context.setCanvas(canvas);
+
+            Paint paint1 = new Paint();
+            paint1.setStyle(Paint.Style.STROKE);
+            paint1.setColor(Color.BLUE);
+            paint1.setStrokeWidth(25);
+
+            canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), paint1);
 
             for(PageGlyph pageGlyph : pageGlyphList) {
                 pageGlyph.draw(context, true);

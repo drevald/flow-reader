@@ -42,6 +42,7 @@ import com.veve.flowreader.model.impl.SimpleLayoutParser;
 import java.util.HashSet;
 import java.util.Set;
 
+import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 import static com.veve.flowreader.Constants.VIEW_MODE_ORIGINAL;
 import static com.veve.flowreader.Constants.VIEW_MODE_PHONE;
@@ -66,6 +67,9 @@ public class PageActivity extends AppCompatActivity {
     int currentPage;
     int viewMode;
     BooksCollection booksCollection;
+    LinearLayout bottomBar;
+    boolean barsVisible;
+
 
     final static int IMAGE_VIEW_HEIGHT_LIMIT = 8000;
 
@@ -110,6 +114,7 @@ public class PageActivity extends AppCompatActivity {
         page = findViewById(R.id.page);
         show = findViewById(R.id.show);
         scroll = findViewById(R.id.scroll);
+        bottomBar = findViewById(R.id.bottomBar);
 
         //page.addOnLayoutChangeListener(new LayoutListener());
         seekBar.setMax(book.getPagesCount());
@@ -117,9 +122,7 @@ public class PageActivity extends AppCompatActivity {
         seekBar.setOnSeekBarChangeListener(new PagerListener());
         home.setOnClickListener(new HomeButtonListener());
         show.setOnClickListener(new ShowListener());
-
         page.setOnTouchListener(new OnDoubleTapListener(this, page));
-
         topLayout.addOnLayoutChangeListener(new LayoutListener());
 
         Display display = getWindowManager().getDefaultDisplay();
@@ -198,6 +201,16 @@ public class PageActivity extends AppCompatActivity {
         pageLoader.execute(pageNumber);
     }
 
+    private void showBars() {
+        bar.setVisibility(View.VISIBLE);
+        bottomBar.setVisibility(View.VISIBLE);
+    }
+
+    private void hideBars() {
+        bar.setVisibility(INVISIBLE);
+        bottomBar.setVisibility(INVISIBLE);
+    }
+
     private void kickOthers(PageLoader pageLoader) {
         for (AsyncTask task : runningTasks) {
             if(!task.isCancelled()) {
@@ -241,6 +254,20 @@ public class PageActivity extends AppCompatActivity {
                             }
                         }
                         return true;
+                    }
+
+                    @Override
+                    public boolean onSingleTapConfirmed(MotionEvent e) {
+                        if (barsVisible) {
+                            bottomBar.setVisibility(INVISIBLE);
+                            bar.setVisibility(INVISIBLE);
+                            barsVisible = false;
+                        } else {
+                            bottomBar.setVisibility(VISIBLE);
+                            bar.setVisibility(VISIBLE);
+                            barsVisible = true;
+                        }
+                        return super.onSingleTapConfirmed(e);
                     }
 
                     @Override
@@ -387,7 +414,7 @@ public class PageActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    scroll.setVisibility(View.INVISIBLE);
+                    scroll.setVisibility(INVISIBLE);
                     progressBar.setVisibility(View.VISIBLE);
                 }
             });
@@ -426,7 +453,7 @@ public class PageActivity extends AppCompatActivity {
                         Log.v(getClass().getName(), "End setting bitmap");
                     }
                     scroll.setVisibility(View.VISIBLE);
-                    progressBar.setVisibility(View.INVISIBLE);
+                    progressBar.setVisibility(INVISIBLE);
                 }
             });
 
