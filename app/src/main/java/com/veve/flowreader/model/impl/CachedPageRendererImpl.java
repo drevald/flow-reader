@@ -37,7 +37,11 @@ public class CachedPageRendererImpl implements PageRenderer {
     private List<PageGlyph> getGlyphs(BookSource bookSource, int position) {
         if (position != currentPage || glyphs == null || glyphs.size() == 0) {
             currentPage = position;
+            long start = System.currentTimeMillis();
             glyphs = pageLayoutParser.getGlyphs(bookSource, position);
+            Log.v(getClass().getName(),
+                    String.format("Getting glyphs for page #%d took #d milliseconds",
+                    position, System.currentTimeMillis() - start));
         }
         return glyphs;
     }
@@ -45,7 +49,10 @@ public class CachedPageRendererImpl implements PageRenderer {
     private Bitmap getOriginalPageBitmap(int position) {
         if (position != currentPage || originalBitmap == null) {
             currentPage = position;
+            long start = System.currentTimeMillis();
             originalBitmap = bookSource.getPageBytes(position);
+            Log.v(getClass().getName(), String.format("Getting page #%d took #d milliseconds",
+                    position, System.currentTimeMillis() - start));
         }
         return originalBitmap;
     }
