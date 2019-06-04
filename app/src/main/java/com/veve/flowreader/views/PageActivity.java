@@ -317,7 +317,9 @@ public class PageActivity extends AppCompatActivity {
 
         @Override
         public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-            pageRenderer = PageRendererFactory.getRenderer(book);
+            if (pageRenderer == null) {
+                pageRenderer = PageRendererFactory.getRenderer(book);
+            }
             PageMenuListener pageMenuListener = new PageMenuListener();
             findViewById(R.id.smaller_text).setOnClickListener(pageMenuListener);
             findViewById(R.id.larger_text).setOnClickListener(pageMenuListener);
