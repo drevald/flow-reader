@@ -52,7 +52,9 @@ android {
 
     preBuild {
         doFirst {
-            JavaCompile jc = android.applicationVariants.find { it.name == 'debug' ||  it.name == 'release'}.javaCompile
+            JavaCompile jc = android.applicationVariants.find {
+                it.name == 'debug' || it.name == 'release'
+            }.javaCompile
             jc.options.compilerArgs = ["-Xlint:unchecked"]
         }
     }
