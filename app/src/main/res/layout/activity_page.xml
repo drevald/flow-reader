@@ -11,6 +11,7 @@
         android:id="@+id/bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="invisible"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
@@ -81,6 +82,8 @@
         android:id="@+id/progress"
         android:layout_width="match_parent"
         android:visibility="visible"
+        android:opacity="translucent"
+        android:background="@color/transparent"
         android:layout_height="match_parent" />
 
     <ScrollView
@@ -88,8 +91,7 @@
         android:layout_height="match_parent"
         android:paddingTop="10sp"
         android:id="@+id/scroll"
-        android:visibility="invisible"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:visibility="invisible">
 
         <LinearLayout
             android:id="@+id/page"
@@ -117,6 +119,8 @@
     </ScrollView>
 
     <LinearLayout
+        android:id="@+id/bottomBar"
+        android:visibility="invisible"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"

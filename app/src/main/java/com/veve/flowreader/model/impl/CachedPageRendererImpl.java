@@ -17,15 +17,44 @@ import java.util.List;
 
 import static android.graphics.Bitmap.Config.ARGB_8888;
 
-public class PageRendererImpl implements PageRenderer {
+public class CachedPageRendererImpl implements PageRenderer {
 
     PageLayoutParser pageLayoutParser;
 
     BookSource bookSource;
 
-    public PageRendererImpl(BookSource bookSource) {
+    Bitmap originalBitmap;
+
+    int currentPage;
+
+    List<PageGlyph> glyphs;
+
+    public CachedPageRendererImpl(BookSource bookSource) {
         pageLayoutParser = OpenCVPageLayoutParser.getInstance();
         this.bookSource = bookSource;
+    }
+
+    private List<PageGlyph> getGlyphs(BookSource bookSource, int position) {
+        if (position != currentPage || glyphs == null || glyphs.size() == 0) {
+            currentPage = position;
+            long start = System.currentTimeMillis();
+            glyphs = pageLayoutParser.getGlyphs(bookSource, position);
+            Log.v(getClass().getName(),
+                    String.format("Getting glyphs for page #%d took #d milliseconds",
+                    position, System.currentTimeMillis() - start));
+        }
+        return glyphs;
+    }
+
+    private Bitmap getOriginalPageBitmap(int position) {
+        if (position != currentPage || originalBitmap == null) {
+            currentPage = position;
+            long start = System.currentTimeMillis();
+            originalBitmap = bookSource.getPageBytes(position);
+            Log.v(getClass().getName(), String.format("Getting page #%d took #d milliseconds",
+                    position, System.currentTimeMillis() - start));
+        }
+        return originalBitmap;
     }
 
     @Override
@@ -33,7 +62,7 @@ public class PageRendererImpl implements PageRenderer {
         Log.d(getClass().getName(), "1");
 
         Log.i(getClass().getName(), String.format("position=%d", position));
-        List<PageGlyph> pageGlyphList = pageLayoutParser.getGlyphs(bookSource, position);
+        List<PageGlyph> pageGlyphList = getGlyphs(bookSource, position);
 
         if (pageGlyphList.size() <= 1) {
             return renderOriginalPage(context, position);
@@ -75,7 +104,7 @@ public class PageRendererImpl implements PageRenderer {
 
     @Override
     public Bitmap renderOriginalPage(DevicePageContext context, int position) {
-        Bitmap bitmap = bookSource.getPageBytes(position);
+        Bitmap bitmap = getOriginalPageBitmap(position);
         Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap,
                 (int) (context.getZoom() * bitmap.getWidth()),
                 (int) (context.getZoom() * bitmap.getHeight()),
@@ -90,5 +119,8 @@ public class PageRendererImpl implements PageRenderer {
     public void setPageLayoutParser(PageLayoutParser pageLayoutParser) {
         this.pageLayoutParser = pageLayoutParser;
     }
+
+
+
 
 }
