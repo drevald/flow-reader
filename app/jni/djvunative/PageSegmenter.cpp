@@ -318,6 +318,27 @@ vector<glyph> PageSegmenter::get_glyphs() {
         vector<line_limit> line_limits = get_line_limits();
         sort(line_limits.begin(), line_limits.end(), SortLineLimits());
 
+        Mat vertHist;
+        reduce(gray_inverted_image, vertHist, 1, REDUCE_SUM, CV_32F);
+
+        int h = vertHist.rows;
+
+        for (int i = 0; i < h; i++) {
+            if (vertHist.at<float>(i, 0) > 0) {
+                vertHist.at<float>(i, 0) = 1;
+            } else {
+                vertHist.at<float>(i, 0) = 0;
+            }
+        }
+
+        std::vector<std::tuple<int,int>> zeroRuns = zero_runs(vertHist);
+
+        int leftIndent = 0;
+        if (zeroRuns.size() >0){
+            leftIndent = std::get<1>(zeroRuns[0]);
+        }
+
+
         int width = image.cols;
         for (line_limit &ll : line_limits) {
             int l = ll.lower;
@@ -344,12 +365,22 @@ vector<glyph> PageSegmenter::get_glyphs() {
 
             horHist.release();
 
+            int c = 0;
             for (const std::tuple<int, int> &r : oneRuns) {
+
 
                 int left = get<0>(r);
                 int right = get<1>(r);
 
                 glyph g;
+
+                if (c == 0 && (left - leftIndent) > 10) {
+                    g.indented = true;
+                } else {
+                    g.indented = false;
+                }
+                c++;
+
                 g.x = left;
                 g.y = u;
                 g.width = right - left;

@@ -28,6 +28,8 @@ public class PageGlyphImpl implements PageGlyph {
 
     private int x, y;
 
+    private boolean indented;
+
 
     public PageGlyphImpl(Bitmap bitmap, PageGlyphInfo rect) {
         this.bitmap = bitmap;
@@ -35,6 +37,7 @@ public class PageGlyphImpl implements PageGlyph {
         this.averageHeight = rect.getAverageHeight();
         this.x = rect.getX();
         this.y = rect.getY();
+        this.indented = rect.isIndented();
     }
 
     public PageGlyphImpl(Bitmap bitmap, int baseLineShift, int averageHight, int x , int y) {
@@ -75,9 +78,15 @@ public class PageGlyphImpl implements PageGlyph {
             context.setLineHeight(averageHeight);
         }
         //checking if currect glyph is within page content
-        if(__width * context.getZoom() + startPoint.x > context.getWidth() - context.getMargin()) {
+        if(__width * context.getZoom() + startPoint.x > context.getWidth() - context.getMargin() ) {
             //if not - start new line
             startPoint.set(context.getMargin(), startPoint.y + (int)(__height * context.getZoom())
+                    + (int)(context.getLeading()* context.getZoom()));
+            currentBaseline += context.getLineHeight() * context.getZoom() + (int)(context.getLeading()* context.getZoom());
+        }
+        if(indented) {
+            //if not - start new line
+            startPoint.set(context.getMargin() + averageHeight/2, startPoint.y + (int)(__height * context.getZoom())
                     + (int)(context.getLeading()* context.getZoom()));
             currentBaseline += context.getLineHeight() * context.getZoom() + (int)(context.getLeading()* context.getZoom());
         }

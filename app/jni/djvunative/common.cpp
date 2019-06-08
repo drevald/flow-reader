@@ -14,7 +14,7 @@ void put_glyphs(JNIEnv *env, cv::Mat& mat, jobject& list) {
     }
 
     //jclass clz = env->FindClass("com/veve/flowreader/model/PageGlyphInfo");
-    jmethodID constructor = env->GetMethodID(clz, "<init>", "(IIIIII)V");
+    jmethodID constructor = env->GetMethodID(clz, "<init>", "(ZIIIIII)V");
 
     if (constructor == NULL) {
         __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "%s\n", "constructor is NULL");
@@ -23,7 +23,7 @@ void put_glyphs(JNIEnv *env, cv::Mat& mat, jobject& list) {
 
     for (glyph g : glyphs) {
 
-        jobject object = env->NewObject(clz, constructor, g.x, g.y, g.width, g.height, g.line_height, g.baseline_shift);
+        jobject object = env->NewObject(clz, constructor, g.indented, g.x, g.y, g.width, g.height, g.line_height, g.baseline_shift);
 
         env->CallBooleanMethod(
                 list,

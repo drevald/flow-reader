@@ -2,6 +2,7 @@ package com.veve.flowreader.model;
 
 public class PageGlyphInfo {
 
+    private boolean indented;
     private int x;
     private int y;
     private int width;
@@ -13,7 +14,8 @@ public class PageGlyphInfo {
 
     }
 
-    public PageGlyphInfo(int x, int y, int width, int height, int averageHeight, int baselineShift) {
+    public PageGlyphInfo(boolean indented, int x, int y, int width, int height, int averageHeight, int baselineShift) {
+        this.indented = indented;
         this.x = x;
         this.y = y;
         this.width = width;
@@ -45,5 +47,9 @@ public class PageGlyphInfo {
 
     public int getHeight() {
         return height;
+    }
+
+    public boolean isIndented() {
+        return indented;
     }
 }

@@ -14,6 +14,7 @@ typedef boost::graph_traits<Graph>::vertex_descriptor vertex_t;
 
 
 struct glyph {
+    bool indented;
     int x, y, width, height, line_height, baseline_shift;
 };
 
