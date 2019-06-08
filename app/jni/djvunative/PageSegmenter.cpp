@@ -230,6 +230,14 @@ cc_result PageSegmenter::get_cc_results(const Mat &image) {
 
     }
 
+    if (count == 0) {
+        cc_result v;
+        v.whole_page = true;
+        v.average_hight = 0;
+        v.centers = center_list;
+        return v;
+    }
+
     Scalar m, stdv;
     Mat hist(1, count, CV_64F, &heights);
     meanStdDev(hist, m, stdv);
@@ -291,18 +299,20 @@ vector<glyph> PageSegmenter::get_glyphs() {
     dilate(image, image, kernel, Point(-1, -1), 2);
 
     // line detection
-    bool lined_document = well_formed_page(image);
+    bool lines_detected = build_well_formed_page(image, gray_inverted_image);
 
     // end line detection
     vector<glyph> return_value;
 
-    if (!lined_document) {
+    if (!lines_detected) {
         glyph g;
         g.x = 0;
         g.y = 0;
         g.width = image.cols;
         g.height = image.rows;
         return_value.push_back(g);
+        mat.release();
+        image.release();
         return return_value;
     } else {
         vector<line_limit> line_limits = get_line_limits();
@@ -357,6 +367,7 @@ vector<glyph> PageSegmenter::get_glyphs() {
 
         return return_value;
     }
+
 
 }
 

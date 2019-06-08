@@ -53,26 +53,26 @@ struct SortLineLimits {
 class PageSegmenter {
 
 public:
-    PageSegmenter(Mat& mat) {
+    PageSegmenter(cv::Mat& mat) {
         this->mat = mat;
-        cvtColor(mat, gray_inverted_image, COLOR_BGR2GRAY);
+        cvtColor(mat, gray_inverted_image, cv::COLOR_BGR2GRAY);
         bitwise_not(gray_inverted_image,gray_inverted_image);
     }
 
-    vector<glyph> get_glyphs();
+    std::vector<glyph> get_glyphs();
 
 private:
-    Mat mat;
-    Mat gray_inverted_image;
-    map<double_pair,int> center_numbers;
-    map<double_pair,Rect> rd;
+    cv::Mat mat;
+    cv::Mat gray_inverted_image;
+    std::map<double_pair,int> center_numbers;
+    std::map<double_pair,cv::Rect> rd;
     Graph g;
     int line_height = 0;
-    vector<line_limit> get_line_limits();
-    void preprocess_for_line_limits(const Mat &image);
-    cc_result get_cc_results(const Mat& image);
-    map<int,vector<double_pair>> get_connected_components(vector<double_pair>& center_list, double averahe_hight);
-    line_limit find_baselines(vector<double_pair>& cc);
+    std::vector<line_limit> get_line_limits();
+    void preprocess_for_line_limits(const cv::Mat &image);
+    cc_result get_cc_results(const cv::Mat& image);
+    std::map<int,std::vector<double_pair>> get_connected_components(std::vector<double_pair>& center_list, double averahe_hight);
+    line_limit find_baselines(std::vector<double_pair>& cc);
 };
 
 

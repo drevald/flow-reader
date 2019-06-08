@@ -410,7 +410,7 @@ public class PageActivity extends AppCompatActivity {
                     if (bitmap.getWidth() >= context.getWidth()) {
                         page.removeAllViews();        // UI code goes here
                         for (int offset = 0; offset < bitmapHeight; offset += IMAGE_VIEW_HEIGHT_LIMIT) {
-                            int height = Math.min(bitmapHeight, offset + IMAGE_VIEW_HEIGHT_LIMIT);
+                           /* int height = Math.min(bitmapHeight, offset + IMAGE_VIEW_HEIGHT_LIMIT);
                             Log.d(getClass().getName(),
                                     String.format(" Bitmap.createBitmap(bitmap, 0, %d, %d, %d)",
                                             offset, context.getWidth(), height - offset));
@@ -418,9 +418,10 @@ public class PageActivity extends AppCompatActivity {
                                     String.format("bitmap size is width : %d height :%d",
                                             bitmap.getWidth(), bitmap.getHeight()));
                             Bitmap limitedBitmap = Bitmap.createBitmap(bitmap, 0, offset, context.getWidth(),
-                                    height - offset);
+                                    height - offset);*/
                             ImageView imageView = new ImageView(getApplicationContext());
-                            imageView.setImageBitmap(limitedBitmap);
+                            imageView.setScaleType(ImageView.ScaleType.FIT_START);
+                            imageView.setImageBitmap(bitmap);
                             page.addView(imageView);
                         }
                         Log.v(getClass().getName(), "End setting bitmap");

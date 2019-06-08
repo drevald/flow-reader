@@ -1,3 +1,6 @@
+#ifndef FLOW_READER_COMMON_H
+#define FLOW_READER_COMMON_H
+
 #include <jni.h>
 
 #include <android/log.h>
@@ -30,6 +33,7 @@
 #include <set>
 #include <iostream>
 #include <algorithm>
+#include <stack>
 
 #include <libdjvu/ddjvuapi.h>
 #include <fpdfview.h>
@@ -43,6 +47,16 @@ using namespace std;
 
 using namespace boost;
 
+struct segment {
+    int y, height;
+};
+
+
+struct SortSegments {
+    bool operator()(std::tuple<int,char> const &lhs, std::tuple<int,char> const &rhs) {
+        return get<0>(lhs) < get<0>(rhs);
+    }
+};
 
 void put_glyphs(JNIEnv *env, Mat& mat, jobject& list);
 
@@ -57,3 +71,9 @@ std::vector<std::tuple<int, int>> one_runs_vert(const Mat &hist);
 float calcMHWScore(vector<int> scores);
 
 bool well_formed_page(Mat& image);
+
+bool build_well_formed_page(Mat& image, Mat& gray_inverted_image);
+
+void filter_gray_inverted_image(std::vector<segment> segments, int width, int height, Mat& gray_inverted_image);
+
+#endif

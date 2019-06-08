@@ -1,6 +1,7 @@
 #include "common.h"
 
-void put_glyphs(JNIEnv *env, Mat& mat, jobject& list) {
+
+void put_glyphs(JNIEnv *env, cv::Mat& mat, jobject& list) {
     PageSegmenter ps(mat);
     vector<glyph> glyphs = ps.get_glyphs();
 
@@ -43,7 +44,7 @@ double TimeSpecToSeconds(struct timespec* ts) {
     return (double)ts->tv_sec + (double)ts->tv_nsec / 1000000000.0;
 }
 
-std::vector<std::tuple<int, int>> one_runs(const Mat &hist) {
+std::vector<std::tuple<int, int>> one_runs(const cv::Mat &hist) {
     int w = hist.cols;
 
     vector<std::tuple<int, int>> return_value;
@@ -63,7 +64,7 @@ std::vector<std::tuple<int, int>> one_runs(const Mat &hist) {
     return return_value;
 }
 
-std::vector<std::tuple<int, int>> one_runs_vert(const Mat &hist) {
+std::vector<std::tuple<int, int>> one_runs_vert(const cv::Mat &hist) {
     int h = hist.rows;
 
     vector<std::tuple<int, int>> return_value;
@@ -84,7 +85,7 @@ std::vector<std::tuple<int, int>> one_runs_vert(const Mat &hist) {
 }
 
 
-std::vector<std::tuple<int,int>> zero_runs(const Mat& hist) {
+std::vector<std::tuple<int,int>> zero_runs(const cv::Mat& hist) {
     int w = hist.rows;
 
     vector<std::tuple<int, int>> return_value;
@@ -104,7 +105,7 @@ std::vector<std::tuple<int,int>> zero_runs(const Mat& hist) {
     return return_value;
 }
 
-float calcMHWScore(vector<int> scores)
+float calcMHWScore(std::vector<int> scores)
 {
     size_t size = scores.size();
 
@@ -124,6 +125,128 @@ float calcMHWScore(vector<int> scores)
             return scores[size / 2];
         }
     }
+}
+
+void filter_gray_inverted_image(std::vector<segment> segments, int width, int height, Mat& gray_inverted_image) {
+
+    std::vector<std::tuple<int,char>> ints;
+    for (segment s : segments) {
+       ints.push_back(std::make_tuple(s.y, 'b'));
+        ints.push_back(std::make_tuple(s.y + s.height, 'e'));
+    }
+
+    sort(ints.begin(), ints.end(), SortSegments());
+    std::stack<int> st;
+
+    std::vector<std::tuple<int,int>> ends;
+    int begin = 0;
+    int end = 0;
+
+    for (std::tuple<int,char> t : ints) {
+        if (st.size() == 0) {
+           begin = get<0>(t);
+        }
+        if (get<1>(t) == 'b') {
+            st.push(get<0>(t));
+        } else {
+            st.pop();
+        }
+        if (st.size()==0) {
+           end = get<0>(t);
+           ends.push_back(std::make_tuple(begin,end));
+        }
+    }
+
+    if (ends.size() > 0) {
+        for (std::tuple<int,int> e : ends) {
+            gray_inverted_image(cv::Range(get<0>(e), get<1>(e)), cv::Range(0, width)).setTo(0);
+        }
+    }
+
+}
+
+bool build_well_formed_page(cv::Mat& image, Mat& gray_inverted_image) {
+    Mat blurred;
+    GaussianBlur(image, blurred, Size(3, 3), 0);
+    Canny( blurred, blurred, 10, 200, 3 );
+    std::vector<vector<cv::Point> > contours;
+    std::vector<cv::Vec4i> hierarchy;
+    findContours( blurred, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE, Point(0, 0) );
+
+    std::vector<std::vector<Point> > contours_poly( contours.size() );
+    std::vector<float> heights( contours.size() );
+    std::vector<float> filtered_heights;
+    std::vector<segment> segments( contours.size() );
+
+    for( int i = 0; i < contours.size(); i++ )
+    { approxPolyDP( Mat(contours[i]), contours_poly[i], 3, true );
+        auto brect = boundingRect( Mat(contours_poly[i]) );
+        heights[i] = brect.height;
+        segments[i] = {brect.y,brect.height};
+    }
+
+    double sum = std::accumulate(heights.begin(), heights.end(), 0.0);
+    double mean = sum / heights.size();
+
+    double sq_sum = std::inner_product(heights.begin(), heights.end(), heights.begin(), 0.0);
+    double stdev = std::sqrt(sq_sum / heights.size() - mean * mean);
+
+    auto mx = std::max_element(heights.begin(), heights.end());
+
+
+    std::vector<segment> high_objects;
+    std::vector<segment> normal_objects;
+
+    for (segment s : segments) {
+        if (s.height > mean + 3*stdev) {
+            high_objects.push_back(s);
+        } else {
+            filtered_heights.push_back(s.height);
+            normal_objects.push_back(s);
+        }
+    }
+
+    double sum1 = std::accumulate(filtered_heights.begin(), filtered_heights.end(), 0.0);
+    double mean1 = sum1 / filtered_heights.size();
+
+    double sq_sum1 = std::inner_product(filtered_heights.begin(), filtered_heights.end(), filtered_heights.begin(), 0.0);
+    double stdev1 = std::sqrt(sq_sum1 / filtered_heights.size() - mean1 * mean1);
+
+    auto mx1 = std::max_element(filtered_heights.begin(), filtered_heights.end());
+
+    if (mx1 == filtered_heights.end()) {
+        return false;
+    }
+
+    std::vector<segment> filtered_high_objects;
+
+    for (segment s : normal_objects) {
+        if (s.height > mean1 + 3*stdev1) {
+            filtered_high_objects.push_back(s);
+        }
+    }
+
+    char msg[30];
+    sprintf(msg, "mean stdev max %f %f %f\n", mean1, stdev1, *mx1);
+
+    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "%s\n", msg);
+
+    if (mean1 + 1.5*stdev1 < *mx1 ) {
+        if (filtered_high_objects.size() > 0) {
+            std::vector<segment> filtered_high_objects;
+            for (segment s : segments) {
+                if (s.height > mean1 + 3*stdev1) {
+                    filtered_high_objects.push_back(s);
+                }
+            }
+            filter_gray_inverted_image(filtered_high_objects, image.cols, image.rows, gray_inverted_image);
+        }
+        return true;
+
+    }
+    return false;
+
+
 }
 
 bool well_formed_page(Mat& image) {
