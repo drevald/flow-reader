@@ -16,16 +16,12 @@ branches:
   - FLOW-UI
   - djvu-ui
 before_script:
-  - android list sdk --extended --no-ui --all
+  - android list sdk --use-sdk-wrapper -extended --no-ui --all
   - echo "y" | android update sdk -a --no-ui --filter sys-img-armeabi-v7a-android-22,sys-img-x86_64-android-22
   - echo "n" | android create avd --name myandroid22 -t "android-22" --abi "default/armeabi-v7a"
   - emulator -avd myandroid22 -no-audio -no-window &
   - android-wait-for-emulator
   - adb devices
-  - adb push app/build/intermediates/ndkBuild/debug/obj/local/armeabi-v7a/libnative-lib.so /data/local/tmp/
-  - adb push app/build/intermediates/ndkBuild/debug/obj/local/armeabi-v7a/nativelib_unittest /data/local/tmp/
-  - adb shell chmod 775 /data/local/tmp/nativelib_unittest
-  - adb shell "LD_LIBRARY_PATH=/data/local/tmp /data/local/tmp/nativelib_unittest"
   - adb shell input keyevent 82 &
 notifications:
   slack:
