@@ -59,6 +59,10 @@ android {
         }
     }
 
+    adbOptions {
+        timeOutInMs 60 * 1000 * 10 
+    }
+
     lintOptions {
         abortOnError false        // true by default
         checkAllWarnings false
