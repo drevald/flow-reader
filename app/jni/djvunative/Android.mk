@@ -39,26 +39,4 @@ LOCAL_SRC_FILES := \
 
 include $(BUILD_SHARED_LIBRARY)
 
-include $(CLEAR_VARS)
-LOCAL_MODULE := nativelib_unittest
-LOCAL_SRC_FILES := nativelib_unittest.cpp
-
-LOCAL_C_INCLUDES := \
-		$(LOCAL_PATH)/../djvu/djvulibre \
-        $(LOCAL_PATH)/../libjpeg-version-9-android/libjpeg9 \
-		$(LOCAL_PATH)/.. \
-		$(LOCAL_PATH)/../lz4 \
-		$(LOCAL_PATH)/../pdfium/fpdfsdk/include  \
-		$(LOCAL_PATH)/../mupdf/include  \
-		$(LOCAL_PATH)/../boost/include \
-		$(CVROOT)/include
-
-
-LOCAL_SHARED_LIBRARIES := native-lib
-LOCAL_STATIC_LIBRARIES := googletest_main
-include $(BUILD_EXECUTABLE)
-
-$(call import-module,third_party/googletest)
-
-
 
