@@ -22,12 +22,8 @@ before_script:
   - emulator -avd myandroid22 -no-audio -no-window &
   - android-wait-for-emulator
   - adb devices
+  - adb push app/src/main/res/raw/pdf_sample.pdf /data/local/tmp/
   - adb shell input keyevent 82 &
-after_success:
-  - adb push /home/travis/build/Oudun/flow-reader/app/build/intermediates/ndkBuild/debug/obj/local/armeabi-v7a/libnative-lib.so /data/local/tmp/ 
-  - adb push /home/travis/build/Oudun/flow-reader/app/build/intermediates/ndkBuild/debug/obj/local/armeabi-v7a/nativelib_unittest /data/local/tmp/ 
-  - adb shell chmod 775 /data/local/tmp/nativelib_unittest 
-  - adb shell "LD_LIBRARY_PATH=/data/local/tmp /data/local/tmp/nativelib_unittest" 
 
 notifications:
   slack:
