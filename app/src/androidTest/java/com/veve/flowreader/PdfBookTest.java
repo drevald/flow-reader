@@ -3,13 +3,9 @@ package com.veve.flowreader;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.util.Log;
 
-import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.PageGlyph;
-import com.veve.flowreader.model.impl.pdf.PdfBook;
 import com.veve.flowreader.model.impl.pdf.PdfBookSource;
-
 
 import org.junit.Assert;
 import org.junit.Test;
