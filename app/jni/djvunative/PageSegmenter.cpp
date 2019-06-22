@@ -118,11 +118,24 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
         for (int j = 0; j < k; j++) {
             int ind = indices[i][j];
             double_pair nb = center_list[ind];
-            if (get<0>(nb) - get<0>(p) != 0) {
+            if (get<0>(nb) - get<0>(p) > 0) {
                 double dist = ((get<1>(nb) - get<1>(p)) * (get<1>(nb) - get<1>(p))) /
                               (get<0>(nb) - get<0>(p)) + (get<0>(nb) - get<0>(p));
-                if (dist < mindist && get<0>(nb) > get<0>(p) &&
-                    abs((get<1>(nb) - get<1>(p))) < 3. / 4. * average_height) {
+
+                bool nb_inside_limits = abs((get<1>(nb) - get<1>(p))) < 3. / 4. * average_height;
+
+                cv::Rect nb_rect = rd.at(nb);
+                cv::Rect p_rect = rd.at(p);
+
+                int y1 = nb_rect.y;
+                int y2 = nb_rect.y + nb_rect.height;
+
+                int yp1 = p_rect.y;
+                int yp2 = p_rect.y + p_rect.height;
+
+                nb_inside_limits = (y1 >= yp1 && y1 <= yp2 || y2 >= yp1 && y2 <= yp2  || yp1 >= y1 && yp1 <= y2 || yp2 >= y1 && yp2 <= y2);
+
+                if (dist < mindist && get<0>(nb) > get<0>(p) && nb_inside_limits) {
                     mindist = dist;
                     right_nb = make_tuple(get<0>(nb), get<1>(nb));
                     found_neighbor = true;
