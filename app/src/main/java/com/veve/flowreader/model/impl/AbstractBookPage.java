@@ -44,12 +44,13 @@ public abstract class AbstractBookPage implements BookPage {
 
         List<PageGlyph> pageGlyphs = new ArrayList<>();
 
+        Bitmap bitmap;
         for (PageGlyphInfo pageGlyphInfo :pageGlyphInfos) {
             int x = pageGlyphInfo.getX();
             int y = pageGlyphInfo.getY();
             int w = pageGlyphInfo.getWidth();
             int h = pageGlyphInfo.getHeight();
-            Bitmap bitmap = Bitmap.createBitmap(bm,x,y,w,h);
+            bitmap = Bitmap.createBitmap(bm,x,y,w,h);
             PageGlyph pg = new PageGlyphImpl(bitmap, pageGlyphInfo);
             pageGlyphs.add(pg);
         }
