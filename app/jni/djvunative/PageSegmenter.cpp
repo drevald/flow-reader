@@ -118,24 +118,11 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
         for (int j = 0; j < k; j++) {
             int ind = indices[i][j];
             double_pair nb = center_list[ind];
-            if (get<0>(nb) - get<0>(p) > 0) {
+            if (get<0>(nb) - get<0>(p) != 0) {
                 double dist = ((get<1>(nb) - get<1>(p)) * (get<1>(nb) - get<1>(p))) /
                               (get<0>(nb) - get<0>(p)) + (get<0>(nb) - get<0>(p));
-
-                bool nb_inside_limits = abs((get<1>(nb) - get<1>(p))) < 3. / 4. * average_height;
-
-                cv::Rect nb_rect = rd.at(nb);
-                cv::Rect p_rect = rd.at(p);
-
-                int y1 = nb_rect.y;
-                int y2 = nb_rect.y + nb_rect.height;
-
-                int yp1 = p_rect.y;
-                int yp2 = p_rect.y + p_rect.height;
-
-                nb_inside_limits = (y1 >= yp1 && y1 <= yp2 || y2 >= yp1 && y2 <= yp2  || yp1 >= y1 && yp1 <= y2 || yp2 >= y1 && yp2 <= y2);
-
-                if (dist < mindist && get<0>(nb) > get<0>(p) && nb_inside_limits) {
+                if (dist < mindist && get<0>(nb) > get<0>(p) &&
+                    abs((get<1>(nb) - get<1>(p))) < 3. / 4. * average_height) {
                     mindist = dist;
                     right_nb = make_tuple(get<0>(nb), get<1>(nb));
                     found_neighbor = true;
@@ -331,20 +318,20 @@ vector<glyph> PageSegmenter::get_glyphs() {
         vector<line_limit> line_limits = get_line_limits();
         sort(line_limits.begin(), line_limits.end(), SortLineLimits());
 
-        Mat vertHist;
-        reduce(gray_inverted_image, vertHist, 1, REDUCE_SUM, CV_32F);
+        Mat hist;
+        reduce(gray_inverted_image, hist, 0, REDUCE_SUM, CV_32F);
 
-        int h = vertHist.rows;
+        int w =hist.cols;
 
-        for (int i = 0; i < h; i++) {
-            if (vertHist.at<float>(i, 0) > 0) {
-                vertHist.at<float>(i, 0) = 1;
+        for (int i = 0; i < w; i++) {
+            if (hist.at<float>(0, i) > 0) {
+                hist.at<float>(0, i) = 1;
             } else {
-                vertHist.at<float>(i, 0) = 0;
+                hist.at<float>(0, i) = 0;
             }
         }
 
-        std::vector<std::tuple<int,int>> zeroRuns = zero_runs(vertHist);
+        std::vector<std::tuple<int,int>> zeroRuns = zero_runs_hor(hist);
 
         int leftIndent = 0;
         if (zeroRuns.size() >0){
@@ -388,6 +375,9 @@ vector<glyph> PageSegmenter::get_glyphs() {
                 glyph g;
 
                 if (c == 0 && (left - leftIndent) > 10) {
+                    char msg[50];
+                    sprintf(msg, "left leftIndent %d %d\n", left, leftIndent);
+                    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "%s\n", msg);
                     g.indented = true;
                 } else {
                     g.indented = false;

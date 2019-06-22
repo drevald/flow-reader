@@ -68,6 +68,8 @@ std::vector<std::tuple<int, int>> one_runs(const Mat& hist);
 
 std::vector<std::tuple<int, int>> one_runs_vert(const Mat &hist);
 
+std::vector<std::tuple<int,int>> zero_runs_hor(const cv::Mat& hist);
+
 float calcMHWScore(vector<int> scores);
 
 bool well_formed_page(Mat& image);

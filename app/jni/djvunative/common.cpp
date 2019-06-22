@@ -84,6 +84,25 @@ std::vector<std::tuple<int, int>> one_runs_vert(const cv::Mat &hist) {
     return return_value;
 }
 
+std::vector<std::tuple<int,int>> zero_runs_hor(const cv::Mat& hist) {
+    int w = hist.cols;
+
+    vector<std::tuple<int, int>> return_value;
+
+    int pos = 0;
+    for (int i = 0; i < w; i++) {
+        if ((i == 0 && hist.at<float>(0, i) == 0) ||
+            (i > 0 && hist.at<float>(0, i) == 0 && hist.at<float>(0,i - 1) == 1)) {
+            pos = i;
+        }
+
+        if ((i == w - 1 && hist.at<float>(0,i) == 0) ||
+            (i < w - 1 && hist.at<float>(0,i) == 0 && hist.at<float>(0,i + 1) == 1)) {
+            return_value.push_back(make_tuple(pos, i));
+        }
+    }
+    return return_value;
+}
 
 std::vector<std::tuple<int,int>> zero_runs(const cv::Mat& hist) {
     int w = hist.rows;
@@ -198,53 +217,13 @@ bool build_well_formed_page(cv::Mat& image, Mat& gray_inverted_image) {
     std::vector<segment> normal_objects;
 
     for (segment s : segments) {
-        if (s.height > mean + 3*stdev) {
+        if (s.height > mean + 6*stdev) {
             high_objects.push_back(s);
-        } else {
-            filtered_heights.push_back(s.height);
-            normal_objects.push_back(s);
         }
     }
 
-    double sum1 = std::accumulate(filtered_heights.begin(), filtered_heights.end(), 0.0);
-    double mean1 = sum1 / filtered_heights.size();
-
-    double sq_sum1 = std::inner_product(filtered_heights.begin(), filtered_heights.end(), filtered_heights.begin(), 0.0);
-    double stdev1 = std::sqrt(sq_sum1 / filtered_heights.size() - mean1 * mean1);
-
-    auto mx1 = std::max_element(filtered_heights.begin(), filtered_heights.end());
-
-    if (mx1 == filtered_heights.end()) {
-        return false;
-    }
-
-    std::vector<segment> filtered_high_objects;
-
-    for (segment s : normal_objects) {
-        if (s.height > mean1 + 3*stdev1) {
-            filtered_high_objects.push_back(s);
-        }
-    }
-
-    char msg[30];
-    sprintf(msg, "mean stdev max %f %f %f\n", mean1, stdev1, *mx1);
-
-    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "%s\n", msg);
-
-    if (mean1 + 1.5*stdev1 < *mx1 ) {
-        if (filtered_high_objects.size() > 0) {
-            std::vector<segment> filtered_high_objects;
-            for (segment s : segments) {
-                if (s.height > mean1 + 3*stdev1) {
-                    filtered_high_objects.push_back(s);
-                }
-            }
-            filter_gray_inverted_image(filtered_high_objects, image.cols, image.rows, gray_inverted_image);
-        }
-        return true;
-
-    }
-    return false;
+    filter_gray_inverted_image(high_objects, image.cols, image.rows, gray_inverted_image);
+    return true;
 
 
 }
