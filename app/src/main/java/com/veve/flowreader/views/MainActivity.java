@@ -2,6 +2,7 @@ package com.veve.flowreader.views;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
@@ -52,6 +53,39 @@ public class MainActivity extends AppCompatActivity {
         bookListAdapter.notifyDataSetChanged();
         bookGridAdapter.notifyDataSetChanged();
     }
+
+//    @Override
+//    protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        setContentView(R.layout.activity_grid_view);
+//        GridView gridView = findViewById(R.id.gridview);
+//        gridView.setAdapter(new BaseAdapter() {
+//            @Override
+//            public int getCount() {
+//                return 28;
+//            }
+//
+//            @Override
+//            public Object getItem(int position) {
+//                return null;
+//            }
+//
+//            @Override
+//            public long getItemId(int position) {
+//                return 0;
+//            }
+//
+//            @Override
+//            public View getView(int position, View convertView, ViewGroup parent) {
+//                View view = getLayoutInflater().inflate(R.layout.book_preview, parent, false);
+//
+////                TextView view = new TextView(getApplicationContext());
+////                view.setText("#" + position);
+//                return view;
+//            }
+//        });
+//
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,8 +148,13 @@ public class MainActivity extends AppCompatActivity {
         gridView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
+                int bookThumbPx = (int) (Constants.BOOK_THUMB_WIDTH
+                        * Resources.getSystem().getDisplayMetrics().density);
+                int bookThumbPaddingPx = (int) (Constants.BOOK_THUMB_HOR_PADDING
+                        * Resources.getSystem().getDisplayMetrics().density);
                 columnsNumber = (int) (gridView.getWidth()/
-                        (Constants.BOOK_THUMB_WIDTH + 2 * Constants.BOOK_THUMB_HOR_PADDING));
+                        (bookThumbPx + 2 * bookThumbPaddingPx));
+                gridView.setMinimumWidth(columnsNumber * (bookThumbPx + 2 * bookThumbPaddingPx));
                 if(preferences.getInt(Constants.VIEW_TYPE, Constants.LIST_VIEW_TYPE) == Constants.LIST_VIEW_TYPE){
                     gridView.setNumColumns(1);
                 } else {
@@ -174,11 +213,8 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
-
-
 
 ///////////////////////   ADAPTERS   ///////////////////////////////////////////////////////////////
 
@@ -285,16 +321,9 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup container) {
-            if (convertView == null) {
-                convertView = getLayoutInflater().inflate(R.layout.items_list, container, false);
-            }
-            //convertView = getLayoutInflater().inflate(R.layout.book_preview, container, false);
-            //TextView textView = convertView.findViewById(R.id.book);
-            TextView textView = new TextView(getApplicationContext());
+            convertView = getLayoutInflater().inflate(R.layout.book_preview, container, false);
+            TextView textView = convertView.findViewById(R.id.cell);
             textView.setText(booksList.get(position).getName());
-            textView.setTextSize(12);
-            textView.setTextColor(Color.CYAN);
-            textView.setBackgroundColor(Color.YELLOW);
             return textView;
         }
 
@@ -307,6 +336,35 @@ public class MainActivity extends AppCompatActivity {
         public boolean equals(Object object) {
             return true;
         }
+
+//        @Override
+//        public int getCount() {
+//            return 28;
+//        }
+//
+//        @Override
+//        public Object getItem(int position) {
+//            return null;
+//        }
+//
+//        @Override
+//        public long getItemId(int position) {
+//            return 0;
+//        }
+//
+//        @Override
+//        public View getView(int position, View convertView, ViewGroup parent) {
+//            View view = getLayoutInflater().inflate(R.layout.book_preview, parent, false);
+//
+////                TextView view = new TextView(getApplicationContext());
+////                view.setText("#" + position);
+//            return view;
+//        }
+//
+//        public void removeBook(long bookId) {
+//
+//        }
+
 
     }
 
