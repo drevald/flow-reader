@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/cell"
+    <ImageView
         android:layout_width="100dp"
         android:layout_height="160dp"
-        android:background="@color/colorPrimary"
-        android:textColor="#eeeeee"
-        android:textAlignment="center"
-        android:textStyle="bold"
-        android:textSize="24dp"
-        android:text="OK"/>
+        android:background="@color/colorPrimary"/>
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    <TextView
         android:id="@+id/caption"
         android:layout_width="100dp"
-        android:layout_height="30dp" />
+        android:layout_height="70dp"
+        android:textSize="12sp"
+        android:textColor="#333333"
+        android:textAlignment="center"/>
 
 </LinearLayout>
 

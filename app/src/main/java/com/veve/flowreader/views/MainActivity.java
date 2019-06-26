@@ -322,9 +322,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup container) {
             convertView = getLayoutInflater().inflate(R.layout.book_preview, container, false);
-            TextView textView = convertView.findViewById(R.id.cell);
+            TextView textView = convertView.findViewById(R.id.caption);
             textView.setText(booksList.get(position).getName());
-            return textView;
+            return convertView;
         }
 
         @Override
@@ -336,35 +336,6 @@ public class MainActivity extends AppCompatActivity {
         public boolean equals(Object object) {
             return true;
         }
-
-//        @Override
-//        public int getCount() {
-//            return 28;
-//        }
-//
-//        @Override
-//        public Object getItem(int position) {
-//            return null;
-//        }
-//
-//        @Override
-//        public long getItemId(int position) {
-//            return 0;
-//        }
-//
-//        @Override
-//        public View getView(int position, View convertView, ViewGroup parent) {
-//            View view = getLayoutInflater().inflate(R.layout.book_preview, parent, false);
-//
-////                TextView view = new TextView(getApplicationContext());
-////                view.setText("#" + position);
-//            return view;
-//        }
-//
-//        public void removeBook(long bookId) {
-//
-//        }
-
 
     }
 
