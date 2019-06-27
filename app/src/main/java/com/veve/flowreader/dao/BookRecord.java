@@ -18,6 +18,11 @@ public class BookRecord {
     private Integer pagesCount;
     private String name;
     private String url;
+    private float zoom;
+    private float kerning;
+    private float leading;
+    private float margin;
+    private byte[] preview;
 
     public BookRecord() {
         this(null, 0, 0, null, null);
@@ -30,6 +35,46 @@ public class BookRecord {
         this.pagesCount = pagesCount;
         this.name = name;
         this.url = url;
+    }
+
+    public float getZoom() {
+        return zoom;
+    }
+
+    public void setZoom(float zoom) {
+        this.zoom = zoom;
+    }
+
+    public float getKerning() {
+        return kerning;
+    }
+
+    public void setKerning(float kerning) {
+        this.kerning = kerning;
+    }
+
+    public float getLeading() {
+        return leading;
+    }
+
+    public void setLeading(float leading) {
+        this.leading = leading;
+    }
+
+    public float getMargin() {
+        return margin;
+    }
+
+    public void setMargin(float margin) {
+        this.margin = margin;
+    }
+
+    public byte[] getPreview() {
+        return preview;
+    }
+
+    public void setPreview(byte[] preview) {
+        this.preview = preview;
     }
 
     public Integer getCurrentPage() {

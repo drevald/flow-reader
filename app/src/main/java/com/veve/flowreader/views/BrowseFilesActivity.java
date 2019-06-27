@@ -238,6 +238,7 @@ public class BrowseFilesActivity extends AppCompatActivity {
                         BookRecord newBook = BookFactory.getInstance().createBook(file);
                         newBook.setCurrentPage(0);
                         newBook.setUrl(file.getAbsolutePath());
+                        newBook.setName(file.getName());
                         BooksCollection.getInstance(getApplicationContext()).addBook(newBook);
                         Intent ii = new Intent(BrowseFilesActivity.this, MainActivity.class);
                         startActivity(ii);
@@ -264,7 +265,6 @@ public class BrowseFilesActivity extends AppCompatActivity {
 
     public void browseInternalMemory(View view) {
         fileListAdapter.setRoot(Environment.getExternalStorageDirectory().getAbsolutePath());
-        fileListAdapter.setRoot("/storage/emulated/0/");
         fileListAdapter.notifyDataSetChanged();
     }
 

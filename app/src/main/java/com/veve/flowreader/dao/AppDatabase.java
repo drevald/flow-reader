@@ -28,7 +28,6 @@ public abstract class AppDatabase extends RoomDatabase {
             appDatabase = Room.databaseBuilder(context, AppDatabase.class, DATABASE_NAME).build();
             if (!databasePresent) {
                 DaoAccess daoAccess = appDatabase.daoAccess();
-
             }
         }
         return appDatabase;
