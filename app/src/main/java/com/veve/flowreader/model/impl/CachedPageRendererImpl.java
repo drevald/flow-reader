@@ -73,7 +73,7 @@ public class CachedPageRendererImpl implements PageRenderer {
                 pageGlyph.draw(context, false);
             }
 
-            Log.d(getClass().getName(), "3");
+            Log.d(getClass().getName(), "Measuring: Remotest point is X:" + context.getRemotestPoint().x + " Y" + context.getRemotestPoint().y + " Baseline: " + context.getCurrentBaseLine() ) ;
 
             context.setCurrentBaseLine(0);
             Point remotestPoint = context.getRemotestPoint();
@@ -95,7 +95,10 @@ public class CachedPageRendererImpl implements PageRenderer {
                 pageGlyph.draw(context, true);
             }
 
+            Log.d(getClass().getName(), "Drawing: Remotest point is X:" + context.getRemotestPoint().x + " Y" + context.getRemotestPoint().y + " Baseline: " + context.getCurrentBaseLine() ) ;
+
             context.resetPosition();
+            context.setCurrentBaseLine(0);
             context.setCanvas(canvas);
             return bitmap;
         }

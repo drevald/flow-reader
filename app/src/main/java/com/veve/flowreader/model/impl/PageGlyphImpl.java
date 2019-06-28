@@ -104,6 +104,12 @@ public class PageGlyphImpl implements PageGlyph {
         context.getRemotestPoint().set(startPoint.x + __dstRect.width()
                 + (int)(context.getKerning()* context.getZoom()), startPoint.y + __dstRect.height());
 
+        Log.v(getClass().getName(), String.format("context.getStartPoint().set(%d + %d + (int)(%f* %f), %d);",
+                startPoint.x, __dstRect.width(), context.getKerning(), context.getZoom(), startPoint.y));
+
+        Log.v(getClass().getName(), String.format("context.getRemotestPoint().set(%d + %d + (int)(%f* %f), %d + %d);",
+                startPoint.x, __dstRect.width(), context.getKerning(), context.getZoom(), startPoint.y, __dstRect.height()));
+
         context.setCurrentBaseLine(currentBaseline);
 
         //bitmap = null;
