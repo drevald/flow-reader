@@ -340,11 +340,13 @@ public class PageActivity extends AppCompatActivity {
                 show.setImageResource(R.drawable.ic_phone);
                 Snackbar.make(view, getString(R.string.ui_reflow_page), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                Log.d(getClass().getName(), String.format("Setting page #%d for modified page", currentPage));
             } else if (viewMode == VIEW_MODE_PHONE) {
                 viewMode = VIEW_MODE_ORIGINAL;
                 show.setImageResource(R.drawable.ic_book);
                 Snackbar.make(view, getString(R.string.ui_original_page), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                Log.d(getClass().getName(), String.format("Setting page #%d for original page", currentPage));
             }
             pageActivity.setPageNumber(currentPage);
         }
@@ -430,8 +432,10 @@ public class PageActivity extends AppCompatActivity {
 
             if (viewMode == Constants.VIEW_MODE_PHONE) {
                 bitmap = pageRenderer.renderPage(context, pageNumber);
+                Log.v(getClass().getName(), String.format("pageRenderer.renderPage(context, %d)", pageNumber));
             } else {
                 bitmap = pageRenderer.renderOriginalPage(context, pageNumber);
+                Log.v(getClass().getName(), String.format("pageRenderer.renderOriginalPage(context, %d)", pageNumber));
             }
 
             Log.d(getClass().getName(), String.format("Result bytes %d", bitmap.getByteCount()));

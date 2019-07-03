@@ -43,7 +43,6 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="none"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context="com.veve.flowreader.views.MainActivity"
         tools:showIn="@layout/activity_main">
@@ -58,6 +57,9 @@
             android:padding="40dp"
             android:horizontalSpacing="20dp"
             android:verticalSpacing="20dp"
+            android:scrollbars="none"
+            android:scrollbarThumbVertical="@null"
+            android:scrollbarThumbHorizontal="@null"
             tools:context="org.studies.android.activities.GridLayoutActivity"/>
 
     </android.support.constraint.ConstraintLayout>

@@ -28,6 +28,8 @@ public class CachedPageRendererImpl implements PageRenderer {
 
     int currentPage;
 
+    int currentOriginalPage;
+
     List<PageGlyph> glyphs;
 
     public CachedPageRendererImpl(BookSource bookSource) {
@@ -37,48 +39,46 @@ public class CachedPageRendererImpl implements PageRenderer {
 
     private List<PageGlyph> getGlyphs(BookSource bookSource, int position) {
         if (position != currentPage || glyphs == null || glyphs.size() == 0) {
+            Log.v(getClass().getName(), "Glyphs not cached current = " + currentPage + " requested = " + position);
             currentPage = position;
             long start = System.currentTimeMillis();
             glyphs = pageLayoutParser.getGlyphs(bookSource, position);
             Log.v(getClass().getName(),
                     String.format("Getting glyphs for page #%d took #d milliseconds",
                     position, System.currentTimeMillis() - start));
+        } else {
+            Log.v(getClass().getName(), "Glyphs cached current = " + currentPage + " requested = " + position);
         }
         return glyphs;
     }
 
     private Bitmap getOriginalPageBitmap(int position) {
-        if (position != currentPage || originalBitmap == null) {
-            currentPage = position;
+        if (position != currentOriginalPage || originalBitmap == null) {
+            Log.v(getClass().getName(), "Page not cached current = " + currentOriginalPage + " requested = " + position);
+            currentOriginalPage = position;
             long start = System.currentTimeMillis();
             originalBitmap = bookSource.getPageBytes(position);
             Log.v(getClass().getName(), String.format("Getting page #%d took #d milliseconds",
                     position, System.currentTimeMillis() - start));
+        } else {
+            Log.v(getClass().getName(), "Page cached current = " + currentOriginalPage + " requested = " + position);
         }
         return originalBitmap;
     }
 
     @Override
     public Bitmap renderPage(DevicePageContext context, int position) {
-        Log.d(getClass().getName(), "1");
-
         Log.i(getClass().getName(), String.format("position=%d", position));
         List<PageGlyph> pageGlyphList = getGlyphs(bookSource, position);
 
         if (pageGlyphList.size() <= 1) {
             return renderOriginalPage(context, position);
         } else {
-            Log.d(getClass().getName(),"2");
-
             for(PageGlyph pageGlyph : pageGlyphList) {
                 pageGlyph.draw(context, false);
             }
-
-            Log.d(getClass().getName(), "Measuring: Remotest point is X:" + context.getRemotestPoint().x + " Y" + context.getRemotestPoint().y + " Baseline: " + context.getCurrentBaseLine() ) ;
-
             context.setCurrentBaseLine(0);
             Point remotestPoint = context.getRemotestPoint();
-            Log.i(getClass().getName(), String.format("w=%d h=%d, position=%d", context.getWidth(), remotestPoint.y, position));
             Bitmap bitmap = Bitmap.createBitmap(context.getWidth(), remotestPoint.y + (int)context.getLeading() , ARGB_8888);
 
             Canvas canvas = new Canvas(bitmap);

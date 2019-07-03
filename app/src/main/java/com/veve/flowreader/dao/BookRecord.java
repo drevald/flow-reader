@@ -4,6 +4,8 @@ package com.veve.flowreader.dao;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 /**
  * Created by ddreval on 4/3/2018.
@@ -21,6 +23,8 @@ public class BookRecord {
     private float zoom;
     private float kerning;
     private float leading;
+
+    @NonNull()
     private float margin;
     private byte[] preview;
 
