@@ -86,8 +86,8 @@ public class CachedPageRendererImpl implements PageRenderer {
 
             Paint paint1 = new Paint();
             paint1.setStyle(Paint.Style.STROKE);
-            paint1.setColor(Color.BLUE);
-            paint1.setStrokeWidth(25);
+            paint1.setColor(Color.RED);
+            paint1.setStrokeWidth(2);
 
             canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), paint1);
 
