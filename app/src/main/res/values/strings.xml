@@ -14,5 +14,5 @@
     <string name="ui_narrow_margins">Narrow margins</string>
     <string name="ui_normal_margins">Normal margins</string>
     <string name="ui_wide_margins">Wide margins</string>
-    <string name="title_activity_main2">Main2Activity</string>
+    <string name="could_not_zoom_more">Could not zoom more</string>
 </resources>

@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.util.Log;
 
+import com.veve.flowreader.Constants;
 import com.veve.flowreader.model.BookSource;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyph;
@@ -89,7 +90,8 @@ public class CachedPageRendererImpl implements PageRenderer {
             paint1.setColor(Color.RED);
             paint1.setStrokeWidth(2);
 
-            canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), paint1);
+            if (Constants.DEBUG)
+                canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), paint1);
 
             for(PageGlyph pageGlyph : pageGlyphList) {
                 pageGlyph.draw(context, true);

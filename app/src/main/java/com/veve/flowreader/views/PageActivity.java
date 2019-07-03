@@ -44,6 +44,7 @@ import java.util.Set;
 
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
+import static com.veve.flowreader.Constants.MAX_BITMAP_SIZE;
 import static com.veve.flowreader.Constants.VIEW_MODE_ORIGINAL;
 import static com.veve.flowreader.Constants.VIEW_MODE_PHONE;
 
@@ -425,33 +426,38 @@ public class PageActivity extends AppCompatActivity {
 
             Bitmap bitmap;
 
+            Log.d(getClass().getName(), String.format("Getting bitmap for zoom = %f", context.getZoom()));
+
             if (viewMode == Constants.VIEW_MODE_PHONE) {
                 bitmap = pageRenderer.renderPage(context, pageNumber);
             } else {
                 bitmap = pageRenderer.renderOriginalPage(context, pageNumber);
             }
 
+            Log.d(getClass().getName(), String.format("Result bytes %d", bitmap.getByteCount()));
+            Log.d(getClass().getName(), String.format("Result allocated bytes %d", bitmap.getAllocationByteCount()));
+            Log.d(getClass().getName(), String.format("Result bitmap size %d x %d x %d", bitmap.getWidth(), bitmap.getHeight(),16));
+            Log.d(getClass().getName(), String.format("Canvas max bitmap size is %d x %d", context.getCanvas().getMaximumBitmapWidth(), context.getCanvas().getMaximumBitmapHeight()));
+
             int bitmapHeight = bitmap.getHeight();
 
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (bitmap.getWidth() >= context.getWidth()) {
+                    if (bitmap.getByteCount() > MAX_BITMAP_SIZE) {
+                        Snackbar.make(topLayout, getString(R.string.could_not_zoom_more),
+                                Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                        context.setZoom(context.getZoom()*0.8f);
+                    } else if (bitmap.getWidth() >= context.getWidth()) {
                         page.removeAllViews();        // UI code goes here
                         for (int offset = 0; offset < bitmapHeight; offset += IMAGE_VIEW_HEIGHT_LIMIT) {
-                           /* int height = Math.min(bitmapHeight, offset + IMAGE_VIEW_HEIGHT_LIMIT);
-                            Log.d(getClass().getName(),
-                                    String.format(" Bitmap.createBitmap(bitmap, 0, %d, %d, %d)",
-                                            offset, context.getWidth(), height - offset));
-                            Log.d(getClass().getName(),
-                                    String.format("bitmap size is width : %d height :%d",
-                                            bitmap.getWidth(), bitmap.getHeight()));
-                            Bitmap limitedBitmap = Bitmap.createBitmap(bitmap, 0, offset, context.getWidth(),
-                                    height - offset);*/
+                            Log.d(getClass().getName(), "Before image creation");
                             ImageView imageView = new ImageView(getApplicationContext());
                             imageView.setScaleType(ImageView.ScaleType.FIT_START);
                             imageView.setImageBitmap(bitmap);
+                            Log.d(getClass().getName(), "Image creation");
                             page.addView(imageView);
+                            Log.d(getClass().getName(), "After image creation");
                         }
                         Log.v(getClass().getName(), "End setting bitmap");
                     }
@@ -459,12 +465,7 @@ public class PageActivity extends AppCompatActivity {
                     progressBar.setVisibility(INVISIBLE);
                 }
             });
-
             return null;
-
         }
-
     }
-
-
 }

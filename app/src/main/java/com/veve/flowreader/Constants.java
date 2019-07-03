@@ -19,6 +19,9 @@ public interface Constants {
     public static final int LIST_VIEW_TYPE = 0;
     public static final int GRID_VIEW_TYPE = 1;
 
+    public static final boolean DEBUG = false;
+
+    public static final int MAX_BITMAP_SIZE = 100 * 1024 * 1024; // 100 MB
 
     public static final String BOOK_ID = "BOOK_ID";
 
