@@ -1,7 +1,7 @@
 language: android
 android:
   components:
-  - android-22
+  - android-24
   - android-26
   - build-tools-26.0.2
   - sys-img-armeabi-v7a-android-24
