@@ -128,6 +128,10 @@ public class PageActivity extends AppCompatActivity {
 
         Display display = getWindowManager().getDefaultDisplay();
         context = new DevicePageContextImpl(display.getWidth());
+        context.setZoom(book.getZoom());
+        context.setKerning(book.getKerning());
+        context.setLeading(book.getLeading());
+        context.setMargin(book.getMargin());
 
         pageActivity = this;
         setPageNumber(currentPage);
@@ -142,18 +146,22 @@ public class PageActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.no_margins: {
                 context.setMargin(0);
+                book.setMargin(0);
                 break;
             }
             case R.id.narrow_margins: {
                 context.setMargin(25);
+                book.setMargin(25);
                 break;
             }
             case R.id.normal_margins: {
                 context.setMargin(50);
+                book.setMargin(50);
                 break;
             }
             case R.id.wide_margins: {
                 context.setMargin(100);
+                book.setMargin(100);
                 break;
             }
             case R.id.opencv_parser: {
@@ -360,31 +368,37 @@ public class PageActivity extends AppCompatActivity {
                 case R.id.smaller_text: {
                     context.setZoom(0.8f * context.getZoom());
                     Log.v(getClass().getName(), "Zoom set to " + context.getZoom());
+                    book.setZoom(context.getZoom());
                     break;
                 }
                 case R.id.larger_text: {
                     context.setZoom(1.25f * context.getZoom());
                     Log.v(getClass().getName(), "Zoom set to " + context.getZoom());
+                    book.setZoom(context.getZoom());
                     break;
                 }
                 case R.id.smaller_kerning: {
                     context.setKerning(0.8f * context.getKerning());
                     Log.v(getClass().getName(), "Kerning set to " + context.getKerning());
+                    book.setKerning(context.getKerning());
                     break;
                 }
                 case R.id.larger_kerning: {
                     context.setKerning(1.25f * context.getKerning());
                     Log.v(getClass().getName(), "Kerning set to " + context.getKerning());
+                    book.setKerning(context.getKerning());
                     break;
                 }
                 case R.id.smaller_leading: {
                     context.setLeading(0.8f * context.getLeading());
                     Log.v(getClass().getName(), "Leading set to " + context.getLeading());
+                    book.setLeading(context.getLeading());
                     break;
                 }
                 case R.id.larger_leading: {
                     context.setLeading(1.25f * context.getLeading());
                     Log.v(getClass().getName(), "Leading set to " + context.getLeading());
+                    book.setLeading(context.getLeading());
                     break;
                 }
             }
@@ -439,9 +453,6 @@ public class PageActivity extends AppCompatActivity {
             }
 
             Log.d(getClass().getName(), String.format("Result bytes %d", bitmap.getByteCount()));
-            Log.d(getClass().getName(), String.format("Result allocated bytes %d", bitmap.getAllocationByteCount()));
-            Log.d(getClass().getName(), String.format("Result bitmap size %d x %d x %d", bitmap.getWidth(), bitmap.getHeight(),16));
-            Log.d(getClass().getName(), String.format("Canvas max bitmap size is %d x %d", context.getCanvas().getMaximumBitmapWidth(), context.getCanvas().getMaximumBitmapHeight()));
 
             int bitmapHeight = bitmap.getHeight();
 
@@ -452,6 +463,8 @@ public class PageActivity extends AppCompatActivity {
                         Snackbar.make(topLayout, getString(R.string.could_not_zoom_more),
                                 Snackbar.LENGTH_LONG).setAction("Action", null).show();
                         context.setZoom(context.getZoom()*0.8f);
+                        book.setZoom(context.getZoom());
+                        booksCollection.updateBook(book);
                     } else if (bitmap.getWidth() >= context.getWidth()) {
                         page.removeAllViews();        // UI code goes here
                         for (int offset = 0; offset < bitmapHeight; offset += IMAGE_VIEW_HEIGHT_LIMIT) {

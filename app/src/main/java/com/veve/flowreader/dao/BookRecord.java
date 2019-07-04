@@ -20,12 +20,10 @@ public class BookRecord {
     private Integer pagesCount;
     private String name;
     private String url;
-    private float zoom;
-    private float kerning;
-    private float leading;
-
-    @NonNull()
-    private float margin;
+    private float zoom = 1f;
+    private float kerning = 0.5f;
+    private float leading = 12f;
+    private int margin = 25;
     private byte[] preview;
 
     public BookRecord() {
@@ -65,11 +63,11 @@ public class BookRecord {
         this.leading = leading;
     }
 
-    public float getMargin() {
+    public int getMargin() {
         return margin;
     }
 
-    public void setMargin(float margin) {
+    public void setMargin(int margin) {
         this.margin = margin;
     }
 

@@ -15,7 +15,7 @@ BookRecord.class
 }, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
-    protected static final String DATABASE_NAME = "db";
+    protected static final String DATABASE_NAME = "db1";
 
     public abstract DaoAccess daoAccess();
 
