@@ -23,12 +23,12 @@ LOCAL_C_INCLUDES := \
 		$(CVROOT)/include
 
 
-LOCAL_STATIC_LIBRARIES := myview djvu libjpeg9 liblz4  libopencv_imgproc libopencv_imgcodecs libopencv_core flann cpufeatures libboost_system libboost_graph
+LOCAL_STATIC_LIBRARIES := myview djvu libjpeg9 liblz4  libopencv_imgproc libopencv_imgcodecs libopencv_core flann cpufeatures libboost_system libboost_graph c++_static
 
 
-LOCAL_CFLAGS += -DHAVE_CONFIG_H -std=c++11 -frtti -fexceptions -fopenmp -w -Ofast -DNDEBUG
-LOCAL_LDLIBS += -llog -lstdc++ -lz -L$(SYSROOT)/usr/lib
-LOCAL_LDFLAGS += -ldl -landroid -fopenmp
+LOCAL_CFLAGS += -DHAVE_CONFIG_H -frtti -fexceptions -fopenmp -w -Ofast -DNDEBUG -nostdlib++ 
+LOCAL_LDLIBS += -llog -lz -L$(SYSROOT)/usr/lib
+LOCAL_LDFLAGS += -ldl -landroid -fopenmp  
 
 LOCAL_C_INCLUDES += common.h pdf-lib.h ImageLoader.h PageSegmenter.h Enclosure.h
 
