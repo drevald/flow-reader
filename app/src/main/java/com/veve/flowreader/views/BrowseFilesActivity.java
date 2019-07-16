@@ -9,6 +9,7 @@ import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.renderscript.RenderScript;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -23,6 +24,7 @@ import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.veve.flowreader.Constants;
@@ -48,6 +50,14 @@ public class BrowseFilesActivity extends AppCompatActivity {
 
     FileListAdapter fileListAdapter;
 
+    private ProgressBar progress;
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        progress.setVisibility(View.INVISIBLE);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +67,8 @@ public class BrowseFilesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_browse_files);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        progress = findViewById(R.id.progress);
 
         //GET BACK BUTTON
         FloatingActionButton home = (FloatingActionButton) findViewById(R.id.home);
@@ -235,13 +247,7 @@ public class BrowseFilesActivity extends AppCompatActivity {
                         Snackbar.make(view, getString(R.string.ui_book_already_added),
                                 Snackbar.LENGTH_LONG).setAction("Action", null).show();
                     } else {
-                        BookRecord newBook = BookFactory.getInstance().createBook(file);
-                        newBook.setCurrentPage(0);
-                        newBook.setUrl(file.getAbsolutePath());
-                        newBook.setName(file.getName());
-                        BooksCollection.getInstance(getApplicationContext()).addBook(newBook);
-                        Intent ii = new Intent(BrowseFilesActivity.this, MainActivity.class);
-                        startActivity(ii);
+                        new BookCreatorTask().execute(file);
                     }
                 }
             } else if (!fileListAdapter.currentFiles.get(i).canRead()) {
@@ -256,7 +262,24 @@ public class BrowseFilesActivity extends AppCompatActivity {
     class BookCreatorTask extends AsyncTask<File, Void, Void> {
         @Override
         protected Void doInBackground(File... files) {
-
+            File file = files[0];
+            runOnUiThread(
+                    new Thread(new Runnable(){
+                        @Override
+                        public void run() {
+                            Log.v(getClass().getName(), "Setting progress bar visible - adding book");
+                            progress.setVisibility(View.VISIBLE);
+                        }
+                    })
+            );
+            Log.v(getClass().getName(), "Start parsing new book");
+            BookRecord newBook = BookFactory.getInstance().createBook(file);
+            newBook.setCurrentPage(0);
+            newBook.setUrl(file.getAbsolutePath());
+            newBook.setName(file.getName());
+            BooksCollection.getInstance(getApplicationContext()).addBook(newBook);
+            Intent ii = new Intent(BrowseFilesActivity.this, MainActivity.class);
+            startActivity(ii);
             return null;
         }
     }

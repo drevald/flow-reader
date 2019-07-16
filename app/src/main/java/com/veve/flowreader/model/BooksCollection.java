@@ -46,6 +46,18 @@ public class BooksCollection {
         }
     }
 
+    public BookRecord getBook(long id) {
+        BookGetterTask bookGetterTask = new BookGetterTask(daoAccess);
+        bookGetterTask.execute(id);
+        try {
+            return bookGetterTask.get();
+        } catch (Exception e) {
+            Log.e(getClass().getName(), e.getLocalizedMessage());
+            return null;
+        }
+    }
+
+
     public void deleteBook (long bookId) {
         new BookDeleteTask(daoAccess).execute(bookId);
     }
@@ -62,32 +74,21 @@ public class BooksCollection {
     }
 
     public long addBook (BookRecord bookRecord) {
-        BookAddTask bookAddTask = new BookAddTask(daoAccess);
-        bookAddTask.execute(bookRecord);
-        try {
-            return bookAddTask.get();
-        } catch (Exception e) {
-            Log.e(getClass().getName(), e.getLocalizedMessage());
-            return -1;
-        }
+//        BookAddTask bookAddTask = new BookAddTask(daoAccess);
+//        bookAddTask.execute(bookRecord);
+//        try {
+//            return bookAddTask.get();
+//        } catch (Exception e) {
+//            Log.e(getClass().getName(), e.getLocalizedMessage());
+//            return -1;
+//        }
+        return daoAccess.addBook(bookRecord);
     }
 
     public void updateBook(BookRecord bookRecord) {
         BookUpdateTask bookUpdateTask = new BookUpdateTask(daoAccess);
         bookUpdateTask.execute(bookRecord);
     }
-
-    public BookRecord getBook(long bookId) {
-        BookGetterTask bookGetterTask = new BookGetterTask(daoAccess);
-        bookGetterTask.execute(bookId);
-        try {
-            return bookGetterTask.get();
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-
 
 }
 
@@ -104,22 +105,6 @@ class BookUpdateTask extends AsyncTask<BookRecord, Void, Void> {
     @Override
     protected Void doInBackground(BookRecord... bookRecords) {
         daoAccess.updateBook(bookRecords[0]);
-        return null;
-    }
-
-}
-
-class BookGetterTask extends AsyncTask<Long, Void, BookRecord> {
-
-    private DaoAccess daoAccess;
-
-    public BookGetterTask(DaoAccess daoAccess) {
-        this.daoAccess = daoAccess;
-    }
-
-    @Override
-    protected BookRecord doInBackground(Long ... longs) {
-        daoAccess.getBook(longs[0]);
         return null;
     }
 
@@ -155,20 +140,35 @@ class BookAddTask extends AsyncTask<BookRecord, Void, Long> {
     }
 }
 
-class BooksGetterTask extends AsyncTask<Void, Void, List<BookRecord>> {
+    class BookGetterTask extends AsyncTask<Long, Void, BookRecord> {
 
-    private DaoAccess daoAccess;
+        private DaoAccess daoAccess;
 
-    BooksGetterTask(DaoAccess daoAccess) {
-        this.daoAccess = daoAccess;
+        BookGetterTask(DaoAccess daoAccess) {
+            this.daoAccess = daoAccess;
+        }
+
+        @Override
+        protected BookRecord doInBackground(Long ... ids) {
+            return daoAccess.getBook(ids[0]);
+        }
+
     }
 
-    @Override
-    protected List<BookRecord> doInBackground(Void... voids) {
-        return daoAccess.listBooks();
-    }
+    class BooksGetterTask extends AsyncTask<Void, Void, List<BookRecord>> {
 
-}
+        private DaoAccess daoAccess;
+
+        BooksGetterTask(DaoAccess daoAccess) {
+            this.daoAccess = daoAccess;
+        }
+
+        @Override
+        protected List<BookRecord> doInBackground(Void... voids) {
+            return daoAccess.listBooks();
+        }
+
+    }
 
     class BookCheckerTask extends AsyncTask<String, Void, Boolean> {
 

@@ -71,9 +71,7 @@ public class PageActivity extends AppCompatActivity {
     LinearLayout bottomBar;
     boolean barsVisible;
 
-
     final static int IMAGE_VIEW_HEIGHT_LIMIT = 8000;
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -82,6 +80,15 @@ public class PageActivity extends AppCompatActivity {
         MenuItem menuItem = menu.findItem(R.id.opencv_parser);
         menuItem.setChecked(true);
         return true;
+    }
+
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        int position = getIntent().getIntExtra("position", 0);
+        booksCollection = BooksCollection.getInstance(getApplicationContext());
+        book = booksCollection.getBook(position);
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -98,9 +105,10 @@ public class PageActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        int position = getIntent().getIntExtra("position", 0);
+        long bookId = getIntent().getLongExtra("bookId", 0);
         booksCollection = BooksCollection.getInstance(getApplicationContext());
-        book = booksCollection.getBooks().get(position);
+        book = booksCollection.getBook(bookId);
+
         pageRenderer = PageRendererFactory.getRenderer(book);
         currentPage = book.getCurrentPage();
 

@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent ii = new Intent(MainActivity.this, PageActivity.class);
                 BookRecord selectedBook = (BookRecord)parent.getItemAtPosition(position);
                 ii.putExtra("filename", selectedBook.getUrl());
-                ii.putExtra("position", position);
+                ii.putExtra("bookId", selectedBook.getId());
                 startActivity(ii);
             }
         });
@@ -230,11 +230,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public void removeBook(long bookId) {
+            BookRecord recordToRemove = null;
             for (BookRecord record : booksList) {
                 if (record.getId() == bookId) {
-                    booksList.remove(record);
+                    recordToRemove = record;
+                    break;
                 }
             }
+            booksList.remove(recordToRemove);
             notifyDataSetChanged();
         }
 
