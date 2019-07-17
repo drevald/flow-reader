@@ -1,7 +1,6 @@
 package com.veve.flowreader.views;
 
 import android.Manifest;
-import android.app.ListActivity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -9,7 +8,6 @@ import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.renderscript.RenderScript;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -20,7 +18,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
@@ -30,23 +27,16 @@ import android.widget.TextView;
 import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
 import com.veve.flowreader.dao.BookRecord;
-import com.veve.flowreader.model.Book;
 import com.veve.flowreader.model.BookFactory;
 import com.veve.flowreader.model.BooksCollection;
 
 import java.io.File;
-import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 public class BrowseFilesActivity extends AppCompatActivity {
-
-    private static final String INTERNAL_ROOT = "/";
-
-    private static final String EXTERNAL_ROOT = "/storage/sdcard1/";
 
     FileListAdapter fileListAdapter;
 
@@ -65,20 +55,17 @@ public class BrowseFilesActivity extends AppCompatActivity {
         requestPermissions();
 
         setContentView(R.layout.activity_browse_files);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         progress = findViewById(R.id.progress);
 
         //GET BACK BUTTON
-        FloatingActionButton home = (FloatingActionButton) findViewById(R.id.home);
-        home.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        FloatingActionButton home = findViewById(R.id.home);
+        home.setOnClickListener(view -> {
                 Intent i = new Intent(BrowseFilesActivity.this, MainActivity.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(i);
-            }
         });
 
 
@@ -229,7 +216,7 @@ public class BrowseFilesActivity extends AppCompatActivity {
 
         FileListAdapter fileListAdapter;
 
-        public FileListener(FileListAdapter fileListAdapter) {
+        FileListener(FileListAdapter fileListAdapter) {
             this.fileListAdapter = fileListAdapter;
         }
 

@@ -3,7 +3,6 @@ package com.veve.flowreader.views;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -14,7 +13,6 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
@@ -65,18 +63,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        Log.i("MainActivity", "Is toolbar visible" + getSupportActionBar().isShowing());
-
 
         ////////////    ADD BOOKS BUTTON     /////////////////////////////////////////////////////
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        fab.setOnClickListener(view -> {
                 Intent intentOne = new Intent(MainActivity.this, BrowseFilesActivity.class);
                 intentOne.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intentOne);
-            }
         });
 
         final GridView gridView = findViewById(R.id.grid);
@@ -99,32 +92,26 @@ public class MainActivity extends AppCompatActivity {
                             gridView.getAdapter()));
         }
 
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent ii = new Intent(MainActivity.this, PageActivity.class);
-                BookRecord selectedBook = (BookRecord)parent.getItemAtPosition(position);
-                ii.putExtra("filename", selectedBook.getUrl());
-                ii.putExtra("bookId", selectedBook.getId());
-                startActivity(ii);
-            }
+        gridView.setOnItemClickListener(
+            (AdapterView<?> parent, View view, int position, long id) -> {
+            Intent ii = new Intent(MainActivity.this, PageActivity.class);
+            BookRecord selectedBook = (BookRecord)parent.getItemAtPosition(position);
+            ii.putExtra("filename", selectedBook.getUrl());
+            ii.putExtra("bookId", selectedBook.getId());
+            startActivity(ii);
         });
 
-        gridView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                int bookThumbPx = (int) (Constants.BOOK_THUMB_WIDTH
-                        * Resources.getSystem().getDisplayMetrics().density);
-                int bookThumbPaddingPx = (int) (Constants.BOOK_THUMB_HOR_PADDING
-                        * Resources.getSystem().getDisplayMetrics().density);
-                columnsNumber = (int) (gridView.getWidth()/
-                        (bookThumbPx + 2 * bookThumbPaddingPx));
-                gridView.setMinimumWidth(columnsNumber * (bookThumbPx + 2 * bookThumbPaddingPx));
-                if(preferences.getInt(Constants.VIEW_TYPE, Constants.LIST_VIEW_TYPE) == Constants.LIST_VIEW_TYPE){
-                    gridView.setNumColumns(1);
-                } else {
-                    gridView.setNumColumns(columnsNumber);
-                }
+        gridView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            int bookThumbPx = (int) (Constants.BOOK_THUMB_WIDTH
+                    * Resources.getSystem().getDisplayMetrics().density);
+            int bookThumbPaddingPx = (int) (Constants.BOOK_THUMB_HOR_PADDING
+                    * Resources.getSystem().getDisplayMetrics().density);
+            columnsNumber = gridView.getWidth()/(bookThumbPx + 2 * bookThumbPaddingPx);
+            gridView.setMinimumWidth(columnsNumber * (bookThumbPx + 2 * bookThumbPaddingPx));
+            if(preferences.getInt(Constants.VIEW_TYPE, Constants.LIST_VIEW_TYPE) == Constants.LIST_VIEW_TYPE){
+                gridView.setNumColumns(1);
+            } else {
+                gridView.setNumColumns(columnsNumber);
             }
         });
 
@@ -185,7 +172,6 @@ public class MainActivity extends AppCompatActivity {
 
     public class BookListAdapter extends BaseAdapter {
 
-        private BookListAdapter instance;
         private List<BookRecord> booksList;
 
         private BookListAdapter() {
@@ -194,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
             notifyDataSetChanged();
         }
 
-        public void removeBook(long bookId) {
+        void removeBook(long bookId) {
             BookRecord recordToRemove = null;
             for (BookRecord record : booksList) {
                 if (record.getId() == bookId) {
@@ -238,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public boolean equals(Object object) {
-            return true;
+            return object instanceof BookListAdapter;
         }
 
         public void refresh() {
@@ -252,7 +238,6 @@ public class MainActivity extends AppCompatActivity {
 
     public class BookGridAdapter extends BaseAdapter {
 
-        private BookGridAdapter instance;
         private List<BookRecord> booksList;
 
         private BookGridAdapter() {
@@ -261,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
             notifyDataSetChanged();
         }
 
-        public void removeBook(long bookId) {
+        void removeBook(long bookId) {
             BookRecord recordToDelete = null;
             for (BookRecord record : booksList) {
                 if (record.getId() == bookId) {
@@ -276,7 +261,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public int getCount() {
             if( booksList == null) {
-                return booksList.size();
+                return -1;
             } else {
                 return booksList.size();
             }
@@ -294,7 +279,10 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup container) {
-            convertView = getLayoutInflater().inflate(R.layout.book_preview, container, false);
+            if (convertView == null) {
+                convertView = getLayoutInflater()
+                        .inflate(R.layout.book_preview, container, false);
+            }
             TextView textView = convertView.findViewById(R.id.caption);
             textView.setText(booksList.get(position).getName());
             return convertView;
@@ -307,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public boolean equals(Object object) {
-            return true;
+            return object instanceof BookGridAdapter;
         }
 
         public void refresh() {
