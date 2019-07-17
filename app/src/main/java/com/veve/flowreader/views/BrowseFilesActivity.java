@@ -260,6 +260,11 @@ public class BrowseFilesActivity extends AppCompatActivity {
     }
 
     class BookCreatorTask extends AsyncTask<File, Void, Void> {
+
+        private BookRecord newBook;
+
+        private long bookId;
+
         @Override
         protected Void doInBackground(File... files) {
             File file = files[0];
@@ -273,14 +278,21 @@ public class BrowseFilesActivity extends AppCompatActivity {
                     })
             );
             Log.v(getClass().getName(), "Start parsing new book");
-            BookRecord newBook = BookFactory.getInstance().createBook(file);
+            newBook = BookFactory.getInstance().createBook(file);
             newBook.setCurrentPage(0);
             newBook.setUrl(file.getAbsolutePath());
             newBook.setName(file.getName());
-            BooksCollection.getInstance(getApplicationContext()).addBook(newBook);
-            Intent ii = new Intent(BrowseFilesActivity.this, MainActivity.class);
-            startActivity(ii);
+            bookId = BooksCollection.getInstance(getApplicationContext()).addBook(newBook);
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            Intent ii = new Intent(BrowseFilesActivity.this, PageActivity.class);
+            ii.putExtra("bookId", bookId);
+            ii.putExtra("filename", newBook.getUrl());
+            startActivity(ii);
         }
     }
 

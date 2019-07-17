@@ -50,50 +50,15 @@ public class MainActivity extends AppCompatActivity {
         @Override
     protected void onPostResume() {
         super.onPostResume();
-        bookListAdapter.notifyDataSetChanged();
-        bookGridAdapter.notifyDataSetChanged();
+        bookListAdapter.refresh();
+        bookGridAdapter.refresh();
     }
-
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_grid_view);
-//        GridView gridView = findViewById(R.id.gridview);
-//        gridView.setAdapter(new BaseAdapter() {
-//            @Override
-//            public int getCount() {
-//                return 28;
-//            }
-//
-//            @Override
-//            public Object getItem(int position) {
-//                return null;
-//            }
-//
-//            @Override
-//            public long getItemId(int position) {
-//                return 0;
-//            }
-//
-//            @Override
-//            public View getView(int position, View convertView, ViewGroup parent) {
-//                View view = getLayoutInflater().inflate(R.layout.book_preview, parent, false);
-//
-////                TextView view = new TextView(getApplicationContext());
-////                view.setText("#" + position);
-//                return view;
-//            }
-//        });
-//
-//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         preferences = getPreferences(MODE_PRIVATE);
-
         bookListAdapter = new BookListAdapter();
-
         bookGridAdapter = new BookGridAdapter();
 
         super.onCreate(savedInstanceState);
@@ -276,6 +241,11 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
+        public void refresh() {
+            booksList = BooksCollection.getInstance(getApplicationContext()).getBooks();
+            notifyDataSetChanged();
+        }
+
     }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -338,6 +308,11 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean equals(Object object) {
             return true;
+        }
+
+        public void refresh() {
+            booksList = BooksCollection.getInstance(getApplicationContext()).getBooks();
+            notifyDataSetChanged();
         }
 
     }
