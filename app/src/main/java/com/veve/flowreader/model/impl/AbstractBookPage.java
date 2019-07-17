@@ -1,6 +1,7 @@
 package com.veve.flowreader.model.impl;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.DevicePageContext;
@@ -38,6 +39,7 @@ public abstract class AbstractBookPage implements BookPage {
 
         final ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
 
+        Log.d(getClass().getName(), String.format("Creating bitmap %d x %d", width, height));
         Bitmap bm = Bitmap.createBitmap(width, height, bitmapConfig);
         byteBuffer.rewind();
         bm.copyPixelsFromBuffer(byteBuffer);

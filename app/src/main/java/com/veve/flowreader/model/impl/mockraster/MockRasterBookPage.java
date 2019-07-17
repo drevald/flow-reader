@@ -1,6 +1,5 @@
 package com.veve.flowreader.model.impl.mockraster;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -10,9 +9,6 @@ import android.util.Log;
 import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyph;
-//import com.veve.flowreader.model.impl.DevicePageContextImpl;
-
-import java.util.List;
 
 import static android.graphics.Bitmap.Config.ARGB_8888;
 
@@ -22,20 +18,14 @@ import static android.graphics.Bitmap.Config.ARGB_8888;
 
 class MockRasterBookPage implements BookPage {
 
-    private int pageNumber;
 
-    private int position = 0;
+    private int position;
 
-    public MockRasterBookPage() {
+    MockRasterBookPage() {
         this.position = 0;
     }
 
-    public MockRasterBookPage(int pageNumber) {
-        this.position = 0;
-        this.pageNumber = pageNumber;
-    }
-
-    public PageGlyph getNextGlyph() {
+    private PageGlyph getNextGlyph() {
         if (position++ < 1000) {
             return MockRasterBookPageGlyph.getInstance(); //new MockRasterBookPageGlyph();
         }
@@ -94,28 +84,6 @@ class MockRasterBookPage implements BookPage {
     public Bitmap getAsOriginalBitmap(DevicePageContext context) {
         return null;
     }
-
-//    Bitmap bitmap = Bitmap.createBitmap(400, 400, ARGB_8888);
-//
-////        Canvas canvas = new Canvas(bitmap);
-////        canvas.drawCircle(50, 50, 50, new Paint());
-//
-//    Canvas canvas = new Canvas(bitmap);
-//        context.resetPosition();
-//        context.setCanvas(canvas);
-//    PageGlyph pageGlyph;
-//    Paint paint = new Paint();
-//        paint.setStyle(Paint.Style.STROKE);
-//        paint.setStrokeWidth(10);
-//
-//
-//        canvas.drawRect(canvas.getClipBounds(), paint);
-//
-//    position = 350;
-//
-//        while (position-- > 0)
-//            new MockRasterBookPageGlyph().draw(context, true);
-
 
     @Override
     public int getWidth() {

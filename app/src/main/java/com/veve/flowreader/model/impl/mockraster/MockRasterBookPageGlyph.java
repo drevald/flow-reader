@@ -6,8 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.support.constraint.solver.widgets.Rectangle;
-import android.util.Log;
 
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyph;
@@ -46,7 +44,7 @@ class MockRasterBookPageGlyph implements PageGlyph {
     private static PageGlyph pageGlyph;
 
     static {
-        bitmaps = new ArrayList<Bitmap>();
+        bitmaps = new ArrayList<>();
         for (byte[] bitmapData : data) {
             bitmaps.add(BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length));
         }
@@ -60,7 +58,6 @@ class MockRasterBookPageGlyph implements PageGlyph {
     @Override
     public void draw(DevicePageContext context, boolean show) {
         Bitmap bitmap = bitmaps.get(random.nextInt(bitmaps.size()));
-        context.getCanvas();
         Point startPoint = context.getStartPoint();
         Canvas canvas = context.getCanvas();
         int __height = bitmap.getHeight();
@@ -80,7 +77,6 @@ class MockRasterBookPageGlyph implements PageGlyph {
                 + (int)(context.getKerning()* context.getZoom()), startPoint.y);
         context.getRemotestPoint().set(startPoint.x + __dstRect.width()
                 + (int)(context.getKerning()* context.getZoom()), startPoint.y + __dstRect.height());
-        bitmap = null;
     }
 
     public static PageGlyph getInstance() {

@@ -9,8 +9,6 @@ import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyph;
 
-import java.util.List;
-
 import static android.graphics.Bitmap.Config.ARGB_8888;
 
 /**
@@ -21,17 +19,15 @@ public class MockPageImpl implements BookPage {
 
     private String content;
 
-    private static final int MAX_GLYPHS = 1000;
-
     private int position = 0;
 
-    public MockPageImpl(String aContent) {
+    MockPageImpl(String aContent) {
         content = aContent;
         position = 0;
     }
 
 
-    public PageGlyph getNextGlyph() {
+    private PageGlyph getNextGlyph() {
         if (position++ < content.length())
             return new MockPageGlyphImpl(content.substring(position-1, position));
         return null;

@@ -5,16 +5,11 @@ import android.util.Log;
 import com.veve.flowreader.model.Book;
 import com.veve.flowreader.model.BookPage;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by ddreval on 2/16/2018.
  */
 
 public class MockRasterBook implements Book {
-
-    private BookPage page;
 
     private int pagesTotal = 600;
 
@@ -24,7 +19,6 @@ public class MockRasterBook implements Book {
 
     public MockRasterBook(String name) {
         this.name = name;
-        this.page = new MockRasterBookPage();
     }
 
     @Override
@@ -40,7 +34,7 @@ public class MockRasterBook implements Book {
     @Override
     public BookPage getPage(int pageNumber) {
         Log.i(getClass().getName(), "Getting page #" + pageNumber);
-        return new MockRasterBookPage(pageNumber);
+        return new MockRasterBookPage();
     }
 
     @Override

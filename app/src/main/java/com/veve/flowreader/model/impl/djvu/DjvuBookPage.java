@@ -8,7 +8,7 @@ import java.util.List;
 
 public class DjvuBookPage extends AbstractBookPage implements BookPage  {
 
-    public DjvuBookPage(long  bookId, int pageNumber) {
+    DjvuBookPage(long  bookId, int pageNumber) {
         super(bookId, pageNumber);
     }
 

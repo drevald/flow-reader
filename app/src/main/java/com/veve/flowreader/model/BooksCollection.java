@@ -6,11 +6,9 @@ import android.util.Log;
 
 import com.veve.flowreader.dao.AppDatabase;
 import com.veve.flowreader.dao.BookRecord;
-import com.veve.flowreader.dao.BookStorage;
 import com.veve.flowreader.dao.DaoAccess;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

@@ -2,7 +2,6 @@ package com.veve.flowreader.model.impl.djvu;
 
 import android.graphics.Bitmap;
 
-import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.BookSource;
 import com.veve.flowreader.model.PageGlyph;
 
@@ -10,7 +9,7 @@ import java.util.List;
 
 public class DjvuBookSource implements BookSource {
 
-    DjvuBook djvuBook;
+    private DjvuBook djvuBook;
 
     public DjvuBookSource(String path) {
         djvuBook = new DjvuBook(path);

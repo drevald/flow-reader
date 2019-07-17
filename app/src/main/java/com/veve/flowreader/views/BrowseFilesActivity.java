@@ -291,7 +291,7 @@ public class BrowseFilesActivity extends AppCompatActivity {
     }
 
     public void browseExternalMemory(View view) {
-        fileListAdapter.setRoot("/storage/emulated/1/");
+        fileListAdapter.setRoot("/storage/sdcard1/");
         fileListAdapter.notifyDataSetChanged();
     }
 

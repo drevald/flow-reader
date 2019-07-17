@@ -1,6 +1,5 @@
 package com.veve.flowreader.model.impl.mocksimple;
 
-import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -11,22 +10,20 @@ import android.util.Log;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyph;
 
-import java.util.Random;
-
 /**
  * Created by ddreval on 15.01.2018.
  */
 
 public class MockPageGlyphImpl implements PageGlyph {
 
-    String str;
+    private String str;
 
-    public static int defaultFontSize = 48;
+    private static int defaultFontSize = 48;
     public static Rect rect = new Rect();
     public static Paint paint = new Paint();
     private static Paint paint1 = new Paint();
 
-    public MockPageGlyphImpl(String aStr) {
+    MockPageGlyphImpl(String aStr) {
         str = aStr;
         paint.setTextSize(defaultFontSize);
         paint.setFakeBoldText(true);
@@ -62,13 +59,13 @@ public class MockPageGlyphImpl implements PageGlyph {
         paint.setTextSize(defaultFontSize * context.getZoom());
         paint.getTextBounds(str, 0, 1, rect);
         Log.d("Glyph", String.format("font %S size is %dx%d", str, rect.width(), rect.height()));
-        return (int)(rect.width());
+        return rect.width();
     }
 
     protected int getHeight(DevicePageContext context) {
         paint.setTextSize(defaultFontSize * context.getZoom());
         paint.getTextBounds(str, 0, 1, rect);
-        return (int)(rect.height());
+        return rect.height();
     }
 
 }

@@ -10,13 +10,13 @@ public interface BookPage {
 
     /**
      * Returns raster representation of reflowed page for the given context
-     * @param context
-     * @return
+     * @param context rendering context like page size, zoom, leading, kerning
+     * @return rendered bitmap
      */
-    public Bitmap getAsBitmap(DevicePageContext context);
+    Bitmap getAsBitmap(DevicePageContext context);
 
-    public int getWidth();
+    int getWidth();
 
-    public int getHeight();
+    int getHeight();
 
 }
