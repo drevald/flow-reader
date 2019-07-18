@@ -22,16 +22,6 @@ public class MockRasterBook implements Book {
     }
 
     @Override
-    public void setCurrentPageNumber(int pageNumber) {
-        this.currentPage = pageNumber;
-    }
-
-    @Override
-    public int getCurrentPageNumber() {
-        return this.currentPage;
-    }
-
-    @Override
     public BookPage getPage(int pageNumber) {
         Log.i(getClass().getName(), "Getting page #" + pageNumber);
         return new MockRasterBookPage();

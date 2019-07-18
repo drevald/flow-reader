@@ -22,6 +22,7 @@ public class DjvuBook implements Book {
     private String name;
 
     private int currentPageNumber = 0;
+
     public DjvuBook(String path) {
        this.bookId = openBook(path);
        this.path = path;
@@ -31,17 +32,6 @@ public class DjvuBook implements Book {
     private native long openBook(String path);
     private native String openStringBook(String path);
     private native int getNumberOfPages(long bookId);
-
-
-    @Override
-    public void setCurrentPageNumber(int pageNumber) {
-        this.currentPageNumber = pageNumber;
-    }
-
-    @Override
-    public int getCurrentPageNumber() {
-        return currentPageNumber;
-    }
 
     @Override
     public BookPage getPage(int pageNumber) {

@@ -16,4 +16,6 @@ public interface BookSource {
 
     int getPagesCount();
 
+    String getBookTitle();
+
 }

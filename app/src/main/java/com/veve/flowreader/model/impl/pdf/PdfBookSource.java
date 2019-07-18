@@ -32,4 +32,9 @@ public class PdfBookSource implements BookSource {
         return pdfBook.getPagesCount();
     }
 
+    @Override
+    public String getBookTitle() {
+        return null;
+    }
+
 }

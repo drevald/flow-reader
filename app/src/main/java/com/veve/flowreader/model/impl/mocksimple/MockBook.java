@@ -49,17 +49,6 @@ public class MockBook implements Book {
 
         private static final String[] PAGES = {"ЮЮЮ"};
 
-
-    @Override
-    public void setCurrentPageNumber(int pageNumber) {
-        currentPage = pageNumber;
-    }
-
-    @Override
-    public int getCurrentPageNumber() {
-        return currentPage;
-    }
-
     @Override
     public BookPage getPage(int pageNumber) {
         return new MockPageImpl(PAGES[pageNumber]);

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -39,6 +40,7 @@ import com.veve.flowreader.model.impl.DevicePageContextImpl;
 import com.veve.flowreader.model.impl.OpenCVPageLayoutParser;
 import com.veve.flowreader.model.impl.SimpleLayoutParser;
 
+import java.lang.ref.WeakReference;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -134,7 +136,9 @@ public class PageActivity extends AppCompatActivity {
         topLayout.addOnLayoutChangeListener(new LayoutListener());
 
         Display display = getWindowManager().getDefaultDisplay();
-        context = new DevicePageContextImpl(display.getWidth());
+        Point point = new Point();
+        display.getSize(point);
+        context = new DevicePageContextImpl(point.x);
         context.setZoom(book.getZoom());
         context.setKerning(book.getKerning());
         context.setLeading(book.getLeading());
@@ -212,7 +216,7 @@ public class PageActivity extends AppCompatActivity {
         currentPage = pageNumber;
         book.setCurrentPage(pageNumber);
         booksCollection.updateBook(book);
-        PageLoader pageLoader = new PageLoader();
+        PageLoader pageLoader = new PageLoader(this);
         kickOthers(pageLoader);
         pageLoader.execute(pageNumber);
     }
@@ -285,6 +289,7 @@ public class PageActivity extends AppCompatActivity {
 
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
+                view.performClick();
                 return gestureDetector.onTouchEvent(motionEvent);
             }
         }
@@ -407,20 +412,26 @@ public class PageActivity extends AppCompatActivity {
 
     }
 
-
     class PageLoader extends AsyncTask<Integer, Void, Void> {
+
+        private WeakReference<PageActivity> pageActivityReference;
+
+        // only retain a weak reference to the activity
+        PageLoader(PageActivity context) {
+            pageActivityReference = new WeakReference<>(context);
+        }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            runningTasks.remove(this);
+            pageActivityReference.get().runningTasks.remove(this);
             Log.d(getClass().getName(), "Task #" + hashCode() + " removed on completion");
         }
 
         @Override
         protected void onCancelled() {
             super.onCancelled();
-            runningTasks.remove(this);
+            pageActivityReference.get().runningTasks.remove(this);
             Log.d(getClass().getName(), "Task #" + hashCode() + " removed on cancellation");
         }
 
@@ -428,8 +439,8 @@ public class PageActivity extends AppCompatActivity {
         protected Void doInBackground(Integer... integers) {
 
             runOnUiThread(()-> {
-                    scroll.setVisibility(INVISIBLE);
-                    progressBar.setVisibility(View.VISIBLE);
+                pageActivityReference.get().scroll.setVisibility(INVISIBLE);
+                pageActivityReference.get().progressBar.setVisibility(View.VISIBLE);
                 }
             );
 
@@ -439,11 +450,11 @@ public class PageActivity extends AppCompatActivity {
 
             Log.d(getClass().getName(), String.format("Getting bitmap for zoom = %f", context.getZoom()));
 
-            if (viewMode == Constants.VIEW_MODE_PHONE) {
-                bitmap = pageRenderer.renderPage(context, pageNumber);
+            if (pageActivityReference.get().viewMode == Constants.VIEW_MODE_PHONE) {
+                bitmap = pageActivityReference.get().pageRenderer.renderPage(context, pageNumber);
                 Log.v(getClass().getName(), String.format("pageRenderer.renderPage(context, %d)", pageNumber));
             } else {
-                bitmap = pageRenderer.renderOriginalPage(context, pageNumber);
+                bitmap = pageActivityReference.get().pageRenderer.renderOriginalPage(context, pageNumber);
                 Log.v(getClass().getName(), String.format("pageRenderer.renderOriginalPage(context, %d)", pageNumber));
             }
 
@@ -458,23 +469,23 @@ public class PageActivity extends AppCompatActivity {
                         Snackbar.make(topLayout, getString(R.string.could_not_zoom_more),
                                 Snackbar.LENGTH_LONG).setAction("Action", null).show();
                         context.setZoom(context.getZoom()*0.8f);
-                        book.setZoom(context.getZoom());
-                        booksCollection.updateBook(book);
+                        pageActivityReference.get().book.setZoom(context.getZoom());
+                        pageActivityReference.get().booksCollection.updateBook(book);
                     } else if (bitmap.getWidth() >= context.getWidth()) {
-                        page.removeAllViews();        // UI code goes here
+                        pageActivityReference.get().page.removeAllViews();        // UI code goes here
                         for (int offset = 0; offset < bitmapHeight; offset += IMAGE_VIEW_HEIGHT_LIMIT) {
                             Log.d(getClass().getName(), "Before image creation");
                             ImageView imageView = new ImageView(getApplicationContext());
                             imageView.setScaleType(ImageView.ScaleType.FIT_START);
                             imageView.setImageBitmap(bitmap);
                             Log.d(getClass().getName(), "Image creation");
-                            page.addView(imageView);
+                            pageActivityReference.get().page.addView(imageView);
                             Log.d(getClass().getName(), "After image creation");
                         }
                         Log.v(getClass().getName(), "End setting bitmap");
                     }
-                    scroll.setVisibility(View.VISIBLE);
-                    progressBar.setVisibility(INVISIBLE);
+                    pageActivityReference.get().scroll.setVisibility(View.VISIBLE);
+                    pageActivityReference.get().progressBar.setVisibility(INVISIBLE);
                 }
             });
             return null;
