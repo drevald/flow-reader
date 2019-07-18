@@ -20,17 +20,17 @@ import static android.graphics.Bitmap.Config.ARGB_8888;
 
 public class CachedPageRendererImpl implements PageRenderer {
 
-    PageLayoutParser pageLayoutParser;
+    private PageLayoutParser pageLayoutParser;
 
-    BookSource bookSource;
+    private BookSource bookSource;
 
-    Bitmap originalBitmap;
+    private Bitmap originalBitmap;
 
-    int currentPage;
+    private int currentPage;
 
-    int currentOriginalPage;
+    private int currentOriginalPage;
 
-    List<PageGlyph> glyphs;
+    private List<PageGlyph> glyphs;
 
     public CachedPageRendererImpl(BookSource bookSource) {
         pageLayoutParser = OpenCVPageLayoutParser.getInstance();
@@ -44,7 +44,7 @@ public class CachedPageRendererImpl implements PageRenderer {
             long start = System.currentTimeMillis();
             glyphs = pageLayoutParser.getGlyphs(bookSource, position);
             Log.v(getClass().getName(),
-                    String.format("Getting glyphs for page #%d took #d milliseconds",
+                    String.format("Getting glyphs for page #%d took #%d milliseconds",
                     position, System.currentTimeMillis() - start));
         } else {
             Log.v(getClass().getName(), "Glyphs cached current = " + currentPage + " requested = " + position);
@@ -58,7 +58,7 @@ public class CachedPageRendererImpl implements PageRenderer {
             currentOriginalPage = position;
             long start = System.currentTimeMillis();
             originalBitmap = bookSource.getPageBytes(position);
-            Log.v(getClass().getName(), String.format("Getting page #%d took #d milliseconds",
+            Log.v(getClass().getName(), String.format("Getting page #%d took #%d milliseconds",
                     position, System.currentTimeMillis() - start));
         } else {
             Log.v(getClass().getName(), "Page cached current = " + currentOriginalPage + " requested = " + position);
@@ -110,15 +110,10 @@ public class CachedPageRendererImpl implements PageRenderer {
     @Override
     public Bitmap renderOriginalPage(DevicePageContext context, int position) {
         Bitmap bitmap = getOriginalPageBitmap(position);
-        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap,
+        return Bitmap.createScaledBitmap(bitmap,
                 (int) (context.getZoom() * bitmap.getWidth()),
                 (int) (context.getZoom() * bitmap.getHeight()),
                 false);
-        return scaledBitmap;
-    }
-
-    public PageLayoutParser getPageLayoutParser() {
-        return pageLayoutParser;
     }
 
     public void setPageLayoutParser(PageLayoutParser pageLayoutParser) {

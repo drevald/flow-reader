@@ -10,11 +10,8 @@ public class PageGlyphInfo {
     private int averageHeight;
     private int baselineShift;
 
-    public PageGlyphInfo() {
-
-    }
-
-    public PageGlyphInfo(boolean indented, int x, int y, int width, int height, int averageHeight, int baselineShift) {
+    public PageGlyphInfo(boolean indented, int x, int y, int width, int height,
+                         int averageHeight, int baselineShift) {
         this.indented = indented;
         this.x = x;
         this.y = y;

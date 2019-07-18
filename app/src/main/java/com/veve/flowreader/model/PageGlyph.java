@@ -8,7 +8,8 @@ public interface PageGlyph {
 
     /**
      * Draws glyph on page and updates context to place  next glyph
-     * @param context
+     * @param context sets drawing content
+     * @param show is real drawing needed
      */
-    public void draw(DevicePageContext context, boolean show);
+    void draw(DevicePageContext context, boolean show);
 }

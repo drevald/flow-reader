@@ -11,7 +11,7 @@ import java.util.List;
 public class PdfBookPage extends AbstractBookPage implements BookPage {
 
 
-    public PdfBookPage(long bookId, int pageNumber) {
+    PdfBookPage(long bookId, int pageNumber) {
        super(bookId, pageNumber);
     }
 

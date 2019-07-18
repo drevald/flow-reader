@@ -8,21 +8,17 @@ import android.graphics.Color;
 
 public interface Constants {
 
-    public static final int LIGHT_PINK = Color.rgb(255, 64, 129);
-    public static final int GREEN = Color.rgb(0, 129, 0);
-    public static int BOOK_THUMB_WIDTH = 100;
-    public static int BOOK_THUMB_HOR_PADDING = 20;
-    public static int VIEW_MODE_PHONE = 0;
-    public static int VIEW_MODE_ORIGINAL = 1;
-    public static int VIEW_MODE_ORIGINAL_MARKED = 2;
-    public static final String VIEW_TYPE = "VIEW_TYPE";
-    public static final int LIST_VIEW_TYPE = 0;
-    public static final int GRID_VIEW_TYPE = 1;
-
-    public static final boolean DEBUG = true;
-
-    public static final int MAX_BITMAP_SIZE = 100 * 1024 * 1024; // 100 MB
-
-    public static final String BOOK_ID = "BOOK_ID";
+    int LIGHT_PINK = Color.rgb(255, 64, 129);
+    int GREEN = Color.rgb(0, 129, 0);
+    int BOOK_THUMB_WIDTH = 100;
+    int BOOK_THUMB_HOR_PADDING = 20;
+    int VIEW_MODE_PHONE = 0;
+    int VIEW_MODE_ORIGINAL = 1;
+    String VIEW_TYPE = "VIEW_TYPE";
+    int LIST_VIEW_TYPE = 0;
+    int GRID_VIEW_TYPE = 1;
+    boolean DEBUG = true;
+    int MAX_BITMAP_SIZE = 100 * 1024 * 1024; // 100 MB
+    String BOOK_ID = "BOOK_ID";
 
 }

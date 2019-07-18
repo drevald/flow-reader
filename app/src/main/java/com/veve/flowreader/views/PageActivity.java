@@ -52,7 +52,6 @@ public class PageActivity extends AppCompatActivity {
 
     Set<AsyncTask> runningTasks;
     TextView pager;
-    Toolbar toolbar;
     AppBarLayout bar;
     CoordinatorLayout topLayout;
     PageRenderer pageRenderer;
@@ -99,7 +98,7 @@ public class PageActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        runningTasks = new HashSet<AsyncTask>();
+        runningTasks = new HashSet<>();
 
         setContentView(R.layout.activity_page);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -218,16 +217,6 @@ public class PageActivity extends AppCompatActivity {
         pageLoader.execute(pageNumber);
     }
 
-    private void showBars() {
-        bar.setVisibility(View.VISIBLE);
-        bottomBar.setVisibility(View.VISIBLE);
-    }
-
-    private void hideBars() {
-        bar.setVisibility(INVISIBLE);
-        bottomBar.setVisibility(INVISIBLE);
-    }
-
     private void kickOthers(PageLoader pageLoader) {
         for (AsyncTask task : runningTasks) {
             if(!task.isCancelled()) {
@@ -255,7 +244,7 @@ public class PageActivity extends AppCompatActivity {
 
             private GestureDetector gestureDetector;
 
-            public OnDoubleTapListener(Context c, LinearLayout p) {
+            OnDoubleTapListener(Context c, LinearLayout p) {
                 gestureDetector = new GestureDetector(c, new GestureDetector.SimpleOnGestureListener() {
                     @Override
                     public boolean onDoubleTap(MotionEvent e) {
@@ -438,13 +427,11 @@ public class PageActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Integer... integers) {
 
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
+            runOnUiThread(()-> {
                     scroll.setVisibility(INVISIBLE);
                     progressBar.setVisibility(View.VISIBLE);
                 }
-            });
+            );
 
             int pageNumber = integers[0];
 

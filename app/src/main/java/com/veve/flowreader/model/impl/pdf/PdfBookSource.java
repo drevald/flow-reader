@@ -9,7 +9,7 @@ import java.util.List;
 
 public class PdfBookSource implements BookSource {
 
-    PdfBook pdfBook;
+    private PdfBook pdfBook;
 
     public PdfBookSource(String path) {
         pdfBook = new PdfBook(path);
@@ -24,13 +24,7 @@ public class PdfBookSource implements BookSource {
     @Override
     public List<PageGlyph> getPageGlyphs(int pageNumber) {
         PdfBookPage pdfBookPage = (PdfBookPage)pdfBook.getPage(pageNumber);
-        List<PageGlyph> pageGlyphs = pdfBookPage.getPageGlyphs();
-        return pageGlyphs;
-    }
-
-    @Override
-    public String getBookTitle() {
-        return pdfBook.getName();
+        return pdfBookPage.getPageGlyphs();
     }
 
     @Override

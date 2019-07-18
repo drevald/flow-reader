@@ -1,8 +1,5 @@
 package com.veve.flowreader.model;
 
-
-import android.graphics.Bitmap;
-
 import java.util.List;
 
 /**

@@ -17,7 +17,6 @@ public class DevicePageContext {
     private float kerning;
     private float leading;
     private int margin;
-    private int displayDpi;
     private int lineHeight;
     private int currentBaseLine;
 
@@ -30,10 +29,6 @@ public class DevicePageContext {
 
     public Point getStartPoint() {
         return startPoint;
-    }
-
-    public void setStartPoint(Point startPoint) {
-        this.startPoint = startPoint;
     }
 
     public Canvas getCanvas() {
@@ -64,10 +59,6 @@ public class DevicePageContext {
         return remotestPoint;
     }
 
-    public void setRemotestPoint(Point remotestPoint) {
-        this.remotestPoint = remotestPoint;
-    }
-
     public float getKerning() {
         return kerning;
     }
@@ -90,14 +81,6 @@ public class DevicePageContext {
 
     public void setMargin(int margin) {
         this.margin = margin;
-    }
-
-    public int getDisplayDpi() {
-        return displayDpi;
-    }
-
-    public void setDisplayDpi(int displayDpi) {
-        this.displayDpi = displayDpi;
     }
 
     public int getLineHeight() {

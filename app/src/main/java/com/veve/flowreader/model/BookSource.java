@@ -14,8 +14,6 @@ public interface BookSource {
 
     List<PageGlyph> getPageGlyphs(int pageNumber);
 
-    String getBookTitle();
-
     int getPagesCount();
 
 }

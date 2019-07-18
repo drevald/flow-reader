@@ -1,7 +1,5 @@
 package com.veve.flowreader.model.impl;
 
-import android.graphics.Bitmap;
-
 import com.veve.flowreader.model.BookSource;
 import com.veve.flowreader.model.PageGlyph;
 import com.veve.flowreader.model.PageLayoutParser;

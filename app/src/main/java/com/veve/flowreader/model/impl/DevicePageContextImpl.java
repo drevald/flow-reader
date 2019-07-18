@@ -2,7 +2,6 @@ package com.veve.flowreader.model.impl;
 
 import android.graphics.Canvas;
 import android.graphics.Point;
-import android.util.Log;
 
 import com.veve.flowreader.model.DevicePageContext;
 
@@ -46,11 +45,6 @@ public class DevicePageContextImpl extends DevicePageContext {
 
     private int currentBaseLine;
 
-
-    public DevicePageContextImpl() {
-
-    }
-
     public DevicePageContextImpl(int width) {
         this.zoom = DEFAULT_ZOOM;
         this.kerning = DEFAULT_KERNING;
@@ -61,29 +55,6 @@ public class DevicePageContextImpl extends DevicePageContext {
         this.remotestPoint = new Point(margin, 0);
         this.displayDpi = DEFAULT_DISPLAY_DPI;
         this.currentBaseLine = 0;
-    }
-
-    public DevicePageContextImpl(Canvas canvas) {
-        this.zoom = DEFAULT_ZOOM;
-        this.kerning = DEFAULT_KERNING;
-        this.leading = DEFAULT_LEADING;
-        this.canvas = canvas;
-        this.width = canvas.getWidth();
-        this.margin = DEFAULT_MARGIN;
-        this.startPoint = new Point(margin, 0);
-        this.remotestPoint = new Point(margin, 0);
-        this.displayDpi = DEFAULT_DISPLAY_DPI;
-        this.currentBaseLine = 0;
-    }
-
-    @Override
-    public int getDisplayDpi() {
-        return displayDpi;
-    }
-
-    @Override
-    public void setDisplayDpi(int displayDpi) {
-        this.displayDpi = displayDpi;
     }
 
     @Override
@@ -118,11 +89,6 @@ public class DevicePageContextImpl extends DevicePageContext {
     }
 
     @Override
-    public void setStartPoint(Point startPoint) {
-        this.startPoint = startPoint;
-    }
-
-    @Override
     public Canvas getCanvas() {
         return canvas;
     }
@@ -147,11 +113,6 @@ public class DevicePageContextImpl extends DevicePageContext {
 
     @Override
     public Point getRemotestPoint() {return this.remotestPoint;}
-
-    @Override
-    public void setRemotestPoint(Point remotestPoint) {
-        this.remotestPoint = remotestPoint;
-    }
 
     public float getKerning() {
         return kerning;

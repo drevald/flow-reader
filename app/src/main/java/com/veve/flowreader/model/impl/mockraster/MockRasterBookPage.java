@@ -40,7 +40,7 @@ class MockRasterBookPage implements BookPage {
     @Override
     public Bitmap getAsBitmap(DevicePageContext context) {
 
-        PageGlyph pageGlyph = null;
+        PageGlyph pageGlyph;
         Log.i(getClass().getName(), String.format("position=%d", position));
         while((pageGlyph = getNextGlyph()) != null) {
             pageGlyph.draw(context, false);
@@ -79,10 +79,6 @@ class MockRasterBookPage implements BookPage {
 
         return bitmap;
 
-    }
-
-    public Bitmap getAsOriginalBitmap(DevicePageContext context) {
-        return null;
     }
 
     @Override

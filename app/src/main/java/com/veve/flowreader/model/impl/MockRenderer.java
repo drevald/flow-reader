@@ -11,11 +11,9 @@ import com.veve.flowreader.model.impl.mockraster.MockRasterBook;
 
 public class MockRenderer implements PageRenderer {
 
-    private BookRecord bookRecord;
     private Book book;
 
     public MockRenderer(BookRecord bookRecord) {
-        this.bookRecord = bookRecord;
         this.book = new MockRasterBook(bookRecord.getName());
     }
 

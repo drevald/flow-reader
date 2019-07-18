@@ -7,24 +7,17 @@ package com.veve.flowreader.model;
 public interface Book {
 
     /**
-     * Sets current number (original numbering) of the page.
-     * @param pageNumber page number
-     */
-    public void setCurrentPageNumber(int pageNumber);
-
-    /**
      * Returns the current number (original numbering) of the page.
      */
-    public int getCurrentPageNumber();
 
-    public BookPage getPage(int pageNumber);
+    BookPage getPage(int pageNumber);
 
-    public int getPagesCount();
+    int getPagesCount();
 
-    public String getName();
+    String getName();
 
-    public long getId();
+    long getId();
 
-    public String getPath();
+    String getPath();
 
 }

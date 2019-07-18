@@ -35,7 +35,7 @@ public class PageGlyphImpl implements PageGlyph {
     private boolean indented;
 
 
-    public PageGlyphImpl(Bitmap bitmap, PageGlyphInfo rect) {
+    PageGlyphImpl(Bitmap bitmap, PageGlyphInfo rect) {
         this.bitmap = bitmap;
         this.baseLineShift = rect.getBaselineShift();
         this.averageHeight = rect.getAverageHeight();
@@ -45,14 +45,6 @@ public class PageGlyphImpl implements PageGlyph {
         paint_debug.setStyle(Paint.Style.STROKE);
         paint_debug.setColor(Color.BLUE);
         paint_debug.setStrokeWidth(1);
-    }
-
-    public PageGlyphImpl(Bitmap bitmap, int baseLineShift, int averageHight, int x , int y) {
-        this.bitmap = bitmap;
-        this.baseLineShift = baseLineShift;
-        this.averageHeight = averageHight;
-        this.x = x;
-        this.y = y;
     }
 
     public int getX() {
@@ -84,8 +76,6 @@ public class PageGlyphImpl implements PageGlyph {
             currentBaseline = (int)(__height * 1.3);
             context.setLineHeight(averageHeight);
         }
-
-        String showLine = show?"Paint ":"Measure ";
 
         //checking if currect glyph is within page content
         if(__width * context.getZoom() + startPoint.x > context.getWidth() - context.getMargin() ) {

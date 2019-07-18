@@ -33,7 +33,6 @@ import com.veve.flowreader.model.BooksCollection;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 public class BrowseFilesActivity extends AppCompatActivity {
@@ -71,7 +70,7 @@ public class BrowseFilesActivity extends AppCompatActivity {
 
         // FILES LIST
         fileListAdapter = new FileListAdapter();
-        ListView listView = (ListView) findViewById(android.R.id.list);
+        ListView listView = findViewById(android.R.id.list);
         listView.setAdapter(fileListAdapter);
         listView.setOnItemClickListener(new FileListener(fileListAdapter));
     }
@@ -80,28 +79,11 @@ public class BrowseFilesActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
-
-            // Permission is not granted
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.READ_EXTERNAL_STORAGE)) {
-
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-
-            } else {
-
-                // No explanation needed; request the permission
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
             }
-        } else {
-            // Permission has already been granted
         }
     }
 
@@ -112,10 +94,10 @@ public class BrowseFilesActivity extends AppCompatActivity {
 
         private File rootDir;
 
-        public File currentDirectory;
+        File currentDirectory;
         List<File> currentFiles;
 
-        public FileListAdapter() {
+        FileListAdapter() {
             super();
             setRoot(Environment.getExternalStorageDirectory().getAbsolutePath());
         }
@@ -124,19 +106,17 @@ public class BrowseFilesActivity extends AppCompatActivity {
             try {
                 rootDir = new File(path);
                 currentDirectory = rootDir;
-                currentFiles = new ArrayList<File>();
+                currentFiles = new ArrayList<>();
                 for (File file : currentDirectory.listFiles()) {
                     if (file.canRead())
                         currentFiles.add(file);
                 }
-                Collections.sort(currentFiles, new Comparator<File>() {
-                    public int compare(File fileOne, File fileTwo) {
-                        if (fileOne.isDirectory() && fileTwo.isFile()) {
-                            return -1;
-                        } else if (fileOne.isFile() && fileTwo.isDirectory()) {
-                            return 1;
-                        } else return fileOne.getName().compareTo(fileTwo.getName());
-                    }
+                Collections.sort(currentFiles, (File fileOne, File fileTwo) -> {
+                    if (fileOne.isDirectory() && fileTwo.isFile()) {
+                        return -1;
+                    } else if (fileOne.isFile() && fileTwo.isDirectory()) {
+                        return 1;
+                    } else return fileOne.getName().compareTo(fileTwo.getName());
                 });
             } catch (Exception e) {
 //                Log.e(this.getClass().getName(), e.getMessage());

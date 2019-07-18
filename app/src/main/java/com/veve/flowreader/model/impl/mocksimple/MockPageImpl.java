@@ -19,7 +19,7 @@ public class MockPageImpl implements BookPage {
 
     private String content;
 
-    private int position = 0;
+    private int position;
 
     MockPageImpl(String aContent) {
         content = aContent;
@@ -41,7 +41,7 @@ public class MockPageImpl implements BookPage {
     @Override
     public Bitmap getAsBitmap(DevicePageContext context) {
 
-        PageGlyph pageGlyph = null;
+        PageGlyph pageGlyph;
 
         while((pageGlyph = getNextGlyph()) != null) {
             pageGlyph.draw(context, false);
@@ -72,11 +72,6 @@ public class MockPageImpl implements BookPage {
         context.setCanvas(canvas);
         return bitmap;
 
-    }
-
-
-    public Bitmap getAsOriginalBitmap(DevicePageContext context) {
-        return null;
     }
 
     @Override

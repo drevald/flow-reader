@@ -12,8 +12,6 @@ import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyph;
 import com.veve.flowreader.model.PageLayoutParser;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -45,7 +43,7 @@ public class SimpleLayoutParser implements PageLayoutParser {
 
         List<Row> rows = getRows(bitmap);
 
-        List<PageGlyph> glyphs = new ArrayList<PageGlyph>();
+        List<PageGlyph> glyphs = new ArrayList<>();
 
         for (Row row : rows) {
             glyphs.addAll(getGlyphs(row, bitmap));
@@ -62,7 +60,7 @@ public class SimpleLayoutParser implements PageLayoutParser {
         int width = bitmap.getWidth();
         int glyphState = STATE_GLYPH_BLANK;
         int glyphStart = 0;
-        List<Glyph> glyphs = new ArrayList<Glyph>();
+        List<Glyph> glyphs = new ArrayList<>();
         double sum;
         double greyscale;
 
@@ -80,7 +78,7 @@ public class SimpleLayoutParser implements PageLayoutParser {
                     glyphState = STATE_GLYPH_STARTED;
                     glyphStart = i;
                 }
-            } else if (glyphState == STATE_GLYPH_STARTED) {
+            } else {
                 if ((rowHeight-sum)/rowHeight < CHAR_THRESHOLD) {
                     glyphState = STATE_GLYPH_BLANK;
                     Bitmap glyphBitmap = Bitmap
@@ -101,7 +99,7 @@ public class SimpleLayoutParser implements PageLayoutParser {
         double sum;
         double greyscale;
         int width = bitmap.getWidth();
-        List<Row> rows = new ArrayList<Row>();
+        List<Row> rows = new ArrayList<>();
         int rowStart = 0;
 
         for (int i=0; i<bitmap.getHeight(); i++ ) {
@@ -121,7 +119,7 @@ public class SimpleLayoutParser implements PageLayoutParser {
                     currentState = STATE_ROW;
                     rowStart = i;
                 }
-            } else if (currentState == STATE_ROW) {
+            } else {
                 if ((width-sum)/width < ROW_THRESHOLD) {
                     currentState = STATE_BLANK;
                     rows.add(new Row(rowStart, i));
@@ -137,7 +135,7 @@ public class SimpleLayoutParser implements PageLayoutParser {
         int red = (rgb >> 16) & 0x000000FF;
         int green = (rgb >>8 ) & 0x000000FF;
         int blue = (rgb) & 0x000000FF;
-        return 0.2126 * (red/255) + 0.7152 * (green/255) + 0.0722 * (blue/255);
+        return (0.2126 * red + 0.7152 * green + 0.0722 * blue)/255;
     }
 
     public static PageLayoutParser getInstance() {
@@ -169,28 +167,15 @@ class Row {
 class Glyph implements PageGlyph {
 
     private static Paint paint = new Paint();
-    private int top, bottom, left, right;
     private Bitmap bitmap;
-
-    Glyph(int top, int bottom, int left, int right) {
-        this.top = top;
-        this.bottom = bottom;
-        this.left = left;
-        this.right = right;
-    }
 
     Glyph(Bitmap bitmap) {
         this.bitmap = bitmap;
     }
 
-    public String toString() {
-        return String.format(Locale.KOREA, "top:%d,bottom:%d,left:%d,right:%d", top, bottom, left, right);
-    }
-
     @Override
     public void draw(DevicePageContext context, boolean show) {
 
-        context.getCanvas();
         Point startPoint = context.getStartPoint();
         Canvas canvas = context.getCanvas();
         int __height = bitmap.getHeight();

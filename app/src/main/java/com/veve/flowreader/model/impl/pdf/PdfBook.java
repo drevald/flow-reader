@@ -26,17 +26,6 @@ public class PdfBook implements Book {
     private native long openBook(String path);
     private native int getNumberOfPages(long bookId);
 
-
-    @Override
-    public void setCurrentPageNumber(int pageNumber) {
-        this.pageNumber = pageNumber;
-    }
-
-    @Override
-    public int getCurrentPageNumber() {
-        return pageNumber;
-    }
-
     @Override
     public BookPage getPage(int pageNumber) {
 
@@ -50,7 +39,7 @@ public class PdfBook implements Book {
 
     @Override
     public String getName() {
-        return path;
+        return name;
     }
 
     @Override

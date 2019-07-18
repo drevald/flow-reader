@@ -19,9 +19,9 @@ import static android.graphics.Bitmap.Config.ARGB_8888;
 
 public class PageRendererImpl implements PageRenderer {
 
-    PageLayoutParser pageLayoutParser;
+    private PageLayoutParser pageLayoutParser;
 
-    BookSource bookSource;
+    private BookSource bookSource;
 
     public PageRendererImpl(BookSource bookSource) {
         pageLayoutParser = OpenCVPageLayoutParser.getInstance();
@@ -76,15 +76,10 @@ public class PageRendererImpl implements PageRenderer {
     @Override
     public Bitmap renderOriginalPage(DevicePageContext context, int position) {
         Bitmap bitmap = bookSource.getPageBytes(position);
-        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap,
+        return Bitmap.createScaledBitmap(bitmap,
                 (int) (context.getZoom() * bitmap.getWidth()),
                 (int) (context.getZoom() * bitmap.getHeight()),
                 false);
-        return scaledBitmap;
-    }
-
-    public PageLayoutParser getPageLayoutParser() {
-        return pageLayoutParser;
     }
 
     public void setPageLayoutParser(PageLayoutParser pageLayoutParser) {
