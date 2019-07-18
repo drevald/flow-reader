@@ -120,7 +120,4 @@ public class CachedPageRendererImpl implements PageRenderer {
         this.pageLayoutParser = pageLayoutParser;
     }
 
-
-
-
 }
