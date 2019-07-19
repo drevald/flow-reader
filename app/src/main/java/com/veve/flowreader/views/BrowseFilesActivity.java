@@ -275,6 +275,5 @@ public class BrowseFilesActivity extends AppCompatActivity {
         fileListAdapter.notifyDataSetChanged();
     }
 
-
 }
 

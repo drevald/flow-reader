@@ -3,6 +3,8 @@ package com.veve.flowreader.views;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -17,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.veve.flowreader.Constants;
@@ -284,6 +287,10 @@ public class MainActivity extends AppCompatActivity {
                         .inflate(R.layout.book_preview, container, false);
             }
             TextView textView = convertView.findViewById(R.id.caption);
+            ImageView imageView = convertView.findViewById(R.id.thumbnail);
+            byte[] bytes = booksList.get(position).getPreview();
+            Bitmap thumbnailBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            imageView.setImageBitmap(thumbnailBitmap);
             textView.setText(booksList.get(position).getName());
             return convertView;
         }

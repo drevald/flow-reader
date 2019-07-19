@@ -1,5 +1,6 @@
 package com.veve.flowreader.model;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.veve.flowreader.dao.BookRecord;
@@ -7,6 +8,8 @@ import com.veve.flowreader.model.impl.djvu.DjvuBook;
 import com.veve.flowreader.model.impl.pdf.PdfBook;
 
 import java.io.File;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
 
 /**
  * Designed as a factory of Book objects of all types
@@ -27,25 +30,28 @@ public class BookFactory {
 
     public BookRecord createBook(File file) {
         BookRecord bookRecord = new BookRecord();
+        Book book = null;
         if (file.getName().toLowerCase().endsWith("djvu")) {
-            Book book = new DjvuBook(file.getPath());
-            try {
-                Thread.sleep(10000);
-            } catch (Exception e) {
-                Log.e(getClass().getName(), e.getLocalizedMessage());
-            }
-            bookRecord.setPagesCount(book.getPagesCount());
-            bookRecord.setName(book.getName());
+            book = new DjvuBook(file.getPath());
         } else if (file.getName().toLowerCase().endsWith("pdf")) {
-            Book book = new PdfBook(file.getPath());
-            try {
-                Thread.sleep(10000);
-            } catch (Exception e) {
-                Log.e(getClass().getName(), e.getLocalizedMessage());
-            }
-            bookRecord.setPagesCount(book.getPagesCount());
-            bookRecord.setName(book.getName());
+            book = new PdfBook(file.getPath());
         }
+
+        try {
+            Thread.sleep(10000);
+        } catch (Exception e) {
+            Log.e(getClass().getName(), e.getLocalizedMessage());
+        }
+        bookRecord.setPagesCount(book.getPagesCount());
+        bookRecord.setName(book.getName());
+
+        Bitmap bitmap = book.getPage(0).getAsBitmap(new DevicePageContext(100));
+        Bitmap thumbnail = Bitmap.createBitmap(Bitmap.createBitmap(bitmap, 0, 0, 100, 200));
+        int iBytes = thumbnail.getWidth() * thumbnail.getHeight() * 4;
+        ByteBuffer buffer = ByteBuffer.allocate(iBytes);
+        thumbnail.copyPixelsToBuffer(buffer);
+        bookRecord.setPreview(buffer.array());
+
         return bookRecord;
     }
 
