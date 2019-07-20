@@ -19,7 +19,7 @@ before_script:
   - android list sdk --extended --no-ui --all
   - echo "y" | android update sdk -a --no-ui --filter sys-img-armeabi-v7a-android-22
   - echo "n" | android create avd --name myandroid22 -t "android-22" --abi "default/armeabi-v7a"
-  - emulator -avd myandroid22 -no-audio -no-window &
+  - emulator -prop dalvik.vm.heapsize=512m -avd myandroid22 -no-audio -no-window &
   - android-wait-for-emulator
   - adb devices
   - adb push app/src/main/res/raw/pdf_sample.pdf /data/local/tmp/
