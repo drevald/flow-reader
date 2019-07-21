@@ -297,6 +297,7 @@ vector<glyph> PageSegmenter::get_glyphs() {
     bitwise_not(image, image);
     const Mat kernel = getStructuringElement(MORPH_RECT, Size(8, 2));
     dilate(image, image, kernel, Point(-1, -1), 2);
+    threshold(image, image, 0, 255, THRESH_BINARY | THRESH_OTSU);
 
     // line detection
     bool lines_detected = build_well_formed_page(image, gray_inverted_image);
@@ -319,25 +320,24 @@ vector<glyph> PageSegmenter::get_glyphs() {
         sort(line_limits.begin(), line_limits.end(), SortLineLimits());
 
         Mat hist;
-        reduce(gray_inverted_image, hist, 0, REDUCE_SUM, CV_32F);
+        reduce(image, hist, 0, REDUCE_SUM, CV_32F);
 
         int w =hist.cols;
 
+        // left indent is the first nonzero sum in the histogram
+        int left_indent = 0;
+        bool left_indent_found = false;
         for (int i = 0; i < w; i++) {
             if (hist.at<float>(0, i) > 0) {
+                if (!left_indent_found) {
+                    left_indent = i;
+                    left_indent_found = true;
+                }
                 hist.at<float>(0, i) = 1;
             } else {
                 hist.at<float>(0, i) = 0;
             }
         }
-
-        std::vector<std::tuple<int,int>> zeroRuns = zero_runs_hor(hist);
-
-        int leftIndent = 0;
-        if (zeroRuns.size() >0){
-            leftIndent = std::get<1>(zeroRuns[0]);
-        }
-
 
         int width = image.cols;
         for (line_limit &ll : line_limits) {
@@ -374,10 +374,7 @@ vector<glyph> PageSegmenter::get_glyphs() {
 
                 glyph g;
 
-                if (c == 0 && (left - leftIndent) > 10) {
-                    char msg[50];
-                    sprintf(msg, "left leftIndent %d %d\n", left, leftIndent);
-                    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "%s\n", msg);
+                if (c == 0 && (left - left_indent) > 10) {
                     g.indented = true;
                 } else {
                     g.indented = false;
