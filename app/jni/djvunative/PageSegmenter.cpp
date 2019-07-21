@@ -374,7 +374,7 @@ vector<glyph> PageSegmenter::get_glyphs() {
 
                 glyph g;
 
-                if (c == 0 && (left - left_indent) > 10) {
+                if (c == 0 && (left - left_indent) > 0.01 * width) {
                     g.indented = true;
                 } else {
                     g.indented = false;
