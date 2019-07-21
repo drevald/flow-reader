@@ -4,9 +4,11 @@ import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.veve.flowreader.dao.BookRecord;
+import com.veve.flowreader.model.impl.DevicePageContextImpl;
 import com.veve.flowreader.model.impl.djvu.DjvuBook;
 import com.veve.flowreader.model.impl.pdf.PdfBook;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -46,11 +48,10 @@ public class BookFactory {
         bookRecord.setName(book.getName());
 
         Bitmap bitmap = book.getPage(0).getAsBitmap(new DevicePageContext(100));
-        Bitmap thumbnail = Bitmap.createBitmap(Bitmap.createBitmap(bitmap, 0, 0, 100, 200));
-        int iBytes = thumbnail.getWidth() * thumbnail.getHeight() * 4;
-        ByteBuffer buffer = ByteBuffer.allocate(iBytes);
-        thumbnail.copyPixelsToBuffer(buffer);
-        bookRecord.setPreview(buffer.array());
+        Bitmap thumbnail = Bitmap.createScaledBitmap(bitmap, 100, 150, true);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        thumbnail.compress(Bitmap.CompressFormat.JPEG,100, byteArrayOutputStream);
+        bookRecord.setPreview(byteArrayOutputStream.toByteArray());
 
         return bookRecord;
     }
