@@ -100,13 +100,18 @@ public class BrowseFilesActivity extends AppCompatActivity {
         FileListAdapter() {
             super();
             setRoot(Environment.getExternalStorageDirectory().getAbsolutePath());
+            setRoot(Environment.getExternalStorageDirectory().getAbsolutePath());
         }
 
         protected void setRoot(String path) {
             try {
                 rootDir = new File(path);
+                Log.d(getClass().getName(), String.format("setRoot(%s)", path));
                 currentDirectory = rootDir;
                 currentFiles = new ArrayList<>();
+                Log.d(getClass().getName(), String.format("currentDirectory.listFiles() = ",
+                        currentDirectory.listFiles() == null ? "null" :
+                                currentDirectory.listFiles().length + " files"));
                 for (File file : currentDirectory.listFiles()) {
                     if (file.canRead())
                         currentFiles.add(file);
