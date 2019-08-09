@@ -16,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Display;
 import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -92,6 +93,12 @@ public class PageActivity extends AppCompatActivity {
         book = booksCollection.getBook(position);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(Constants.VIEW_MODE_PARAM, viewMode);
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,7 +120,11 @@ public class PageActivity extends AppCompatActivity {
         pageRenderer = PageRendererFactory.getRenderer(book);
         currentPage = book.getCurrentPage();
 
-        viewMode = Constants.VIEW_MODE_PHONE;
+        viewMode = savedInstanceState == null
+                ? Constants.VIEW_MODE_PHONE
+                : savedInstanceState.getInt(Constants.VIEW_MODE_PARAM) == 0
+                        ? Constants.VIEW_MODE_PHONE
+                        : savedInstanceState.getInt(Constants.VIEW_MODE_PARAM);
 
         bar = findViewById(R.id.bar);
         topLayout = findViewById(R.id.topLayout);
@@ -351,12 +362,24 @@ public class PageActivity extends AppCompatActivity {
                 Snackbar.make(view, getString(R.string.ui_reflow_page), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                 Log.d(getClass().getName(), String.format("Setting page #%d for modified page", currentPage));
+                findViewById(R.id.smaller_text).setEnabled(true);
+                findViewById(R.id.larger_text).setEnabled(true);
+                findViewById(R.id.smaller_kerning).setEnabled(true);
+                findViewById(R.id.larger_kerning).setEnabled(true);
+                findViewById(R.id.smaller_leading).setEnabled(true);
+                findViewById(R.id.larger_leading).setEnabled(true);
             } else if (viewMode == VIEW_MODE_PHONE) {
                 viewMode = VIEW_MODE_ORIGINAL;
                 show.setImageResource(R.drawable.ic_book);
                 Snackbar.make(view, getString(R.string.ui_original_page), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                 Log.d(getClass().getName(), String.format("Setting page #%d for original page", currentPage));
+                findViewById(R.id.smaller_text).setEnabled(false);
+                findViewById(R.id.larger_text).setEnabled(false);
+                findViewById(R.id.smaller_kerning).setEnabled(false);
+                findViewById(R.id.larger_kerning).setEnabled(false);
+                findViewById(R.id.smaller_leading).setEnabled(false);
+                findViewById(R.id.larger_leading).setEnabled(false);
             }
             pageActivity.setPageNumber(currentPage);
         }

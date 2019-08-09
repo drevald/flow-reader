@@ -97,7 +97,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            >
+            android:gravity="top">
 
         </LinearLayout>
 
@@ -110,8 +110,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:orientation="horizontal"
-        android:background="#fff"
-        >
+        android:background="#fff">
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/show"
