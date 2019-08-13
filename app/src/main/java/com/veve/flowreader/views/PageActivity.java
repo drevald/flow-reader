@@ -309,7 +309,8 @@ public class PageActivity extends AppCompatActivity {
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
             Log.d(getClass().getName(), "onStopTrackingTouch");
-            setPageNumber(seekBar.getProgress());
+            int progress = seekBar.getProgress();
+            setPageNumber(progress > 0 ? progress - 1: progress);
             seekBar.setVisibility(View.GONE);
             pager.setVisibility(VISIBLE);
         }
