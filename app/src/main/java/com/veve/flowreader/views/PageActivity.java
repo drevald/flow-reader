@@ -469,31 +469,39 @@ public class PageActivity extends AppCompatActivity {
                     context.setZoom(context.getZoom()*0.8f);
                     pageActivityReference.get().book.setZoom(pageActivityReference.get().context.getZoom());
                     pageActivityReference.get().booksCollection.updateBook(pageActivityReference.get().book);
-                } else if (bitmap.getWidth() >= pageActivityReference.get().context.getWidth()) {
-                    List<View> pageViews = new ArrayList<>();// UI code goes here
-                    for (int offset = 0; offset < bitmapHeight; offset += Constants.IMAGE_VIEW_HEIGHT_LIMIT) {
-                        Log.d(getClass().getName(), "Before image creation");
-                        int height = Math.min(bitmapHeight, offset + Constants.IMAGE_VIEW_HEIGHT_LIMIT);
-                        Log.d(getClass().getName(),
-                        String.format(" Bitmap.createBitmap(bitmap, 0, %d, %d, %d)",
-                        offset, context.getWidth(), height - offset));
-                        Log.d(getClass().getName(),
-                        String.format("bitmap size is width : %d height :%d",
-                        bitmap.getWidth(), bitmap.getHeight()));
-                        Bitmap limitedBitmap = Bitmap.createBitmap(bitmap, 0, offset, context.getWidth(),
-                                height - offset);
+                //} else if (bitmap.getWidth() >= pageActivityReference.get().context.getWidth()) {
+                } else {
+                    if (viewMode == VIEW_MODE_PHONE) {
+                        List<View> pageViews = new ArrayList<>();// UI code goes here
+                        for (int offset = 0; offset < bitmapHeight; offset += Constants.IMAGE_VIEW_HEIGHT_LIMIT) {
+                            Log.d(getClass().getName(), "Before image creation");
+                            int height = Math.min(bitmapHeight, offset + Constants.IMAGE_VIEW_HEIGHT_LIMIT);
+                            Log.d(getClass().getName(),
+                                    String.format(" Bitmap.createBitmap(bitmap, 0, %d, %d, %d)",
+                                            offset, context.getWidth(), height - offset));
+                            Log.d(getClass().getName(),
+                                    String.format("bitmap size is width : %d height :%d",
+                                            bitmap.getWidth(), bitmap.getHeight()));
+                            Bitmap limitedBitmap = Bitmap.createBitmap(bitmap, 0, offset, context.getWidth(),
+                                    height - offset);
+                            ImageView imageView = new ImageView(getApplicationContext());
+                            imageView.setScaleType(ImageView.ScaleType.FIT_START);
+                            imageView.setImageBitmap(limitedBitmap);
+                            pageViews.add(imageView);
+                            Log.d(getClass().getName(), "Image creation");
+                            Log.d(getClass().getName(), "After image creation");
+                        }
+                        pageActivityReference.get().page.removeAllViews();
+                        for (View view : pageViews) {
+                            pageActivityReference.get().page.addView(view);
+                        }
+                        Log.v(getClass().getName(), "End setting bitmap");
+                    } else {
+                        pageActivityReference.get().page.removeAllViews();
                         ImageView imageView = new ImageView(getApplicationContext());
-                        imageView.setScaleType(ImageView.ScaleType.FIT_START);
-                        imageView.setImageBitmap(limitedBitmap);
-                        pageViews.add(imageView);
-                        Log.d(getClass().getName(), "Image creation");
-                        Log.d(getClass().getName(), "After image creation");
+                        imageView.setImageBitmap(bitmap);
+                        pageActivityReference.get().page.addView(imageView);
                     }
-                    pageActivityReference.get().page.removeAllViews();
-                    for (View view : pageViews) {
-                        pageActivityReference.get().page.addView(view);
-                    }
-                    Log.v(getClass().getName(), "End setting bitmap");
                 }
                 pageActivityReference.get().scroll.setVisibility(VISIBLE);
                 pageActivityReference.get().progressBar.setVisibility(INVISIBLE);
