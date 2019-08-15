@@ -78,8 +78,6 @@ public class PageActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d(getClass().getName(), "onCreateOptionsMenu");
         getMenuInflater().inflate(R.menu.page_menu, menu);
-        MenuItem menuItem = menu.findItem(R.id.opencv_parser);
-        menuItem.setChecked(true);
         return true;
     }
 
@@ -173,24 +171,6 @@ public class PageActivity extends AppCompatActivity {
             case R.id.wide_margins: {
                 context.setMargin(100);
                 book.setMargin(100);
-                break;
-            }
-            case R.id.opencv_parser: {
-                pageRenderer.setPageLayoutParser(
-                        OpenCVPageLayoutParser.getInstance());
-                setPageNumber(currentPage);
-                break;
-            }
-            case R.id.simple_parser: {
-                pageRenderer.setPageLayoutParser(
-                        SimpleLayoutParser.getInstance());
-                setPageNumber(currentPage);
-                break;
-            }
-            case R.id.page_segmenter: {
-                pageRenderer.setPageLayoutParser(
-                        SimpleLayoutParser.getInstance());
-                setPageNumber(currentPage);
                 break;
             }
             case R.id.delete_book: {

@@ -4,13 +4,5 @@
     <item android:id="@+id/narrow_margins" android:title="@string/ui_narrow_margins" />
     <item android:id="@+id/normal_margins" android:title="@string/ui_normal_margins" />
     <item android:id="@+id/wide_margins" android:title="@string/ui_wide_margins" />
-    <group android:checkableBehavior="single">
-        <item android:id="@+id/opencv_parser" android:title="Open CV Parser" />
-        <item android:id="@+id/simple_parser" android:title="Simple Parser" />
-        <item android:id="@+id/page_segmenter" android:title="Page Segmenter" />
-    </group>
-    <group android:checkableBehavior="all">
-        <item android:id="@+id/show_glyph_borders" android:title="Show Glyph Borders" />
-    </group>
     <item android:id="@+id/delete_book" android:title="Delete this Book" />
 </menu>

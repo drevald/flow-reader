@@ -15,4 +15,5 @@
     <string name="ui_normal_margins">Обычные поля</string>
     <string name="ui_wide_margins">Широкие поля</string>
     <string name="could_not_zoom_more">Максимальное увеличение</string>
+    <string name="delete_this_book">Удалить книгу</string>
 </resources>

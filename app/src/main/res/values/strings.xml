@@ -15,4 +15,5 @@
     <string name="ui_normal_margins">Normal margins</string>
     <string name="ui_wide_margins">Wide margins</string>
     <string name="could_not_zoom_more">Could not zoom more</string>
+    <string name="delete_this_book">Delete this book</string>
 </resources>
