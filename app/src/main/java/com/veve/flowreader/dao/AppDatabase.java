@@ -12,7 +12,7 @@ import android.support.annotation.NonNull;
         {BookRecord.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
-    private static final String DATABASE_NAME = "db2";
+    private static final String DATABASE_NAME = "db";
 
     public abstract DaoAccess daoAccess();
 

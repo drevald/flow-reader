@@ -90,6 +90,12 @@ public class PageActivity extends AppCompatActivity {
         book = booksCollection.getBook(position);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(Constants.VIEW_MODE_PARAM, viewMode);
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +117,11 @@ public class PageActivity extends AppCompatActivity {
         pageRenderer = PageRendererFactory.getRenderer(book);
         currentPage = book.getCurrentPage();
 
-        viewMode = Constants.VIEW_MODE_PHONE;
+        viewMode = savedInstanceState == null
+                ? Constants.VIEW_MODE_PHONE
+                : savedInstanceState.getInt(Constants.VIEW_MODE_PARAM) == 0
+                        ? Constants.VIEW_MODE_PHONE
+                        : savedInstanceState.getInt(Constants.VIEW_MODE_PARAM);
 
         bar = findViewById(R.id.bar);
         topLayout = findViewById(R.id.topLayout);
