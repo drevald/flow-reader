@@ -28,7 +28,16 @@
                 <data android:mimeType="application/pdf" />
                 <data android:mimeType="application/x-pdf" />
             </intent-filter>
-            <intent-filter>
+        </activity>
+        <activity
+            android:name=".views.BrowseFilesActivity"
+            android:label="@string/title_activity_browse_files"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".views.PageActivity"
+            android:label="@string/title_activity_page"
+            android:theme="@style/AppTheme.NoActionBar">
+               <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data
@@ -73,15 +82,52 @@
                     android:mimeType="*/*"
                     android:scheme="file" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data
+                    android:host="*"
+                    android:pathPattern=".*\\.djvu"
+                    android:mimeType="*/*"
+                    android:scheme="content" />
+                <data
+                    android:host="*"
+                    android:pathPattern=".*\\..*\\.djvu"
+                    android:mimeType="*/*"
+                    android:scheme="content" />
+                <data
+                    android:host="*"
+                    android:pathPattern=".*\\..*\\..*\\.djvu"
+                    android:mimeType="*/*"
+                    android:scheme="content" />
+                <data
+                    android:host="*"
+                    android:pathPattern=".*\\..*\\..*\\..*\\.djvu"
+                    android:mimeType="*/*"
+                    android:scheme="content" />
+
+                <data
+                    android:host="*"
+                    android:pathPattern=".*\\.pdf"
+                    android:mimeType="*/*"
+                    android:scheme="content" />
+                <data
+                    android:host="*"
+                    android:pathPattern=".*\\..*\\.pdf"
+                    android:mimeType="*/*"
+                    android:scheme="content" />
+                <data
+                    android:host="*"
+                    android:pathPattern=".*\\..*\\..*\\.pdf"
+                    android:mimeType="*/*"
+                    android:scheme="content" />
+                <data
+                    android:host="*"
+                    android:pathPattern=".*\\..*\\..*\\..*\\.pdf"
+                    android:mimeType="*/*"
+                    android:scheme="content" />
+            </intent-filter>
         </activity>
-        <activity
-            android:name=".views.BrowseFilesActivity"
-            android:label="@string/title_activity_browse_files"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".views.PageActivity"
-            android:label="@string/title_activity_page"
-            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
