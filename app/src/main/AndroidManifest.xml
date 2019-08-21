@@ -21,12 +21,6 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
                 <action android:name="android.intent.action.VIEW" />
-                <action android:name="android.intent.action.OPEN_DOCUMENT" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="file" />
-                <data android:mimeType="application/pdf" />
-                <data android:mimeType="application/x-pdf" />
             </intent-filter>
         </activity>
         <activity
@@ -36,95 +30,99 @@
         <activity
             android:name=".views.PageActivity"
             android:label="@string/title_activity_page"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".views.GetBookActivity"
+            android:label="@string/title_activity_page"
             android:theme="@style/AppTheme.NoActionBar">
-               <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <data
-                    android:host="*"
-                    android:pathPattern=".*\\.djvu"
-                    android:mimeType="*/*"
-                    android:scheme="file" />
-                <data
-                    android:host="*"
-                    android:pathPattern=".*\\..*\\.djvu"
-                    android:mimeType="*/*"
-                    android:scheme="file" />
-                <data
-                    android:host="*"
-                    android:pathPattern=".*\\..*\\..*\\.djvu"
-                    android:mimeType="*/*"
-                    android:scheme="file" />
-                <data
-                    android:host="*"
-                    android:pathPattern=".*\\..*\\..*\\..*\\.djvu"
-                    android:mimeType="*/*"
-                    android:scheme="file" />
-
-                <data
-                    android:host="*"
-                    android:pathPattern=".*\\.pdf"
-                    android:mimeType="*/*"
-                    android:scheme="file" />
-                <data
-                    android:host="*"
-                    android:pathPattern=".*\\..*\\.pdf"
-                    android:mimeType="*/*"
-                    android:scheme="file" />
-                <data
-                    android:host="*"
-                    android:pathPattern=".*\\..*\\..*\\.pdf"
-                    android:mimeType="*/*"
-                    android:scheme="file" />
-                <data
-                    android:host="*"
-                    android:pathPattern=".*\\..*\\..*\\..*\\.pdf"
-                    android:mimeType="*/*"
-                    android:scheme="file" />
-            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data
                     android:host="*"
+                    android:mimeType="*/*"
                     android:pathPattern=".*\\.djvu"
-                    android:mimeType="*/*"
-                    android:scheme="content" />
+                    android:scheme="file" />
                 <data
                     android:host="*"
+                    android:mimeType="*/*"
                     android:pathPattern=".*\\..*\\.djvu"
-                    android:mimeType="*/*"
-                    android:scheme="content" />
+                    android:scheme="file" />
                 <data
                     android:host="*"
+                    android:mimeType="*/*"
                     android:pathPattern=".*\\..*\\..*\\.djvu"
-                    android:mimeType="*/*"
-                    android:scheme="content" />
+                    android:scheme="file" />
                 <data
                     android:host="*"
-                    android:pathPattern=".*\\..*\\..*\\..*\\.djvu"
                     android:mimeType="*/*"
-                    android:scheme="content" />
+                    android:pathPattern=".*\\..*\\..*\\..*\\.djvu"
+                    android:scheme="file" />
+                <data
+                    android:host="*"
+                    android:mimeType="*/*"
+                    android:pathPattern=".*\\.pdf"
+                    android:scheme="file" />
+                <data
+                    android:host="*"
+                    android:mimeType="*/*"
+                    android:pathPattern=".*\\..*\\.pdf"
+                    android:scheme="file" />
+                <data
+                    android:host="*"
+                    android:mimeType="*/*"
+                    android:pathPattern=".*\\..*\\..*\\.pdf"
+                    android:scheme="file" />
+                <data
+                    android:host="*"
+                    android:mimeType="*/*"
+                    android:pathPattern=".*\\..*\\..*\\..*\\.pdf"
+                    android:scheme="file" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
 
                 <data
                     android:host="*"
+                    android:mimeType="*/*"
+                    android:pathPattern=".*\\.djvu"
+                    android:scheme="content" />
+                <data
+                    android:host="*"
+                    android:mimeType="*/*"
+                    android:pathPattern=".*\\..*\\.djvu"
+                    android:scheme="content" />
+                <data
+                    android:host="*"
+                    android:mimeType="*/*"
+                    android:pathPattern=".*\\..*\\..*\\.djvu"
+                    android:scheme="content" />
+                <data
+                    android:host="*"
+                    android:mimeType="*/*"
+                    android:pathPattern=".*\\..*\\..*\\..*\\.djvu"
+                    android:scheme="content" />
+                <data
+                    android:host="*"
+                    android:mimeType="*/*"
                     android:pathPattern=".*\\.pdf"
-                    android:mimeType="*/*"
                     android:scheme="content" />
                 <data
                     android:host="*"
+                    android:mimeType="*/*"
                     android:pathPattern=".*\\..*\\.pdf"
-                    android:mimeType="*/*"
                     android:scheme="content" />
                 <data
                     android:host="*"
+                    android:mimeType="*/*"
                     android:pathPattern=".*\\..*\\..*\\.pdf"
-                    android:mimeType="*/*"
                     android:scheme="content" />
                 <data
                     android:host="*"
-                    android:pathPattern=".*\\..*\\..*\\..*\\.pdf"
                     android:mimeType="*/*"
+                    android:pathPattern=".*\\..*\\..*\\..*\\.pdf"
                     android:scheme="content" />
             </intent-filter>
         </activity>
