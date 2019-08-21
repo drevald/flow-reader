@@ -38,42 +38,6 @@
                 style="?android:attr/borderlessButtonStyle"
                 />
 
-            <android.support.v7.widget.AppCompatImageButton
-                android:id="@+id/larger_kerning"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                app:srcCompat="@drawable/ic_larger_kerning"
-                style="?android:attr/borderlessButtonStyle"
-                />
-
-            <android.support.v7.widget.AppCompatImageButton
-                android:id="@+id/smaller_kerning"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                app:srcCompat="@drawable/ic_smaller_kerning"
-                style="?android:attr/borderlessButtonStyle"
-                />
-
-            <android.support.v7.widget.AppCompatImageButton
-                android:id="@+id/larger_leading"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                app:srcCompat="@drawable/ic_larger_leading"
-                style="?android:attr/borderlessButtonStyle"
-                />
-
-            <android.support.v7.widget.AppCompatImageButton
-                android:id="@+id/smaller_leading"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                app:srcCompat="@drawable/ic_smaller_leading"
-                style="?android:attr/borderlessButtonStyle"
-                />
-
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>

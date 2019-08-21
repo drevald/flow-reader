@@ -25,4 +25,7 @@ public interface Constants {
 
     String BOOK_ID = "BOOK_ID";
 
+    int MARGIN_STEP = 50;
+    int MARGIN_MAX = 250;
+
 }

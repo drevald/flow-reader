@@ -48,6 +48,8 @@ import java.util.Set;
 
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
+import static com.veve.flowreader.Constants.MARGIN_MAX;
+import static com.veve.flowreader.Constants.MARGIN_STEP;
 import static com.veve.flowreader.Constants.MAX_BITMAP_SIZE;
 import static com.veve.flowreader.Constants.VIEW_MODE_ORIGINAL;
 import static com.veve.flowreader.Constants.VIEW_MODE_PHONE;
@@ -163,26 +165,42 @@ public class PageActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.id.no_margins: {
-                context.setMargin(0);
-                book.setMargin(0);
+            case R.id.margins_minus: {
+                int margin = context.getMargin();
+                context.setMargin(margin > MARGIN_STEP ? margin - MARGIN_STEP : margin);
                 break;
             }
-            case R.id.narrow_margins: {
-                context.setMargin(25);
-                book.setMargin(25);
+            case R.id.margins_plus: {
+                int margin = context.getMargin();
+                context.setMargin(margin < MARGIN_MAX ? margin + MARGIN_STEP : margin);
                 break;
             }
-            case R.id.normal_margins: {
-                context.setMargin(50);
-                book.setMargin(50);
+
+            case R.id.kerning_minus: {
+                context.setKerning(0.8f * context.getKerning());
+                Log.v(getClass().getName(), "Kerning set to " + context.getKerning());
+                book.setKerning(context.getKerning());
                 break;
             }
-            case R.id.wide_margins: {
-                context.setMargin(100);
-                book.setMargin(100);
+            case R.id.kerning_plus: {
+                context.setKerning(1.25f * context.getKerning());
+                Log.v(getClass().getName(), "Kerning set to " + context.getKerning());
+                book.setKerning(context.getKerning());
                 break;
             }
+            case R.id.leading_minus: {
+                context.setLeading(0.8f * context.getLeading());
+                Log.v(getClass().getName(), "Leading set to " + context.getLeading());
+                book.setLeading(context.getLeading());
+                break;
+            }
+            case R.id.leading_plus: {
+                context.setLeading(1.25f * context.getLeading());
+                Log.v(getClass().getName(), "Leading set to " + context.getLeading());
+                book.setLeading(context.getLeading());
+                break;
+            }
+
             case R.id.delete_book: {
                 long bookId = book.getId();
                 BooksCollection.getInstance(getApplicationContext()).deleteBook(bookId);
@@ -325,10 +343,6 @@ public class PageActivity extends AppCompatActivity {
             PageMenuListener pageMenuListener = new PageMenuListener();
             findViewById(R.id.smaller_text).setOnClickListener(pageMenuListener);
             findViewById(R.id.larger_text).setOnClickListener(pageMenuListener);
-            findViewById(R.id.smaller_kerning).setOnClickListener(pageMenuListener);
-            findViewById(R.id.larger_kerning).setOnClickListener(pageMenuListener);
-            findViewById(R.id.smaller_leading).setOnClickListener(pageMenuListener);
-            findViewById(R.id.larger_leading).setOnClickListener(pageMenuListener);
         }
     }
 
@@ -368,30 +382,6 @@ public class PageActivity extends AppCompatActivity {
                     context.setZoom(1.25f * context.getZoom());
                     Log.v(getClass().getName(), "Zoom set to " + context.getZoom());
                     book.setZoom(context.getZoom());
-                    break;
-                }
-                case R.id.smaller_kerning: {
-                    context.setKerning(0.8f * context.getKerning());
-                    Log.v(getClass().getName(), "Kerning set to " + context.getKerning());
-                    book.setKerning(context.getKerning());
-                    break;
-                }
-                case R.id.larger_kerning: {
-                    context.setKerning(1.25f * context.getKerning());
-                    Log.v(getClass().getName(), "Kerning set to " + context.getKerning());
-                    book.setKerning(context.getKerning());
-                    break;
-                }
-                case R.id.smaller_leading: {
-                    context.setLeading(0.8f * context.getLeading());
-                    Log.v(getClass().getName(), "Leading set to " + context.getLeading());
-                    book.setLeading(context.getLeading());
-                    break;
-                }
-                case R.id.larger_leading: {
-                    context.setLeading(1.25f * context.getLeading());
-                    Log.v(getClass().getName(), "Leading set to " + context.getLeading());
-                    book.setLeading(context.getLeading());
                     break;
                 }
             }

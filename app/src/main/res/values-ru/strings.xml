@@ -16,4 +16,10 @@
     <string name="ui_wide_margins">Широкие поля</string>
     <string name="could_not_zoom_more">Максимальное увеличение</string>
     <string name="delete_this_book">Удалить книгу</string>
+    <string name="margins_plus">Увеличить поля</string>
+    <string name="margins_minus">Уменьшить поля</string>
+    <string name="leading_plus">Увеличить интерлиньяж</string>
+    <string name="leading_minus">Уменьшить интерлиньяж</string>
+    <string name="kerning_plus">Увеличить кернинг</string>
+    <string name="kerning_minus">Уменьшить кернинг</string>
 </resources>
