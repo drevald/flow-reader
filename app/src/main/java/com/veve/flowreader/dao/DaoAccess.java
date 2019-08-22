@@ -12,7 +12,7 @@ import java.util.List;
 public interface DaoAccess {
 
     @Query("SELECT * FROM BookRecord WHERE url = :url")
-    List<BookRecord> fetchBook(String url);
+    BookRecord fetchBook(String url);
 
     @Query("SELECT * FROM BookRecord")
     List<BookRecord> listBooks();

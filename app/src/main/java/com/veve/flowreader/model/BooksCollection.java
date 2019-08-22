@@ -55,6 +55,16 @@ public class BooksCollection {
         }
     }
 
+    public BookRecord getBook(String url) {
+        BookByUrlGetterTask bookGetterTask = new BookByUrlGetterTask(daoAccess);
+        bookGetterTask.execute(url);
+        try {
+            return bookGetterTask.get();
+        } catch (Exception e) {
+            Log.e(getClass().getName(), e.getLocalizedMessage());
+            return null;
+        }
+    }
 
     public void deleteBook (long bookId) {
         new BookDeleteTask(daoAccess).execute(bookId);
@@ -156,8 +166,23 @@ public class BooksCollection {
 
         @Override
         protected Boolean doInBackground(String... strings) {
-            List<BookRecord> bookRecords = daoAccess.fetchBook(strings[0]);
-            return bookRecords != null && bookRecords.size() > 0;
+            BookRecord bookRecords = daoAccess.fetchBook(strings[0]);
+            return bookRecords != null;
         }
 
     }
+
+class BookByUrlGetterTask extends AsyncTask<String, Void, BookRecord> {
+
+    private DaoAccess daoAccess;
+
+    BookByUrlGetterTask(DaoAccess daoAccess) {
+        this.daoAccess = daoAccess;
+    }
+
+    @Override
+    protected BookRecord doInBackground(String... strings) {
+        return daoAccess.fetchBook(strings[0]);
+    }
+
+}
