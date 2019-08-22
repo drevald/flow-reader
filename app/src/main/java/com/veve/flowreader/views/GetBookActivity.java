@@ -1,6 +1,8 @@
 package com.veve.flowreader.views;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,7 +23,7 @@ public class GetBookActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_book);
-        File file = new File(getIntent().getData().getPath());
+        File file = new File(getFilePath(getIntent().getData()));
         BooksCollection booksCollection = BooksCollection.getInstance(getApplicationContext());
         if (booksCollection.hasBook(file)) {
             BookRecord bookRecord = booksCollection.getBook(file.getPath());
@@ -32,6 +34,25 @@ public class GetBookActivity extends AppCompatActivity {
         } else {
             new BookCreatorTask().execute(file);
         }
+    }
+
+    private String getFilePath(Uri uri) {
+        String filePath = null;
+        Log.d("","URI = "+ uri);
+        if (uri != null && "content".equals(uri.getScheme())) {
+            Cursor cursor = this.getContentResolver().query(uri,
+                    new String[] { android.provider.MediaStore.Images.ImageColumns.DATA },
+                    null,
+                    null,
+                    null);
+            cursor.moveToFirst();
+            filePath = cursor.getString(0);
+            cursor.close();
+        } else {
+            filePath = uri.getPath();
+        }
+        Log.d("","Chosen path = "+ filePath);
+        return filePath;
     }
 
 
