@@ -478,13 +478,7 @@ public class PageActivity extends AppCompatActivity {
                         }
                         Log.v(getClass().getName(), "End setting bitmap");
                     } else {
-//                        scroll.removeAllViews();
-//                        page = new LinearLayout(getApplicationContext());
-//                        scroll.addView(page);
-                        page.setMinimumHeight(0);
-                        page.setMinimumWidth(0);
                         pageActivityReference.get().page.removeAllViewsInLayout();
-                        pageActivityReference.get().page.refreshDrawableState();
                         Bitmap limitedBitmap = bitmap; //Bitmap.createBitmap(bitmap, 0, 0, page.getWidth(), page.getHeight());
                         ImageView imageView = new ImageView(getApplicationContext());
                         imageView.setScaleType(ImageView.ScaleType.FIT_START);
