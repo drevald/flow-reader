@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -479,8 +481,12 @@ public class PageActivity extends AppCompatActivity {
                         Log.v(getClass().getName(), "End setting bitmap");
                     } else {
                         pageActivityReference.get().page.removeAllViewsInLayout();
-                        Bitmap limitedBitmap = bitmap; //Bitmap.createBitmap(bitmap, 0, 0, page.getWidth(), page.getHeight());
+                        Bitmap limitedBitmap = Bitmap.createScaledBitmap(bitmap, scroll.getWidth(),
+                                (scroll.getWidth() * bitmap.getHeight())/bitmap.getWidth(),false);
                         ImageView imageView = new ImageView(getApplicationContext());
+                        ViewGroup.LayoutParams layoutParams =
+                                new ViewGroup.LayoutParams(limitedBitmap.getWidth(), limitedBitmap.getHeight());
+                        imageView.setLayoutParams(layoutParams);
                         imageView.setScaleType(ImageView.ScaleType.FIT_START);
                         imageView.setImageBitmap(limitedBitmap);
                         pageActivityReference.get().page.addView(imageView);
