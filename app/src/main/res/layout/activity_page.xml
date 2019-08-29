@@ -21,6 +21,15 @@
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
             <android.support.v7.widget.AppCompatImageButton
+                android:id="@+id/help"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                app:srcCompat="@drawable/ic_larger_text"
+                style="?android:attr/borderlessButtonStyle"
+                />
+
+            <android.support.v7.widget.AppCompatImageButton
                 android:id="@+id/larger_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -82,7 +91,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|start"
             android:layout_margin="@dimen/fab_margin"
-            app:srcCompat="@drawable/ic_phone"
+            app:srcCompat="@drawable/ic_to_book"
             android:layout_weight = "0"/>
 
         <TextView

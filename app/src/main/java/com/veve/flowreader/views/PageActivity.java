@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.pdf.PdfDocument;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -137,6 +138,10 @@ public class PageActivity extends AppCompatActivity {
         show = findViewById(R.id.show);
         scroll = findViewById(R.id.scroll);
         bottomBar = findViewById(R.id.bottomBar);
+
+        findViewById(R.id.help).setOnClickListener((view)->{
+            startActivity(new Intent(PageActivity.this, HelpActivity.class));
+        });
 
         //page.addOnLayoutChangeListener(new LayoutListener());
         seekBar.setMax(book.getPagesCount());
@@ -354,13 +359,13 @@ public class PageActivity extends AppCompatActivity {
             ImageView show = (ImageView)view;
             if (viewMode == VIEW_MODE_ORIGINAL) {
                 viewMode = VIEW_MODE_PHONE;
-                show.setImageResource(R.drawable.ic_phone);
+                show.setImageResource(R.drawable.ic_to_book);
                 Snackbar.make(view, getString(R.string.ui_reflow_page), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                 Log.d(getClass().getName(), String.format("Setting page #%d for modified page", currentPage));
             } else if (viewMode == VIEW_MODE_PHONE) {
                 viewMode = VIEW_MODE_ORIGINAL;
-                show.setImageResource(R.drawable.ic_book);
+                show.setImageResource(R.drawable.ic_to_phone);
                 Snackbar.make(view, getString(R.string.ui_original_page), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                 Log.d(getClass().getName(), String.format("Setting page #%d for original page", currentPage));

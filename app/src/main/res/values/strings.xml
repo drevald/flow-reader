@@ -22,4 +22,5 @@
     <string name="leading_minus">Smaller leading</string>
     <string name="kerning_plus">Bigger kerning</string>
     <string name="kerning_minus">Smaller kerning</string>
+    <string name="title_activity_help">HelpActivity</string>
 </resources>
