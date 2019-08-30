@@ -16,18 +16,32 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="50sp"
             android:orientation="horizontal">
-            <ImageView
-                android:layout_width="200sp"
-                android:layout_height="100sp"
-                app:srcCompat="@drawable/ic_tap_leftt"/>
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="return"/>
-
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@color/colorAccent"/>
         </LinearLayout>
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="#FFEB3B"/>
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@color/colorPrimaryDark"/>
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="#538E96"/>
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="#FF9800"/>
 
     </LinearLayout>
 

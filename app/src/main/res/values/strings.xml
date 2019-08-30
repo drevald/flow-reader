@@ -22,5 +22,8 @@
     <string name="leading_minus">Smaller leading</string>
     <string name="kerning_plus">Bigger kerning</string>
     <string name="kerning_minus">Smaller kerning</string>
-    <string name="title_activity_help">HelpActivity</string>
+    <string name="title_activity_help">Hint</string>
+    <string name="double_tap_left">Double tap the left half of screen to navigate to the previous page</string>
+    <string name="double_tap_right">Double tap the right half of screen to navigate to the next page</string>
+    <string name="single_tap">Single tap on screen - to show/hide navigation and settings</string>
 </resources>

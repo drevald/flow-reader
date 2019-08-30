@@ -22,4 +22,8 @@
     <string name="leading_minus">Уменьшить интерлиньяж</string>
     <string name="kerning_plus">Увеличить кернинг</string>
     <string name="kerning_minus">Уменьшить кернинг</string>
+    <string name="title_activity_help">Подсказки</string>
+    <string name="double_tap_left">Двойное нажатие на левую половину экрана - перейти к предыдущей странице</string>
+    <string name="double_tap_right">Двойное нажатие на правую половину экрана - перейти к следующей странице</string>
+    <string name="single_tap">Одинарное нажатие на экран - показать/скрыть настройки</string>
 </resources>
