@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -19,6 +19,13 @@
 
     <style name="mainText">
         <item name="android:labelTextSize">24sp</item>
+    </style>
+
+    <style name="label">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:padding">20sp</item>
     </style>
 
 </resources>
