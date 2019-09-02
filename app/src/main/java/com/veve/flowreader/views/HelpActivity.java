@@ -1,5 +1,6 @@
 package com.veve.flowreader.views;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -26,9 +27,6 @@ public class HelpActivity extends AppCompatActivity {
             setContentView(R.layout.activity_help_portrait);
         }
 
-
-
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -36,8 +34,9 @@ public class HelpActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+               Intent intent = new Intent(HelpActivity.this, PageActivity.class);
+               intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+               startActivity(intent);
             }
         });
     }

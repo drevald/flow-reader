@@ -27,4 +27,6 @@
     <string name="double_tap_right">Double tap the right half of screen to navigate to the next page</string>
     <string name="single_tap">Single tap on screen - to show/hide navigation and settings</string>
     <string name="help">Help</string>
+    <string name="show_overturned">Click to view the overturned page</string>
+    <string name="show_original">Click to view the original page</string>
 </resources>

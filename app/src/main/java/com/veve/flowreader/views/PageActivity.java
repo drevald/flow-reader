@@ -143,7 +143,8 @@ public class PageActivity extends AppCompatActivity {
             startActivity(new Intent(PageActivity.this, HelpActivity.class));
         });
 
-        //page.addOnLayoutChangeListener(new LayoutListener());
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
         seekBar.setMax(book.getPagesCount());
         pager.setOnTouchListener(new PagerTouchListener());
         seekBar.setOnSeekBarChangeListener(new PagerListener());
@@ -160,6 +161,8 @@ public class PageActivity extends AppCompatActivity {
         context.setKerning(book.getKerning());
         context.setLeading(book.getLeading());
         context.setMargin(book.getMargin());
+
+        ((TextView)findViewById(R.id.book_title)).setText(book.getName());
 
         pageActivity = this;
         setPageNumber(currentPage);

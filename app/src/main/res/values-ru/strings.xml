@@ -27,4 +27,6 @@
     <string name="double_tap_right">Двойное нажатие на правую половину экрана - перейти к следующей странице</string>
     <string name="single_tap">Одинарное нажатие на экран - показать/скрыть настройки</string>
     <string name="help">Помощь</string>
+    <string name="show_overturned">Кликните чтобы увидеть переверстанную страницу</string>
+    <string name="show_original">Кликните чтобы увидеть оригинальную страницу</string>
 </resources>

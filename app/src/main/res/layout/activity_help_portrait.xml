@@ -71,6 +71,44 @@
                 android:background="@color/colorPrimary"/>
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="200dp"
+                android:layout_height="100dp"
+                app:srcCompat="@drawable/ic_to_book_large"
+                android:contentDescription="@string/show_original"
+                android:background="@color/colorPrimary"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/show_original"
+                style="@style/label"
+                android:background="@color/colorPrimary"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="200dp"
+                android:layout_height="100dp"
+                app:srcCompat="@drawable/ic_to_phone_large"
+                android:contentDescription="@string/show_overturned"
+                android:background="@color/colorPrimary"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/show_overturned"
+                style="@style/label"
+                android:background="@color/colorPrimary"/>
+        </LinearLayout>
+
+
+
     </LinearLayout>
 
     </ScrollView>
