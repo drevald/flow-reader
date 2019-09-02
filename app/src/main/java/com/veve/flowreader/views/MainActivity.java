@@ -99,8 +99,8 @@ public class MainActivity extends AppCompatActivity {
             (AdapterView<?> parent, View view, int position, long id) -> {
             Intent ii = new Intent(MainActivity.this, PageActivity.class);
             BookRecord selectedBook = (BookRecord)parent.getItemAtPosition(position);
-            ii.putExtra("filename", selectedBook.getUrl());
-            ii.putExtra("bookId", selectedBook.getId());
+            ii.putExtra(Constants.FILE_NAME, selectedBook.getUrl());
+            ii.putExtra(Constants.BOOK_ID, selectedBook.getId());
             startActivity(ii);
         });
 

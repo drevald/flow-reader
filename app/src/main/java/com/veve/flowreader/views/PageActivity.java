@@ -115,7 +115,7 @@ public class PageActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        long bookId = getIntent().getLongExtra("bookId", 0);
+        long bookId = getIntent().getLongExtra(Constants.BOOK_ID, 0);
         booksCollection = BooksCollection.getInstance(getApplicationContext());
         book = booksCollection.getBook(bookId);
 
@@ -140,7 +140,9 @@ public class PageActivity extends AppCompatActivity {
         bottomBar = findViewById(R.id.bottomBar);
 
         findViewById(R.id.help).setOnClickListener((view)->{
-            startActivity(new Intent(PageActivity.this, HelpActivity.class));
+            Intent intent = new Intent(PageActivity.this, HelpActivity.class);
+            intent.putExtra(Constants.BOOK_ID, book.getId());
+            startActivity(intent);
         });
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.model.Book;
@@ -28,8 +29,8 @@ public class GetBookActivity extends AppCompatActivity {
         if (booksCollection.hasBook(file)) {
             BookRecord bookRecord = booksCollection.getBook(file.getPath());
             Intent ii = new Intent(GetBookActivity.this, PageActivity.class);
-            ii.putExtra("bookId", bookRecord.getId());
-            ii.putExtra("filename", bookRecord.getUrl());
+            ii.putExtra(Constants.BOOK_ID, bookRecord.getId());
+            ii.putExtra(Constants.FILE_NAME, bookRecord.getUrl());
             startActivity(ii);
         } else {
             new BookCreatorTask().execute(file);
@@ -78,8 +79,8 @@ public class GetBookActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             Intent ii = new Intent(GetBookActivity.this, PageActivity.class);
-            ii.putExtra("bookId", bookId);
-            ii.putExtra("filename", newBook.getUrl());
+            ii.putExtra(Constants.BOOK_ID, bookId);
+            ii.putExtra(Constants.FILE_NAME, newBook.getUrl());
             startActivity(ii);
         }
     }
