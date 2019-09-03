@@ -80,6 +80,13 @@ public class PageActivity extends AppCompatActivity {
     boolean barsVisible;
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        book.setScrollOffset(scroll.getScrollY());
+        booksCollection.updateBook(book);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d(getClass().getName(), "onCreateOptionsMenu");
         getMenuInflater().inflate(R.menu.page_menu, menu);
@@ -90,6 +97,7 @@ public class PageActivity extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        Log.v(getClass().getName(), getClass().getName() + "onNewIntent# " + this.hashCode());
         int position = getIntent().getIntExtra("position", 0);
         booksCollection = BooksCollection.getInstance(getApplicationContext());
         book = booksCollection.getBook(position);
@@ -98,16 +106,16 @@ public class PageActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(Constants.VIEW_MODE_PARAM, viewMode);
+        booksCollection.updateBook(book);
     }
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        Log.d(getClass().getName(), "onCreate");
-
         super.onCreate(savedInstanceState);
+
+        Log.v(getClass().getName(), getClass().getName() + "onCreate# " + this.hashCode());
 
         runningTasks = new HashSet<>();
 
@@ -122,11 +130,7 @@ public class PageActivity extends AppCompatActivity {
         pageRenderer = PageRendererFactory.getRenderer(book);
         currentPage = book.getCurrentPage();
 
-        viewMode = savedInstanceState == null
-                ? Constants.VIEW_MODE_PHONE
-                : savedInstanceState.getInt(Constants.VIEW_MODE_PARAM) == 0
-                        ? Constants.VIEW_MODE_PHONE
-                        : savedInstanceState.getInt(Constants.VIEW_MODE_PARAM);
+        viewMode = book.getMode();
 
         bar = findViewById(R.id.bar);
         topLayout = findViewById(R.id.topLayout);
@@ -169,9 +173,8 @@ public class PageActivity extends AppCompatActivity {
         pageActivity = this;
         setPageNumber(currentPage);
 
+
     }
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -180,11 +183,13 @@ public class PageActivity extends AppCompatActivity {
             case R.id.margins_minus: {
                 int margin = context.getMargin();
                 context.setMargin(margin > MARGIN_STEP ? margin - MARGIN_STEP : margin);
+                book.setMargin(margin);
                 break;
             }
             case R.id.margins_plus: {
                 int margin = context.getMargin();
                 context.setMargin(margin < MARGIN_MAX ? margin + MARGIN_STEP : margin);
+                book.setMargin(margin);
                 break;
             }
 
@@ -355,6 +360,7 @@ public class PageActivity extends AppCompatActivity {
             PageMenuListener pageMenuListener = new PageMenuListener();
             findViewById(R.id.smaller_text).setOnClickListener(pageMenuListener);
             findViewById(R.id.larger_text).setOnClickListener(pageMenuListener);
+            scroll.scrollTo(0, book.getScrollOffset());
         }
     }
 
@@ -364,12 +370,14 @@ public class PageActivity extends AppCompatActivity {
             ImageView show = (ImageView)view;
             if (viewMode == VIEW_MODE_ORIGINAL) {
                 viewMode = VIEW_MODE_PHONE;
+                book.setMode(VIEW_MODE_PHONE);
                 show.setImageResource(R.drawable.ic_to_book);
                 Snackbar.make(view, getString(R.string.ui_reflow_page), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                 Log.d(getClass().getName(), String.format("Setting page #%d for modified page", currentPage));
             } else if (viewMode == VIEW_MODE_PHONE) {
                 viewMode = VIEW_MODE_ORIGINAL;
+                book.setMode(VIEW_MODE_ORIGINAL);
                 show.setImageResource(R.drawable.ic_to_phone);
                 Snackbar.make(view, getString(R.string.ui_original_page), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
@@ -418,14 +426,12 @@ public class PageActivity extends AppCompatActivity {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             pageActivityReference.get().runningTasks.remove(this);
-            Log.d(getClass().getName(), "Task #" + hashCode() + " removed on completion");
         }
 
         @Override
         protected void onCancelled() {
             super.onCancelled();
             pageActivityReference.get().runningTasks.remove(this);
-            Log.d(getClass().getName(), "Task #" + hashCode() + " removed on cancellation");
         }
 
         @Override
@@ -441,17 +447,12 @@ public class PageActivity extends AppCompatActivity {
 
             Bitmap bitmap;
 
-            Log.d(getClass().getName(), String.format("Getting bitmap for zoom = %f", pageActivityReference.get().context.getZoom()));
-
             if (pageActivityReference.get().viewMode == Constants.VIEW_MODE_PHONE) {
                 bitmap = pageActivityReference.get().pageRenderer.renderPage(context, pageNumber);
-                Log.v(getClass().getName(), String.format("pageRenderer.renderPage(context, %d)", pageNumber));
             } else {
                 bitmap = pageActivityReference.get().pageRenderer.renderOriginalPage(pageActivityReference.get().context, pageNumber);
-                Log.v(getClass().getName(), String.format("pageRenderer.renderOriginalPage(context, %d)", pageNumber));
             }
 
-            Log.d(getClass().getName(), String.format("Result bytes %d", bitmap.getByteCount()));
 
             int bitmapHeight = bitmap.getHeight();
 
@@ -469,10 +470,10 @@ public class PageActivity extends AppCompatActivity {
                         for (int offset = 0; offset < bitmapHeight; offset += Constants.IMAGE_VIEW_HEIGHT_LIMIT) {
                             Log.d(getClass().getName(), "Before image creation");
                             int height = Math.min(bitmapHeight, offset + Constants.IMAGE_VIEW_HEIGHT_LIMIT);
-                            Log.d(getClass().getName(),
+                            Log.v(getClass().getName(),
                                     String.format(" Bitmap.createBitmap(bitmap, 0, %d, %d, %d)",
                                             offset, context.getWidth(), height - offset));
-                            Log.d(getClass().getName(),
+                            Log.v(getClass().getName(),
                                     String.format("bitmap size is width : %d height :%d",
                                             bitmap.getWidth(), bitmap.getHeight()));
                             Bitmap limitedBitmap = Bitmap.createBitmap(bitmap, 0, offset, context.getWidth(),

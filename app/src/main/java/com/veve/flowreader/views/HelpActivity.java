@@ -8,6 +8,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 
 import com.veve.flowreader.Constants;
@@ -20,12 +21,15 @@ public class HelpActivity extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        Log.v(getClass().getName(), getClass().getName() + "onNewIntent# " + this.hashCode());
         bookId = intent.getIntExtra(Constants.BOOK_ID, -1);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.v(getClass().getName(), getClass().getName() + "onCreate# " + this.hashCode());
 
         int orientation = getResources().getConfiguration().orientation;
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -44,7 +48,7 @@ public class HelpActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                Intent intent = new Intent(HelpActivity.this, PageActivity.class);
-               intent.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
+               intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
                intent.putExtra(Constants.BOOK_ID, getIntent().getLongExtra(Constants.BOOK_ID, -1));
                HelpActivity.this.startActivity(intent);
             }

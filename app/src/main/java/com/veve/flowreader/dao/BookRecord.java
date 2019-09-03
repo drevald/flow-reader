@@ -22,6 +22,8 @@ public class BookRecord {
     private float kerning = 0.5f;
     private float leading = 12f;
     private int margin = 25;
+    private int mode = 2;
+    private int scrollOffset = 0;
     private byte[] preview;
 
     public BookRecord() {
@@ -116,5 +118,13 @@ public class BookRecord {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public int getMode() { return mode; }
+
+    public void setMode(int mode) { this.mode = mode;}
+
+    public int getScrollOffset() {return scrollOffset; }
+
+    public void setScrollOffset(int scrollOffset) {this.scrollOffset = scrollOffset; }
 
 }
