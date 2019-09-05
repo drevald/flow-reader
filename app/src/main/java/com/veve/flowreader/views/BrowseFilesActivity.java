@@ -100,7 +100,6 @@ public class BrowseFilesActivity extends AppCompatActivity {
         FileListAdapter() {
             super();
             setRoot(Environment.getExternalStorageDirectory().getAbsolutePath());
-            setRoot(Environment.getExternalStorageDirectory().getAbsolutePath());
         }
 
         protected void setRoot(String path) {
@@ -109,6 +108,8 @@ public class BrowseFilesActivity extends AppCompatActivity {
                 Log.d(getClass().getName(), String.format("setRoot(%s)", path));
                 currentDirectory = rootDir;
                 currentFiles = new ArrayList<>();
+                Log.d(getClass().getName(), String.format("currentDirectory = " + currentDirectory));
+                Log.d(getClass().getName(), String.format("currentDirectory.listFiles() = " + currentDirectory.listFiles()));
                 Log.d(getClass().getName(), String.format("currentDirectory.listFiles() = ",
                         currentDirectory.listFiles() == null ? "null" :
                                 currentDirectory.listFiles().length + " files"));
