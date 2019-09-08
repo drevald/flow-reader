@@ -51,8 +51,6 @@ public class BrowseFilesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        requestPermissions();
-
         setContentView(R.layout.activity_browse_files);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -75,17 +73,7 @@ public class BrowseFilesActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new FileListener(fileListAdapter));
     }
 
-    private void requestPermissions() {
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-            }
-        }
-    }
+
 
 
 ///    ADAPTERS    ///////////////////////////////////////////
