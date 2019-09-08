@@ -30,11 +30,11 @@ LOCAL_CFLAGS += -DHAVE_CONFIG_H -frtti -fexceptions -fopenmp -w -Ofast -DNDEBUG 
 LOCAL_LDLIBS += -llog -lz -L$(SYSROOT)/usr/lib
 LOCAL_LDFLAGS += -ldl -landroid -fopenmp  
 
-LOCAL_C_INCLUDES += common.h pdf-lib.h ImageLoader.h PageSegmenter.h Enclosure.h
+LOCAL_C_INCLUDES += common.h pdf-lib.h ImageLoader.h PageSegmenter.h Enclosure.h ImageNode.h Xycut.h
 
 
 LOCAL_SRC_FILES := \
-	common.cpp PageSegmenter.cpp Enclosure.cpp djvu-lib.cpp pdf-lib.cpp
+	common.cpp PageSegmenter.cpp Enclosure.cpp djvu-lib.cpp pdf-lib.cpp ImageNode.cpp Xycut.cpp
 
 
 include $(BUILD_SHARED_LIBRARY)

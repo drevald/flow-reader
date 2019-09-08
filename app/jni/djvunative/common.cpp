@@ -1,9 +1,7 @@
 #include "common.h"
 
 
-void put_glyphs(JNIEnv *env, cv::Mat& mat, jobject& list) {
-    PageSegmenter ps(mat);
-    vector<glyph> glyphs = ps.get_glyphs();
+void put_glyphs(JNIEnv *env, vector<glyph>& glyphs, jobject& list) {
 
     jclass listcls = static_cast<jclass>(env->NewGlobalRef(env->FindClass("java/util/ArrayList")));
     jmethodID addMethod = env->GetMethodID(listcls, "add", "(Ljava/lang/Object;)Z");
@@ -51,13 +49,13 @@ std::vector<std::tuple<int, int>> one_runs(const cv::Mat &hist) {
 
     int pos = 0;
     for (int i = 0; i < w; i++) {
-        if ((i == 0 && hist.at<int>(0, i) == 1) ||
-            (i > 0 && hist.at<int>(0, i) == 1 && hist.at<int>(0, i - 1) == 0)) {
+        if ((i == 0 && hist.at<int>(0, i) > 0) ||
+            (i > 0 && hist.at<int>(0, i) > 0 && hist.at<int>(0, i - 1) == 0)) {
             pos = i;
         }
 
-        if ((i == w - 1 && hist.at<int>(0, i) == 1) ||
-            (i < w - 1 && hist.at<int>(0, i) == 1 && hist.at<int>(0, i + 1) == 0)) {
+        if ((i == w - 1 && hist.at<int>(0, i) > 0) ||
+            (i < w - 1 && hist.at<int>(0, i) > 0 && hist.at<int>(0, i + 1) == 0)) {
             return_value.push_back(make_tuple(pos, i));
         }
     }
@@ -87,18 +85,18 @@ std::vector<std::tuple<int, int>> one_runs_vert(const cv::Mat &hist) {
 std::vector<std::tuple<int,int>> zero_runs_hor(const cv::Mat& hist) {
     int w = hist.cols;
 
-    vector<std::tuple<int, int>> return_value;
+    std::vector<std::tuple<int, int>> return_value;
 
     int pos = 0;
     for (int i = 0; i < w; i++) {
         if ((i == 0 && hist.at<float>(0, i) == 0) ||
-            (i > 0 && hist.at<float>(0, i) == 0 && hist.at<float>(0,i - 1) == 1)) {
+            (i > 0 && hist.at<float>(0, i) == 0 && hist.at<float>(0,i - 1) > 0)) {
             pos = i;
         }
 
         if ((i == w - 1 && hist.at<float>(0,i) == 0) ||
-            (i < w - 1 && hist.at<float>(0,i) == 0 && hist.at<float>(0,i + 1) == 1)) {
-            return_value.push_back(make_tuple(pos, i));
+            (i < w - 1 && hist.at<float>(0,i) == 0 && hist.at<float>(0,i + 1) > 0)) {
+            return_value.push_back(std::make_tuple(pos, i));
         }
     }
     return return_value;
@@ -112,12 +110,12 @@ std::vector<std::tuple<int,int>> zero_runs(const cv::Mat& hist) {
     int pos = 0;
     for (int i = 0; i < w; i++) {
         if ((i == 0 && hist.at<float>(i, 0) == 0) ||
-            (i > 0 && hist.at<float>(i, 0) == 0 && hist.at<float>(i - 1,0) == 1)) {
+            (i > 0 && hist.at<float>(i, 0) == 0 && hist.at<float>(i - 1,0) > 0)) {
             pos = i;
         }
 
         if ((i == w - 1 && hist.at<float>(i, 0) == 0) ||
-            (i < w - 1 && hist.at<float>(i, 0) == 0 && hist.at<float>(i + 1,0) == 1)) {
+            (i < w - 1 && hist.at<float>(i, 0) == 0 && hist.at<float>(i + 1,0) > 0)) {
             return_value.push_back(make_tuple(pos, i));
         }
     }
@@ -316,3 +314,30 @@ bool well_formed_page(Mat& image) {
     return lined_document;
 
 }
+
+int max_ind(std::vector<std::tuple<int,int>> zr, double threshold) {
+    std::vector<std::tuple<int,int>> gaps;
+    for (int i=0;i<zr.size();i++) {
+        int gap = std::get<1>(zr.at(i)) - std::get<0>(zr.at(i));
+        if (gap > threshold) {
+            gaps.push_back(std::make_tuple(i, std::get<1>(zr.at(i)) - std::get<0>(zr.at(i))));
+        }
+    }
+    int max = -1;
+    int maxind = -1;
+    if (gaps.size() > 0) {
+        for (int i=0;i<gaps.size();i++) {
+            int ind = std::get<0>(gaps.at(i));
+            int gap = std::get<1>(gaps.at(i));
+
+            if (gap > max){
+                max = gap;
+                maxind = ind;
+            }
+        }
+        return maxind;
+    } else {
+        return -1;
+    }
+}
+

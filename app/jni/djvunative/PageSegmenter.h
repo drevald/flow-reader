@@ -13,10 +13,6 @@ typedef boost::adjacency_list < boost::vecS, boost::vecS, boost::undirectedS, do
 typedef boost::graph_traits<Graph>::vertex_descriptor vertex_t;
 
 
-struct glyph {
-    bool indented;
-    int x, y, width, height, line_height, baseline_shift;
-};
 
 struct line_limit {
     line_limit(int upper, int upper_baseline, int lower_baseline, int lower) {
