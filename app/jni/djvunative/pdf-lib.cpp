@@ -5,6 +5,8 @@
 #include "pdf-lib.h"
 
 #include "common.h"
+#include "PageSegmenter.h"
+#include "Xycut.h"
 
 
 JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativeWidth
@@ -86,7 +88,31 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
     env->SetByteArrayRegion(array, 0, size, (jbyte*)buffer);
 
     Mat mat(height,width,CV_8UC4,&((char*)buffer)[0]);
-    put_glyphs(env, mat, list);
+
+    Xycut xycut(mat);
+    std::vector<ImageNode> parts = xycut.get_image_parts();
+    vector<glyph> new_glyphs;
+
+    for (int i=0;i<parts.size(); i++) {
+        ImageNode node = parts.at(i);
+        Mat m = node.get_mat();
+        int x = node.get_x();
+        int y = node.get_y();
+        cv::Size s = m.size();
+        cv::Rect rect(x,y,s.width, s.height);
+        cv::Mat img = mat(rect);
+        PageSegmenter ps(img);
+        vector<glyph> glyphs = ps.get_glyphs();
+
+        for (int j=0;j<glyphs.size(); j++) {
+            glyph g = glyphs.at(j);
+            g.x += x;
+            g.y += y;
+            new_glyphs.push_back(g);
+        }
+    }
+
+    put_glyphs(env, new_glyphs, list);
     free((void*)buffer);
     mat.release();
 

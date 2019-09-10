@@ -55,14 +55,14 @@ public class PageGlyphImpl implements PageGlyph {
         return y;
     }
 
-    private int getBaselineShif() {
+    private int getBaselineShift() {
         return baseLineShift;
     }
 
     @Override
     public void draw(DevicePageContext context, boolean show) {
 
-        int baseLineShift = getBaselineShif();
+        int baseLineShift = getBaselineShift();
         Log.v(getClass().getName(), "Baseline shift is " + baseLineShift);
 
         Canvas canvas = context.getCanvas();
@@ -74,8 +74,9 @@ public class PageGlyphImpl implements PageGlyph {
         int currentBaseline = context.getCurrentBaseLine();
         if (currentBaseline == 0) {
             currentBaseline = (int)(__height * 1.3);
-            context.setLineHeight(averageHeight);
+
         }
+        context.setLineHeight(averageHeight);
 
         //checking if currect glyph is within page content
         if(__width * context.getZoom() + startPoint.x > context.getWidth() - context.getMargin() ) {

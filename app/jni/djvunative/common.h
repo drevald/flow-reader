@@ -38,8 +38,6 @@
 #include <libdjvu/ddjvuapi.h>
 #include <fpdfview.h>
 
-#include "PageSegmenter.h"
-
 #define APPNAME "FLOW-READER"
 
 using namespace cv;
@@ -51,6 +49,11 @@ struct segment {
     int y, height;
 };
 
+struct glyph {
+    bool indented;
+    int x, y, width, height, line_height, baseline_shift;
+};
+
 
 struct SortSegments {
     bool operator()(std::tuple<int,char> const &lhs, std::tuple<int,char> const &rhs) {
@@ -58,7 +61,7 @@ struct SortSegments {
     }
 };
 
-void put_glyphs(JNIEnv *env, Mat& mat, jobject& list);
+void put_glyphs(JNIEnv *env, vector<glyph>& glyphs, jobject& list);
 
 double TimeSpecToSeconds(struct timespec* ts);
 
@@ -77,5 +80,8 @@ bool well_formed_page(Mat& image);
 bool build_well_formed_page(Mat& image, Mat& gray_inverted_image);
 
 void filter_gray_inverted_image(std::vector<segment> segments, int width, int height, Mat& gray_inverted_image);
+
+int max_ind(std::vector<std::tuple<int,int>> zr, double threshold);
+
 
 #endif

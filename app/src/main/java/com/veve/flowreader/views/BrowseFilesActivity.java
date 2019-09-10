@@ -51,8 +51,6 @@ public class BrowseFilesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        requestPermissions();
-
         setContentView(R.layout.activity_browse_files);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -75,17 +73,7 @@ public class BrowseFilesActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new FileListener(fileListAdapter));
     }
 
-    private void requestPermissions() {
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-            }
-        }
-    }
+
 
 
 ///    ADAPTERS    ///////////////////////////////////////////
@@ -100,7 +88,6 @@ public class BrowseFilesActivity extends AppCompatActivity {
         FileListAdapter() {
             super();
             setRoot(Environment.getExternalStorageDirectory().getAbsolutePath());
-            setRoot(Environment.getExternalStorageDirectory().getAbsolutePath());
         }
 
         protected void setRoot(String path) {
@@ -109,6 +96,8 @@ public class BrowseFilesActivity extends AppCompatActivity {
                 Log.d(getClass().getName(), String.format("setRoot(%s)", path));
                 currentDirectory = rootDir;
                 currentFiles = new ArrayList<>();
+                Log.d(getClass().getName(), String.format("currentDirectory = " + currentDirectory));
+                Log.d(getClass().getName(), String.format("currentDirectory.listFiles() = " + currentDirectory.listFiles()));
                 Log.d(getClass().getName(), String.format("currentDirectory.listFiles() = ",
                         currentDirectory.listFiles() == null ? "null" :
                                 currentDirectory.listFiles().length + " files"));

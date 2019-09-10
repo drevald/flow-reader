@@ -6,7 +6,6 @@
 #include "Enclosure.h"
 
 
-
 line_limit PageSegmenter::find_baselines(vector<double_pair> &cc) {
 
     sort(cc.begin(), cc.end(), PairXOrder());
@@ -173,6 +172,7 @@ vector<line_limit> PageSegmenter::get_line_limits() {
     if (cc_results.whole_page) {
         vector<line_limit> v;
         line_limit ll(0,0,image.rows,image.rows);
+        line_height = image.size().height;
         v.push_back(ll);
         return v;
     } else {
@@ -233,7 +233,7 @@ cc_result PageSegmenter::get_cc_results(const Mat &image) {
     if (count == 0) {
         cc_result v;
         v.whole_page = true;
-        v.average_hight = 0;
+        v.average_hight = image.size().height;
         v.centers = center_list;
         return v;
     }
@@ -247,6 +247,11 @@ cc_result PageSegmenter::get_cc_results(const Mat &image) {
 
 
     double average_height = m(0);
+    if (average_height == 0) {
+        __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "cpp average height %f\n", average_height);
+    }
+
+
     double std = stdv(0);
 
     bool whole_page = false;
@@ -311,6 +316,7 @@ vector<glyph> PageSegmenter::get_glyphs() {
         g.y = 0;
         g.width = image.cols;
         g.height = image.rows;
+        g.line_height = image.size().height;
         return_value.push_back(g);
         mat.release();
         image.release();
@@ -388,6 +394,8 @@ vector<glyph> PageSegmenter::get_glyphs() {
                 g.baseline_shift = l - bl;
                 g.line_height = line_height;
                 return_value.push_back(g);
+
+
 
             }
 

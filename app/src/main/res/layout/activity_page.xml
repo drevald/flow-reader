@@ -22,8 +22,9 @@
 
             <android.support.v7.widget.AppCompatImageButton
                 android:id="@+id/help"
-                android:layout_width="wrap_content"
+                android:layout_width="32dp"
                 android:layout_height="wrap_content"
+                android:paddingRight="32dp"
                 android:layout_gravity="start"
                 app:srcCompat="@drawable/ic_help"
                 style="?android:attr/borderlessButtonStyle"
@@ -32,11 +33,12 @@
             <TextView
                 android:id="@+id/book_title"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layout_weight="0"/>
 
             <android.support.v7.widget.AppCompatImageButton
                 android:id="@+id/larger_text"
-                android:layout_width="wrap_content"
+                android:layout_width="64dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 app:srcCompat="@drawable/ic_larger_text"
@@ -46,7 +48,7 @@
 
             <android.support.v7.widget.AppCompatImageButton
                 android:id="@+id/smaller_text"
-                android:layout_width="wrap_content"
+                android:layout_width="64dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 app:srcCompat="@drawable/ic_smaller_text"
