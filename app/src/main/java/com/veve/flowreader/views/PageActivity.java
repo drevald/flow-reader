@@ -51,6 +51,7 @@ import java.util.Set;
 
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
+import static com.veve.flowreader.Constants.BOOK_ID;
 import static com.veve.flowreader.Constants.MARGIN_MAX;
 import static com.veve.flowreader.Constants.MARGIN_STEP;
 import static com.veve.flowreader.Constants.MAX_BITMAP_SIZE;
@@ -98,6 +99,7 @@ public class PageActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         Log.v(getClass().getName(), getClass().getName() + "onNewIntent# " + this.hashCode());
+        Log.d("INTENT_ONNEWINTENT",  getIntent().getIntExtra(BOOK_ID, 0)  + " = getIntent().getLongExtra(Constants.BOOK_ID, 0); hash = " + intent.hashCode());;
         int position = getIntent().getIntExtra("position", 0);
         booksCollection = BooksCollection.getInstance(getApplicationContext());
         book = booksCollection.getBook(position);
@@ -123,7 +125,8 @@ public class PageActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        long bookId = getIntent().getLongExtra(Constants.BOOK_ID, 0);
+        long bookId = getIntent().getLongExtra(BOOK_ID, 0);
+        Log.d("INTENT_ONCREATE", bookId + " = getIntent().getLongExtra(Constants.BOOK_ID, 0); hash = " + getIntent().hashCode());
         booksCollection = BooksCollection.getInstance(getApplicationContext());
         book = booksCollection.getBook(bookId);
 
@@ -145,7 +148,7 @@ public class PageActivity extends AppCompatActivity {
 
         findViewById(R.id.help).setOnClickListener((view)->{
             Intent intent = new Intent(PageActivity.this, HelpActivity.class);
-            intent.putExtra(Constants.BOOK_ID, book.getId());
+            intent.putExtra(BOOK_ID, book.getId());
             startActivity(intent);
         });
 
@@ -223,7 +226,7 @@ public class PageActivity extends AppCompatActivity {
                 BooksCollection.getInstance(getApplicationContext()).deleteBook(bookId);
                 Intent i = new Intent(PageActivity.this, MainActivity.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                i.putExtra(Constants.BOOK_ID, bookId);
+                i.putExtra(BOOK_ID, bookId);
                 startActivity(i);
                 break;
             }

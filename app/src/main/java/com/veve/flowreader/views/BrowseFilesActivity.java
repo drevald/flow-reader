@@ -252,7 +252,7 @@ public class BrowseFilesActivity extends AppCompatActivity {
             super.onPostExecute(aVoid);
             Intent ii = new Intent(BrowseFilesActivity.this, PageActivity.class);
             ii.putExtra(Constants.BOOK_ID, bookId);
-            ii.putExtra(Constants.BOOK_ID, newBook.getUrl());
+            ii.putExtra(Constants.FILE_NAME, newBook.getUrl());
             startActivity(ii);
         }
     }
