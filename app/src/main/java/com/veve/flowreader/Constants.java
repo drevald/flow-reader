@@ -19,7 +19,7 @@ public interface Constants {
     String VIEW_TYPE = "VIEW_TYPE";
     int LIST_VIEW_TYPE = 0;
     int GRID_VIEW_TYPE = 1;
-    boolean DEBUG = true;
+    boolean DEBUG = false;
     int MAX_BITMAP_SIZE = 100 * 1024 * 1024; // 100 MB
     int IMAGE_VIEW_HEIGHT_LIMIT = 4000;
 
