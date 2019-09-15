@@ -259,6 +259,35 @@ public class PageActivity extends AppCompatActivity {
 
 ////////////////////////////   LISTENERS  ////////////////////////////////////////////////////
 
+        class SwapListener implements View.OnTouchListener {
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                float x1, x2;
+                float MIN_DISTANCE = 150;
+                x1 = 0;
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        x1 = event.getX();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        x2 = event.getX();
+                        float deltaX = x2 - x1;
+                        if (Math.abs(deltaX) > MIN_DISTANCE) {
+                            if (x2 > x1) {
+                                Log.d(getClass().getName(),"Left to Right swipe [Next]");
+                            } else {
+                                Log.d(getClass().getName(),"Right to Left swipe [Next]");
+                            }
+                        }
+                        break;
+                }
+                view.onTouchEvent(event);
+                return true;
+//                return true;
+            }
+        }
+
+
         class PagerTouchListener implements View.OnTouchListener {
             @Override
             public boolean onTouch(View view, MotionEvent event) {
@@ -275,6 +304,32 @@ public class PageActivity extends AppCompatActivity {
 
             OnDoubleTapListener(Context c, LinearLayout p) {
                 gestureDetector = new GestureDetector(c, new GestureDetector.SimpleOnGestureListener() {
+
+                    @Override
+                    public boolean onScroll(MotionEvent e1, MotionEvent e2,float distanceX, float distanceY) {
+                        Log.v(getClass().getName(), "onScroll");
+                        if (Math.abs(distanceX) > 2 * Math.abs(distanceY) && Math.abs(distanceX) > 50) {
+                            if (distanceX > 0) {
+                                if (book.getCurrentPage() < book.getPagesCount()-1) {
+                                    setPageNumber(book.getCurrentPage()+1);
+                                    scroll.scrollTo(0, 0);
+                                }
+                            } else {
+                                if (book.getCurrentPage() > 0) {
+                                    setPageNumber(book.getCurrentPage()-1);
+                                    scroll.scrollTo(0, 0);
+                                }
+                            }
+                        }
+                        try {
+                            Thread.currentThread().sleep(100);
+                        } catch (Exception e) {
+
+                        }
+
+                        return true;
+                    }
+
                     @Override
                     public boolean onDoubleTap(MotionEvent e) {
                         float x = e.getX();
@@ -282,10 +337,12 @@ public class PageActivity extends AppCompatActivity {
                         if (x > p.getWidth() / 2) {
                             if (book.getCurrentPage() < book.getPagesCount()-1) {
                                 setPageNumber(book.getCurrentPage()+1);
+                                scroll.scrollTo(0, 0);
                             }
                         } else {
                             if (book.getCurrentPage() > 0) {
                                 setPageNumber(book.getCurrentPage()-1);
+                                scroll.scrollTo(0, 0);
                             }
                         }
                         return true;
@@ -309,12 +366,35 @@ public class PageActivity extends AppCompatActivity {
                     public boolean onDown(MotionEvent e) {
                         return true;
                     }
+
                 });
             }
 
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
+
                 view.performClick();
+
+//                float x1, x2;
+//                float MIN_DISTANCE = 150;
+//                x1 = 0;
+//                switch(motionEvent.getAction()) {
+//                    case MotionEvent.ACTION_DOWN:
+//                        x1 = motionEvent.getX();
+//                        break;
+//                    case MotionEvent.ACTION_UP:
+//                        x2 = motionEvent.getX();
+//                        float deltaX = x2 - x1;
+//                        if (Math.abs(deltaX) > MIN_DISTANCE) {
+//                            if (x2 > x1) {
+//                                Log.d(getClass().getName(),"Left to Right swipe [Next]");
+//                            } else {
+//                                Log.d(getClass().getName(),"Right to Left swipe [Next]");
+//                            }
+//                        }
+//                        break;
+//                }
+
                 return gestureDetector.onTouchEvent(motionEvent);
             }
         }
