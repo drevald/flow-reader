@@ -79,6 +79,7 @@ public class CachedPageRendererImpl implements PageRenderer {
             }
             context.setCurrentBaseLine(0);
             Point remotestPoint = context.getRemotestPoint();
+            Log.v("BITMAP_SIZE", "Creating " + context.getWidth() + "x" + (remotestPoint.y + (int)context.getLeading()) + " bitmap");
             Bitmap bitmap = Bitmap.createBitmap(context.getWidth(), remotestPoint.y + (int)context.getLeading() , ARGB_8888);
 
             Canvas canvas = new Canvas(bitmap);

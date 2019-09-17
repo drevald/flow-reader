@@ -68,6 +68,7 @@ public abstract class AbstractBookPage implements BookPage {
         int height = getHeight();
         Bitmap.Config bitmapConfig = Bitmap.Config.ARGB_8888;
         final ByteBuffer bb = ByteBuffer.wrap(imageBytes);
+        Log.v("BITMAP_MEMORY", "Bitmap.createBitmap(" + width + ", " + height + ", bitmapConfig);");
         Bitmap bm = Bitmap.createBitmap(width, height, bitmapConfig);
         bb.rewind();
         bm.copyPixelsFromBuffer(bb);

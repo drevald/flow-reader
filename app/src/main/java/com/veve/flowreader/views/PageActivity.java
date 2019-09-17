@@ -1,6 +1,7 @@
 package com.veve.flowreader.views;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,6 +10,7 @@ import android.graphics.Point;
 import android.graphics.pdf.PdfDocument;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -176,6 +178,9 @@ public class PageActivity extends AppCompatActivity {
         pageActivity = this;
         setPageNumber(currentPage);
 
+        book.setZoom(context.getZoom());
+        ((TextView)findViewById(R.id.zoom_percent))
+                .setText((int)(context.getZoom() * 100)+"%");
 
     }
 
@@ -476,15 +481,23 @@ public class PageActivity extends AppCompatActivity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.smaller_text: {
-                    context.setZoom(0.8f * context.getZoom());
+                    if (context.getZoom() < 0.5)
+                        break;
+                    context.setZoom(-0.5f + context.getZoom());
                     Log.v(getClass().getName(), "Zoom set to " + context.getZoom());
                     book.setZoom(context.getZoom());
+                    ((TextView)findViewById(R.id.zoom_percent))
+                            .setText((int)(context.getZoom() * 100)+"%");
                     break;
                 }
                 case R.id.larger_text: {
-                    context.setZoom(1.25f * context.getZoom());
+                    if (context.getZoom() > 3.5)
+                        break;
+                    context.setZoom(0.5f + context.getZoom());
                     Log.v(getClass().getName(), "Zoom set to " + context.getZoom());
                     book.setZoom(context.getZoom());
+                    ((TextView)findViewById(R.id.zoom_percent))
+                            .setText((int)(context.getZoom() * 100)+"%");
                     break;
                 }
             }
@@ -559,6 +572,15 @@ public class PageActivity extends AppCompatActivity {
                             Log.v(getClass().getName(),
                                     String.format("bitmap size is width : %d height :%d",
                                             bitmap.getWidth(), bitmap.getHeight()));
+
+                            ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
+                            ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+                            activityManager.getMemoryInfo(mi);
+                            Log.v("BITMAP_MEMORY", "mi.availMem " + mi.availMem);
+                            Log.v("BITMAP_MEMORY", "mi.totalMem " + mi.totalMem);
+                            Log.v("BITMAP_MEMORY", "mi.lowMemory " + mi.lowMemory);
+//                            Log.v("BITMAP_MEMORY", "mi.visibleAppThreshold " + mi.hiddenAppThreshold);
+
                             Bitmap limitedBitmap = Bitmap.createBitmap(bitmap, 0, offset, context.getWidth(),
                                     height - offset);
                             ImageView imageView = new ImageView(getApplicationContext());
