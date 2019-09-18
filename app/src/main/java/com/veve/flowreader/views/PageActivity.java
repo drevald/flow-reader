@@ -81,6 +81,7 @@ public class PageActivity extends AppCompatActivity {
     BooksCollection booksCollection;
     LinearLayout bottomBar;
     boolean barsVisible;
+    String commitId = "$Id$";
 
     @Override
     protected void onPause() {
@@ -491,7 +492,7 @@ public class PageActivity extends AppCompatActivity {
                     break;
                 }
                 case R.id.larger_text: {
-                    if (context.getZoom() > 3.5)
+                    if (context.getZoom() > 5)
                         break;
                     context.setZoom(0.5f + context.getZoom());
                     Log.v(getClass().getName(), "Zoom set to " + context.getZoom());
@@ -556,7 +557,7 @@ public class PageActivity extends AppCompatActivity {
                 if (bitmap.getByteCount() > MAX_BITMAP_SIZE) {
                     Snackbar.make(topLayout, getString(R.string.could_not_zoom_more),
                             Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                    context.setZoom(context.getZoom()*0.8f);
+                    context.setZoom(context.getZoom() - 0.5f);
                     pageActivityReference.get().book.setZoom(pageActivityReference.get().context.getZoom());
                     pageActivityReference.get().booksCollection.updateBook(pageActivityReference.get().book);
                 //} else if (bitmap.getWidth() >= pageActivityReference.get().context.getWidth()) {

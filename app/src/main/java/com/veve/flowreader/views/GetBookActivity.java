@@ -20,34 +20,50 @@ import java.io.File;
 
 public class GetBookActivity extends AppCompatActivity {
 
+    private static final String DOWNLOAD_CONTENT_PREFIX =
+            "content://com.android.providers.downloads.ui.fileprovider/external_files";
+
+    private static final String DOWNLOAD_FILE_PREFIX = "/storage/emulated/0";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_book);
-        File file = new File(getFilePath(getIntent().getData()));
-        BooksCollection booksCollection = BooksCollection.getInstance(getApplicationContext());
-        if (booksCollection.hasBook(file)) {
-            BookRecord bookRecord = booksCollection.getBook(file.getPath());
-            Intent ii = new Intent(GetBookActivity.this, PageActivity.class);
-            ii.putExtra(Constants.BOOK_ID, bookRecord.getId());
-            ii.putExtra(Constants.FILE_NAME, bookRecord.getUrl());
-            startActivity(ii);
-        } else {
-            new BookCreatorTask().execute(file);
+        Uri uri = getIntent().getData();
+        try {
+            File file = new File(getFilePath(uri));
+            BooksCollection booksCollection = BooksCollection.getInstance(getApplicationContext());
+            if (booksCollection.hasBook(file)) {
+                BookRecord bookRecord = booksCollection.getBook(file.getPath());
+                Intent ii = new Intent(GetBookActivity.this, PageActivity.class);
+                ii.putExtra(Constants.BOOK_ID, bookRecord.getId());
+                ii.putExtra(Constants.FILE_NAME, bookRecord.getUrl());
+                startActivity(ii);
+            } else {
+                new BookCreatorTask().execute(file);
+            }
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "URI is " + uri, e);
+            Intent intent = new Intent (GetBookActivity.this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+            startActivity(intent);
         }
     }
 
-    private String getFilePath(Uri uri) {
+    private String getFilePath(Uri uri) throws Exception {
         String filePath = null;
-        Log.d("","URI = "+ uri);
+        Log.d(getClass().getName(),"URI = "+ uri);
         if (uri != null && "content".equals(uri.getScheme())) {
             Cursor cursor = this.getContentResolver().query(uri,
-                    new String[] { android.provider.MediaStore.Images.ImageColumns.DATA },
+                    new String[] { android.provider.MediaStore.Files.FileColumns.DATA },
                     null,
                     null,
                     null);
-            cursor.moveToFirst();
-            filePath = cursor.getString(0);
+            if(cursor.getColumnNames().length > 0) {
+                filePath = cursor.getString(0);
+            } else {
+                filePath = uri.toString().replace(DOWNLOAD_CONTENT_PREFIX, DOWNLOAD_FILE_PREFIX);
+            }
             cursor.close();
         } else {
             filePath = uri.getPath();

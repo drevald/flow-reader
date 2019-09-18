@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 
-import com.veve.flowreader.test.R;
+import com.veve.flowreader.R;
 
 import static android.graphics.BitmapFactory.*;
 import static junit.framework.Assert.assertNotNull;
@@ -24,15 +24,10 @@ public class LayoutParserTest {
     @Test
     public void test() {
         Context appContext = InstrumentationRegistry.getTargetContext();
-//        InputStream is = appContext.getResources()
-//                .openRawResource(R.raw.one_column);
-//        assertNotNull(is);
-//        BufferedInputStream bufferedInputStream = new BufferedInputStream(is);
-//        Bitmap bitmap = BitmapFactory.decodeStream(bufferedInputStream);
+        InputStream is = appContext.getResources().openRawResource(R.raw.one_column);
+        Bitmap bitmap = BitmapFactory.decodeStream(is);
+        assertNotNull(bitmap);
 
-//        Bitmap bitmap = BitmapFactory
-//                .decodeResource(appContext.getResources(), R.raw.one_column);
-//        assertNotNull(bitmap);
     }
 
 }
