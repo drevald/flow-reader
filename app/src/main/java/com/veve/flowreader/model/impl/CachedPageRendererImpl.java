@@ -5,16 +5,26 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.pdf.PdfDocument;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.veve.flowreader.Constants;
+import com.veve.flowreader.dao.BookRecord;
+import com.veve.flowreader.dao.PageGlyphRecord;
 import com.veve.flowreader.model.BookSource;
+import com.veve.flowreader.model.BooksCollection;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyph;
+import com.veve.flowreader.model.PageGlyphInfo;
 import com.veve.flowreader.model.PageLayoutParser;
 import com.veve.flowreader.model.PageRenderer;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import static android.graphics.Bitmap.Config.ARGB_8888;
 
@@ -32,20 +42,64 @@ public class CachedPageRendererImpl implements PageRenderer {
 
     private List<PageGlyph> glyphs;
 
-    public CachedPageRendererImpl(BookSource bookSource) {
+    private BooksCollection booksCollection;
+
+    private BookRecord bookRecord;
+
+    public CachedPageRendererImpl(BooksCollection booksCollection, BookRecord bookRecord, BookSource bookSource) {
         pageLayoutParser = OpenCVPageLayoutParser.getInstance();
         this.bookSource = bookSource;
+        this.booksCollection = booksCollection;
+        this.bookRecord = bookRecord;
     }
 
     private List<PageGlyph> getGlyphs(BookSource bookSource, int position) {
+        // if page changed or glyphs are not stored or glyphs absent - retrieve new ones
         if (position != currentPage || glyphs == null || glyphs.size() == 0) {
             Log.v(getClass().getName(), "Glyphs not cached current = " + currentPage + " requested = " + position);
             currentPage = position;
             long start = System.currentTimeMillis();
-            glyphs = pageLayoutParser.getGlyphs(bookSource, position);
-            Log.v(getClass().getName(),
-                    String.format("Getting glyphs for page #%d took #%d milliseconds",
-                    position, System.currentTimeMillis() - start));
+            List<PageGlyphRecord> storedGlyphs = booksCollection.getPageGlyphs(bookRecord.getId(), position);
+            if (storedGlyphs == null) {
+                glyphs = pageLayoutParser.getGlyphs(bookSource, position);
+                List<PageGlyphRecord> glyphsToStore = new ArrayList<PageGlyphRecord>();
+                for (PageGlyph glyph : glyphs) {
+                    glyphsToStore.add(new PageGlyphRecord(
+                            bookRecord.getId(),
+                            position,
+                            ((PageGlyphImpl)glyph).getX(),
+                            ((PageGlyphImpl)glyph).getY(),
+                            ((PageGlyphImpl)glyph).getWidth(),
+                            ((PageGlyphImpl)glyph).getHeight(),
+                            ((PageGlyphImpl)glyph).getBaseLineShift(),
+                            ((PageGlyphImpl)glyph).getAverageHeight(),
+                            ((PageGlyphImpl)glyph).isIndented()
+                    ));
+                }
+                booksCollection.addGlyphs(glyphsToStore);
+                Log.v(getClass().getName(),
+                        String.format("Getting glyphs for page #%d took #%d milliseconds",
+                                position, System.currentTimeMillis() - start));
+            } else {
+                List<PageGlyph> glyphsRestored = new ArrayList<PageGlyph>();
+                for (PageGlyphRecord storedGlyph : storedGlyphs) {
+                    PageGlyphInfo pageGlyphInfo = new PageGlyphInfo(
+                            storedGlyph.isIndented(),
+                            storedGlyph.getX(),
+                            storedGlyph.getY(),
+                            storedGlyph.getWidth(),
+                            storedGlyph.getHeight(),
+                            storedGlyph.getAverageHeight(),
+                            storedGlyph.getBaselineShift());
+                    Bitmap bitmap = bookSource.getPageBytes(position);
+                    PageGlyphImpl pageGlyph = new PageGlyphImpl(bitmap, pageGlyphInfo);
+                    glyphsRestored.add(pageGlyph);
+                }
+                glyphs = glyphsRestored;
+                Log.v(getClass().getName(),
+                        String.format("Getting stored glyphs for page #%d took #%d milliseconds",
+                                position, System.currentTimeMillis() - start));
+            }
         } else {
             Log.v(getClass().getName(), "Glyphs cached current = " + currentPage + " requested = " + position);
         }

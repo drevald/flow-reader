@@ -10,13 +10,13 @@ import com.veve.flowreader.model.impl.pdf.PdfBookSource;
 
 public class PageRendererFactory {
 
-    public static PageRenderer getRenderer(BookRecord bookRecord) {
+    public static PageRenderer getRenderer(BooksCollection bookCollection, BookRecord bookRecord) {
         if (bookRecord.getUrl().toLowerCase().endsWith("djvu")) {
             BookSource bookSource = new DjvuBookSource(bookRecord.getUrl());
-            return new CachedPageRendererImpl(bookSource);
+            return new CachedPageRendererImpl(bookCollection, bookRecord, bookSource);
         } else  if (bookRecord.getUrl().toLowerCase().endsWith("pdf")) {
             BookSource bookSource = new PdfBookSource(bookRecord.getUrl());
-            return new CachedPageRendererImpl(bookSource);
+            return new CachedPageRendererImpl(bookCollection, bookRecord, bookSource);
         } else {
             return new MockRenderer(bookRecord);
         }

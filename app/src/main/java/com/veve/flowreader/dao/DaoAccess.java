@@ -29,6 +29,13 @@ public interface DaoAccess {
     @Query("SELECT * FROM BookRecord WHERE id = :bookId")
     BookRecord getBook(Long bookId);
 
+    @Query("SELECT * FROM PageGlyphRecord WHERE bookId = :bookId AND position = :position")
+    List<PageGlyphRecord> getPageGlyphs(Long bookId, Integer position);
 
+    @Insert
+    void insertGlyphs(List<PageGlyphRecord> glyphs);
+
+    @Query("DELETE FROM PageGlyphRecord WHERE bookId = :bookId")
+    void deleteBookGlyphs(long bookId);
 
 }

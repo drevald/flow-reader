@@ -7,6 +7,7 @@ import android.util.Log;
 import com.veve.flowreader.dao.AppDatabase;
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.dao.DaoAccess;
+import com.veve.flowreader.dao.PageGlyphRecord;
 
 import java.io.File;
 import java.util.List;
@@ -90,9 +91,60 @@ public class BooksCollection {
         bookUpdateTask.execute(bookRecord);
     }
 
+    public List<PageGlyphRecord> getPageGlyphs(Long id, int position) {
+        try {
+            GetPageGlyphsTask getPageGlyphsTask = new GetPageGlyphsTask(daoAccess);
+            getPageGlyphsTask.execute(id, position);
+            return getPageGlyphsTask.get();
+        } catch (Exception e) {
+            Log.e(getClass().getName(),
+                    "Failed to get glyphs for book #" + id + " page " + position, e);
+            return null;
+        }
+    }
+
+    public void addGlyphs(List<PageGlyphRecord> glyphsToStore) {
+        try {
+            AddPageGlyphsTask addPageGlyphsTask = new AddPageGlyphsTask(daoAccess);
+            addPageGlyphsTask.execute(glyphsToStore);
+        } catch (Exception e) {
+            Log.e(getClass().getName(),"Failed to insert glyphs", e);
+        }
+    }
 }
 
 ///////////////////////   DB TASKS   ////////////////////////////////////////////
+
+    class AddPageGlyphsTask extends AsyncTask<List<PageGlyphRecord>, Void, Void> {
+
+        private DaoAccess daoAccess;
+
+        AddPageGlyphsTask(DaoAccess daoAccess) {
+            this.daoAccess = daoAccess;
+        }
+
+        @Override
+        protected Void doInBackground(List<PageGlyphRecord>... lists) {
+            daoAccess.insertGlyphs((List<PageGlyphRecord>)lists[0]);
+            return null;
+        }
+
+    }
+
+    class GetPageGlyphsTask extends AsyncTask<Object, Void, List<PageGlyphRecord>> {
+
+        private DaoAccess daoAccess;
+
+        GetPageGlyphsTask(DaoAccess daoAccess) {
+            this.daoAccess = daoAccess;
+        }
+
+        @Override
+        protected List<PageGlyphRecord> doInBackground(Object... objects) {
+            return daoAccess.getPageGlyphs((Long)objects[0], (Integer)objects[1]);
+        }
+
+    }
 
     class BookUpdateTask extends AsyncTask<BookRecord, Void, Void> {
 
@@ -121,6 +173,7 @@ public class BooksCollection {
         @Override
         protected Void doInBackground(Long... longs) {
             daoAccess.deleteBook(longs[0]);
+            daoAccess.deleteBookGlyphs(longs[0]);
             return null;
         }
 
