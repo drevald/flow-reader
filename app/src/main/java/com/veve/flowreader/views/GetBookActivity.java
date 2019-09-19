@@ -68,7 +68,7 @@ public class GetBookActivity extends AppCompatActivity {
         } else {
             filePath = uri.getPath();
         }
-        Log.d("","Chosen path = "+ filePath);
+        Log.d(getClass().getName(),"Chosen path = "+ filePath);
         return filePath;
     }
 
@@ -99,6 +99,7 @@ public class GetBookActivity extends AppCompatActivity {
             ii.putExtra(Constants.FILE_NAME, newBook.getUrl());
             startActivity(ii);
         }
+
     }
 
 
