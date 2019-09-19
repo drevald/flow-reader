@@ -1,10 +1,28 @@
 package com.veve.flowreader.dao;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
 @Entity
 public class PageGlyphRecord {
+
+    @PrimaryKey(autoGenerate = true)
+    private long id;
+    private long bookId;
+    private int position;
+    private int x;
+    private int y;
+    private int width;
+    private int height;
+    private int baselineShift;
+    private int averageHeight;
+    private boolean indented;
+
+    @Ignore
+    public PageGlyphRecord() {
+
+    }
 
     public PageGlyphRecord(long bookId, int position, int x, int y, int width, int height, int baselineShift, int averageHeight, boolean indented) {
         this.bookId = bookId;
@@ -90,18 +108,6 @@ public class PageGlyphRecord {
         this.averageHeight = averageHeight;
     }
 
-    @PrimaryKey
-    private long id;
-    private long bookId;
-    private int position;
-    private int x;
-    private int y;
-    private int width;
-    private int height;
-    private int baselineShift;
-    private int averageHeight;
-    private boolean indented;
-
     public boolean isIndented() {
         return indented;
     }
@@ -109,19 +115,5 @@ public class PageGlyphRecord {
     public void setIndented(boolean indented) {
         this.indented = indented;
     }
-
-    //    private static Paint paint = new Paint();
-//
-//    private static Paint paint_debug = new Paint();
-//
-//    private Bitmap bitmap;
-//
-//    private int baseLineShift;
-//
-//    private int averageHeight;
-//
-//    private int x, y;
-//
-//    private boolean indented;
 
 }

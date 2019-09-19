@@ -94,7 +94,9 @@ public class BooksCollection {
     public List<PageGlyphRecord> getPageGlyphs(Long id, int position) {
         try {
             GetPageGlyphsTask getPageGlyphsTask = new GetPageGlyphsTask(daoAccess);
+            Log.v(getClass().getName(), "1");
             getPageGlyphsTask.execute(id, position);
+            Log.v(getClass().getName(), "2");
             return getPageGlyphsTask.get();
         } catch (Exception e) {
             Log.e(getClass().getName(),
@@ -125,7 +127,7 @@ public class BooksCollection {
 
         @Override
         protected Void doInBackground(List<PageGlyphRecord>... lists) {
-            daoAccess.insertGlyphs((List<PageGlyphRecord>)lists[0]);
+            daoAccess.insertGlyphs(lists[0]);
             return null;
         }
 

@@ -25,17 +25,6 @@ public abstract class AppDatabase extends RoomDatabase {
         return appDatabase;
     }
 
-//    @NonNull
-//    @Override
-//    protected SupportSQLiteOpenHelper createOpenHelper(DatabaseConfiguration config) {
-//        return null;
-//    }
-//
-//    @Override
-//    protected InvalidationTracker createInvalidationTracker() {
-//        return null;
-//    }
-
     @Override
     public void clearAllTables() {
 
