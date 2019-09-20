@@ -51,6 +51,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 import static com.veve.flowreader.Constants.BOOK_ID;
@@ -301,7 +302,7 @@ public class PageActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View view, MotionEvent event) {
                 view.performClick();
-                pager.setVisibility(View.GONE);
+                pager.setVisibility(GONE);
                 seekBar.setVisibility(VISIBLE);
                 return true;
             }
@@ -361,7 +362,7 @@ public class PageActivity extends AppCompatActivity {
                     public boolean onSingleTapConfirmed(MotionEvent e) {
                         if (barsVisible) {
                             bottomBar.setVisibility(INVISIBLE);
-                            bar.setVisibility(INVISIBLE);
+                            bar.setVisibility(GONE);
                             barsVisible = false;
                         } else {
                             bottomBar.setVisibility(VISIBLE);
@@ -425,7 +426,7 @@ public class PageActivity extends AppCompatActivity {
             Log.d(getClass().getName(), "onStopTrackingTouch");
             int progress = seekBar.getProgress();
             setPageNumber(progress > 0 ? progress - 1: progress);
-            seekBar.setVisibility(View.GONE);
+            seekBar.setVisibility(GONE);
             pager.setVisibility(VISIBLE);
         }
     }
