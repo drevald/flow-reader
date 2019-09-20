@@ -11,6 +11,7 @@ import com.veve.flowreader.dao.PageGlyphRecord;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by ddreval on 12.01.2018.
@@ -91,13 +92,16 @@ public class BooksCollection {
         bookUpdateTask.execute(bookRecord);
     }
 
-    public List<PageGlyphRecord> getPageGlyphs(Long id, int position) {
+    public List<PageGlyphRecord> getPageGlyphs(Long id, int position, boolean async) {
+        if (!async) {
+            return daoAccess.getPageGlyphs(id, position);
+        }
+        GetPageGlyphsTask getPageGlyphsTask = new GetPageGlyphsTask(daoAccess);
+        Log.v(getClass().getName(), "1");
+        getPageGlyphsTask.execute(id, position);
         try {
-            GetPageGlyphsTask getPageGlyphsTask = new GetPageGlyphsTask(daoAccess);
-            Log.v(getClass().getName(), "1");
-            getPageGlyphsTask.execute(id, position);
             Log.v(getClass().getName(), "2");
-            return getPageGlyphsTask.get();
+            return getPageGlyphsTask.get(1, TimeUnit.MINUTES);
         } catch (Exception e) {
             Log.e(getClass().getName(),
                     "Failed to get glyphs for book #" + id + " page " + position, e);
@@ -105,7 +109,11 @@ public class BooksCollection {
         }
     }
 
-    public void addGlyphs(List<PageGlyphRecord> glyphsToStore) {
+    public void addGlyphs(List<PageGlyphRecord> glyphsToStore, boolean async) {
+        if (!async) {
+            daoAccess.insertGlyphs(glyphsToStore);
+            return;
+        }
         try {
             AddPageGlyphsTask addPageGlyphsTask = new AddPageGlyphsTask(daoAccess);
             addPageGlyphsTask.execute(glyphsToStore);
@@ -144,6 +152,7 @@ public class BooksCollection {
         @Override
         protected List<PageGlyphRecord> doInBackground(Object... objects) {
             return daoAccess.getPageGlyphs((Long)objects[0], (Integer)objects[1]);
+            //return daoAccess.getPageGlyphs();
         }
 
     }

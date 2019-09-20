@@ -59,8 +59,8 @@ public class CachedPageRendererImpl implements PageRenderer {
             Log.v(getClass().getName(), "Glyphs not cached current = " + currentPage + " requested = " + position);
             currentPage = position;
             long start = System.currentTimeMillis();
-            List<PageGlyphRecord> storedGlyphs = booksCollection.getPageGlyphs(bookRecord.getId(), position);
-            if (storedGlyphs == null) {
+            List<PageGlyphRecord> storedGlyphs = booksCollection.getPageGlyphs(bookRecord.getId(), position, false);
+            if (storedGlyphs == null || storedGlyphs.size() == 0) {
                 glyphs = pageLayoutParser.getGlyphs(bookSource, position);
                 List<PageGlyphRecord> glyphsToStore = new ArrayList<PageGlyphRecord>();
                 for (PageGlyph glyph : glyphs) {
@@ -76,12 +76,14 @@ public class CachedPageRendererImpl implements PageRenderer {
                             ((PageGlyphImpl)glyph).isIndented()
                     ));
                 }
-                booksCollection.addGlyphs(glyphsToStore);
+                booksCollection.addGlyphs(glyphsToStore, false);
                 Log.v(getClass().getName(),
                         String.format("Getting glyphs for page #%d took #%d milliseconds",
                                 position, System.currentTimeMillis() - start));
             } else {
                 List<PageGlyph> glyphsRestored = new ArrayList<PageGlyph>();
+                long timeBuildingGlyphs = 0;
+                Bitmap bitmap = bookSource.getPageBytes(position);
                 for (PageGlyphRecord storedGlyph : storedGlyphs) {
                     PageGlyphInfo pageGlyphInfo = new PageGlyphInfo(
                             storedGlyph.isIndented(),
@@ -91,13 +93,21 @@ public class CachedPageRendererImpl implements PageRenderer {
                             storedGlyph.getHeight(),
                             storedGlyph.getAverageHeight(),
                             storedGlyph.getBaselineShift());
-                    Bitmap bitmap = bookSource.getPageBytes(position);
-                    PageGlyphImpl pageGlyph = new PageGlyphImpl(bitmap, pageGlyphInfo);
+                    long startBuildingGlyph = System.currentTimeMillis();
+                    Bitmap glyphBitmap = Bitmap.createBitmap(
+                            bitmap,
+                            storedGlyph.getX(),
+                            storedGlyph.getY(),
+                            storedGlyph.getWidth(),
+                            storedGlyph.getHeight());
+                    timeBuildingGlyphs += (System.currentTimeMillis() - startBuildingGlyph);
+                    PageGlyphImpl pageGlyph = new PageGlyphImpl(glyphBitmap, pageGlyphInfo);
                     glyphsRestored.add(pageGlyph);
                 }
+                Log.v(getClass().getName(), "Bitmap creation took " + timeBuildingGlyphs + " milliseconds");
                 glyphs = glyphsRestored;
                 Log.v(getClass().getName(),
-                        String.format("Getting stored glyphs for page #%d took #%d milliseconds",
+                        String.format("Getting stored glyphs for page #%d took %d milliseconds",
                                 position, System.currentTimeMillis() - start));
             }
         } else {

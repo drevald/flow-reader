@@ -535,8 +535,8 @@ public class PageActivity extends AppCompatActivity {
         protected Void doInBackground(Integer... integers) {
 
             runOnUiThread(()-> {
-                pageActivityReference.get().scroll.setVisibility(INVISIBLE);
-                pageActivityReference.get().progressBar.setVisibility(View.VISIBLE);
+                    pageActivityReference.get().scroll.setVisibility(INVISIBLE);
+                    pageActivityReference.get().progressBar.setVisibility(View.VISIBLE);
                 }
             );
 
@@ -549,7 +549,6 @@ public class PageActivity extends AppCompatActivity {
             } else {
                 bitmap = pageActivityReference.get().pageRenderer.renderOriginalPage(pageActivityReference.get().context, pageNumber);
             }
-
 
             int bitmapHeight = bitmap.getHeight();
 

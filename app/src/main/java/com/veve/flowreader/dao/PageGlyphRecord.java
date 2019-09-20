@@ -116,4 +116,27 @@ public class PageGlyphRecord {
         this.indented = indented;
     }
 
+    public boolean equals(PageGlyphRecord record) {
+        return this.indented == record.indented
+                &&this.x == record.x
+                &&this.y == record.y
+                &&this.width == record.width
+                &&this.height == record.height
+                &&this.baselineShift == record.baselineShift
+                &&this.averageHeight == record.averageHeight;
+    }
+
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + x;
+        result = prime * result + y;
+        result = prime * result + width;
+        result = prime * result + height;
+        result = prime * result + baselineShift;
+        result = prime * result + averageHeight;
+        result = prime * result + (indented ? 0 : 1);
+        return result;
+    }
+
 }

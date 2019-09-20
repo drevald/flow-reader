@@ -60,6 +60,7 @@ public class BookCollectionTest {
 
     @Test
     public void checkGlyphQueries() {
+
         booksCollection.deleteBook(1);
         List<PageGlyphRecord> glyphs = booksCollection.getPageGlyphs(1L, 1);
         assertNotNull(glyphs);
@@ -67,13 +68,17 @@ public class BookCollectionTest {
         List<PageGlyphRecord> testGlyphs;
         testGlyphs = new ArrayList<PageGlyphRecord>();
         testGlyphs.add(new PageGlyphRecord(1, 1, 1, 1, 1, 1, 1, 1, true));
-        testGlyphs.add(new PageGlyphRecord(1, 1, 1, 1, 1, 1, 1, 1, true));
-        testGlyphs.add(new PageGlyphRecord(1, 1, 1, 1, 1, 1, 1, 1, true));
+        testGlyphs.add(new PageGlyphRecord(1, 2, 1, 1, 1, 1, 1, 1, true));
+        testGlyphs.add(new PageGlyphRecord(1, 3, 1, 1, 1, 1, 1, 1, true));
         booksCollection.addGlyphs(testGlyphs);
 
         List<PageGlyphRecord> retrievedGlyphs = booksCollection.getPageGlyphs(1L, 1);
         assertNotNull(retrievedGlyphs);
-        assertEquals(testGlyphs, retrievedGlyphs);
+        assertEquals(testGlyphs.size(), retrievedGlyphs.size());
+        for (int i = 0; i < testGlyphs.size(); i++) {
+            assertTrue(testGlyphs.get(i).equals(retrievedGlyphs.get(i)));
+        }
+
     }
 
 }
