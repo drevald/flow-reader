@@ -32,7 +32,7 @@ public:
         return y;
     };
 
-    ~ImageNode(){
+    virtual ~ImageNode(){
         if (left != nullptr) {
             delete(left);
         }

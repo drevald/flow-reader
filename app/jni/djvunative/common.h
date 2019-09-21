@@ -81,7 +81,7 @@ bool build_well_formed_page(Mat& image, Mat& gray_inverted_image);
 
 void filter_gray_inverted_image(std::vector<segment> segments, int width, int height, Mat& gray_inverted_image);
 
-int max_ind(std::vector<std::tuple<int,int>> zr, double threshold);
+int max_ind(std::vector<std::tuple<int,int>> zr);
 
 
 #endif

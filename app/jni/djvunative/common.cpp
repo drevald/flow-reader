@@ -315,13 +315,10 @@ bool well_formed_page(Mat& image) {
 
 }
 
-int max_ind(std::vector<std::tuple<int,int>> zr, double threshold) {
+int max_ind(std::vector<std::tuple<int,int>> zr) {
     std::vector<std::tuple<int,int>> gaps;
     for (int i=0;i<zr.size();i++) {
-        int gap = std::get<1>(zr.at(i)) - std::get<0>(zr.at(i));
-        if (gap > threshold) {
-            gaps.push_back(std::make_tuple(i, std::get<1>(zr.at(i)) - std::get<0>(zr.at(i))));
-        }
+        gaps.push_back(std::make_tuple(i, std::get<1>(zr.at(i)) - std::get<0>(zr.at(i))));
     }
     int max = -1;
     int maxind = -1;
@@ -340,4 +337,3 @@ int max_ind(std::vector<std::tuple<int,int>> zr, double threshold) {
         return -1;
     }
 }
-

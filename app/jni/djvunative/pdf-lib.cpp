@@ -90,7 +90,7 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
     Mat mat(height,width,CV_8UC4,&((char*)buffer)[0]);
 
     Xycut xycut(mat);
-    std::vector<ImageNode> parts = xycut.get_image_parts();
+    std::vector<ImageNode> parts = xycut.xycut();
     vector<glyph> new_glyphs;
 
     for (int i=0;i<parts.size(); i++) {

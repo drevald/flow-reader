@@ -190,7 +190,7 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
     Mat mat(h, w, CV_8UC4, &((char *) pixels)[0]);
 
     Xycut xycut(mat);
-    std::vector<ImageNode> parts = xycut.get_image_parts();
+    std::vector<ImageNode> parts = xycut.xycut();
 
     vector<glyph> new_glyphs;
 
