@@ -298,6 +298,13 @@ std::vector<ImageNode> Xycut::xycut() {
         int threshold = (*result) - 1 ;
         std::cout << "threshold = " << threshold << std::endl;
         xycut_vertical_cut(wo_borders, threshold, &tree, 0, height, image.size().width);
+        int size = tree.to_vector().size();
+        if (size > 20) {
+            ImageNode node(image, 0,0);
+            std::vector<ImageNode> v;
+            v.push_back(node);
+            return v;
+        }
         return tree.to_vector();
     } else {
         ImageNode node(image, 0,0);
