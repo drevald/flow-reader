@@ -6,10 +6,12 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.veve.flowreader.dao.BookRecord;
+import com.veve.flowreader.dao.PageGlyphRecord;
 import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.BooksCollection;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.impl.DevicePageContextImpl;
+import com.veve.flowreader.model.impl.PageGlyphImpl;
 import com.veve.flowreader.model.impl.pdf.PdfBook;
 import com.veve.flowreader.model.impl.pdf.PdfBookPage;
 
@@ -18,6 +20,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -42,7 +46,6 @@ public class BookCollectionTest {
         BookRecord bookRecord = new BookRecord();
         long bookId = booksCollection.addBook(bookRecord);
         bookRecord = booksCollection.getBook(bookId);
-        //int newPage = 148;
         assertNotEquals(-1, bookId);
         /*
         int currPage = bookRecord.getCurrentPage();
@@ -55,4 +58,28 @@ public class BookCollectionTest {
         */
     }
 
+    @Test
+    public void checkGlyphQueries() {
+
+        booksCollection.deleteBook(1);
+        List<PageGlyphRecord> glyphs = booksCollection.getPageGlyphs(1L, 1, true);
+        assertNotNull(glyphs);
+        assertEquals(glyphs.size(), 0);
+        List<PageGlyphRecord> testGlyphs;
+        testGlyphs = new ArrayList<PageGlyphRecord>();
+        testGlyphs.add(new PageGlyphRecord(1, 1, 1, 1, 1, 1, 1, 1, true));
+        testGlyphs.add(new PageGlyphRecord(1, 2, 1, 1, 1, 1, 1, 1, true));
+        testGlyphs.add(new PageGlyphRecord(1, 3, 1, 1, 1, 1, 1, 1, true));
+        booksCollection.addGlyphs(testGlyphs, true);
+
+        List<PageGlyphRecord> retrievedGlyphs = booksCollection.getPageGlyphs(1L, 1, true);
+        assertNotNull(retrievedGlyphs);
+        assertEquals(testGlyphs.size(), retrievedGlyphs.size());
+        for (int i = 0; i < testGlyphs.size(); i++) {
+            assertTrue(testGlyphs.get(i).equals(retrievedGlyphs.get(i)));
+        }
+
+    }
+
 }
+

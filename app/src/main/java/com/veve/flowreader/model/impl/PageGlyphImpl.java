@@ -28,6 +28,18 @@ public class PageGlyphImpl implements PageGlyph {
 
     private int baseLineShift;
 
+    public int getBaseLineShift() {
+        return baseLineShift;
+    }
+
+    public int getAverageHeight() {
+        return averageHeight;
+    }
+
+    public boolean isIndented() {
+        return indented;
+    }
+
     private int averageHeight;
 
     private int x, y;
@@ -53,6 +65,14 @@ public class PageGlyphImpl implements PageGlyph {
 
     public int getY() {
         return y;
+    }
+
+    public int getWidth() {
+        return bitmap.getWidth();
+    }
+
+    public int getHeight() {
+        return bitmap.getHeight();
     }
 
     private int getBaselineShift() {

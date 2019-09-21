@@ -5,17 +5,28 @@ import android.graphics.Bitmap;
 import java.util.List;
 
 /**
- * Format specifi component designed to retrieve book data for non-recognized (raster) book.
- * Data should include page count, book title and page bitmap;
+ * Format specific component designed to retrieve book pages for non-recognized (raster) book.
  */
 public interface BookSource {
 
     Bitmap getPageBytes(int pageNumber);
 
+    @Deprecated
+    /**
+     * Use PageLayoutParser.getGlyphs instead
+     */
     List<PageGlyph> getPageGlyphs(int pageNumber);
 
+    @Deprecated
+    /**
+     * Use BookRecord.getPagesCount instead
+     */
     int getPagesCount();
 
+    @Deprecated
+    /**
+     * Use BookRecord.getBookTitle instead
+     */
     String getBookTitle();
 
 }

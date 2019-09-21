@@ -1,6 +1,7 @@
 package com.veve.flowreader.views;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,6 +10,7 @@ import android.graphics.Point;
 import android.graphics.pdf.PdfDocument;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -49,8 +51,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
+import static com.veve.flowreader.Constants.BOOK_ID;
 import static com.veve.flowreader.Constants.MARGIN_MAX;
 import static com.veve.flowreader.Constants.MARGIN_STEP;
 import static com.veve.flowreader.Constants.MAX_BITMAP_SIZE;
@@ -78,6 +82,7 @@ public class PageActivity extends AppCompatActivity {
     BooksCollection booksCollection;
     LinearLayout bottomBar;
     boolean barsVisible;
+    String commitId = "$Id$";
 
     @Override
     protected void onPause() {
@@ -98,6 +103,7 @@ public class PageActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         Log.v(getClass().getName(), getClass().getName() + "onNewIntent# " + this.hashCode());
+        Log.d("INTENT_ONNEWINTENT",  getIntent().getIntExtra(BOOK_ID, 0)  + " = getIntent().getLongExtra(Constants.BOOK_ID, 0); hash = " + intent.hashCode());;
         int position = getIntent().getIntExtra("position", 0);
         booksCollection = BooksCollection.getInstance(getApplicationContext());
         book = booksCollection.getBook(position);
@@ -123,11 +129,12 @@ public class PageActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        long bookId = getIntent().getLongExtra(Constants.BOOK_ID, 0);
+        long bookId = getIntent().getLongExtra(BOOK_ID, 0);
+        Log.d("INTENT_ONCREATE", bookId + " = getIntent().getLongExtra(Constants.BOOK_ID, 0); hash = " + getIntent().hashCode());
         booksCollection = BooksCollection.getInstance(getApplicationContext());
         book = booksCollection.getBook(bookId);
 
-        pageRenderer = PageRendererFactory.getRenderer(book);
+        pageRenderer = PageRendererFactory.getRenderer(booksCollection, book);
         currentPage = book.getCurrentPage();
 
         viewMode = book.getMode();
@@ -145,7 +152,7 @@ public class PageActivity extends AppCompatActivity {
 
         findViewById(R.id.help).setOnClickListener((view)->{
             Intent intent = new Intent(PageActivity.this, HelpActivity.class);
-            intent.putExtra(Constants.BOOK_ID, book.getId());
+            intent.putExtra(BOOK_ID, book.getId());
             startActivity(intent);
         });
 
@@ -173,6 +180,9 @@ public class PageActivity extends AppCompatActivity {
         pageActivity = this;
         setPageNumber(currentPage);
 
+        book.setZoom(context.getZoom());
+        ((TextView)findViewById(R.id.zoom_percent))
+                .setText((int)(context.getZoom() * 100)+"%");
 
     }
 
@@ -223,7 +233,7 @@ public class PageActivity extends AppCompatActivity {
                 BooksCollection.getInstance(getApplicationContext()).deleteBook(bookId);
                 Intent i = new Intent(PageActivity.this, MainActivity.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                i.putExtra(Constants.BOOK_ID, bookId);
+                i.putExtra(BOOK_ID, bookId);
                 startActivity(i);
                 break;
             }
@@ -259,11 +269,40 @@ public class PageActivity extends AppCompatActivity {
 
 ////////////////////////////   LISTENERS  ////////////////////////////////////////////////////
 
+        class SwapListener implements View.OnTouchListener {
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                float x1, x2;
+                float MIN_DISTANCE = 150;
+                x1 = 0;
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        x1 = event.getX();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        x2 = event.getX();
+                        float deltaX = x2 - x1;
+                        if (Math.abs(deltaX) > MIN_DISTANCE) {
+                            if (x2 > x1) {
+                                Log.d(getClass().getName(),"Left to Right swipe [Next]");
+                            } else {
+                                Log.d(getClass().getName(),"Right to Left swipe [Next]");
+                            }
+                        }
+                        break;
+                }
+                view.onTouchEvent(event);
+                return true;
+//                return true;
+            }
+        }
+
+
         class PagerTouchListener implements View.OnTouchListener {
             @Override
             public boolean onTouch(View view, MotionEvent event) {
                 view.performClick();
-                pager.setVisibility(View.GONE);
+                pager.setVisibility(GONE);
                 seekBar.setVisibility(VISIBLE);
                 return true;
             }
@@ -275,6 +314,32 @@ public class PageActivity extends AppCompatActivity {
 
             OnDoubleTapListener(Context c, LinearLayout p) {
                 gestureDetector = new GestureDetector(c, new GestureDetector.SimpleOnGestureListener() {
+
+                    @Override
+                    public boolean onScroll(MotionEvent e1, MotionEvent e2,float distanceX, float distanceY) {
+                        Log.v(getClass().getName(), "onScroll");
+                        if (Math.abs(distanceX) > 2 * Math.abs(distanceY) && Math.abs(distanceX) > 50) {
+                            if (distanceX > 0) {
+                                if (book.getCurrentPage() < book.getPagesCount()-1) {
+                                    setPageNumber(book.getCurrentPage()+1);
+                                    scroll.scrollTo(0, 0);
+                                }
+                            } else {
+                                if (book.getCurrentPage() > 0) {
+                                    setPageNumber(book.getCurrentPage()-1);
+                                    scroll.scrollTo(0, 0);
+                                }
+                            }
+                        }
+                        try {
+                            Thread.currentThread().sleep(100);
+                        } catch (Exception e) {
+
+                        }
+
+                        return true;
+                    }
+
                     @Override
                     public boolean onDoubleTap(MotionEvent e) {
                         float x = e.getX();
@@ -282,10 +347,12 @@ public class PageActivity extends AppCompatActivity {
                         if (x > p.getWidth() / 2) {
                             if (book.getCurrentPage() < book.getPagesCount()-1) {
                                 setPageNumber(book.getCurrentPage()+1);
+                                scroll.scrollTo(0, 0);
                             }
                         } else {
                             if (book.getCurrentPage() > 0) {
                                 setPageNumber(book.getCurrentPage()-1);
+                                scroll.scrollTo(0, 0);
                             }
                         }
                         return true;
@@ -295,7 +362,7 @@ public class PageActivity extends AppCompatActivity {
                     public boolean onSingleTapConfirmed(MotionEvent e) {
                         if (barsVisible) {
                             bottomBar.setVisibility(INVISIBLE);
-                            bar.setVisibility(INVISIBLE);
+                            bar.setVisibility(GONE);
                             barsVisible = false;
                         } else {
                             bottomBar.setVisibility(VISIBLE);
@@ -309,12 +376,35 @@ public class PageActivity extends AppCompatActivity {
                     public boolean onDown(MotionEvent e) {
                         return true;
                     }
+
                 });
             }
 
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
+
                 view.performClick();
+
+//                float x1, x2;
+//                float MIN_DISTANCE = 150;
+//                x1 = 0;
+//                switch(motionEvent.getAction()) {
+//                    case MotionEvent.ACTION_DOWN:
+//                        x1 = motionEvent.getX();
+//                        break;
+//                    case MotionEvent.ACTION_UP:
+//                        x2 = motionEvent.getX();
+//                        float deltaX = x2 - x1;
+//                        if (Math.abs(deltaX) > MIN_DISTANCE) {
+//                            if (x2 > x1) {
+//                                Log.d(getClass().getName(),"Left to Right swipe [Next]");
+//                            } else {
+//                                Log.d(getClass().getName(),"Right to Left swipe [Next]");
+//                            }
+//                        }
+//                        break;
+//                }
+
                 return gestureDetector.onTouchEvent(motionEvent);
             }
         }
@@ -336,7 +426,7 @@ public class PageActivity extends AppCompatActivity {
             Log.d(getClass().getName(), "onStopTrackingTouch");
             int progress = seekBar.getProgress();
             setPageNumber(progress > 0 ? progress - 1: progress);
-            seekBar.setVisibility(View.GONE);
+            seekBar.setVisibility(GONE);
             pager.setVisibility(VISIBLE);
         }
     }
@@ -355,7 +445,7 @@ public class PageActivity extends AppCompatActivity {
         @Override
         public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
             if (pageRenderer == null) {
-                pageRenderer = PageRendererFactory.getRenderer(book);
+                pageRenderer = PageRendererFactory.getRenderer(booksCollection, book);
             }
             PageMenuListener pageMenuListener = new PageMenuListener();
             findViewById(R.id.smaller_text).setOnClickListener(pageMenuListener);
@@ -393,15 +483,23 @@ public class PageActivity extends AppCompatActivity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.smaller_text: {
-                    context.setZoom(0.8f * context.getZoom());
+                    if (context.getZoom() < 0.5)
+                        break;
+                    context.setZoom(-0.5f + context.getZoom());
                     Log.v(getClass().getName(), "Zoom set to " + context.getZoom());
                     book.setZoom(context.getZoom());
+                    ((TextView)findViewById(R.id.zoom_percent))
+                            .setText((int)(context.getZoom() * 100)+"%");
                     break;
                 }
                 case R.id.larger_text: {
-                    context.setZoom(1.25f * context.getZoom());
+                    if (context.getZoom() > 5)
+                        break;
+                    context.setZoom(0.5f + context.getZoom());
                     Log.v(getClass().getName(), "Zoom set to " + context.getZoom());
                     book.setZoom(context.getZoom());
+                    ((TextView)findViewById(R.id.zoom_percent))
+                            .setText((int)(context.getZoom() * 100)+"%");
                     break;
                 }
             }
@@ -438,8 +536,8 @@ public class PageActivity extends AppCompatActivity {
         protected Void doInBackground(Integer... integers) {
 
             runOnUiThread(()-> {
-                pageActivityReference.get().scroll.setVisibility(INVISIBLE);
-                pageActivityReference.get().progressBar.setVisibility(View.VISIBLE);
+                    pageActivityReference.get().scroll.setVisibility(INVISIBLE);
+                    pageActivityReference.get().progressBar.setVisibility(View.VISIBLE);
                 }
             );
 
@@ -453,14 +551,13 @@ public class PageActivity extends AppCompatActivity {
                 bitmap = pageActivityReference.get().pageRenderer.renderOriginalPage(pageActivityReference.get().context, pageNumber);
             }
 
-
             int bitmapHeight = bitmap.getHeight();
 
             runOnUiThread(() -> {
                 if (bitmap.getByteCount() > MAX_BITMAP_SIZE) {
                     Snackbar.make(topLayout, getString(R.string.could_not_zoom_more),
                             Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                    context.setZoom(context.getZoom()*0.8f);
+                    context.setZoom(context.getZoom() - 0.5f);
                     pageActivityReference.get().book.setZoom(pageActivityReference.get().context.getZoom());
                     pageActivityReference.get().booksCollection.updateBook(pageActivityReference.get().book);
                 //} else if (bitmap.getWidth() >= pageActivityReference.get().context.getWidth()) {
@@ -476,6 +573,15 @@ public class PageActivity extends AppCompatActivity {
                             Log.v(getClass().getName(),
                                     String.format("bitmap size is width : %d height :%d",
                                             bitmap.getWidth(), bitmap.getHeight()));
+
+                            ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
+                            ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+                            activityManager.getMemoryInfo(mi);
+                            Log.v("BITMAP_MEMORY", "mi.availMem " + mi.availMem);
+                            Log.v("BITMAP_MEMORY", "mi.totalMem " + mi.totalMem);
+                            Log.v("BITMAP_MEMORY", "mi.lowMemory " + mi.lowMemory);
+//                            Log.v("BITMAP_MEMORY", "mi.visibleAppThreshold " + mi.hiddenAppThreshold);
+
                             Bitmap limitedBitmap = Bitmap.createBitmap(bitmap, 0, offset, context.getWidth(),
                                     height - offset);
                             ImageView imageView = new ImageView(getApplicationContext());
