@@ -1,5 +1,7 @@
 package com.veve.flowreader.model.impl;
 
+import android.graphics.Bitmap;
+
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.model.BookSource;
 import com.veve.flowreader.model.PageGlyph;
@@ -12,10 +14,7 @@ public class OpenCVPageLayoutParser implements PageLayoutParser {
     private static PageLayoutParser parser;
 
     @Override
-    public List<PageGlyph> getGlyphs(BookRecord bookRecord, BookSource bookSource, int position) {
-        List<PageGlyph> glyphs;
-
-        //Bitmap b = Bitmap.createBitmap(bookSource.getPageBytes(position), g.x, g.y, g.bitmap.getWidth(), g.bitmap.getHeight());
+    public List<PageGlyph> getGlyphs(Bitmap bitmap) {
         return null;
     }
 

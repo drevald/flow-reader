@@ -36,14 +36,13 @@ public class SimpleLayoutParser implements PageLayoutParser {
     }
 
     @Override
-    public List<PageGlyph> getGlyphs(BookRecord bookRecord, BookSource bookSource, int position) {
-        return null;
+    public List<PageGlyph> getGlyphs(BookSource bookSource, int position) {
+        Bitmap bitmap = bookSource.getPageBytes(position);
+        return getGlyphs(bitmap);
     }
 
     @Override
-    public List<PageGlyph> getGlyphs(BookSource bookSource, int position) {
-
-        Bitmap bitmap = bookSource.getPageBytes(position);
+    public List<PageGlyph> getGlyphs(Bitmap bitmap) {
 
         Log.d(getClass().getName(), "getGlyphs started");
 
