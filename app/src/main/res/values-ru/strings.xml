@@ -29,4 +29,6 @@
     <string name="help">Помощь</string>
     <string name="show_overturned">Кликните чтобы увидеть переверстанную страницу</string>
     <string name="show_original">Кликните чтобы увидеть оригинальную страницу</string>
+    <string name="title_activity_report">Отчет о нечитабельной странице</string>
+    <string name="page_unreadable">Страница нечитабельна</string>
 </resources>

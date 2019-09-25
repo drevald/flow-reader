@@ -36,6 +36,7 @@ import android.widget.Toast;
 
 import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
+import com.veve.flowreader.ReportActivity;
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.model.BooksCollection;
 import com.veve.flowreader.model.DevicePageContext;
@@ -83,6 +84,7 @@ public class PageActivity extends AppCompatActivity {
     LinearLayout bottomBar;
     boolean barsVisible;
     String commitId = "$Id$";
+    PageLoader pageLoader;
 
     @Override
     protected void onPause() {
@@ -227,7 +229,15 @@ public class PageActivity extends AppCompatActivity {
                 book.setLeading(context.getLeading());
                 break;
             }
-
+            case R.id.page_unreadable: {
+                Intent reportIntent = new Intent(PageActivity.this, ReportActivity.class);
+                reportIntent.putExtra("originalBitmap", pageRenderer.renderOriginalPage(context, currentPage));
+                reportIntent.putExtra("overturnedBitmap", pageLoader.bitmap);
+                reportIntent.putExtra("glyphs", booksCollection.getPageGlyphs(book.getId(), currentPage, true).toArray());
+                reportIntent.putExtra("width", context.getWidth());
+                reportIntent.putExtra("bookId", book.getId());
+                startActivity(reportIntent);
+            }
             case R.id.delete_book: {
                 long bookId = book.getId();
                 BooksCollection.getInstance(getApplicationContext()).deleteBook(bookId);
@@ -251,7 +261,7 @@ public class PageActivity extends AppCompatActivity {
         currentPage = pageNumber;
         book.setCurrentPage(pageNumber);
         booksCollection.updateBook(book);
-        PageLoader pageLoader = new PageLoader(this);
+        pageLoader = new PageLoader(this);
         kickOthers(pageLoader);
         pageLoader.execute(pageNumber);
     }
@@ -382,29 +392,7 @@ public class PageActivity extends AppCompatActivity {
 
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
-
                 view.performClick();
-
-//                float x1, x2;
-//                float MIN_DISTANCE = 150;
-//                x1 = 0;
-//                switch(motionEvent.getAction()) {
-//                    case MotionEvent.ACTION_DOWN:
-//                        x1 = motionEvent.getX();
-//                        break;
-//                    case MotionEvent.ACTION_UP:
-//                        x2 = motionEvent.getX();
-//                        float deltaX = x2 - x1;
-//                        if (Math.abs(deltaX) > MIN_DISTANCE) {
-//                            if (x2 > x1) {
-//                                Log.d(getClass().getName(),"Left to Right swipe [Next]");
-//                            } else {
-//                                Log.d(getClass().getName(),"Right to Left swipe [Next]");
-//                            }
-//                        }
-//                        break;
-//                }
-
                 return gestureDetector.onTouchEvent(motionEvent);
             }
         }
@@ -513,6 +501,8 @@ public class PageActivity extends AppCompatActivity {
 
     class PageLoader extends AsyncTask<Integer, Void, Void> {
 
+        Bitmap bitmap;
+
         private WeakReference<PageActivity> pageActivityReference;
 
         // only retain a weak reference to the activity
@@ -542,8 +532,6 @@ public class PageActivity extends AppCompatActivity {
             );
 
             int pageNumber = integers[0];
-
-            Bitmap bitmap;
 
             if (pageActivityReference.get().viewMode == Constants.VIEW_MODE_PHONE) {
                 bitmap = pageActivityReference.get().pageRenderer.renderPage(context, pageNumber);

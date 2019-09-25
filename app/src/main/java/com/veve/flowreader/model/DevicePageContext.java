@@ -3,11 +3,13 @@ package com.veve.flowreader.model;
 import android.graphics.Canvas;
 import android.graphics.Point;
 
+import java.io.Serializable;
+
 /**
  * Created by ddreval on 16.01.2018.
  */
 
-public class DevicePageContext {
+public class DevicePageContext implements Serializable {
 
     private Point startPoint;
     private Canvas canvas;
