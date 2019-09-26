@@ -4,7 +4,10 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
+import com.veve.flowreader.model.PageGlyph;
+
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 public class PageGlyphRecord implements Serializable {
@@ -139,6 +142,10 @@ public class PageGlyphRecord implements Serializable {
         result = prime * result + averageHeight;
         result = prime * result + (indented ? 0 : 1);
         return result;
+    }
+
+    public static byte[] asJson(List<PageGlyphRecord> glyphs) {
+        return "{glyphs}".getBytes();
     }
 
 }

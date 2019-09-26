@@ -15,7 +15,7 @@
         <activity
             android:name=".ReportActivity"
             android:label="@string/title_activity_report"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".views.HelpActivity"
             android:theme="@style/AppTheme.NoActionBar" />

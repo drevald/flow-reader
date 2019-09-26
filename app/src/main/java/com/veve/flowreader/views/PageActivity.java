@@ -37,15 +37,21 @@ import android.widget.Toast;
 import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
 import com.veve.flowreader.ReportActivity;
+import com.veve.flowreader.dao.AppDatabase;
 import com.veve.flowreader.dao.BookRecord;
+import com.veve.flowreader.dao.DaoAccess;
+import com.veve.flowreader.dao.PageGlyphRecord;
+import com.veve.flowreader.dao.ReportRecord;
 import com.veve.flowreader.model.BooksCollection;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageRenderer;
 import com.veve.flowreader.model.PageRendererFactory;
 import com.veve.flowreader.model.impl.DevicePageContextImpl;
 import com.veve.flowreader.model.impl.OpenCVPageLayoutParser;
+import com.veve.flowreader.model.impl.PageGlyphImpl;
 import com.veve.flowreader.model.impl.SimpleLayoutParser;
 
+import java.io.ByteArrayOutputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -230,13 +236,25 @@ public class PageActivity extends AppCompatActivity {
                 break;
             }
             case R.id.page_unreadable: {
-                Intent reportIntent = new Intent(PageActivity.this, ReportActivity.class);
-                reportIntent.putExtra("originalBitmap", pageRenderer.renderOriginalPage(context, currentPage));
-                reportIntent.putExtra("overturnedBitmap", pageLoader.bitmap);
-                reportIntent.putExtra("glyphs", booksCollection.getPageGlyphs(book.getId(), currentPage, true).toArray());
-                reportIntent.putExtra("width", context.getWidth());
-                reportIntent.putExtra("bookId", book.getId());
-                startActivity(reportIntent);
+
+                Bitmap originalBitmap = pageRenderer.renderOriginalPage(context, currentPage);
+                Log.v(getClass().getName(), "Original bitmap size is " + originalBitmap.getWidth() + " x " + originalBitmap.getHeight());
+                Bitmap overturnedBitmap = pageLoader.bitmap;
+                Log.v(getClass().getName(), "Overturned bitmap size is " + overturnedBitmap.getWidth() + " x " + overturnedBitmap.getHeight());
+                ByteArrayOutputStream osOriginal = new ByteArrayOutputStream();
+                ByteArrayOutputStream osOverturned = new ByteArrayOutputStream();
+                originalBitmap.compress(Bitmap.CompressFormat.JPEG, 75, osOriginal);
+                overturnedBitmap.compress(Bitmap.CompressFormat.JPEG, 25, osOverturned);
+                Log.v(getClass().getName(), "Original image size is " + osOriginal.toByteArray().length);
+                Log.v(getClass().getName(), "Overturned image size is " + osOverturned.toByteArray().length);
+
+                ReportRecord reportRecord = new ReportRecord(
+                        PageGlyphRecord.asJson(booksCollection.getPageGlyphs(book.getId(), currentPage, true)),
+                        osOriginal.toByteArray(),
+                        osOverturned.toByteArray());
+                ReportCollectorTask reportCollectorTask = new ReportCollectorTask();
+                reportCollectorTask.execute(reportRecord);
+                break;
             }
             case R.id.delete_book: {
                 long bookId = book.getId();
@@ -249,7 +267,6 @@ public class PageActivity extends AppCompatActivity {
             }
 
         }
-
         setPageNumber(currentPage);
         return true;
 
@@ -346,7 +363,6 @@ public class PageActivity extends AppCompatActivity {
                         } catch (Exception e) {
 
                         }
-
                         return true;
                     }
 
@@ -604,4 +620,22 @@ public class PageActivity extends AppCompatActivity {
             return null;
         }
     }
+
+    class ReportCollectorTask extends AsyncTask<ReportRecord, Void, Void> {
+
+        @Override
+        protected Void doInBackground(ReportRecord... reportRecords) {
+            AppDatabase appDatabase = AppDatabase.getInstance(getApplicationContext());
+            DaoAccess daoAccess = appDatabase.daoAccess();
+            Long reportId = daoAccess.insertReport(reportRecords[0]);
+            Intent reportIntent = new Intent(PageActivity.this, ReportActivity.class);
+            reportIntent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+            reportIntent.putExtra("reportId", reportId);
+            startActivity(reportIntent);
+            return null;
+        }
+
+    }
+
+
 }

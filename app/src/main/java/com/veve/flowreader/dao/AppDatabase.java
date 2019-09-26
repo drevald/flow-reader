@@ -9,7 +9,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 @android.arch.persistence.room.Database(entities =
-        {BookRecord.class, PageGlyphRecord.class}, version = 1, exportSchema = false)
+        {BookRecord.class, PageGlyphRecord.class, ReportRecord.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static final String DATABASE_NAME = "db";
