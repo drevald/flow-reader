@@ -5,4 +5,3 @@ Android program designed to reshape image based text document targeted for page 
 $Id$
 $Id$
 $Id$
-
