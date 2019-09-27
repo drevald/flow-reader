@@ -22,10 +22,13 @@ import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageRenderer;
 import com.veve.flowreader.model.PageRendererFactory;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Locale;
 
 public class ReportActivity extends AppCompatActivity {
 
+    static final String REPORT_URL = "https://glyph-report.herokuapp.com/upload";
     Bitmap originalBitmap;
     Bitmap overturnedBitmap;
 
@@ -52,8 +55,7 @@ public class ReportActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                ReportSenderTask reportSenderTask = new ReportSenderTask();
             }
         });
 
@@ -88,8 +90,39 @@ public class ReportActivity extends AppCompatActivity {
         }
     }
 
-}
+    class ReportSenderTask extends AsyncTask<ReportRecord, Long, Long> {
 
+        Long reportIncomingId;
+
+        @Override
+        protected Long doInBackground(ReportRecord... reportRecords) {
+//            publishProgress();
+
+            try {
+                URL url = new URL(REPORT_URL);
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("POST");
+
+                //https://developer.android.com/training/volley/simple.html
+                //or do it by yourself - https://stackoverflow.com/questions/913626/what-should-a-multipart-http-request-with-multiple-files-look-like
+
+                return null;
+            } catch (Exception e) {
+
+            } finally {
+
+            }
+
+        }
+
+        @Override
+        protected void onProgressUpdate(Long... values) {
+            super.onProgressUpdate(values);
+        }
+    }
+
+
+}
 
 
 
