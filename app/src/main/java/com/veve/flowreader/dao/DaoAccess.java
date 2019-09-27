@@ -4,6 +4,7 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
+import android.database.Cursor;
 
 import java.util.List;
 
@@ -45,6 +46,6 @@ public interface DaoAccess {
     long insertReport(ReportRecord reportRecord);
 
     @Query("SELECT * from ReportRecord WHERE id = :reportId")
-    ReportRecord getReport(long reportId);
+    Cursor getReport(long reportId);
 
 }
