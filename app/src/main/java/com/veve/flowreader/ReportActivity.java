@@ -28,7 +28,6 @@ import java.util.Locale;
 
 public class ReportActivity extends AppCompatActivity {
 
-    static final String REPORT_URL = "https://glyph-report.herokuapp.com/upload";
     Bitmap originalBitmap;
     Bitmap overturnedBitmap;
 
@@ -99,17 +98,16 @@ public class ReportActivity extends AppCompatActivity {
 //            publishProgress();
 
             try {
-                URL url = new URL(REPORT_URL);
+                URL url = new URL(Constants.REPORT_URL);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setRequestMethod("POST");
-
                 //https://developer.android.com/training/volley/simple.html
                 //or do it by yourself - https://stackoverflow.com/questions/913626/what-should-a-multipart-http-request-with-multiple-files-look-like
 
-                return null;
             } catch (Exception e) {
 
             } finally {
+                return null;
 
             }
 
