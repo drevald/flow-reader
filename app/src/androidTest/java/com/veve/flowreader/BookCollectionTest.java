@@ -68,8 +68,8 @@ public class BookCollectionTest {
         List<PageGlyphRecord> testGlyphs;
         testGlyphs = new ArrayList<PageGlyphRecord>();
         testGlyphs.add(new PageGlyphRecord(1, 1, 1, 1, 1, 1, 1, 1, true));
-        testGlyphs.add(new PageGlyphRecord(1, 2, 1, 1, 1, 1, 1, 1, true));
-        testGlyphs.add(new PageGlyphRecord(1, 3, 1, 1, 1, 1, 1, 1, true));
+        testGlyphs.add(new PageGlyphRecord(1, 1, 1, 1, 1, 1, 1, 1, true));
+        testGlyphs.add(new PageGlyphRecord(1, 1, 1, 1, 1, 1, 1, 1, true));
         booksCollection.addGlyphs(testGlyphs, true);
 
         List<PageGlyphRecord> retrievedGlyphs = booksCollection.getPageGlyphs(1L, 1, true);
