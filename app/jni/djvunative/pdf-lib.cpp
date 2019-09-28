@@ -8,6 +8,21 @@
 #include "PageSegmenter.h"
 #include "Xycut.h"
 
+jstring get_metadata(JNIEnv *env, jlong bookId, const char* property) {
+    FPDF_DOCUMENT doc = (FPDF_DOCUMENT)bookId;
+    char16_t buf[128];
+    int size = FPDF_GetMetaText(doc, property, buf, 256);
+
+    int length = strlen16(buf);
+
+    if (size > 0 && size < 256) {
+        jchar* jc = (jchar*)buf;
+        return env->NewString(jc, length);
+    } else {
+        return NULL;
+    }
+}
+
 
 JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativeWidth
         (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber) {
@@ -37,6 +52,8 @@ JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNa
     return (jint)height;
 
 }
+
+
 
 
 
@@ -124,6 +141,16 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
 
     return array;
 
+}
+
+JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativeTitle
+        (JNIEnv *env, jclass cls, jlong bookId) {
+   return get_metadata(env, bookId, "Title");
+}
+
+JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativeAuthor
+        (JNIEnv *env, jclass cls, jlong bookId) {
+    return get_metadata(env, bookId, "Author");
 }
 
 JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativeBytes

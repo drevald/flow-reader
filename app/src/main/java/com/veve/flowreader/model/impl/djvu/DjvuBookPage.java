@@ -1,9 +1,12 @@
 package com.veve.flowreader.model.impl.djvu;
 
+import android.util.Log;
+
 import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.PageGlyphInfo;
 import com.veve.flowreader.model.impl.AbstractBookPage;
 import java.util.List;
+import java.util.Optional;
 
 
 public class DjvuBookPage extends AbstractBookPage implements BookPage  {
@@ -31,6 +34,20 @@ public class DjvuBookPage extends AbstractBookPage implements BookPage  {
     public int getHeight() {
         return getNativeHeight(getBookId(), getPageNumber());
     }
+
+    @Override
+    public String getTitle() {
+        return getNativeTitle(getBookId());
+    }
+
+    @Override
+    public String getAuthor() {
+        return getNativeAuthor(getBookId());
+    }
+
+    private static native String getNativeTitle(long bookId);
+
+    private static native String getNativeAuthor(long bookId);
 
     private static native byte[] getNativeBytes(long bookId, int pageNumber);
 

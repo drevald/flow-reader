@@ -10,6 +10,12 @@ extern "C" {
 JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativeBytes
         (JNIEnv *, jclass, jlong, jint);
 
+JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativeTitle
+        (JNIEnv *, jclass, jlong);
+
+JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativeAuthor
+        (JNIEnv *, jclass, jlong);
+
 JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativePageGlyphs
         (JNIEnv *, jclass, jlong, jint, jobject);
 

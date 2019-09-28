@@ -1,6 +1,7 @@
 package com.veve.flowreader.model.impl.pdf;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.DevicePageContext;
@@ -32,6 +33,8 @@ public class PdfBookPage extends AbstractBookPage implements BookPage {
     }
 
 
+
+
     @Override
     public int getWidth() {
         return getNativeWidth(getBookId(), getPageNumber());
@@ -41,6 +44,20 @@ public class PdfBookPage extends AbstractBookPage implements BookPage {
     public int getHeight() {
         return getNativeHeight(getBookId(), getPageNumber());
     }
+
+    @Override
+    public String getTitle() {
+        return getNativeTitle(getBookId());
+    }
+
+    @Override
+    public String getAuthor() {
+        return getNativeAuthor(getBookId());
+    }
+
+    private static native String getNativeTitle(long bookId);
+
+    private static native String getNativeAuthor(long bookId);
 
     private static native int getNativeWidth(long bookId, int pageNumber);
 

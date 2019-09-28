@@ -337,3 +337,13 @@ int max_ind(std::vector<std::tuple<int,int>> zr) {
         return -1;
     }
 }
+
+int strlen16(char16_t* strarg)
+{
+    if(!strarg)
+        return -1; //strarg is NULL pointer
+    char16_t* str = strarg;
+    for(;*str;++str)
+        ; // empty body
+    return str-strarg;
+}

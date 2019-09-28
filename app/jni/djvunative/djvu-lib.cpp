@@ -9,10 +9,35 @@
 #define PIXELS 3
 
 
+
 struct Document {
     ddjvu_context_t *ctx;
     ddjvu_document_t *doc;
 };
+
+jstring get_annotation(JNIEnv *env, jlong bookId, const char* key) {
+    Document *document = (Document *) bookId;
+    miniexp_t annotations = ddjvu_document_get_anno(document->doc, 1);
+    miniexp_t *keys = ddjvu_anno_get_metadata_keys(annotations);
+
+    if (!keys) return env->NewStringUTF("");
+
+    int i;
+    for (i = 0; keys[i] != miniexp_nil; i++) {
+        const char *value = ddjvu_anno_get_metadata(annotations, keys[i]);
+        if (value) {
+            const char* k = miniexp_to_name(keys[i]);
+            if (std::strcmp(k, key)==0) {
+                __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "value =  %s\n", value);
+                return env->NewStringUTF(value);
+            }
+        }
+    }
+
+    if (keys) free(keys);
+    return NULL;
+}
+
 
 
 JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_getNumberOfPages
@@ -32,6 +57,17 @@ JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_getNumb
     return ddjvu_document_get_pagenum(doc);
 
 }
+
+JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeTitle
+        (JNIEnv *env, jclass cls, jlong bookId) {
+    return get_annotation(env, bookId, "Title");
+}
+
+JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeAuthor
+        (JNIEnv *env, jclass cls, jlong bookId) {
+    return get_annotation(env, bookId, "Author");
+}
+
 
 JNIEXPORT jlong JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_openBook
         (JNIEnv *env, jobject obj, jstring path) {

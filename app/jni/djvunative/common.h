@@ -34,9 +34,13 @@
 #include <iostream>
 #include <algorithm>
 #include <stack>
+#include <wchar.h>
+#include <codecvt>
 
 #include <libdjvu/ddjvuapi.h>
+#include <libdjvu/miniexp.h>
 #include <fpdfview.h>
+#include <fpdfdoc.h>
 
 #define APPNAME "FLOW-READER"
 
@@ -82,6 +86,8 @@ bool build_well_formed_page(Mat& image, Mat& gray_inverted_image);
 void filter_gray_inverted_image(std::vector<segment> segments, int width, int height, Mat& gray_inverted_image);
 
 int max_ind(std::vector<std::tuple<int,int>> zr);
+
+int strlen16(char16_t* strarg);
 
 
 #endif
