@@ -18,13 +18,14 @@ public class PageGlyphRecord {
     private int baselineShift;
     private int averageHeight;
     private boolean indented;
+    private boolean isSpace;
 
     @Ignore
     public PageGlyphRecord() {
 
     }
 
-    public PageGlyphRecord(long bookId, int position, int x, int y, int width, int height, int baselineShift, int averageHeight, boolean indented) {
+    public PageGlyphRecord(long bookId, int position, int x, int y, int width, int height, int baselineShift, int averageHeight, boolean indented, boolean isSpace) {
         this.bookId = bookId;
         this.position = position;
         this.x = x;
@@ -34,6 +35,7 @@ public class PageGlyphRecord {
         this.baselineShift = baselineShift;
         this.averageHeight = averageHeight;
         this.indented = indented;
+        this.isSpace = isSpace;
     }
 
     public long getId() {
@@ -114,6 +116,14 @@ public class PageGlyphRecord {
 
     public void setIndented(boolean indented) {
         this.indented = indented;
+    }
+
+    public boolean isSpace() {
+        return isSpace;
+    }
+
+    public void setSpace(boolean space) {
+        isSpace = space;
     }
 
     public boolean equals(PageGlyphRecord record) {

@@ -19,7 +19,7 @@ line_limit PageSegmenter::find_baselines(vector<double_pair> &cc) {
     int max = numeric_limits<int>::min();
     int min = numeric_limits<int>::max();
 
-    double lowerData[line_rects.size()];
+    vector<int> lowerData;//[line_rects.size()];
 
     for (int i = 0; i < line_rects.size(); i++) {
         Rect rect = line_rects.at(i);
@@ -29,12 +29,14 @@ line_limit PageSegmenter::find_baselines(vector<double_pair> &cc) {
         if (rect.y + rect.height > max) {
             max = rect.y + rect.height;
         }
-        lowerData[i] = rect.y + rect.height;
+        lowerData.push_back(rect.y + rect.height);
     }
 
     int size = line_rects.size();
 
-    map<double,int> countsLower;
+    map<int,int> countsLower;
+
+    //double s = std::accumulate(lowerData.begin(), lowerData.end(), 0.0)/size;
 
     for (int c = 0; c < size; c++) {
         double m = lowerData[c];
@@ -118,13 +120,24 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
             int ind = indices[i][j];
             double_pair nb = center_list[ind];
             if (get<0>(nb) - get<0>(p) != 0) {
-                double dist = ((get<1>(nb) - get<1>(p)) * (get<1>(nb) - get<1>(p))) /
-                              (get<0>(nb) - get<0>(p)) + (get<0>(nb) - get<0>(p));
-                if (dist < mindist && get<0>(nb) > get<0>(p) &&
-                    abs((get<1>(nb) - get<1>(p))) < 3. / 4. * average_height) {
-                    mindist = dist;
-                    right_nb = make_tuple(get<0>(nb), get<1>(nb));
-                    found_neighbor = true;
+                double dist = sqrt(((get<1>(nb) - get<1>(p)) * (get<1>(nb) - get<1>(p))) +
+                                   (get<0>(nb) - get<0>(p)) * (get<0>(nb) - get<0>(p)));
+                cv::Rect rect1 = rd.at(nb);
+                cv::Rect rect2 = rd.at(p);
+                int a_s = rect1.y;
+                int a_e = rect1.y + rect1.height;
+                int b_s = rect2.y;
+                int b_e = rect2.y + rect2.height;
+                if (b_s <= a_e && a_s <= b_e) {
+                    int o_s = std::max(a_s, b_s);
+                    int o_e = std::min(a_e, b_e);
+                    int diff = o_e - o_s;
+                    if (dist < mindist && get<0>(nb) > get<0>(p) &&
+                        diff >= 5./6. * average_height) {
+                        mindist = dist;
+                        right_nb = make_tuple(get<0>(nb), get<1>(nb));
+                        found_neighbor = true;
+                    }
                 }
             }
         }
@@ -193,7 +206,10 @@ vector<line_limit> PageSegmenter::get_line_limits() {
             int cn = keys.at(i);
             vector<double_pair> cc = components.at(cn);
             line_limit ll = find_baselines(cc);
-            v.push_back(ll);
+            if(cc.size() > 1) {
+                v.push_back(ll);
+            }
+
         }
 
         return v;
@@ -266,7 +282,7 @@ cc_result PageSegmenter::get_cc_results(const Mat &image) {
         int y = -get<1>(a);
         int width = get<2>(a) - x;
         int height = get<3>(a) - y;
-        if (height > average_height - std && height < 2*average_height) {
+        if (height > average_height - std && height < 2*average_height && width > average_height / 3.) {
             double cx = (x + width) / 2.0;
             double cy = (y + height) / 2.0;
             rd[make_tuple((x + width) / 2.0, (y + height) / 2.0)] = Rect(x, y, width, height);
@@ -322,6 +338,10 @@ vector<glyph> PageSegmenter::get_glyphs() {
         image.release();
         return return_value;
     } else {
+        Mat image;
+        cvtColor(mat, image, COLOR_BGR2GRAY);
+        bitwise_not(image, image);
+        threshold(image, image, 0, 255, THRESH_BINARY | THRESH_OTSU);
         vector<line_limit> line_limits = get_line_limits();
         sort(line_limits.begin(), line_limits.end(), SortLineLimits());
 
@@ -353,7 +373,7 @@ vector<glyph> PageSegmenter::get_glyphs() {
             int bu = ll.upper_baseline;
 
             Mat lineimage(image, Rect(0, u, width, l - u));
-            threshold(lineimage, lineimage, 0, 255, THRESH_BINARY | THRESH_OTSU);
+            //threshold(lineimage, lineimage, 0, 255, THRESH_BINARY | THRESH_OTSU);
             Mat horHist;
             reduce(lineimage, horHist, 0, REDUCE_SUM, CV_32F);
 
@@ -372,15 +392,16 @@ vector<glyph> PageSegmenter::get_glyphs() {
             horHist.release();
 
             int c = 0;
-            for (const std::tuple<int, int> &r : oneRuns) {
-
-
+            int space_width = 0;
+            std::vector<double> spaces;
+            for (int k=0; k<oneRuns.size(); k++) {
+                std::tuple<int, int> r = oneRuns.at(k);
                 int left = get<0>(r);
                 int right = get<1>(r);
 
                 glyph g;
 
-                if (c == 0 && (left - left_indent) > 0.01 * width) {
+                if (c == 0 && (left - left_indent) > 0.02 * width) {
                     g.indented = true;
                 } else {
                     g.indented = false;
@@ -393,8 +414,27 @@ vector<glyph> PageSegmenter::get_glyphs() {
                 g.height = l - u;
                 g.baseline_shift = l - bl;
                 g.line_height = line_height;
-                return_value.push_back(g);
+                g.is_space = false;
+                if (g.width > 0) {
+                    return_value.push_back(g);
+                }
 
+
+                glyph space;
+                space.x = right;
+                int nextx = k != oneRuns.size()-1 ? get<0>(oneRuns.at(k+1)) : right + std::accumulate(spaces.begin(), spaces.end(), 0.0)/spaces.size();
+                space_width = nextx - right;
+                spaces.push_back(space_width);
+                space.width = space_width;
+                space.y = u;
+                space.baseline_shift = l - bl;
+                space.line_height = line_height;
+                space.height = l - u;
+                space.indented = false;
+                space.is_space = true;
+                if (space.width>0) {
+                    return_value.push_back(space);
+                }
 
 
             }

@@ -227,6 +227,7 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
 
     Xycut xycut(mat);
     std::vector<ImageNode> parts = xycut.xycut();
+    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "parts count = %d\n", parts.size());
 
     vector<glyph> new_glyphs;
 

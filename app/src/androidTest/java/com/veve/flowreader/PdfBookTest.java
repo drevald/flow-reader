@@ -21,7 +21,7 @@ public class PdfBookTest {
         Context appContext = InstrumentationRegistry.getTargetContext();
         PdfBookSource source = new PdfBookSource("/data/local/tmp/pdf_sample.pdf");
         List<PageGlyph> pageGlyphs = source.getPageGlyphs(0);
-        Assert.assertEquals(354, pageGlyphs.size());
+        Assert.assertEquals(2772, pageGlyphs.size());
     }
 
 }

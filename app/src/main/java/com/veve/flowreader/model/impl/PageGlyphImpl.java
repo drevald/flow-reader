@@ -46,6 +46,8 @@ public class PageGlyphImpl implements PageGlyph {
 
     private boolean indented;
 
+    private boolean isSpace;
+
 
     PageGlyphImpl(Bitmap bitmap, PageGlyphInfo rect) {
         this.bitmap = bitmap;
@@ -54,6 +56,7 @@ public class PageGlyphImpl implements PageGlyph {
         this.x = rect.getX();
         this.y = rect.getY();
         this.indented = rect.isIndented();
+        this.isSpace = rect.isSpace();
         paint_debug.setStyle(Paint.Style.STROKE);
         paint_debug.setColor(Color.BLUE);
         paint_debug.setStrokeWidth(1);
@@ -75,15 +78,19 @@ public class PageGlyphImpl implements PageGlyph {
         return bitmap.getHeight();
     }
 
-    private int getBaselineShift() {
-        return baseLineShift;
+    public boolean isSpace() {
+        return isSpace;
     }
 
     @Override
     public void draw(DevicePageContext context, boolean show) {
 
-        int baseLineShift = getBaselineShift();
         Log.v(getClass().getName(), "Baseline shift is " + baseLineShift);
+
+        if (isSpace && context.isNewline()) {
+            context.setNewline(false);
+            //return;
+        }
 
         Canvas canvas = context.getCanvas();
         int __height = bitmap.getHeight();
@@ -104,22 +111,29 @@ public class PageGlyphImpl implements PageGlyph {
             startPoint.set(context.getMargin(), startPoint.y + (int)(__height * context.getZoom())
                     + (int)(context.getLeading()* context.getZoom()));
             currentBaseline += context.getLineHeight() * context.getZoom() + (int)(context.getLeading()* context.getZoom());
+            context.setNewline(true);
         }
+
         if(indented) {
-            //if not - start new line
             startPoint.set(context.getMargin() + averageHeight/2, startPoint.y + (int)(__height * context.getZoom())
                     + (int)(context.getLeading()* context.getZoom()));
             currentBaseline += context.getLineHeight() * context.getZoom() + (int)(context.getLeading()* context.getZoom());
         }
+        context.setNewline(false);
+
+
         Rect __srcRect = new Rect(0, 0, __width, __height);
         Rect __dstRect = new Rect(startPoint.x ,
                 currentBaseline + baseLineShift - (int)(__height * context.getZoom()),
                 startPoint.x +(int)(__width * context.getZoom()),
                 currentBaseline + baseLineShift);
+
         if(show) {
             canvas.drawBitmap(bitmap, __srcRect, __dstRect, paint);
-            if (Constants.DEBUG)
+            if (Constants.DEBUG) {
                 canvas.drawRect(__dstRect, paint_debug);
+            }
+
         }
 
         context.getStartPoint().set(startPoint.x + __dstRect.width()
@@ -129,6 +143,7 @@ public class PageGlyphImpl implements PageGlyph {
         context.setCurrentBaseLine(currentBaseline);
 
         //bitmap = null;
+
     }
 
 

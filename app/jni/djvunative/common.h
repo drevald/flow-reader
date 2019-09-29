@@ -56,6 +56,7 @@ struct segment {
 struct glyph {
     bool indented;
     int x, y, width, height, line_height, baseline_shift;
+    bool is_space;
 };
 
 

@@ -19,8 +19,10 @@ public class DevicePageContext {
     private int margin;
     private int lineHeight;
     private int currentBaseLine;
+    private boolean newline;
 
     public DevicePageContext() {
+        newline = true;
     }
 
     public DevicePageContext(int width) {
@@ -103,4 +105,11 @@ public class DevicePageContext {
         startPoint.set(0, 0);
     }
 
+    public boolean isNewline() {
+        return newline;
+    }
+
+    public void setNewline(boolean newline) {
+        this.newline = newline;
+    }
 }

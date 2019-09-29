@@ -73,7 +73,8 @@ public class CachedPageRendererImpl implements PageRenderer {
                             ((PageGlyphImpl)glyph).getHeight(),
                             ((PageGlyphImpl)glyph).getBaseLineShift(),
                             ((PageGlyphImpl)glyph).getAverageHeight(),
-                            ((PageGlyphImpl)glyph).isIndented()
+                            ((PageGlyphImpl)glyph).isIndented(),
+                            ((PageGlyphImpl)glyph).isSpace()
                     ));
                 }
                 booksCollection.addGlyphs(glyphsToStore, false);
@@ -92,7 +93,9 @@ public class CachedPageRendererImpl implements PageRenderer {
                             storedGlyph.getWidth(),
                             storedGlyph.getHeight(),
                             storedGlyph.getAverageHeight(),
-                            storedGlyph.getBaselineShift());
+                            storedGlyph.getBaselineShift(),
+                            storedGlyph.isSpace()
+                            );
                     long startBuildingGlyph = System.currentTimeMillis();
                     Bitmap glyphBitmap = Bitmap.createBitmap(
                             bitmap,
