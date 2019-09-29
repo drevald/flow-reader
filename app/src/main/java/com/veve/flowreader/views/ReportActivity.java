@@ -1,12 +1,16 @@
 package com.veve.flowreader.views;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -61,7 +65,9 @@ public class ReportActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                requestPermissions();
                 ReportSenderTask reportSenderTask = new ReportSenderTask();
+                reportSenderTask.execute();
             }
         });
 
@@ -99,12 +105,12 @@ public class ReportActivity extends AppCompatActivity {
         }
     }
 
-    static class ReportSenderTask extends AsyncTask<ReportRecord, Long, Long> {
+    static class ReportSenderTask extends AsyncTask<Void, Long, Long> {
 
         Long reportIncomingId;
 
         @Override
-        protected Long doInBackground(ReportRecord... reportRecords) {
+        protected Long doInBackground(Void... voids) {
 //            publishProgress();
             try {
                 URL url = new URL(Constants.REPORT_URL);
@@ -171,6 +177,21 @@ public class ReportActivity extends AppCompatActivity {
             return byteArrayOutputStream.toByteArray();
         }
 
+    }
+
+    private void requestPermissions() {
+        if (ContextCompat.checkSelfPermission(getApplicationContext(),
+                Manifest.permission.ACCESS_NETWORK_STATE)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_NETWORK_STATE)) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{
+                                Manifest.permission.ACCESS_NETWORK_STATE,
+                                Manifest.permission.INTERNET
+                        }, 1);
+            }
+        }
     }
 
 
