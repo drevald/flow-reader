@@ -89,7 +89,7 @@ public class PageGlyphImpl implements PageGlyph {
 
         if (isSpace && context.isNewline()) {
             context.setNewline(false);
-            //return;
+            return;
         }
 
         Canvas canvas = context.getCanvas();

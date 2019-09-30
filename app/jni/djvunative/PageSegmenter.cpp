@@ -133,7 +133,7 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
                     int o_e = std::min(a_e, b_e);
                     int diff = o_e - o_s;
                     if (dist < mindist && get<0>(nb) > get<0>(p) &&
-                        diff >= 5./6. * average_height) {
+                        diff >= 1./2. * average_height) {
                         mindist = dist;
                         right_nb = make_tuple(get<0>(nb), get<1>(nb));
                         found_neighbor = true;
@@ -206,9 +206,9 @@ vector<line_limit> PageSegmenter::get_line_limits() {
             int cn = keys.at(i);
             vector<double_pair> cc = components.at(cn);
             line_limit ll = find_baselines(cc);
-            if(cc.size() > 1) {
+            //if(cc.size() > 1) {
                 v.push_back(ll);
-            }
+            //}
 
         }
 
@@ -401,7 +401,7 @@ vector<glyph> PageSegmenter::get_glyphs() {
 
                 glyph g;
 
-                if (c == 0 && (left - left_indent) > 0.02 * width) {
+                if (c == 0 && (left - left_indent) > 0.05 * width) {
                     g.indented = true;
                 } else {
                     g.indented = false;

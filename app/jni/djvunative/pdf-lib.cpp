@@ -123,6 +123,9 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
 
         for (int j=0;j<glyphs.size(); j++) {
             glyph g = glyphs.at(j);
+            if (j==0){
+                g.indented = true;
+            }
             g.x += x;
             g.y += y;
             new_glyphs.push_back(g);
