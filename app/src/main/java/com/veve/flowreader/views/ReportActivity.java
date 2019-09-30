@@ -30,6 +30,7 @@ import com.veve.flowreader.model.PageRenderer;
 import com.veve.flowreader.model.PageRendererFactory;
 
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -124,6 +125,15 @@ public class ReportActivity extends AppCompatActivity {
                 os.write(getFileData(originalImage, "image/jpeg", "originalImage", "originalImage.jpeg", true));
                 //os.write(data);
                 os.flush();
+
+                Log.v("HIROKU_RESPONSE", "response code" + conn.getResponseCode());
+                InputStream is = conn.getInputStream();
+                byte[] buffer = new byte[100];
+                while (is.read(buffer) != -1) {
+                    Log.v("HIROKU_RESPONSE", new String(buffer));
+                }
+
+
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {

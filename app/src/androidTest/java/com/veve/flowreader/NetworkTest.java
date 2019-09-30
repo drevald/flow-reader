@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,8 +35,16 @@ public class NetworkTest {
             OutputStream os = conn.getOutputStream();
             //os.write(getTextData("text", "fieldName", true));
             os.write(getFileData("aaa".getBytes(), "image/jpeg", "originalImage", "originalImage.jpeg", true));
-            //os.write(data);
             os.flush();
+
+
+            Log.v("HIROKU_RESPONSE", "response code" + conn.getResponseCode());
+            InputStream is = conn.getInputStream();
+            byte[] buffer = new byte[100];
+            while (is.read(buffer) != -1) {
+                Log.v("HIROKU_RESPONSE", new String(buffer));
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
