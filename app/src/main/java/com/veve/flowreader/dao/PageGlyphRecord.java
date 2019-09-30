@@ -148,4 +148,8 @@ public class PageGlyphRecord implements Serializable {
         return "{glyphs}".getBytes();
     }
 
+    public static byte[] asJson(PageGlyphRecord glyph) {
+        return "{glyphs}".getBytes();
+    }
+
 }

@@ -16,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.veve.flowreader.Constants;
@@ -43,6 +44,9 @@ public class ReportActivity extends AppCompatActivity {
     private static byte[] glyphs;
     private static final String BOUNDARY = "---------------------------104659796718797242641237073228";
     private static final String BOUNDARY_PART = "--";
+    private static long totalSize = 0L;
+    private static ProgressBar progressBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +54,9 @@ public class ReportActivity extends AppCompatActivity {
         setContentView(R.layout.activity_report);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        progressBar = findViewById(R.id.progress);
+        progressBar.setMax(100);
 
         long bookId = getIntent().getLongExtra("reportId", -1);
 
@@ -86,7 +93,6 @@ public class ReportActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Cursor cursor) {
             super.onPostExecute(cursor);
-            long totalSize = 0L;
             cursor.moveToFirst();
             originalImage = cursor.getBlob(cursor.getColumnIndex("originalPage"));
             overturnedImage = cursor.getBlob(cursor.getColumnIndex("overturnedPage"));
@@ -106,13 +112,13 @@ public class ReportActivity extends AppCompatActivity {
         }
     }
 
-    static class ReportSenderTask extends AsyncTask<Void, Long, Long> {
+    static class ReportSenderTask extends AsyncTask<Void, Float, Long> {
 
         Long reportIncomingId;
 
         @Override
         protected Long doInBackground(Void... voids) {
-//            publishProgress();
+            publishProgress();
             try {
                 URL url = new URL(Constants.REPORT_URL);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -121,10 +127,16 @@ public class ReportActivity extends AppCompatActivity {
                 conn.setDoOutput(true);
                 conn.connect();
                 OutputStream os = conn.getOutputStream();
-                //os.write(getTextData("text", "fieldName", true));
-                os.write(getFileData(originalImage, "image/jpeg", "originalImage", "originalImage.jpeg", true));
-                //os.write(data);
+                os.write(getFileData(originalImage, "image/jpeg", "originalImage", "originalImage.jpeg", false));
+                publishProgress(((float)originalImage.length/(float)totalSize));
+                os.write(getFileData(overturnedImage, "image/jpeg", "overturnedImage", "overturnedImage.jpeg", false));
+                publishProgress(((float)(originalImage.length+overturnedImage.length)/(float)totalSize));
+                os.write(getFileData(glyphs, "application/json", "glyphs", "glyphs.json", true));
+                publishProgress(((float)(originalImage.length+overturnedImage.length + glyphs.length)/(float)totalSize));
                 os.flush();
+
+
+
 
                 Log.v("HIROKU_RESPONSE", "response code" + conn.getResponseCode());
                 InputStream is = conn.getInputStream();
@@ -144,8 +156,10 @@ public class ReportActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onProgressUpdate(Long... values) {
+        protected void onProgressUpdate(Float... values) {
             super.onProgressUpdate(values);
+            if (values != null && values.length > 0)
+                progressBar.setProgress((int)(values[0] * 100));
         }
 
         private byte[] getTextData(String text, String fieldName, boolean lastOne) throws Exception {
