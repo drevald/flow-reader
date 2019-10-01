@@ -30,7 +30,7 @@ public interface Constants {
     int MARGIN_MAX = 250;
 
     public static final String VERSION = "$Id$";
-    public final String REPORT_URL = "https://glyph-report.herokuapp.com/upload";
+    public final String REPORT_URL = "https://glyph-report.herokuapp.com/loader";
 
 
 

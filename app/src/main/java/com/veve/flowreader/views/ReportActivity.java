@@ -31,6 +31,7 @@ import com.veve.flowreader.model.PageRenderer;
 import com.veve.flowreader.model.PageRendererFactory;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -135,17 +136,16 @@ public class ReportActivity extends AppCompatActivity {
                 publishProgress(((float)(originalImage.length+overturnedImage.length + glyphs.length)/(float)totalSize));
                 os.flush();
 
-
-
-
                 Log.v("HIROKU_RESPONSE", "response code" + conn.getResponseCode());
                 InputStream is = conn.getInputStream();
-                byte[] buffer = new byte[100];
-                while (is.read(buffer) != -1) {
-                    Log.v("HIROKU_RESPONSE", new String(buffer));
-                }
-
-
+                DataInputStream dis = new DataInputStream(is);
+                reportIncomingId = (long)dis.readInt();
+//                byte[] buffer = new byte[100];
+//                while (is.read(buffer) != -1) {
+//                    Log.v("HIROKU_RESPONSE", new String(buffer));
+//                }
+                dis.close();
+                is.close();
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
