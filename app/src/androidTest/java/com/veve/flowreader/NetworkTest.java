@@ -1,20 +1,14 @@
 package com.veve.flowreader;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+
 import android.util.Log;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.Socket;
 import java.net.URL;
 
 public class NetworkTest {
@@ -24,7 +18,6 @@ public class NetworkTest {
 
     @Test
     public void sendRequest() {
-//            publishProgress();
         try {
             URL url = new URL(Constants.REPORT_URL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -33,7 +26,6 @@ public class NetworkTest {
             conn.setDoOutput(true);
             conn.connect();
             OutputStream os = conn.getOutputStream();
-            //os.write(getTextData("text", "fieldName", true));
             os.write(getFileData("aaa".getBytes(), "image/jpeg", "originalImage", "originalImage.jpeg", true));
             os.flush();
 

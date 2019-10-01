@@ -48,4 +48,8 @@ public interface DaoAccess {
     @Query("SELECT * from ReportRecord WHERE id = :reportId")
     Cursor getReport(long reportId);
 
+    @Query("DELETE FROM ReportRecord WHERE id = :reportId")
+    void deleteReport(long reportId);
+
+
 }

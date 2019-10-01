@@ -253,6 +253,8 @@ public class PageActivity extends AppCompatActivity {
                         baos.toByteArray(),
                         osOriginal.toByteArray(),
                         osOverturned.toByteArray());
+                reportRecord.setBookId(book.getId());
+                reportRecord.setPosition(currentPage);
                 ReportCollectorTask reportCollectorTask = new ReportCollectorTask();
                 reportCollectorTask.execute(reportRecord);
                 break;

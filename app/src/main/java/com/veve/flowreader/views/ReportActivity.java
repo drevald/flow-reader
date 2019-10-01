@@ -2,9 +2,11 @@ package com.veve.flowreader.views;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.pdf.PdfDocument;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -47,7 +49,9 @@ public class ReportActivity extends AppCompatActivity {
     private static final String BOUNDARY_PART = "--";
     private static long totalSize = 0L;
     private static ProgressBar progressBar;
-
+    private static long reportId;
+    private static long bookId;
+    private static int position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +64,6 @@ public class ReportActivity extends AppCompatActivity {
         progressBar.setMax(100);
 
         long bookId = getIntent().getLongExtra("reportId", -1);
-
 
         ReportGetterTask reportGetterTask = new ReportGetterTask();
 
@@ -95,6 +98,9 @@ public class ReportActivity extends AppCompatActivity {
         protected void onPostExecute(Cursor cursor) {
             super.onPostExecute(cursor);
             cursor.moveToFirst();
+            bookId = cursor.getLong(cursor.getColumnIndex("bookId"));
+            position = cursor.getInt(cursor.getColumnIndex("position"));
+            reportId = cursor.getLong(cursor.getColumnIndex("id"));
             originalImage = cursor.getBlob(cursor.getColumnIndex("originalPage"));
             overturnedImage = cursor.getBlob(cursor.getColumnIndex("overturnedPage"));
             glyphs = cursor.getBlob(cursor.getColumnIndex("glyphs"));
@@ -113,7 +119,7 @@ public class ReportActivity extends AppCompatActivity {
         }
     }
 
-    static class ReportSenderTask extends AsyncTask<Void, Float, Long> {
+    class ReportSenderTask extends AsyncTask<Void, Float, Long> {
 
         Long reportIncomingId;
 
@@ -138,17 +144,22 @@ public class ReportActivity extends AppCompatActivity {
 
                 Log.v("HIROKU_RESPONSE", "response code" + conn.getResponseCode());
                 InputStream is = conn.getInputStream();
-                DataInputStream dis = new DataInputStream(is);
-                reportIncomingId = (long)dis.readInt();
-//                byte[] buffer = new byte[100];
-//                while (is.read(buffer) != -1) {
-//                    Log.v("HIROKU_RESPONSE", new String(buffer));
-//                }
-                dis.close();
+                byte[] buffer = new byte[100];
+                while (is.read(buffer) != -1) {
+                    Log.v("HIROKU_RESPONSE", new String(buffer));
+                }
                 is.close();
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
+
+                AppDatabase appDatabase = AppDatabase.getInstance(getApplicationContext());
+                appDatabase.daoAccess().deleteReport(reportId);
+                Intent backToPageIntent = new Intent(ReportActivity.this, PageActivity.class);
+                backToPageIntent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+                backToPageIntent.putExtra(Constants.BOOK_ID, bookId);
+                backToPageIntent.putExtra(Constants.POSITION, position);
+                startActivity(backToPageIntent);
                 return null;
 
             }

@@ -24,6 +24,7 @@ public interface Constants {
     int IMAGE_VIEW_HEIGHT_LIMIT = 4000;
 
     String BOOK_ID = "BOOK_ID";
+    String POSITION = "position";
     String FILE_NAME = "FILENAME";
 
     int MARGIN_STEP = 50;
