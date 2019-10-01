@@ -30,6 +30,7 @@ import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
 import com.veve.flowreader.dao.AppDatabase;
@@ -240,8 +241,16 @@ public class PageActivity extends AppCompatActivity {
                 Log.v(getClass().getName(), "Original image size is " + osOriginal.toByteArray().length);
                 Log.v(getClass().getName(), "Overturned image size is " + osOverturned.toByteArray().length);
 
+                ObjectMapper mapper = new ObjectMapper(); // create once, reuse
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                try {
+                    mapper.writeValue(baos, booksCollection.getPageGlyphs(book.getId(), currentPage, true));
+                } catch (Exception e) {
+                    Log.e(getClass().getName(), "Failed to convert Glyphs to JSON", e);
+                }
+
                 ReportRecord reportRecord = new ReportRecord(
-                        PageGlyphRecord.asJson(booksCollection.getPageGlyphs(book.getId(), currentPage, true)),
+                        baos.toByteArray(),
                         osOriginal.toByteArray(),
                         osOverturned.toByteArray());
                 ReportCollectorTask reportCollectorTask = new ReportCollectorTask();

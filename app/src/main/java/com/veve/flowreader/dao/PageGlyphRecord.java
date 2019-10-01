@@ -149,23 +149,5 @@ public class PageGlyphRecord implements Serializable {
         return result;
     }
 
-    public static byte[] asJson(List<PageGlyphRecord> glyphs)  {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{\"glyphs\":");
-        for (int i = 0; i < glyphs.size(); i++) {
-            sb.append(new String(asJson(glyphs.get(i))));
-            if (i != glyphs.size()-1)
-                sb.append(',');
-        }
-        sb.append("\"}");
-        return sb.toString().getBytes();
-    }
-
-    private static byte[] asJson(PageGlyphRecord glyph) {
-        return String.format(Locale.getDefault(), GLYPH_JSON,
-                glyph.getX(), glyph.getY(), glyph.getWidth(), glyph.getHeight(), glyph.getBaselineShift(), glyph.getAverageHeight(), glyph.isIndented()).getBytes();
-    }
-
-
 }
 
