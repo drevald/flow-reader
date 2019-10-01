@@ -12,4 +12,5 @@ public interface PageGlyph {
      * @param show is real drawing needed
      */
     void draw(DevicePageContext context, boolean show);
+
 }

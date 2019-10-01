@@ -4,8 +4,18 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
+import com.veve.flowreader.model.PageGlyph;
+import com.veve.flowreader.model.impl.PageGlyphImpl;
+
+import java.io.ByteArrayOutputStream;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Locale;
+
 @Entity
-public class PageGlyphRecord {
+public class PageGlyphRecord implements Serializable {
+
+    private static final String GLYPH_JSON = "{\"x\":\"%d\", \"y\":\"%d\", \"width\":\"%d\", \"height\":\"%d\", \"baselineShift\":\"%d\",\"averageHeight\":\"%d\",\"indented\":\"%b\"}";
 
     @PrimaryKey(autoGenerate = true)
     private long id;
@@ -150,3 +160,4 @@ public class PageGlyphRecord {
     }
 
 }
+

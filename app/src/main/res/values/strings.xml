@@ -29,4 +29,7 @@
     <string name="help">Help</string>
     <string name="show_overturned">Click to view the overturned page</string>
     <string name="show_original">Click to view the original page</string>
+    <string name="title_activity_report">Report unreadable page</string>
+    <string name="page_unreadable">Page unreadable</string>
+    <string name="notify_send_size">You are going to sent %d bytes over internet</string>
 </resources>

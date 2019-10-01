@@ -6,5 +6,6 @@
     <item android:id="@+id/kerning_minus" android:title="@string/kerning_minus" />
     <item android:id="@+id/leading_plus" android:title="@string/leading_plus" />
     <item android:id="@+id/leading_minus" android:title="@string/leading_minus" />
+    <item android:id="@+id/page_unreadable" android:title="@string/page_unreadable" />
     <item android:id="@+id/delete_book" android:title="@string/delete_this_book" />
 </menu>

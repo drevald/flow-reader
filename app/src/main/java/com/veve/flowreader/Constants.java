@@ -24,9 +24,15 @@ public interface Constants {
     int IMAGE_VIEW_HEIGHT_LIMIT = 4000;
 
     String BOOK_ID = "BOOK_ID";
+    String POSITION = "position";
     String FILE_NAME = "FILENAME";
 
     int MARGIN_STEP = 50;
     int MARGIN_MAX = 250;
+
+    public static final String VERSION = "$Id$";
+    public final String REPORT_URL = "https://glyph-report.herokuapp.com/loader";
+
+
 
 }
