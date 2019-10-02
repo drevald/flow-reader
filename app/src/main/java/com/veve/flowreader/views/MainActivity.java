@@ -111,6 +111,13 @@ public class MainActivity extends AppCompatActivity {
             startActivity(ii);
         });
 
+        gridView.setOnItemLongClickListener(
+            (AdapterView<?> adapterView, View view, int i, long l) -> {
+                Log.v(getClass().getName(), "adapterView = " + adapterView + "view = " + view +  " i = " + i + " l = " + l);
+                return false;
+            }
+        );
+
         gridView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             int bookThumbPx = (int) (Constants.BOOK_THUMB_WIDTH
                     * Resources.getSystem().getDisplayMetrics().density);
@@ -311,6 +318,7 @@ public class MainActivity extends AppCompatActivity {
             Bitmap thumbnailBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
             imageView.setImageBitmap(thumbnailBitmap);
             textView.setText(booksList.get(position).getName());
+            Log.v(getClass().getName(), convertView.toString());
             return convertView;
         }
 

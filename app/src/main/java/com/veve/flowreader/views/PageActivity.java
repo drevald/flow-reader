@@ -163,8 +163,8 @@ public class PageActivity extends AppCompatActivity {
         seekBar.setOnSeekBarChangeListener(new PagerListener());
         home.setOnClickListener(new HomeButtonListener());
         show.setOnClickListener(new ShowListener());
-        //page.setOnTouchListener(new OnDoubleTapListener(this, page));
-        scroll.setOnTouchListener(new OnDoubleTapListener(this, page));
+        page.setOnTouchListener(new OnDoubleTapListener(this, page));
+        //scroll.setOnTouchListener(new OnDoubleTapListener(this, page));
         topLayout.addOnLayoutChangeListener(new LayoutListener());
 
         Display display = getWindowManager().getDefaultDisplay();
