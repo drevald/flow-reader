@@ -21,6 +21,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.veve.flowreader.BuildConfig;
 import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
 import com.veve.flowreader.dao.AppDatabase;
@@ -138,8 +139,9 @@ public class ReportActivity extends AppCompatActivity {
                 publishProgress(((float)originalImage.length/(float)totalSize));
                 os.write(getFileData(overturnedImage, "image/jpeg", "overturnedImage", "overturnedImage.jpeg", false));
                 publishProgress(((float)(originalImage.length+overturnedImage.length)/(float)totalSize));
-                os.write(getFileData(glyphs, "application/json", "glyphs", "glyphs.json", true));
+                os.write(getFileData(glyphs, "application/json", "glyphs", "glyphs.json", false));
                 publishProgress(((float)(originalImage.length+overturnedImage.length + glyphs.length)/(float)totalSize));
+                os.write(getTextData(BuildConfig.GitHash, "version", true));
                 os.flush();
 
                 Log.v("HIROKU_RESPONSE", "response code" + conn.getResponseCode());
