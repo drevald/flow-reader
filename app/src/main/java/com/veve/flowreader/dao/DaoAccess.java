@@ -8,7 +8,6 @@ import android.database.Cursor;
 
 import java.util.List;
 
-
 @Dao
 public interface DaoAccess {
 
