@@ -71,18 +71,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        switch (item.getItemId()) {
-            case R.id.delete_listed_book:
-                BookRecord bookRecord = (BookRecord)bookListAdapter.getItem(info.position);
-                BooksCollection.getInstance(getParent()).deleteBook(bookRecord.getId());
-                bookListAdapter.refresh();
-                bookGridAdapter.refresh();
-                return true;
-            case R.id.rename_listed_book:
-                return true;
-            default:
-                return true;
+        if (item.getItemId() == R.id.delete_listed_book) {
+            BookRecord bookRecord = (BookRecord)bookListAdapter.getItem(info.position);
+            BooksCollection.getInstance(getParent()).deleteBook(bookRecord.getId());
+            bookListAdapter.refresh();
+            bookGridAdapter.refresh();
         }
+        return true;
     }
 
     @Override
