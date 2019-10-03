@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/delete_listed_book" android:title="@string/delete_this_book" />
+    <item android:id="@+id/rename_listed_book" android:title="@string/rename_this_book" />
+</menu>

@@ -16,6 +16,7 @@
     <string name="ui_wide_margins">Wide margins</string>
     <string name="could_not_zoom_more">Could not zoom more</string>
     <string name="delete_this_book">Delete this book</string>
+    <string name="rename_this_book">Rename this book</string>
     <string name="margins_plus">Wider margin</string>
     <string name="margins_minus">Narrower margin</string>
     <string name="leading_plus">Larger leading</string>
