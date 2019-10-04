@@ -118,7 +118,7 @@ public class ReportActivity extends AppCompatActivity {
 
                 ByteArrayOutputStream reflowedImageOs = new ByteArrayOutputStream();
                 FileInputStream reflowedImageInputStream =
-                        new FileInputStream(new String(cursor.getBlob(cursor.getColumnIndex("reflowedPage"))));
+                        new FileInputStream(new String(cursor.getBlob(cursor.getColumnIndex("overturnedPage"))));
                 while (reflowedImageInputStream.read(buffer) != -1) {
                     reflowedImageOs.write(buffer);
                 }
@@ -130,7 +130,6 @@ public class ReportActivity extends AppCompatActivity {
                 Log.e(getClass().getName(), e.getMessage(), e);
             }
 
-            reflowedImage = cursor.getBlob(cursor.getColumnIndex("overturnedPage"));
             glyphs = cursor.getBlob(cursor.getColumnIndex("glyphs"));
             totalSize += reflowedImage.length;
             totalSize += originalImage.length;
