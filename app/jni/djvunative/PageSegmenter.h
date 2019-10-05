@@ -52,6 +52,7 @@ class PageSegmenter {
 public:
     PageSegmenter(cv::Mat& mat) {
         this->mat = mat;
+        gray_inverted_image = mat.clone();
         cvtColor(mat, gray_inverted_image, cv::COLOR_BGR2GRAY);
         bitwise_not(gray_inverted_image,gray_inverted_image);
     }
@@ -65,9 +66,9 @@ private:
     std::map<double_pair,cv::Rect> rd;
     Graph g;
     int line_height = 0;
-    std::vector<line_limit> get_line_limits();
+    std::vector<line_limit> get_line_limits(std::vector<cv::Rect>& big_rects);
     void preprocess_for_line_limits(const cv::Mat &image);
-    cc_result get_cc_results(const cv::Mat& image);
+    cc_result get_cc_results(const cv::Mat& image, std::vector<cv::Rect>& big_rects);
     std::map<int,std::vector<double_pair>> get_connected_components(std::vector<double_pair>& center_list, double averahe_hight);
     line_limit find_baselines(std::vector<double_pair>& cc);
 };

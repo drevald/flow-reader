@@ -174,13 +174,13 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
 }
 
 
-vector<line_limit> PageSegmenter::get_line_limits() {
+vector<line_limit> PageSegmenter::get_line_limits(std::vector<cv::Rect>& big_rects) {
 
     const Mat &image = gray_inverted_image.clone();
     preprocess_for_line_limits(image);
 
 
-    const cc_result cc_results = get_cc_results(image);
+    const cc_result cc_results = get_cc_results(image, big_rects);
 
     if (cc_results.whole_page) {
         vector<line_limit> v;
@@ -206,9 +206,9 @@ vector<line_limit> PageSegmenter::get_line_limits() {
             int cn = keys.at(i);
             vector<double_pair> cc = components.at(cn);
             line_limit ll = find_baselines(cc);
-            //if(cc.size() > 1) {
+            if(cc.size() > 1) {
                 v.push_back(ll);
-            //}
+            }
 
         }
 
@@ -218,7 +218,7 @@ vector<line_limit> PageSegmenter::get_line_limits() {
 
 }
 
-cc_result PageSegmenter::get_cc_results(const Mat &image) {
+cc_result PageSegmenter::get_cc_results(const Mat &image, std::vector<cv::Rect>& big_rects) {
 
     Mat labeled(image.size(), image.type());
     Mat rectComponents = Mat::zeros(Size(0, 0), 0);
@@ -246,6 +246,15 @@ cc_result PageSegmenter::get_cc_results(const Mat &image) {
 
     }
 
+    for (int i=0; i<rects.size(); i++) {
+        cv::Rect r = rects.at(i);
+        double  ratio = r.height/(double)r.width;
+        if (ratio > 10) {
+            big_rects.push_back(r);
+
+        }
+    }
+
     if (count == 0) {
         cc_result v;
         v.whole_page = true;
@@ -260,12 +269,7 @@ cc_result PageSegmenter::get_cc_results(const Mat &image) {
 
     double min, max;
     cv::minMaxLoc(hist, &min, &max);
-
-
     double average_height = m(0);
-    if (average_height == 0) {
-        __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "cpp average height %f\n", average_height);
-    }
 
 
     double std = stdv(0);
@@ -313,7 +317,7 @@ cc_result PageSegmenter::get_cc_results(const Mat &image) {
 vector<glyph> PageSegmenter::get_glyphs() {
 
     // preprocess for the first step
-    Mat image;
+    Mat image = mat.clone();
     cvtColor(mat, image, COLOR_BGR2GRAY);
     bitwise_not(image, image);
     const Mat kernel = getStructuringElement(MORPH_RECT, Size(8, 2));
@@ -338,41 +342,124 @@ vector<glyph> PageSegmenter::get_glyphs() {
         image.release();
         return return_value;
     } else {
-        Mat image;
+        Mat image;// = gray_inverted_image;
         cvtColor(mat, image, COLOR_BGR2GRAY);
         bitwise_not(image, image);
         threshold(image, image, 0, 255, THRESH_BINARY | THRESH_OTSU);
-        vector<line_limit> line_limits = get_line_limits();
+        std::vector<cv::Rect> big_rects;
+        vector<line_limit> line_limits = get_line_limits(big_rects);
         sort(line_limits.begin(), line_limits.end(), SortLineLimits());
+
+        for (int i=0; i<big_rects.size(); i++) {
+            cv::Rect r = big_rects.at(i);
+            cv::Mat region = image(r);
+            std::vector<std::vector<cv::Point>> contours;
+            cv::findContours(region, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
+
+            for (int j=0; j<contours.size(); j++) {
+                cv::RotatedRect rect = cv::minAreaRect(contours.at(j));
+                cv::Rect r = rect.boundingRect();
+
+                if (r.height / (double)r.width > 10) {
+                    std::vector<std::vector<cv::Point>> cnts;
+                    cnts.push_back(contours.at(j));
+                    cv::drawContours(mat, cnts, -1, cv::Scalar(255,255,255), -1);
+                }
+            }
+        }
+
+        cvtColor(mat, image, COLOR_BGR2GRAY);
+        bitwise_not(image, image);
+        threshold(image, image, 0, 255, THRESH_BINARY | THRESH_OTSU);
+
 
         Mat hist;
         reduce(image, hist, 0, REDUCE_SUM, CV_32F);
 
         int w =hist.cols;
 
-        // left indent is the first nonzero sum in the histogram
+        // left indent is the first nonzero sum in the histogram, which doesn't always work
+        //
+
+        std::vector<cv::Point> points;
+
+        for (int i=0;i<line_limits.size(); i++){
+            line_limit ll = line_limits.at(i);
+            int l = ll.lower;
+            int bl = ll.lower_baseline;
+            int u = ll.upper;
+            int bu = ll.upper_baseline;
+
+            Mat lineimage(image, Rect(0, u, w, l - u));
+            //threshold(lineimage, lineimage, 0, 255, THRESH_BINARY | THRESH_OTSU);
+            Mat horHist;
+            reduce(lineimage, horHist, 0, REDUCE_SUM, CV_32F);
+
+            int w = horHist.cols;
+
+            for (int i = 0; i < w; i++) {
+                if (horHist.at<int>(0, i) > 0) {
+                    horHist.at<int>(0, i) = 1;
+                } else {
+                    horHist.at<int>(0, i) = 0;
+                }
+            }
+
+            const vector<std::tuple<int, int>> &oneRuns = one_runs(horHist);
+
+            int x1 = get<0>(oneRuns.at(0));
+            int y1 = u;
+
+            points.push_back(cv::Point(x1,y1));
+
+        }
+        cv::Vec4f params;
+        cv::fitLine(points, params, cv::DIST_L2, 0, 0.01, 0.01);
+
+        // begin line
+
+        float u = params[0];
+        float v = params[1];
+        float x0 = params[2];
+        float y0 = params[3];
+
+        float a = v/u;
+        float b = y0 - (v/u)*x0;
+
         int left_indent = 0;
         bool left_indent_found = false;
-        for (int i = 0; i < w; i++) {
-            if (hist.at<float>(0, i) > 0) {
-                if (!left_indent_found) {
-                    left_indent = i;
-                    left_indent_found = true;
+
+
+        if (u == 0) {
+            for (int i = 0; i < w; i++) {
+                if (hist.at<float>(0, i) > 0) {
+                    if (!left_indent_found) {
+                        left_indent = i;
+                        left_indent_found = true;
+                    }
+                    hist.at<float>(0, i) = 1;
+                } else {
+                    hist.at<float>(0, i) = 0;
                 }
-                hist.at<float>(0, i) = 1;
-            } else {
-                hist.at<float>(0, i) = 0;
             }
         }
 
-        int width = image.cols;
+
+        // end line
+
+        __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "%f %f %f %f\n ", params[0], params[1],params[2],params[3]);
+
+
+
+
+
         for (line_limit &ll : line_limits) {
             int l = ll.lower;
             int bl = ll.lower_baseline;
             int u = ll.upper;
             int bu = ll.upper_baseline;
 
-            Mat lineimage(image, Rect(0, u, width, l - u));
+            Mat lineimage(image, Rect(0, u, w, l - u));
             //threshold(lineimage, lineimage, 0, 255, THRESH_BINARY | THRESH_OTSU);
             Mat horHist;
             reduce(lineimage, horHist, 0, REDUCE_SUM, CV_32F);
@@ -391,7 +478,7 @@ vector<glyph> PageSegmenter::get_glyphs() {
 
             horHist.release();
 
-            int c = 0;
+            //int c = 0;
             int space_width = 0;
             std::vector<double> spaces;
             for (int k=0; k<oneRuns.size(); k++) {
@@ -401,12 +488,19 @@ vector<glyph> PageSegmenter::get_glyphs() {
 
                 glyph g;
 
-                if (c == 0 && (left - left_indent) > 0.05 * width) {
+
+                if (k == 0 && left_indent_found && (left - left_indent) > 0.02 * w) {
                     g.indented = true;
-                } else {
+                } else if (k==0 && !left_indent_found) {
+                    float x = (u - b)/a;
+                    if (left - x > 0.02*w) {
+                        g.indented = true;
+                    }
+                }
+                else {
                     g.indented = false;
                 }
-                c++;
+
 
                 g.x = left;
                 g.y = u;
@@ -422,7 +516,8 @@ vector<glyph> PageSegmenter::get_glyphs() {
 
                 glyph space;
                 space.x = right;
-                int nextx = k != oneRuns.size()-1 ? get<0>(oneRuns.at(k+1)) : right + std::accumulate(spaces.begin(), spaces.end(), 0.0)/spaces.size();
+                //int nextx = k != oneRuns.size()-1 ? get<0>(oneRuns.at(k+1)) : right + std::accumulate(spaces.begin(), spaces.end(), 0.0)/spaces.size();
+                int nextx = k != oneRuns.size()-1 ? get<0>(oneRuns.at(k+1)) : right + 1;
                 space_width = nextx - right;
                 spaces.push_back(space_width);
                 space.width = space_width;

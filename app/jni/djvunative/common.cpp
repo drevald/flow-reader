@@ -220,7 +220,7 @@ bool build_well_formed_page(cv::Mat& image, Mat& gray_inverted_image) {
         }
     }
 
-    filter_gray_inverted_image(high_objects, image.cols, image.rows, gray_inverted_image);
+    //filter_gray_inverted_image(high_objects, image.cols, image.rows, gray_inverted_image);
     return true;
 
 
@@ -303,13 +303,6 @@ bool well_formed_page(Mat& image) {
     thr.release();
     vertHist.release();
 
-    if (lined_document) {
-        sprintf(msg, "true\n");
-        __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "%s\n", msg);
-    } else {
-        sprintf(msg, "false\n");
-        __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "%s\n", msg);
-    }
 
     return lined_document;
 
