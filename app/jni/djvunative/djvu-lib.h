@@ -9,39 +9,39 @@
 extern "C" {
 #endif
 
-JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeBytes
-(JNIEnv *, jclass, jlong, jint);
+    JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeBytes
+        (JNIEnv *, jclass, jlong, jint);
 
-JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativePageGlyphs
+    JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativePageGlyphs
         (JNIEnv *, jclass, jlong, jint, jobject);
 
-JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeTitle
+    JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeTitle
         (JNIEnv *, jclass, jlong);
 
 
-JNIEXPORT jlong JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_openBook
-(JNIEnv *, jobject, jstring);
+    JNIEXPORT jlong JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_openBook
+        (JNIEnv *, jobject, jstring);
 
-JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_getNumberOfPages
+    JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_getNumberOfPages
         (JNIEnv *, jobject, jlong);
 
-JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_openStringBook
+    JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_openStringBook
         (JNIEnv *, jobject,  jstring);
 
-/*
-* Class:     com_veve_flowreader_model_impl_djvu_DjvuBookPage
-* Method:    getNativeWidth
-* Signature: (JI)I
-*/
-JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeWidth
+    /*
+     * Class:     com_veve_flowreader_model_impl_djvu_DjvuBookPage
+     * Method:    getNativeWidth
+     * Signature: (JI)I
+     */
+    JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeWidth
         (JNIEnv *, jclass, jlong, jint);
 
-/*
- * Class:     com_veve_flowreader_model_impl_djvu_DjvuBookPage
- * Method:    getNativeHeight
- * Signature: (JI)I
- */
-JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeHeight
+    /*
+     * Class:     com_veve_flowreader_model_impl_djvu_DjvuBookPage
+     * Method:    getNativeHeight
+     * Signature: (JI)I
+     */
+    JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeHeight
         (JNIEnv *, jclass, jlong, jint);
 
 #ifdef __cplusplus

@@ -59,11 +59,11 @@ vector<std::tuple<array<int, 4>, array<int, 4>>> Enclosure::report(vector<array<
         array<int, 4> a = points[0];
         array<int, 4> b = points[1];
         if (get<0>(a) < get<0>(b) && get<1>(a) < get<1>(b) && get<2>(a) < get<2>(b) &&
-            get<3>(a) < get<3>(b)) {
+                get<3>(a) < get<3>(b)) {
             v.push_back(std::tuple<array<int, 4>, array<int, 4>>(a, b));
             return v;
         } else if (get<0>(a) >= get<0>(b) && get<1>(a) >= get<1>(b) && get<2>(a) >= get<2>(b) &&
-                   get<3>(a) >= get<3>(b)) {
+                get<3>(a) >= get<3>(b)) {
             v.push_back(std::tuple<array<int, 4>, array<int, 4>>(b, a));
             return v;
         } else {
@@ -76,26 +76,26 @@ vector<std::tuple<array<int, 4>, array<int, 4>>> Enclosure::report(vector<array<
         array<int, 4> c = points[2];
 
         if (get<0>(a) < get<0>(b) && get<1>(a) < get<1>(b) && get<2>(a) < get<2>(b) &&
-            get<3>(a) < get<3>(b)) {
+                get<3>(a) < get<3>(b)) {
             v.push_back(std::tuple<array<int, 4>, array<int, 4>>(a, b));
         } else if (get<0>(a) >= get<0>(b) && get<1>(a) >= get<1>(b) && get<2>(a) >= get<2>(b) &&
-                   get<3>(a) >= get<3>(b)) {
+                get<3>(a) >= get<3>(b)) {
             v.push_back(std::tuple<array<int, 4>, array<int, 4>>(b, a));
         }
 
         if (get<0>(a) < get<0>(c) && get<1>(a) < get<1>(c) && get<2>(a) < get<2>(c) &&
-            get<3>(a) < get<3>(c)) {
+                get<3>(a) < get<3>(c)) {
             v.push_back(std::tuple<array<int, 4>, array<int, 4>>(a, c));
         } else if (get<0>(a) >= get<0>(c) && get<1>(a) >= get<1>(c) && get<2>(a) >= get<2>(c) &&
-                   get<3>(a) >= get<3>(c)) {
+                get<3>(a) >= get<3>(c)) {
             v.push_back(std::tuple<array<int, 4>, array<int, 4>>(c, a));
         }
 
         if (get<0>(b) < get<0>(c) && get<1>(b) < get<1>(c) && get<2>(b) < get<2>(c) &&
-            get<3>(b) < get<3>(c)) {
+                get<3>(b) < get<3>(c)) {
             v.push_back(std::tuple<array<int, 4>, array<int, 4>>(b, c));
         } else if (get<0>(b) >= get<0>(c) && get<1>(b) >= get<1>(c) && get<2>(b) >= get<2>(c) &&
-                   get<3>(b) >= get<3>(c)) {
+                get<3>(b) >= get<3>(c)) {
             v.push_back(std::tuple<array<int, 4>, array<int, 4>>(c, b));
         }
 
@@ -151,20 +151,20 @@ set<array<int, 4>> Enclosure::solve() {
     set<array<int, 4>> union__;
 
     set_union(big.begin(), big.end(), small.begin(), small.end(),
-              std::inserter(union_, union_.begin()));
+            std::inserter(union_, union_.begin()));
 
     set_difference(all_.begin(), all_.end(), union_.begin(), union_.end(),
-                   std::inserter(diff1, diff1.begin()));
+            std::inserter(diff1, diff1.begin()));
 
 
     set_difference(big.begin(), big.end(), small.begin(), small.end(),
-                   std::inserter(diff, diff.begin()));
+            std::inserter(diff, diff.begin()));
 
     set_union(diff1.begin(), diff1.end(), diff.begin(), diff.end(),
-              std::inserter(union__, union__.begin()));
+            std::inserter(union__, union__.begin()));
 
     set_difference(union__.begin(), union__.end(), small.begin(), small.end(),
-                   std::inserter(diff2, diff2.begin()));
+            std::inserter(diff2, diff2.begin()));
 
     return diff2;
 }

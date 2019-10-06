@@ -50,12 +50,12 @@ std::vector<std::tuple<int, int>> one_runs(const cv::Mat &hist) {
     int pos = 0;
     for (int i = 0; i < w; i++) {
         if ((i == 0 && hist.at<int>(0, i) > 0) ||
-            (i > 0 && hist.at<int>(0, i) > 0 && hist.at<int>(0, i - 1) == 0)) {
+                (i > 0 && hist.at<int>(0, i) > 0 && hist.at<int>(0, i - 1) == 0)) {
             pos = i;
         }
 
         if ((i == w - 1 && hist.at<int>(0, i) > 0) ||
-            (i < w - 1 && hist.at<int>(0, i) > 0 && hist.at<int>(0, i + 1) == 0)) {
+                (i < w - 1 && hist.at<int>(0, i) > 0 && hist.at<int>(0, i + 1) == 0)) {
             return_value.push_back(make_tuple(pos, i));
         }
     }
@@ -69,13 +69,13 @@ std::vector<std::tuple<int, int>> one_runs_vert(const cv::Mat &hist) {
 
     int pos = 0;
     for (int i = 0; i < h; i++) {
-        if ((i == 0 && hist.at<float>(i,0) == 1) ||
-            (i > 0 && hist.at<float>(i,0) == 1 && hist.at<float>(i - 1,0) == 0)) {
+        if ((i == 0 && hist.at<float>(i,0) > 0) ||
+                (i > 0 && hist.at<float>(i,0) > 0 && hist.at<float>(i - 1,0) == 0)) {
             pos = i;
         }
 
-        if ((i == h - 1 && hist.at<float>(i,0) == 1) ||
-            (i < h - 1 && hist.at<float>(i,0) == 1 && hist.at<float>(i + 1,0) == 0)) {
+        if ((i == h - 1 && hist.at<float>(i,0) > 0) ||
+                (i < h - 1 && hist.at<float>(i,0) > 0 && hist.at<float>(i + 1,0) == 0)) {
             return_value.push_back(make_tuple(pos, i));
         }
     }
@@ -90,12 +90,12 @@ std::vector<std::tuple<int,int>> zero_runs_hor(const cv::Mat& hist) {
     int pos = 0;
     for (int i = 0; i < w; i++) {
         if ((i == 0 && hist.at<float>(0, i) == 0) ||
-            (i > 0 && hist.at<float>(0, i) == 0 && hist.at<float>(0,i - 1) > 0)) {
+                (i > 0 && hist.at<float>(0, i) == 0 && hist.at<float>(0,i - 1) > 0)) {
             pos = i;
         }
 
         if ((i == w - 1 && hist.at<float>(0,i) == 0) ||
-            (i < w - 1 && hist.at<float>(0,i) == 0 && hist.at<float>(0,i + 1) > 0)) {
+                (i < w - 1 && hist.at<float>(0,i) == 0 && hist.at<float>(0,i + 1) > 0)) {
             return_value.push_back(std::make_tuple(pos, i));
         }
     }
@@ -110,12 +110,12 @@ std::vector<std::tuple<int,int>> zero_runs(const cv::Mat& hist) {
     int pos = 0;
     for (int i = 0; i < w; i++) {
         if ((i == 0 && hist.at<float>(i, 0) == 0) ||
-            (i > 0 && hist.at<float>(i, 0) == 0 && hist.at<float>(i - 1,0) > 0)) {
+                (i > 0 && hist.at<float>(i, 0) == 0 && hist.at<float>(i - 1,0) > 0)) {
             pos = i;
         }
 
         if ((i == w - 1 && hist.at<float>(i, 0) == 0) ||
-            (i < w - 1 && hist.at<float>(i, 0) == 0 && hist.at<float>(i + 1,0) > 0)) {
+                (i < w - 1 && hist.at<float>(i, 0) == 0 && hist.at<float>(i + 1,0) > 0)) {
             return_value.push_back(make_tuple(pos, i));
         }
     }
@@ -148,7 +148,7 @@ void filter_gray_inverted_image(std::vector<segment> segments, int width, int he
 
     std::vector<std::tuple<int,char>> ints;
     for (segment s : segments) {
-       ints.push_back(std::make_tuple(s.y, 'b'));
+        ints.push_back(std::make_tuple(s.y, 'b'));
         ints.push_back(std::make_tuple(s.y + s.height, 'e'));
     }
 
@@ -161,7 +161,7 @@ void filter_gray_inverted_image(std::vector<segment> segments, int width, int he
 
     for (std::tuple<int,char> t : ints) {
         if (st.size() == 0) {
-           begin = get<0>(t);
+            begin = get<0>(t);
         }
         if (get<1>(t) == 'b') {
             st.push(get<0>(t));
@@ -169,8 +169,8 @@ void filter_gray_inverted_image(std::vector<segment> segments, int width, int he
             st.pop();
         }
         if (st.size()==0) {
-           end = get<0>(t);
-           ends.push_back(std::make_tuple(begin,end));
+            end = get<0>(t);
+            ends.push_back(std::make_tuple(begin,end));
         }
     }
 

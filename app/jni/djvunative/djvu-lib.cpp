@@ -41,7 +41,7 @@ jstring get_annotation(JNIEnv *env, jlong bookId, const char* key) {
 
 
 JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_getNumberOfPages
-        (JNIEnv *env, jobject obj, jlong bookId) {
+(JNIEnv *env, jobject obj, jlong bookId) {
 
     Document *document = (Document *) bookId;
     ddjvu_document_t *doc = document->doc;
@@ -59,18 +59,18 @@ JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_getNumb
 }
 
 JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeTitle
-        (JNIEnv *env, jclass cls, jlong bookId) {
+(JNIEnv *env, jclass cls, jlong bookId) {
     return get_annotation(env, bookId, "Title");
 }
 
 JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeAuthor
-        (JNIEnv *env, jclass cls, jlong bookId) {
+(JNIEnv *env, jclass cls, jlong bookId) {
     return get_annotation(env, bookId, "Author");
 }
 
 
 JNIEXPORT jlong JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_openBook
-        (JNIEnv *env, jobject obj, jstring path) {
+(JNIEnv *env, jobject obj, jstring path) {
 
     Document *d = (Document *) malloc(sizeof(struct Document));
     const char *nativePath = env->GetStringUTFChars(path, 0);
@@ -83,13 +83,13 @@ JNIEXPORT jlong JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_openBo
 }
 
 JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_openStringBook
-        (JNIEnv *env, jobject obj, jstring str) {
+(JNIEnv *env, jobject obj, jstring str) {
 
     return env->NewStringUTF("test");
 }
 
 JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeWidth
-        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber) {
+(JNIEnv *env, jclass cls, jlong bookId, jint pageNumber) {
 
     Document *document = (Document *) bookId;
     ddjvu_document_t *doc = document->doc;
@@ -105,7 +105,7 @@ JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_get
 }
 
 JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeHeight
-        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber) {
+(JNIEnv *env, jclass cls, jlong bookId, jint pageNumber) {
 
     Document *document = (Document *) bookId;
     ddjvu_document_t *doc = document->doc;
@@ -164,7 +164,7 @@ void waitAndHandleMessages(JNIEnv *env, ddjvu_context_t *contextHandle) {
 }
 
 JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativePageGlyphs
-        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jobject list) {
+(JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jobject list) {
 
     struct timespec start;
     struct timespec end;
@@ -213,11 +213,11 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
     }
 
     jboolean ret = ddjvu_page_render(page, DDJVU_RENDER_COLOR,
-                                     &prect,
-                                     &rrect,
-                                     pixelFormat,
-                                     w * 4,
-                                     (char *) pixels);
+            &prect,
+            &rrect,
+            pixelFormat,
+            w * 4,
+            (char *) pixels);
 
 
     jbyteArray array = env->NewByteArray(size);
@@ -237,19 +237,21 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
         int x = node.get_x();
         int y = node.get_y();
         cv::Size s = m.size();
-        cv::Rect rect(x,y,s.width, s.height);
-        cv::Mat img = mat(rect);
-        PageSegmenter ps(img);
-        vector<glyph> glyphs = ps.get_glyphs();
+        if (s.height / (float)s.width < 5) {
+            cv::Rect rect(x,y,s.width, s.height);
+            cv::Mat img = mat(rect);
+            PageSegmenter ps(img);
+            vector<glyph> glyphs = ps.get_glyphs();
 
-        for (int j=0;j<glyphs.size(); j++) {
-            glyph g = glyphs.at(j);
-            if (j==0) {
-                g.indented = true;
+            for (int j=0;j<glyphs.size(); j++) {
+                glyph g = glyphs.at(j);
+                if (j==0) {
+                    g.indented = true;
+                }
+                g.x += x;
+                g.y += y;
+                new_glyphs.push_back(g);
             }
-            g.x += x;
-            g.y += y;
-            new_glyphs.push_back(g);
         }
     }
 
@@ -272,7 +274,7 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
 }
 
 JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeBytes
-        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber) {
+(JNIEnv *env, jclass cls, jlong bookId, jint pageNumber) {
 
     struct timespec start;
     struct timespec end;
@@ -336,11 +338,11 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
     char *pixels = (char *) malloc(size);
 
     int s = ddjvu_page_render(page, DDJVU_RENDER_COLOR,
-                              &prect,
-                              &rrect,
-                              format,
-                              w * 4,
-                              pixels);
+            &prect,
+            &rrect,
+            format,
+            w * 4,
+            pixels);
 
 
     jbyteArray array = env->NewByteArray(size);

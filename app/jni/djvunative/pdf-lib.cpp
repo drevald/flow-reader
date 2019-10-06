@@ -25,7 +25,7 @@ jstring get_metadata(JNIEnv *env, jlong bookId, const char* property) {
 
 
 JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativeWidth
-        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber) {
+(JNIEnv *env, jclass cls, jlong bookId, jint pageNumber) {
 
     FPDF_DOCUMENT doc = (FPDF_DOCUMENT)bookId;
 
@@ -40,7 +40,7 @@ JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNa
 }
 
 JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativeHeight
-        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber) {
+(JNIEnv *env, jclass cls, jlong bookId, jint pageNumber) {
 
     FPDF_DOCUMENT doc = (FPDF_DOCUMENT)bookId;
 
@@ -58,7 +58,7 @@ JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNa
 
 
 JNIEXPORT jlong JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBook_openBook
-        (JNIEnv* env, jobject obj, jstring path) {
+(JNIEnv* env, jobject obj, jstring path) {
 
 
     FPDF_InitLibrary(NULL);
@@ -76,7 +76,7 @@ JNIEXPORT jlong JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBook_openBook
 }
 
 JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativePageGlyphs
-        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jobject list) {
+(JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jobject list) {
 
     struct timespec start;
     struct timespec end;
@@ -99,7 +99,7 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
 
     FPDF_RenderPageBitmap(bitmap, page, 0, 0, width, height, 0, 0);
     const char* buffer =
-            reinterpret_cast<const char*>(FPDFBitmap_GetBuffer(bitmap));
+        reinterpret_cast<const char*>(FPDFBitmap_GetBuffer(bitmap));
 
     jbyteArray array = env->NewByteArray(size);
     env->SetByteArrayRegion(array, 0, size, (jbyte*)buffer);
@@ -116,19 +116,21 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
         int x = node.get_x();
         int y = node.get_y();
         cv::Size s = m.size();
-        cv::Rect rect(x,y,s.width, s.height);
-        cv::Mat img = mat(rect);
-        PageSegmenter ps(img);
-        vector<glyph> glyphs = ps.get_glyphs();
+        if (s.height / (float)s.width < 5) {
+            cv::Rect rect(x,y,s.width, s.height);
+            cv::Mat img = mat(rect);
+            PageSegmenter ps(img);
+            vector<glyph> glyphs = ps.get_glyphs();
 
-        for (int j=0;j<glyphs.size(); j++) {
-            glyph g = glyphs.at(j);
-            if (j==0){
-                g.indented = true;
+            for (int j=0;j<glyphs.size(); j++) {
+                glyph g = glyphs.at(j);
+                if (j==0){
+                    g.indented = true;
+                }
+                g.x += x;
+                g.y += y;
+                new_glyphs.push_back(g);
             }
-            g.x += x;
-            g.y += y;
-            new_glyphs.push_back(g);
         }
     }
 
@@ -147,17 +149,17 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
 }
 
 JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativeTitle
-        (JNIEnv *env, jclass cls, jlong bookId) {
-   return get_metadata(env, bookId, "Title");
+(JNIEnv *env, jclass cls, jlong bookId) {
+    return get_metadata(env, bookId, "Title");
 }
 
 JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativeAuthor
-        (JNIEnv *env, jclass cls, jlong bookId) {
+(JNIEnv *env, jclass cls, jlong bookId) {
     return get_metadata(env, bookId, "Author");
 }
 
 JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativeBytes
-        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber) {
+(JNIEnv *env, jclass cls, jlong bookId, jint pageNumber) {
 
     FPDF_DOCUMENT doc = (FPDF_DOCUMENT)bookId;
 
@@ -173,7 +175,7 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
 
     FPDF_RenderPageBitmap(bitmap, page, 0, 0, width, height, 0, 0);
     const char* buffer =
-            reinterpret_cast<const char*>(FPDFBitmap_GetBuffer(bitmap));
+        reinterpret_cast<const char*>(FPDFBitmap_GetBuffer(bitmap));
 
     jbyteArray array = env->NewByteArray(size);
     env->SetByteArrayRegion(array, 0, size, (jbyte*)buffer);
@@ -184,7 +186,7 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
 
 
 JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBook_getNumberOfPages
-        (JNIEnv *env, jobject obj, jlong bookId) {
+(JNIEnv *env, jobject obj, jlong bookId) {
 
     FPDF_DOCUMENT doc = (FPDF_DOCUMENT)bookId;
     int page_count = FPDF_GetPageCount(doc);
