@@ -5,8 +5,9 @@
 #include "pdf-lib.h"
 
 #include "common.h"
-#include "PageSegmenter.h"
-#include "Xycut.h"
+#define RESOLUTION_MULTIPLIER  4;
+
+
 
 jstring get_metadata(JNIEnv *env, jlong bookId, const char* property) {
     FPDF_DOCUMENT doc = (FPDF_DOCUMENT)bookId;
@@ -47,7 +48,7 @@ JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNa
     int pageno = (int)pageNumber;
     FPDF_PAGE page = FPDF_LoadPage(doc, pageno);
 
-    int height = static_cast<int>(FPDF_GetPageHeight(page))*4;
+    int height = static_cast<int>(FPDF_GetPageHeight(page))*RESOLUTION_MULTIPLIER;
 
     return (jint)height;
 
@@ -75,74 +76,46 @@ JNIEXPORT jlong JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBook_openBook
 
 }
 
-JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativePageGlyphs
-(JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jobject list) {
 
-    struct timespec start;
-    struct timespec end;
-    double elapsedSeconds;
-
-    clock_gettime(CLOCK_MONOTONIC, &start);
-
+image_format get_pdf_pixels(JNIEnv* env, jlong bookId, jint pageNumber, char** pixels) {
 
     FPDF_DOCUMENT doc = (FPDF_DOCUMENT)bookId;
 
     int pageno = (int)pageNumber;
     FPDF_PAGE page = FPDF_LoadPage(doc, pageno);
-    int width = static_cast<int>(FPDF_GetPageWidth(page))*4;
-    int height = static_cast<int>(FPDF_GetPageHeight(page))*4;
+    int width = static_cast<int>(FPDF_GetPageWidth(page))*RESOLUTION_MULTIPLIER;
+    int height = static_cast<int>(FPDF_GetPageHeight(page))*RESOLUTION_MULTIPLIER;
 
-    int size = width * height * 4;
+    int size = width * height * RESOLUTION_MULTIPLIER;
 
     FPDF_BITMAP bitmap = FPDFBitmap_Create(width, height, 0);
     FPDFBitmap_FillRect(bitmap, 0, 0, width, height, 0xFFFFFFFF);
 
     FPDF_RenderPageBitmap(bitmap, page, 0, 0, width, height, 0, 0);
-    const char* buffer =
-        reinterpret_cast<const char*>(FPDFBitmap_GetBuffer(bitmap));
+    *pixels = (char*)reinterpret_cast<const char*>(FPDFBitmap_GetBuffer(bitmap));
+
+    return image_format(width, height, size);
+
+}
+
+JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativePageGlyphs
+(JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jobject list) {
+
+    char* buffer;
+
+    image_format format = get_pdf_pixels(env, bookId, pageNumber, &buffer);
+    int size = format.size;
+    int height = format.h;
+    int width = format.w;
 
     jbyteArray array = env->NewByteArray(size);
     env->SetByteArrayRegion(array, 0, size, (jbyte*)buffer);
 
     Mat mat(height,width,CV_8UC4,&((char*)buffer)[0]);
-
-    Xycut xycut(mat);
-    std::vector<ImageNode> parts = xycut.xycut();
-    vector<glyph> new_glyphs;
-
-    for (int i=0;i<parts.size(); i++) {
-        ImageNode node = parts.at(i);
-        Mat m = node.get_mat();
-        int x = node.get_x();
-        int y = node.get_y();
-        cv::Size s = m.size();
-        if (s.height / (float)s.width < 5) {
-            cv::Rect rect(x,y,s.width, s.height);
-            cv::Mat img = mat(rect);
-            PageSegmenter ps(img);
-            vector<glyph> glyphs = ps.get_glyphs();
-
-            for (int j=0;j<glyphs.size(); j++) {
-                glyph g = glyphs.at(j);
-                if (j==0){
-                    g.indented = true;
-                }
-                g.x += x;
-                g.y += y;
-                new_glyphs.push_back(g);
-            }
-        }
-    }
-
+    std::vector<glyph> new_glyphs = get_glyphs(mat);
     put_glyphs(env, new_glyphs, list);
     free((void*)buffer);
     mat.release();
-
-    clock_gettime(CLOCK_MONOTONIC, &end);
-    elapsedSeconds = TimeSpecToSeconds(&end) - TimeSpecToSeconds(&start);
-    char duration[30];
-    sprintf(duration, "pdf glyphs duration%f", elapsedSeconds);
-    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "%s\n", duration);
 
     return array;
 
@@ -161,21 +134,10 @@ JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
 JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativeBytes
 (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber) {
 
-    FPDF_DOCUMENT doc = (FPDF_DOCUMENT)bookId;
+    char* buffer;
 
-    int pageno = (int)pageNumber;
-    FPDF_PAGE page = FPDF_LoadPage(doc, pageno);
-    int width = static_cast<int>(FPDF_GetPageWidth(page))*4;
-    int height = static_cast<int>(FPDF_GetPageHeight(page))*4;
-
-    int size = width * height * 4;
-
-    FPDF_BITMAP bitmap = FPDFBitmap_Create(width, height, 0);
-    FPDFBitmap_FillRect(bitmap, 0, 0, width, height, 0xFFFFFFFF);
-
-    FPDF_RenderPageBitmap(bitmap, page, 0, 0, width, height, 0, 0);
-    const char* buffer =
-        reinterpret_cast<const char*>(FPDFBitmap_GetBuffer(bitmap));
+    image_format format = get_pdf_pixels(env, bookId, pageNumber, &buffer);
+    int size = format.size;
 
     jbyteArray array = env->NewByteArray(size);
     env->SetByteArrayRegion(array, 0, size, (jbyte*)buffer);

@@ -2,8 +2,10 @@
 // Created by Sergey Mikhno on 2019-05-13.
 //
 
-#include "PageSegmenter.h"
+#include "common.h"
 #include "Enclosure.h"
+#include "PageSegmenter.h"
+
 
 
 line_limit PageSegmenter::find_baselines(vector<double_pair> &cc) {
@@ -475,12 +477,6 @@ vector<glyph> PageSegmenter::get_glyphs() {
 
         // end line
 
-        __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "%f %f %f %f\n ", params[0], params[1],params[2],params[3]);
-
-
-
-
-
         for (line_limit &ll : line_limits) {
             int l = ll.lower;
             int bl = ll.lower_baseline;
@@ -536,7 +532,7 @@ vector<glyph> PageSegmenter::get_glyphs() {
 
                 Mat hist;
                 reduce(lineimage(cv::Rect(left, 0, right-left, l-u)), hist, 1, REDUCE_SUM, CV_32F);
-                const vector<std::tuple<int, int>> vert_one_runs = one_runs_vert(hist);
+                const vector<std::tuple<int, int>> vert_one_runs = one_runs(hist);
 
                 int shift = vert_one_runs.size() > 0 ? get<0>(vert_one_runs.at(0)) : 0;
 

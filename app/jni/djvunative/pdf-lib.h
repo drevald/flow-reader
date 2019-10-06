@@ -2,10 +2,12 @@
 #define FLOW_READER_PDF_LIB_H
 
 #include <jni.h>
+#include "common.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 
     JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativeBytes
         (JNIEnv *, jclass, jlong, jint);
@@ -40,6 +42,9 @@ extern "C" {
      */
     JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativeHeight
         (JNIEnv *, jclass, jlong, jint);
+
+    image_format get_pdf_pixels(JNIEnv*, jlong, jint, char**);
+
 
 #ifdef __cplusplus
 }
