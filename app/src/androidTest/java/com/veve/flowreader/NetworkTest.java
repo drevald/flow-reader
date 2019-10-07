@@ -1,69 +1,46 @@
 package com.veve.flowreader;
 
-import android.graphics.Canvas;
-import android.graphics.Point;
-import android.os.AsyncTask;
 
-import com.android.volley.toolbox.HttpResponse;
-import com.veve.flowreader.dao.BookRecord;
-import com.veve.flowreader.model.BookSource;
-import com.veve.flowreader.model.DevicePageContext;
-import com.veve.flowreader.model.PageRenderer;
-import com.veve.flowreader.model.PageRendererFactory;
-import com.veve.flowreader.model.impl.DevicePageContextImpl;
-import com.veve.flowreader.model.impl.PageRendererImpl;
-import com.veve.flowreader.model.impl.djvu.DjvuBookSource;
+import android.util.Log;
 
 import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.Socket;
 import java.net.URL;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
 
-import javax.net.ssl.HttpsURLConnection;
-
-import static com.veve.flowreader.Constants.REPORT_URL;
-import static org.junit.Assert.*;
-
-/**
- * Example local unit test, which will execute on the development machine (host).
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
- */
-public class ExampleUnitTest {
+public class NetworkTest {
 
     private static final String BOUNDARY = "---------------------------104659796718797242641237073228";
     private static final String BOUNDARY_PART = "--";
 
     @Test
-    public void testRequest() throws Exception {
-        URL url = new URL("https://glyph-report.herokuapp.com/upload");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+    public void sendRequest() {
         try {
+            URL url = new URL(Constants.REPORT_URL);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + BOUNDARY);
             conn.setDoOutput(true);
             conn.connect();
             OutputStream os = conn.getOutputStream();
-            os.write(getTextData("text", "fieldName", true));
-            //os.write(data);
+            os.write(getFileData("aaa".getBytes(), "image/jpeg", "originalImage", "originalImage.jpeg", true));
             os.flush();
-            if (conn.getResponseCode() == HttpsURLConnection.HTTP_OK) {
-                //conn.setRequestMethod("POST");
 
+
+            Log.v("HIROKU_RESPONSE", "response code" + conn.getResponseCode());
+            InputStream is = conn.getInputStream();
+            byte[] buffer = new byte[100];
+            while (is.read(buffer) != -1) {
+                Log.v("HIROKU_RESPONSE", new String(buffer));
             }
-        } catch (IOException e) {
+
+        } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            //conn.disconnect();
         }
+
     }
 
     private byte[] getTextData(String text, String fieldName, boolean lastOne) throws Exception {
@@ -104,6 +81,7 @@ public class ExampleUnitTest {
         byteArrayOutputStream.write("\r\n".getBytes());
         return byteArrayOutputStream.toByteArray();
     }
+
 
 
 }

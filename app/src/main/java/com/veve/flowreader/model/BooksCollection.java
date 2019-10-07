@@ -47,6 +47,13 @@ public class BooksCollection {
     }
 
     public BookRecord getBook(long id) {
+        return getBook(id, true);
+    }
+
+    public BookRecord getBook(long id, boolean async) {
+        if (!async) {
+            return daoAccess.getBook(id);
+        }
         BookGetterTask bookGetterTask = new BookGetterTask(daoAccess);
         bookGetterTask.execute(id);
         try {

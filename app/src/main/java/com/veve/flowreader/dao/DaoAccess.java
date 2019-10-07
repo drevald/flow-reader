@@ -4,9 +4,9 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
+import android.database.Cursor;
 
 import java.util.List;
-
 
 @Dao
 public interface DaoAccess {
@@ -40,5 +40,15 @@ public interface DaoAccess {
 
     @Query("DELETE FROM PageGlyphRecord WHERE bookId = :bookId")
     void deleteBookGlyphs(long bookId);
+
+    @Insert
+    long insertReport(ReportRecord reportRecord);
+
+    @Query("SELECT * from ReportRecord WHERE id = :reportId")
+    Cursor getReport(long reportId);
+
+    @Query("DELETE FROM ReportRecord WHERE id = :reportId")
+    void deleteReport(long reportId);
+
 
 }

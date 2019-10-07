@@ -13,6 +13,8 @@ import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyph;
 import com.veve.flowreader.model.PageGlyphInfo;
 
+import java.util.List;
+
 
 /**
  * Created by ddreval on 19.04.2018.
@@ -145,6 +147,5 @@ public class PageGlyphImpl implements PageGlyph {
         //bitmap = null;
 
     }
-
 
 }

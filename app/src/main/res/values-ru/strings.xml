@@ -16,6 +16,7 @@
     <string name="ui_wide_margins">Широкие поля</string>
     <string name="could_not_zoom_more">Максимальное увеличение</string>
     <string name="delete_this_book">Удалить книгу</string>
+    <string name="rename_this_book">Переименовать книгу</string>
     <string name="margins_plus">Увеличить поля</string>
     <string name="margins_minus">Уменьшить поля</string>
     <string name="leading_plus">Увеличить интерлиньяж</string>
@@ -29,4 +30,7 @@
     <string name="help">Помощь</string>
     <string name="show_overturned">Кликните чтобы увидеть переверстанную страницу</string>
     <string name="show_original">Кликните чтобы увидеть оригинальную страницу</string>
+    <string name="title_activity_report">Отчет о нечитабельной странице</string>
+    <string name="page_unreadable">Страница нечитабельна</string>
+    <string name="notify_send_size">Вы согласны переслать %d байтов по интернет?</string>
 </resources>
