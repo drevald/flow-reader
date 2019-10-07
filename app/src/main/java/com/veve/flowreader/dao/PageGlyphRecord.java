@@ -143,7 +143,8 @@ public class PageGlyphRecord implements Serializable {
                 &&this.width == record.width
                 &&this.height == record.height
                 &&this.baselineShift == record.baselineShift
-                &&this.averageHeight == record.averageHeight;
+                &&this.averageHeight == record.averageHeight
+                &&this.isSpace == record.isSpace;
     }
 
     public int hashCode() {
