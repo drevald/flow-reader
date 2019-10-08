@@ -531,7 +531,11 @@ vector<glyph> PageSegmenter::get_glyphs() {
                 // detect real height
 
                 Mat hist;
-                reduce(lineimage(cv::Rect(left, 0, right-left, l-u)), hist, 1, REDUCE_SUM, CV_32F);
+                cv::Mat line = lineimage(cv::Rect(left, 0, right-left, l-u));
+                if (line.size().width == 0 || line.size().height == 0) {
+                    continue;
+                }
+                reduce(lineimage, hist, 1, REDUCE_SUM, CV_32F);
                 const vector<std::tuple<int, int>> vert_one_runs = one_runs(hist);
 
                 int shift = vert_one_runs.size() > 0 ? get<0>(vert_one_runs.at(0)) : 0;
