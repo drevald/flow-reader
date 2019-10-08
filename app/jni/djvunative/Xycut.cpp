@@ -44,7 +44,7 @@ void Xycut::xycut_vertical_find(cv::Mat img, double threshold, int level, int he
 
     cv::Mat hist;
     reduce(img, hist, 0, cv::REDUCE_SUM, CV_32F);
-    std::vector<std::tuple<int,int>> zr = zero_runs_hor(hist);
+    std::vector<std::tuple<int,int>> zr = zero_runs(hist);
 
     std::vector<std::tuple<int,int>> zr1;
     for (int i=0;i<zr.size();i++){
@@ -139,7 +139,7 @@ void Xycut::xycut_vertical_cut(cv::Mat img, double threshold, ImageNode* tree, i
 
     cv::Mat hist;
     reduce(img, hist, 0, cv::REDUCE_SUM, CV_32F);
-    std::vector<std::tuple<int,int>> zr = zero_runs_hor(hist);
+    std::vector<std::tuple<int,int>> zr = zero_runs(hist);
 
     std::vector<std::tuple<int,int>> zr1;
     for (int i=0;i<zr.size();i++){

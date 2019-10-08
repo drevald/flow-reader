@@ -2,12 +2,7 @@
 #include "djvu-lib.h"
 #include "common.h"
 
-#include "PageSegmenter.h"
-#include "Xycut.h"
-
-
-#define PIXELS 3
-
+#define PIXELS 4
 
 
 struct Document {
@@ -39,9 +34,8 @@ jstring get_annotation(JNIEnv *env, jlong bookId, const char* key) {
 }
 
 
-
 JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_getNumberOfPages
-        (JNIEnv *env, jobject obj, jlong bookId) {
+(JNIEnv *env, jobject obj, jlong bookId) {
 
     Document *document = (Document *) bookId;
     ddjvu_document_t *doc = document->doc;
@@ -53,24 +47,23 @@ JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_getNumb
         ddjvu_message_pop(ctx);
     }
 
-
     return ddjvu_document_get_pagenum(doc);
 
 }
 
 JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeTitle
-        (JNIEnv *env, jclass cls, jlong bookId) {
+(JNIEnv *env, jclass cls, jlong bookId) {
     return get_annotation(env, bookId, "Title");
 }
 
 JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeAuthor
-        (JNIEnv *env, jclass cls, jlong bookId) {
+(JNIEnv *env, jclass cls, jlong bookId) {
     return get_annotation(env, bookId, "Author");
 }
 
 
 JNIEXPORT jlong JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_openBook
-        (JNIEnv *env, jobject obj, jstring path) {
+(JNIEnv *env, jobject obj, jstring path) {
 
     Document *d = (Document *) malloc(sizeof(struct Document));
     const char *nativePath = env->GetStringUTFChars(path, 0);
@@ -83,13 +76,13 @@ JNIEXPORT jlong JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_openBo
 }
 
 JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_openStringBook
-        (JNIEnv *env, jobject obj, jstring str) {
+(JNIEnv *env, jobject obj, jstring str) {
 
     return env->NewStringUTF("test");
 }
 
 JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeWidth
-        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber) {
+(JNIEnv *env, jclass cls, jlong bookId, jint pageNumber) {
 
     Document *document = (Document *) bookId;
     ddjvu_document_t *doc = document->doc;
@@ -105,7 +98,7 @@ JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_get
 }
 
 JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeHeight
-        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber) {
+(JNIEnv *env, jclass cls, jlong bookId, jint pageNumber) {
 
     Document *document = (Document *) bookId;
     ddjvu_document_t *doc = document->doc;
@@ -163,28 +156,19 @@ void waitAndHandleMessages(JNIEnv *env, ddjvu_context_t *contextHandle) {
     handleMessages(env, ctx);
 }
 
-JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativePageGlyphs
-        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jobject list) {
-
-    struct timespec start;
-    struct timespec end;
-    double elapsedSeconds;
-
-    clock_gettime(CLOCK_MONOTONIC, &start);
+image_format get_djvu_pixels(JNIEnv *env, jlong bookId, jint page_number, char** pixels) {
 
     Document *document = (Document *) bookId;
     ddjvu_context_t *ctx = document->ctx;
     ddjvu_document_t *doc = document->doc;
 
-    int pageno = (int) pageNumber;
+    int pageno = (int) page_number;
 
     ddjvu_page_t *page = ddjvu_page_create_by_pageno(doc, pageno);
-
 
     ddjvu_status_t r;
     ddjvu_pageinfo_t info;
     while ((r = ddjvu_document_get_pageinfo(doc, pageno, &info)) < DDJVU_JOB_OK) {
-
     }
 
     int w = info.width;
@@ -206,154 +190,55 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
     ddjvu_format_set_y_direction(pixelFormat, 1);
 
     int size = w * h * 4;
-    char *pixels = (char *) malloc(size);
+    *pixels = (char *) malloc(size);
 
     while (!ddjvu_page_decoding_done(page)) {
         waitAndHandleMessages(env, ctx);
     }
 
-    jboolean ret = ddjvu_page_render(page, DDJVU_RENDER_COLOR,
+    ddjvu_page_render(page, DDJVU_RENDER_COLOR,
                                      &prect,
                                      &rrect,
                                      pixelFormat,
-                                     w * 4,
-                                     (char *) pixels);
+                                     w * PIXELS,
+                                     *pixels);
 
+    ddjvu_format_release(pixelFormat);
+    return image_format(w,h,size);
 
+}
+
+JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativePageGlyphs
+(JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jobject list) {
+
+    char* pixels;
+    image_format format = get_djvu_pixels(env, bookId, pageNumber, &pixels);
+    int size = format.size;
+    int w = format.w;
+    int h= format.h;
     jbyteArray array = env->NewByteArray(size);
     env->SetByteArrayRegion(array, 0, size, (jbyte *) pixels);
 
     Mat mat(h, w, CV_8UC4, &((char *) pixels)[0]);
-
-    Xycut xycut(mat);
-    std::vector<ImageNode> parts = xycut.xycut();
-    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "parts count = %d\n", parts.size());
-
-    vector<glyph> new_glyphs;
-
-    for (int i=0;i<parts.size(); i++) {
-        ImageNode node = parts.at(i);
-        Mat m = node.get_mat();
-        int x = node.get_x();
-        int y = node.get_y();
-        cv::Size s = m.size();
-        cv::Rect rect(x,y,s.width, s.height);
-        cv::Mat img = mat(rect);
-        PageSegmenter ps(img);
-        vector<glyph> glyphs = ps.get_glyphs();
-
-        for (int j=0;j<glyphs.size(); j++) {
-            glyph g = glyphs.at(j);
-            if (j==0) {
-                g.indented = true;
-            }
-            g.x += x;
-            g.y += y;
-            new_glyphs.push_back(g);
-        }
-    }
-
+    vector<glyph> new_glyphs = get_glyphs(mat);
     put_glyphs(env, new_glyphs, list);
-
     mat.release();
-
-    ddjvu_format_release(pixelFormat);
-
     free(pixels);
-
-    clock_gettime(CLOCK_MONOTONIC, &end);
-    elapsedSeconds = TimeSpecToSeconds(&end) - TimeSpecToSeconds(&start);
-    char duration[30];
-    sprintf(duration, "total duration%f", elapsedSeconds);
-    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "%s\n", duration);
 
     return array;
 
 }
 
 JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeBytes
-        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber) {
+(JNIEnv *env, jclass cls, jlong bookId, jint pageNumber) {
 
-    struct timespec start;
-    struct timespec end;
-    double elapsedSeconds;
-
-    clock_gettime(CLOCK_MONOTONIC, &start);
-
-    Document *document = (Document *) bookId;
-    ddjvu_context_t *ctx = document->ctx;
-    ddjvu_document_t *doc = document->doc;
-
-    int pageno = (int) pageNumber;
-
-    ddjvu_page_t *page = ddjvu_page_create_by_pageno(doc, pageno);
-
-    while (!ddjvu_page_decoding_done (page)) {
-        //ddjvu_message_wait(ctx);
-        // Process available messages
-        const ddjvu_message_t *msg;
-        while ((msg = ddjvu_message_peek(ctx))) {
-            switch (msg->m_any.tag) {
-                case DDJVU_ERROR:
-
-                    break;
-                case DDJVU_INFO:
-                    break;
-                case DDJVU_DOCINFO:
-                    break;
-                default:
-                    break;
-            }
-            ddjvu_message_pop(ctx);
-        }
-    }
-
-    ddjvu_status_t r;
-    ddjvu_pageinfo_t info;
-    while ((r = ddjvu_document_get_pageinfo(doc, pageno, &info)) < DDJVU_JOB_OK) {
-
-    }
-
-    int w = info.width;
-    int h = info.height;
-
-    ddjvu_rect_t rrect;
-    ddjvu_rect_t prect;
-
-    prect.x = 0;
-    prect.y = 0;
-    prect.w = w;
-    prect.h = h;
-    rrect = prect;
-
-    // ddjvu_format_t *format = ddjvu_format_create(DDJVU_FORMAT_RGB24, 0, NULL);
-    unsigned int masks[] = {0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000};
-    ddjvu_format_t *format = ddjvu_format_create(DDJVU_FORMAT_RGBMASK32, 4, masks);
-    ddjvu_format_set_row_order(format, 1);
-    ddjvu_format_set_y_direction(format, 1);
-
-    int size = w * h * 4;
-    char *pixels = (char *) malloc(size);
-
-    int s = ddjvu_page_render(page, DDJVU_RENDER_COLOR,
-                              &prect,
-                              &rrect,
-                              format,
-                              w * 4,
-                              pixels);
-
-
+    char* pixels;
+    image_format format = get_djvu_pixels(env, bookId, pageNumber,  &pixels);
+    int size = format.size;
     jbyteArray array = env->NewByteArray(size);
     env->SetByteArrayRegion(array, 0, size, (jbyte *) pixels);
     free(pixels);
-    ddjvu_format_release(format);
     //free(page);
-
-    clock_gettime(CLOCK_MONOTONIC, &end);
-    elapsedSeconds = TimeSpecToSeconds(&end) - TimeSpecToSeconds(&start);
-    char duration[30];
-    sprintf(duration, "%f", elapsedSeconds);
-    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "%s\n", duration);
 
     return array;
 }

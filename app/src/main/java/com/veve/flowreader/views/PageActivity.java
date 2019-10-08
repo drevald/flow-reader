@@ -45,6 +45,8 @@ import com.veve.flowreader.model.PageRendererFactory;
 import com.veve.flowreader.model.impl.DevicePageContextImpl;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -230,14 +232,32 @@ public class PageActivity extends AppCompatActivity {
             }
             case R.id.page_unreadable: {
                 Bitmap originalBitmap = pageRenderer.renderOriginalPage(context, currentPage);
-                Bitmap overturnedBitmap = pageLoader.bitmap;
+                Bitmap reflowedBitmap = pageLoader.bitmap;
                 ByteArrayOutputStream osOriginal = new ByteArrayOutputStream();
-                ByteArrayOutputStream osOverturned = new ByteArrayOutputStream();
+                ByteArrayOutputStream osReflowed = new ByteArrayOutputStream();
                 originalBitmap.compress(Bitmap.CompressFormat.JPEG, 75, osOriginal);
-                overturnedBitmap.compress(Bitmap.CompressFormat.JPEG, 25, osOverturned);
+                reflowedBitmap.compress(Bitmap.CompressFormat.JPEG, 25, osReflowed);
                 ObjectMapper mapper = new ObjectMapper(); // create once, reuse
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+
+                File origBmpFile = null;
+                File reflowedBmpFile = null;
                 try {
+                    origBmpFile = File.createTempFile(book.getId() + "_orig", null);
+                    FileOutputStream origBmpFileOut = new FileOutputStream(origBmpFile);
+                    origBmpFileOut.write(osOriginal.toByteArray());
+                    origBmpFileOut.close();
+                    origBmpFile.deleteOnExit();
+                    Log.v(getClass().getName(), "Original bitmap stored in tmp file " + origBmpFile.getPath());
+
+                    reflowedBmpFile = File.createTempFile(book.getId() + "_reflow", null);
+                    FileOutputStream reflowedBmpFileOut = new FileOutputStream(reflowedBmpFile);
+                    reflowedBmpFileOut.write(osReflowed.toByteArray());
+                    reflowedBmpFileOut.close();
+                    reflowedBmpFile.deleteOnExit();
+                    Log.v(getClass().getName(), "Original bitmap stored in tmp file " + origBmpFile.getPath());
+
                     mapper.writeValue(baos, booksCollection.getPageGlyphs(book.getId(), currentPage, true));
                 } catch (Exception e) {
                     Log.e(getClass().getName(), "Failed to convert Glyphs to JSON", e);
@@ -245,8 +265,8 @@ public class PageActivity extends AppCompatActivity {
 
                 ReportRecord reportRecord = new ReportRecord(
                         baos.toByteArray(),
-                        osOriginal.toByteArray(),
-                        osOverturned.toByteArray());
+                        origBmpFile.getPath().getBytes(),
+                        reflowedBmpFile.getPath().getBytes());
                 reportRecord.setBookId(book.getId());
                 reportRecord.setPosition(currentPage);
                 ReportCollectorTask reportCollectorTask = new ReportCollectorTask();

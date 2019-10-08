@@ -33,8 +33,10 @@ import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageRenderer;
 import com.veve.flowreader.model.PageRendererFactory;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -44,7 +46,7 @@ import java.util.Locale;
 public class ReportActivity extends AppCompatActivity {
 
     private static byte[] originalImage;
-    private static byte[] overturnedImage;
+    private static byte[] reflowedImage;
     private static byte[] glyphs;
     private static final String BOUNDARY = "---------------------------104659796718797242641237073228";
     private static final String BOUNDARY_PART = "--";
@@ -102,10 +104,34 @@ public class ReportActivity extends AppCompatActivity {
             bookId = cursor.getLong(cursor.getColumnIndex("bookId"));
             position = cursor.getInt(cursor.getColumnIndex("position"));
             reportId = cursor.getLong(cursor.getColumnIndex("id"));
-            originalImage = cursor.getBlob(cursor.getColumnIndex("originalPage"));
-            overturnedImage = cursor.getBlob(cursor.getColumnIndex("overturnedPage"));
+            try {
+                ByteArrayOutputStream originalImageOs = new ByteArrayOutputStream();
+                FileInputStream originalImageInputStream =
+                        new FileInputStream(new String(cursor.getBlob(cursor.getColumnIndex("originalPage"))));
+                byte[] buffer = new byte[100];
+                while (originalImageInputStream.read(buffer) != -1) {
+                    originalImageOs.write(buffer);
+                }
+                originalImageOs.close();
+                originalImage = originalImageOs.toByteArray();
+                originalImageInputStream.close();
+
+                ByteArrayOutputStream reflowedImageOs = new ByteArrayOutputStream();
+                FileInputStream reflowedImageInputStream =
+                        new FileInputStream(new String(cursor.getBlob(cursor.getColumnIndex("overturnedPage"))));
+                while (reflowedImageInputStream.read(buffer) != -1) {
+                    reflowedImageOs.write(buffer);
+                }
+                reflowedImageOs.close();
+                reflowedImage = reflowedImageOs.toByteArray();
+                reflowedImageInputStream.close();
+
+            } catch (Exception e) {
+                Log.e(getClass().getName(), e.getMessage(), e);
+            }
+
             glyphs = cursor.getBlob(cursor.getColumnIndex("glyphs"));
-            totalSize += overturnedImage.length;
+            totalSize += reflowedImage.length;
             totalSize += originalImage.length;
             totalSize += glyphs.length;
             TextView textView = findViewById(R.id.size_note);
@@ -137,10 +163,10 @@ public class ReportActivity extends AppCompatActivity {
                 OutputStream os = conn.getOutputStream();
                 os.write(getFileData(originalImage, "image/jpeg", "originalImage", "originalImage.jpeg", false));
                 publishProgress(((float)originalImage.length/(float)totalSize));
-                os.write(getFileData(overturnedImage, "image/jpeg", "overturnedImage", "overturnedImage.jpeg", false));
-                publishProgress(((float)(originalImage.length+overturnedImage.length)/(float)totalSize));
+                os.write(getFileData(reflowedImage, "image/jpeg", "overturnedImage", "overturnedImage.jpeg", false));
+                publishProgress(((float)(originalImage.length+reflowedImage.length)/(float)totalSize));
                 os.write(getFileData(glyphs, "application/json", "glyphs", "glyphs.json", false));
-                publishProgress(((float)(originalImage.length+overturnedImage.length + glyphs.length)/(float)totalSize));
+                publishProgress(((float)(originalImage.length+reflowedImage.length + glyphs.length)/(float)totalSize));
                 os.write(getTextData(BuildConfig.GitHash, "version", true));
                 os.flush();
 

@@ -42,6 +42,7 @@
 #include <fpdfview.h>
 #include <fpdfdoc.h>
 
+
 #define APPNAME "FLOW-READER"
 
 using namespace cv;
@@ -49,16 +50,23 @@ using namespace std;
 
 using namespace boost;
 
-struct segment {
+typedef struct segment_struct {
     int y, height;
-};
+} segment;
 
-struct glyph {
+typedef struct glyph_struct {
     bool indented;
     int x, y, width, height, line_height, baseline_shift;
     bool is_space;
-};
+} glyph;
 
+struct image_format {
+    int w;
+    int h;
+    int size;
+public:
+    image_format(int w, int h, int size) : w(w), h(h), size(size) {}
+};
 
 struct SortSegments {
     bool operator()(std::tuple<int,char> const &lhs, std::tuple<int,char> const &rhs) {
@@ -68,8 +76,6 @@ struct SortSegments {
 
 void put_glyphs(JNIEnv *env, vector<glyph>& glyphs, jobject& list);
 
-double TimeSpecToSeconds(struct timespec* ts);
-
 std::vector<std::tuple<int,int>> zero_runs(const Mat& hist);
 
 std::vector<std::tuple<int, int>> one_runs(const Mat& hist);
@@ -78,17 +84,11 @@ std::vector<std::tuple<int, int>> one_runs_vert(const Mat &hist);
 
 std::vector<std::tuple<int,int>> zero_runs_hor(const cv::Mat& hist);
 
-float calcMHWScore(vector<int> scores);
-
-bool well_formed_page(Mat& image);
-
-bool build_well_formed_page(Mat& image, Mat& gray_inverted_image);
-
-void filter_gray_inverted_image(std::vector<segment> segments, int width, int height, Mat& gray_inverted_image);
-
 int max_ind(std::vector<std::tuple<int,int>> zr);
 
 int strlen16(char16_t* strarg);
+
+std::vector<glyph> get_glyphs(cv::Mat mat);
 
 
 #endif

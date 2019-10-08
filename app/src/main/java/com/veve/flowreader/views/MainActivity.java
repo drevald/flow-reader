@@ -15,6 +15,8 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -57,6 +59,25 @@ public class MainActivity extends AppCompatActivity {
         super.onPostResume();
         bookListAdapter.refresh();
         bookGridAdapter.refresh();
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.book_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        if (item.getItemId() == R.id.delete_listed_book) {
+            BookRecord bookRecord = (BookRecord)bookListAdapter.getItem(info.position);
+            BooksCollection.getInstance(getParent()).deleteBook(bookRecord.getId());
+            bookListAdapter.refresh();
+            bookGridAdapter.refresh();
+        }
+        return true;
     }
 
     @Override
@@ -111,12 +132,12 @@ public class MainActivity extends AppCompatActivity {
             startActivity(ii);
         });
 
-        gridView.setOnItemLongClickListener(
-            (AdapterView<?> adapterView, View view, int i, long l) -> {
-                Log.v(getClass().getName(), "adapterView = " + adapterView + "view = " + view +  " i = " + i + " l = " + l);
-                return false;
-            }
-        );
+//        gridView.setOnItemLongClickListener(
+//            (AdapterView<?> adapterView, View view, int i, long l) -> {
+//                Log.v(getClass().getName(), "adapterView = " + adapterView + "view = " + view +  " i = " + i + " l = " + l);
+//                return false;
+//            }
+//        );
 
         gridView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             int bookThumbPx = (int) (Constants.BOOK_THUMB_WIDTH
@@ -132,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        registerForContextMenu(gridView);
 
         /////    SWITCH TO LIST VIEW     ///////////////////////////////
 
@@ -168,21 +190,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        super.onOptionsItemSelected(item);
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.delete_listed_book) {
+            Log.v(getClass().getName(), item.toString());
         }
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     private void requestPermissions() {
@@ -260,6 +278,7 @@ public class MainActivity extends AppCompatActivity {
             booksList = BooksCollection.getInstance(getApplicationContext()).getBooks();
             notifyDataSetChanged();
         }
+
 
     }
 
