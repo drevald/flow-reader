@@ -22,7 +22,7 @@ import org.junit.runner.RunWith;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.function.BiConsumer;
+//import java.util.function.BiConsumer;
 
 import static org.junit.Assert.assertTrue;
 
@@ -111,12 +111,12 @@ public class PerformanceTest {
        booksCollection.deleteBook(bookRecordId);
     }
 
-    private void checkTiming(BiConsumer<DevicePageContext, Integer> f, DevicePageContext context, int position, int limit, String message) {
-        long start = System.currentTimeMillis();
-        f.accept(context, position);
-        long end = System.currentTimeMillis();
-        Log.d(getClass().getName(), message + " took " + (System.currentTimeMillis() - start) + " millisecods");
-        assertTrue(message + " took " + (end - start ) + " milliseconds which is more than " + limit, end - start < limit);
-    }
+//    private void checkTiming(BiConsumer<DevicePageContext, Integer> f, DevicePageContext context, int position, int limit, String message) {
+//        long start = System.currentTimeMillis();
+//        f.accept(context, position);
+//        long end = System.currentTimeMillis();
+//        Log.d(getClass().getName(), message + " took " + (System.currentTimeMillis() - start) + " millisecods");
+//        assertTrue(message + " took " + (end - start ) + " milliseconds which is more than " + limit, end - start < limit);
+//    }
 
 }
