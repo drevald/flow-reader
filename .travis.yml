@@ -13,8 +13,6 @@ install:
 branches:
   only:
   - master
-  - FLOW-UI
-  - djvu-ui
 before_script:
   - android list sdk --extended --no-ui --all
   - echo "y" | android update sdk -a --no-ui --filter sys-img-armeabi-v7a-android-22
