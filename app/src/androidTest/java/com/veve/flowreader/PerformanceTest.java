@@ -72,37 +72,37 @@ public class PerformanceTest {
         cachedPageRenderer.renderOriginalPage(context, 0);
         end = System.currentTimeMillis();
         Log.d(getClass().getName(), "First time opening original page" + " took " + (System.currentTimeMillis() - start) + " millisecods");
-        assertTrue("First time opening original page" + " took " + (end - start ) + " milliseconds which is more than " + 2000, end - start < 200);
+        assertTrue("First time opening original page" + " took " + (end - start ) + " milliseconds which is more than " + 10000, end - start < 200);
 
         start = System.currentTimeMillis();
         cachedPageRenderer.renderOriginalPage(context, 0);
         end = System.currentTimeMillis();
         Log.d(getClass().getName(), "Second time opening original page" + " took " + (System.currentTimeMillis() - start) + " millisecods");
-        assertTrue("Second time opening original page" + " took " + (end - start ) + " milliseconds which is more than " + 500, end - start < 500);
+        assertTrue("Second time opening original page" + " took " + (end - start ) + " milliseconds which is more than " + 2500, end - start < 500);
 
         start = System.currentTimeMillis();
         cachedPageRenderer.renderPage(context, 0);
         end = System.currentTimeMillis();
         Log.d(getClass().getName(), "First time opening page" + " took " + (System.currentTimeMillis() - start) + " millisecods");
-        assertTrue("First time opening page" + " took " + (end - start ) + " milliseconds which is more than " + 3000, end - start < 3000);
+        assertTrue("First time opening page" + " took " + (end - start ) + " milliseconds which is more than " + 15000, end - start < 3000);
 
         start = System.currentTimeMillis();
         cachedPageRenderer.renderPage(context, 0);
         end = System.currentTimeMillis();
         Log.d(getClass().getName(), "Second time opening page" + " took " + (System.currentTimeMillis() - start) + " millisecods");
-        assertTrue("Second time opening page" + " took " + (end - start ) + " milliseconds which is more than " + 1000, end - start < 1000);
+        assertTrue("Second time opening page" + " took " + (end - start ) + " milliseconds which is more than " + 5000, end - start < 1000);
 
         start = System.currentTimeMillis();
         cachedPageRenderer.renderPage(context, 1);
         end = System.currentTimeMillis();
         Log.d(getClass().getName(), "First time opening next page" + " took " + (System.currentTimeMillis() - start) + " millisecods");
-        assertTrue("First time opening next page" + " took " + (end - start ) + " milliseconds which is more than " + 3000, end - start < 3000);
+        assertTrue("First time opening next page" + " took " + (end - start ) + " milliseconds which is more than " + 15000, end - start < 3000);
 
         start = System.currentTimeMillis();
         cachedPageRenderer.renderPage(context, 0);
         end = System.currentTimeMillis();
         Log.d(getClass().getName(), "Third time opening page" + " took " + (System.currentTimeMillis() - start) + " millisecods");
-        assertTrue("Third time opening page" + " took " + (end - start ) + " milliseconds which is more than " + 1000, end - start < 1000);
+        assertTrue("Third time opening page" + " took " + (end - start ) + " milliseconds which is more than " + 5000, end - start < 1000);
 
     }
 
