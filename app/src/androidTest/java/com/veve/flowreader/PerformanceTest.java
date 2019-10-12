@@ -58,6 +58,10 @@ public class PerformanceTest {
             return;
         }
 
+        if("true".equals(System.getenv("TRAVIS"))) {
+            return;
+        }
+
         long start, end;
         start = System.currentTimeMillis();
 
