@@ -54,6 +54,10 @@ public class PerformanceTest {
     @Test
     public void testDjvu() {
 
+        if("true".equals(System.getProperty("TRAVIS"))) {
+            return;
+        }
+
         long start, end;
         start = System.currentTimeMillis();
 

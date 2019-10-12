@@ -23,6 +23,9 @@ before_script:
   - adb push app/src/main/res/raw/pdf_sample.pdf /data/local/tmp/
   - adb shell input keyevent 82 &
 
+env:
+  TRAVIS=true
+
 notifications:
   slack:
     secure: IbzkCYh7lMOqFzuIAMF7p1d3imgIXWewturYxSP7ePJIjJyJWGSLz+T7W8ntzoPZmSuDiA0OcHMGdS3k5hsUd3c6XAXY3aEp9KEN0j7UxQX0fIEnhcpZ2GedfMwwCXe4NDpIIst9yPC6Rkzk8qJEFgXeUA33vIXMf5mrhW0+/WA0OzatvGQk9OSSKsPWpEtJ5dRALqjEwZMXdsDwp1kQosGgGxFU7VgL+JzfPolUk5+axMGuIT0BBS4dpJrGtRJuMoLO4gkLKXrSdGahfyr0v/KVZYA+f8RL3PzZf5gKWdBdUwjbALJgdVQ1U+4/FULMuLoZo3EQel0cBJl6wecNGFtdfPW/qJoEt9AItVRBbSDjY8moBPwWHJ/4S7sCkyep9ghZuuymnZADzh71zW4RMXszc7Q+i1yoDQHuGRQTmlxdBBYeFBTPpxM3s9+Kl6q4KeRh9tzDzXkQG2ykeW5jXdLkbRDYWxXNMGO3oz7UMlPoYhcH10bQRrwakv73DGsFsbNYznZCpLVyirsHm1jdCxMReAcMQdIoMlWu9aq+JjVvV70xzlbNOwSJdU7UKFlIvJHWDfhbuQeKkvLwns8vpspK8RDnIMEegdYfJIQsn81EGMH2th2lXL4hEzTXT/VWk01laLd7RRIX6zQ2Fg0wBgADhwmHihCWb6XCtUotNeo=
