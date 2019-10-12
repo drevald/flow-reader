@@ -38,8 +38,6 @@ line_limit PageSegmenter::find_baselines(vector<double_pair> &cc) {
 
     map<int,int> countsLower;
 
-    //double s = std::accumulate(lowerData.begin(), lowerData.end(), 0.0)/size;
-
     for (int c = 0; c < size; c++) {
         double m = lowerData[c];
         if (countsLower.find(m) == countsLower.end()){
@@ -63,14 +61,6 @@ line_limit PageSegmenter::find_baselines(vector<double_pair> &cc) {
 
     return line_limit(min, 0, maxLowerIndex, max);
 
-}
-
-
-void PageSegmenter::preprocess_for_line_limits(const Mat &image) {
-    threshold(image, image, 0, 255, THRESH_OTSU | THRESH_BINARY);
-    //const Mat kernel = getStructuringElement(MORPH_RECT, Size(3, 3));
-    //erode(image, image, kernel, Point(-1, -1), 2);
-    //dilate(image, image, kernel, Point(-1, -1), 2);
 }
 
 map<int, vector<double_pair>>
@@ -123,7 +113,7 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
             double_pair nb = center_list[ind];
             if (get<0>(nb) - get<0>(p) != 0) {
                 double dist = sqrt(((get<1>(nb) - get<1>(p)) * (get<1>(nb) - get<1>(p))) +
-                        (get<0>(nb) - get<0>(p)) * (get<0>(nb) - get<0>(p)));
+                                   (get<0>(nb) - get<0>(p)) * (get<0>(nb) - get<0>(p)));
                 cv::Rect rect1 = rd.at(nb);
                 cv::Rect rect2 = rd.at(p);
                 int a_s = rect1.y;
@@ -135,7 +125,7 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
                     int o_e = std::min(a_e, b_e);
                     int diff = o_e - o_s;
                     if (dist < mindist && get<0>(nb) > get<0>(p) &&
-                            diff >= 1./2. * average_height) {
+                        diff >= 1./2. * average_height) {
                         mindist = dist;
                         right_nb = make_tuple(get<0>(nb), get<1>(nb));
                         found_neighbor = true;
@@ -161,7 +151,7 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
     std::vector<int> c(num_vertices(g));
 
     int num = connected_components
-        (g, make_iterator_property_map(c.begin(), get(vertex_index, g), c[0]));
+            (g, make_iterator_property_map(c.begin(), get(vertex_index, g), c[0]));
 
     for (int i = 0; i < c.size(); i++) {
         int cn = c[i];
@@ -178,16 +168,12 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
 
 vector<line_limit> PageSegmenter::get_line_limits(std::vector<cv::Rect>& big_rects) {
 
-    const Mat &image = gray_inverted_image.clone();
-    preprocess_for_line_limits(image);
-
-
-    const cc_result cc_results = get_cc_results(image, big_rects);
+    const cc_result cc_results = get_cc_results(big_rects);
 
     if (cc_results.whole_page) {
         vector<line_limit> v;
-        line_limit ll(0,0,image.rows,image.rows);
-        line_height = image.size().height;
+        line_limit ll(0,0,mat.rows,mat.rows);
+        line_height = mat.size().height;
         v.push_back(ll);
         return v;
     } else {
@@ -201,7 +187,7 @@ vector<line_limit> PageSegmenter::get_line_limits(std::vector<cv::Rect>& big_rec
         vector<int> keys;
 
         boost::copy(components | boost::adaptors::map_keys,
-                std::back_inserter(keys));
+                    std::back_inserter(keys));
 
         vector<line_limit> v;
         for (int i=0;i<keys.size(); i++) {
@@ -220,7 +206,9 @@ vector<line_limit> PageSegmenter::get_line_limits(std::vector<cv::Rect>& big_rec
 
 }
 
-cc_result PageSegmenter::get_cc_results(const Mat &image, std::vector<cv::Rect>& big_rects) {
+cc_result PageSegmenter::get_cc_results(std::vector<cv::Rect>& big_rects) {
+
+    Mat image = gray_inverted_image;
 
     Mat labeled(image.size(), image.type());
     Mat rectComponents = Mat::zeros(Size(0, 0), 0);
@@ -318,12 +306,12 @@ cc_result PageSegmenter::get_cc_results(const Mat &image, std::vector<cv::Rect>&
 vector<glyph> PageSegmenter::get_glyphs() {
 
     // preprocess for the first step
-    Mat image = mat.clone();
-    cvtColor(mat, image, COLOR_BGR2GRAY);
-    bitwise_not(image, image);
-    const Mat kernel = getStructuringElement(MORPH_RECT, Size(8, 2));
-    dilate(image, image, kernel, Point(-1, -1), 2);
-    threshold(image, image, 0, 255, THRESH_BINARY | THRESH_OTSU);
+    //Mat image = mat.clone();
+    //cvtColor(mat, image, COLOR_BGR2GRAY);
+    //bitwise_not(image, image);
+    //const Mat kernel = getStructuringElement(MORPH_RECT, Size(8, 2));
+    //dilate(image, image, kernel, Point(-1, -1), 2);
+    //threshold(image, image, 0, 255, THRESH_BINARY | THRESH_OTSU);
 
     // line detection
     bool lines_detected = true;//build_well_formed_page(image, gray_inverted_image);
@@ -331,258 +319,240 @@ vector<glyph> PageSegmenter::get_glyphs() {
     // end line detection
     vector<glyph> return_value;
 
-    if (!lines_detected) {
-        glyph g;
-        g.x = 0;
-        g.y = 0;
-        g.width = image.cols;
-        g.height = image.rows;
-        g.line_height = image.size().height;
-        return_value.push_back(g);
-        mat.release();
-        image.release();
-        return return_value;
-    } else {
-        Mat image;// = gray_inverted_image;
-        cvtColor(mat, image, COLOR_BGR2GRAY);
-        bitwise_not(image, image);
-        threshold(image, image, 0, 255, THRESH_BINARY | THRESH_OTSU);
-        std::vector<cv::Rect> big_rects;
-        vector<line_limit> line_limits = get_line_limits(big_rects);
+
+    std::vector<cv::Rect> big_rects;
+    vector<line_limit> line_limits = get_line_limits(big_rects);
 
 
-        // detect lines inside other lines
+    // detect lines inside other lines
 
-        set<int> small_line_limits;
-        for (int i=0; i<line_limits.size(); i++) {
-            for (int j=0; j!=i && j<line_limits.size(); j++) {
-                line_limit lli = line_limits.at(i);
-                line_limit llj = line_limits.at(j);
-                if (lli.upper >= llj.upper && lli.lower <= llj.lower) {
-                    small_line_limits.insert(j);
-                }
+    set<int> small_line_limits;
+    for (int i=0; i<line_limits.size(); i++) {
+        for (int j=0; j!=i && j<line_limits.size(); j++) {
+            line_limit lli = line_limits.at(i);
+            line_limit llj = line_limits.at(j);
+            if (lli.upper >= llj.upper && lli.lower <= llj.lower) {
+                small_line_limits.insert(j);
             }
         }
-
-        std::vector<line_limit> new_line_limits;
-        for (int i=0; i<line_limits.size(); i++) {
-            if (small_line_limits.find(i) == small_line_limits.end() ){
-                new_line_limits.push_back(line_limits.at(i));
-            }
-        }
-
-        line_limits = new_line_limits;
-
-
-
-        // end detect
-
-
-        sort(line_limits.begin(), line_limits.end(), SortLineLimits());
-
-        for (int i=0; i<big_rects.size(); i++) {
-            cv::Rect r = big_rects.at(i);
-            cv::Mat region = image(r);
-            std::vector<std::vector<cv::Point>> contours;
-            cv::findContours(region, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
-
-            for (int j=0; j<contours.size(); j++) {
-                cv::RotatedRect rect = cv::minAreaRect(contours.at(j));
-                cv::Rect r = rect.boundingRect();
-
-                //if (r.height / (double)r.width > 10) {
-                std::vector<std::vector<cv::Point>> cnts;
-                cnts.push_back(contours.at(j));
-                cv::drawContours(mat, cnts, -1, cv::Scalar(255,255,255), -1);
-                //}
-            }
-        }
-
-        cvtColor(mat, image, COLOR_BGR2GRAY);
-        bitwise_not(image, image);
-        threshold(image, image, 0, 255, THRESH_BINARY | THRESH_OTSU);
-
-
-        Mat hist;
-        reduce(image, hist, 0, REDUCE_SUM, CV_32F);
-
-        int w =hist.cols;
-
-        // left indent is the first nonzero sum in the histogram, which doesn't always work
-        //
-
-        std::vector<cv::Point> points;
-
-        for (int i=0;i<line_limits.size(); i++){
-            line_limit ll = line_limits.at(i);
-            int l = ll.lower;
-            int bl = ll.lower_baseline;
-            int u = ll.upper;
-            int bu = ll.upper_baseline;
-
-            Mat lineimage(image, Rect(0, u, w, l - u));
-            //threshold(lineimage, lineimage, 0, 255, THRESH_BINARY | THRESH_OTSU);
-            Mat horHist;
-            reduce(lineimage, horHist, 0, REDUCE_SUM, CV_32F);
-
-            int w = horHist.cols;
-
-            for (int i = 0; i < w; i++) {
-                if (horHist.at<int>(0, i) > 0) {
-                    horHist.at<int>(0, i) = 1;
-                } else {
-                    horHist.at<int>(0, i) = 0;
-                }
-            }
-
-            const vector<std::tuple<int, int>> &oneRuns = one_runs(horHist);
-
-            int x1 = get<0>(oneRuns.at(0));
-            int y1 = u;
-
-            points.push_back(cv::Point(x1,y1));
-
-        }
-        cv::Vec4f params;
-        cv::fitLine(points, params, cv::DIST_L2, 0, 0.01, 0.01);
-
-        // begin line
-
-        float u = params[0];
-        float v = params[1];
-        float x0 = params[2];
-        float y0 = params[3];
-
-        float a = v/u;
-        float b = y0 - (v/u)*x0;
-
-        int left_indent = 0;
-        bool left_indent_found = false;
-
-
-        if (u == 0) {
-            for (int i = 0; i < w; i++) {
-                if (hist.at<float>(0, i) > 0) {
-                    if (!left_indent_found) {
-                        left_indent = i;
-                        left_indent_found = true;
-                    }
-                    hist.at<float>(0, i) = 1;
-                } else {
-                    hist.at<float>(0, i) = 0;
-                }
-            }
-        }
-
-
-        // end line
-
-        for (line_limit &ll : line_limits) {
-            int l = ll.lower;
-            int bl = ll.lower_baseline;
-            int u = ll.upper;
-            int bu = ll.upper_baseline;
-
-            Mat lineimage(image, Rect(0, u, w, l - u));
-            //threshold(lineimage, lineimage, 0, 255, THRESH_BINARY | THRESH_OTSU);
-            Mat horHist;
-            reduce(lineimage, horHist, 0, REDUCE_SUM, CV_32F);
-
-            int w = horHist.cols;
-
-            for (int i = 0; i < w; i++) {
-                if (horHist.at<int>(0, i) > 0) {
-                    horHist.at<int>(0, i) = 1;
-                } else {
-                    horHist.at<int>(0, i) = 0;
-                }
-            }
-
-            const vector<std::tuple<int, int>> &oneRuns = one_runs(horHist);
-
-            horHist.release();
-
-            //int c = 0;
-            int space_width = 0;
-            std::vector<double> spaces;
-            for (int k=0; k<oneRuns.size(); k++) {
-                std::tuple<int, int> r = oneRuns.at(k);
-                int left = get<0>(r);
-                int right = get<1>(r);
-
-                glyph g;
-
-
-                if (k == 0 && left_indent_found && (left - left_indent) > 0.02 * w) {
-                    g.indented = true;
-                } else if (k==0 && !left_indent_found) {
-                    float x = (u - b)/a;
-                    if (left - x > 0.02*w) {
-                        g.indented = true;
-                    }
-                }
-                else {
-                    g.indented = false;
-                }
-
-
-
-
-                // detect real height
-
-                Mat hist;
-                cv::Mat letter = lineimage(cv::Rect(left, 0, right-left, l-u));
-                cv::Size size = letter.size();
-                if (size.width == 0 || size.height == 0) {
-                    continue;
-                }
-                reduce(letter, hist, 1, REDUCE_SUM, CV_32F);
-                const vector<std::tuple<int, int>> vert_one_runs = one_runs(hist);
-
-                int shift = vert_one_runs.size() > 0 ? get<0>(vert_one_runs.at(0)) : 0;
-
-                // end detect
-
-                g.x = left;
-                g.y = u + shift;
-                g.width = right - left;
-
-                g.height = l - u - shift;
-                g.baseline_shift = l - bl   ;
-                g.line_height = line_height;
-                g.is_space = false;
-                if (g.width > 0) {
-                    return_value.push_back(g);
-                }
-
-
-                glyph space;
-                space.x = right;
-                //int nextx = k != oneRuns.size()-1 ? get<0>(oneRuns.at(k+1)) : right + std::accumulate(spaces.begin(), spaces.end(), 0.0)/spaces.size();
-                int nextx = k != oneRuns.size()-1 ? get<0>(oneRuns.at(k+1)) : right + 1;
-                space_width = nextx - right;
-                spaces.push_back(space_width);
-                space.width = space_width;
-                space.y = u + shift;
-                space.baseline_shift = l - bl;
-                space.line_height = line_height;
-                space.height = l - u - shift;
-                space.indented = false;
-                space.is_space = true;
-                if (space.width>0) {
-                    return_value.push_back(space);
-                }
-
-
-            }
-
-        }
-
-        mat.release();
-        image.release();
-
-        return return_value;
     }
+
+    std::vector<line_limit> new_line_limits;
+    for (int i=0; i<line_limits.size(); i++) {
+        if (small_line_limits.find(i) == small_line_limits.end() ){
+            new_line_limits.push_back(line_limits.at(i));
+        }
+    }
+
+    line_limits = new_line_limits;
+
+
+
+    // end detect
+
+
+    sort(line_limits.begin(), line_limits.end(), SortLineLimits());
+
+    for (int i=0; i<big_rects.size(); i++) {
+        cv::Rect r = big_rects.at(i);
+        cv::Mat region = mat(r);
+        std::vector<std::vector<cv::Point>> contours;
+        cv::findContours(region, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
+
+        for (int j=0; j<contours.size(); j++) {
+            cv::RotatedRect rect = cv::minAreaRect(contours.at(j));
+            cv::Rect r = rect.boundingRect();
+
+            //if (r.height / (double)r.width > 10) {
+            std::vector<std::vector<cv::Point>> cnts;
+            cnts.push_back(contours.at(j));
+            cv::drawContours(mat, cnts, -1, cv::Scalar(255,255,255), -1);
+            //}
+        }
+    }
+
+
+    Mat hist;
+    reduce(gray_inverted_image, hist, 0, REDUCE_SUM, CV_32F);
+
+    int w =hist.cols;
+
+    // left indent is the first nonzero sum in the histogram, which doesn't always work
+    //
+
+    std::vector<cv::Point> points;
+
+    for (int i=0;i<line_limits.size(); i++){
+        line_limit ll = line_limits.at(i);
+        int l = ll.lower;
+        int bl = ll.lower_baseline;
+        int u = ll.upper;
+        int bu = ll.upper_baseline;
+
+        Mat lineimage(gray_inverted_image, Rect(0, u, w, l - u));
+        //threshold(lineimage, lineimage, 0, 255, THRESH_BINARY | THRESH_OTSU);
+        Mat horHist;
+        reduce(lineimage, horHist, 0, REDUCE_SUM, CV_32F);
+
+        int w = horHist.cols;
+
+        for (int i = 0; i < w; i++) {
+            if (horHist.at<int>(0, i) > 0) {
+                horHist.at<int>(0, i) = 1;
+            } else {
+                horHist.at<int>(0, i) = 0;
+            }
+        }
+
+        const vector<std::tuple<int, int>> &oneRuns = one_runs(horHist);
+
+        int x1 = oneRuns.size() > 0 ? get<0>(oneRuns.at(0)) : 0;
+        int y1 = u;
+
+        points.push_back(cv::Point(x1,y1));
+
+    }
+    cv::Vec4f params;
+    cv::fitLine(points, params, cv::DIST_L2, 0, 0.01, 0.01);
+
+    // begin line
+
+    float u = params[0];
+    float v = params[1];
+    float x0 = params[2];
+    float y0 = params[3];
+
+    float a = v/u;
+    float b = y0 - (v/u)*x0;
+
+    int left_indent = 0;
+    bool left_indent_found = false;
+
+
+    if (u == 0) {
+        for (int i = 0; i < w; i++) {
+            if (hist.at<float>(0, i) > 0) {
+                if (!left_indent_found) {
+                    left_indent = i;
+                    left_indent_found = true;
+                }
+                hist.at<float>(0, i) = 1;
+            } else {
+                hist.at<float>(0, i) = 0;
+            }
+        }
+    }
+
+
+    // end line
+
+    for (line_limit &ll : line_limits) {
+        int l = ll.lower;
+        int bl = ll.lower_baseline;
+        int u = ll.upper;
+        int bu = ll.upper_baseline;
+
+        Mat lineimage(gray_inverted_image, Rect(0, u, w, l - u));
+        //threshold(lineimage, lineimage, 0, 255, THRESH_BINARY | THRESH_OTSU);
+        Mat horHist;
+        reduce(lineimage, horHist, 0, REDUCE_SUM, CV_32F);
+
+        int w = horHist.cols;
+
+        for (int i = 0; i < w; i++) {
+            if (horHist.at<int>(0, i) > 0) {
+                horHist.at<int>(0, i) = 1;
+            } else {
+                horHist.at<int>(0, i) = 0;
+            }
+        }
+
+        const vector<std::tuple<int, int>> &oneRuns = one_runs(horHist);
+
+        horHist.release();
+
+        //int c = 0;
+        int space_width = 0;
+        std::vector<double> spaces;
+        for (int k=0; k<oneRuns.size(); k++) {
+            std::tuple<int, int> r = oneRuns.at(k);
+            int left = get<0>(r);
+            int right = get<1>(r);
+
+            glyph g;
+
+
+            if (k == 0 && left_indent_found && (left - left_indent) > 0.02 * w) {
+                g.indented = true;
+            } else if (k==0 && !left_indent_found) {
+                float x = (u - b)/a;
+                if (left - x > 0.02*w) {
+                    g.indented = true;
+                }
+            }
+            else {
+                g.indented = false;
+            }
+
+
+
+
+            // detect real height
+
+            Mat hist;
+            cv::Mat letter = lineimage(cv::Rect(left, 0, right-left, l-u));
+            cv::Size size = letter.size();
+            if (size.width == 0 || size.height == 0) {
+                continue;
+            }
+            reduce(letter, hist, 1, REDUCE_SUM, CV_32F);
+            const vector<std::tuple<int, int>> vert_one_runs = one_runs(hist);
+
+            int shift = vert_one_runs.size() > 0 ? get<0>(vert_one_runs.at(0)) : 0;
+
+            // end detect
+
+            g.x = left;
+            g.y = u + shift;
+            g.width = right - left;
+
+            g.height = l - u - shift;
+            g.baseline_shift = l - bl   ;
+            g.line_height = line_height;
+            g.is_space = false;
+            if (g.width > 0) {
+                return_value.push_back(g);
+            }
+
+
+            glyph space;
+            space.x = right;
+            //int nextx = k != oneRuns.size()-1 ? get<0>(oneRuns.at(k+1)) : right + std::accumulate(spaces.begin(), spaces.end(), 0.0)/spaces.size();
+            int lastspacewidth = std::min(5, w - right);
+            int nextx = k != oneRuns.size()-1 ? get<0>(oneRuns.at(k+1)) : right + lastspacewidth;
+
+            space_width = nextx - right;
+            spaces.push_back(space_width);
+            space.width = space_width;
+            space.y = u + shift;
+            space.baseline_shift = l - bl;
+            space.line_height = line_height;
+            space.height = l - u - shift;
+            space.indented = false;
+            space.is_space = true;
+            if (space.width>0) {
+                return_value.push_back(space);
+            }
+
+
+        }
+
+    }
+
+    mat.release();
+    gray_inverted_image.release();
+
+    return return_value;
 
 
 }

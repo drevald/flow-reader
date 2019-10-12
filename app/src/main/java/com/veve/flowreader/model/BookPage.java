@@ -15,6 +15,8 @@ public interface BookPage {
      */
     Bitmap getAsBitmap(DevicePageContext context);
 
+    Bitmap getAsGrayscaleBitmap(DevicePageContext context);
+
     int getWidth();
 
     int getHeight();

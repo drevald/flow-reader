@@ -84,7 +84,7 @@ public class CachedPageRendererImpl implements PageRenderer {
             } else {
                 List<PageGlyph> glyphsRestored = new ArrayList<PageGlyph>();
                 long timeBuildingGlyphs = 0;
-                Bitmap bitmap = bookSource.getPageBytes(position);
+                Bitmap bitmap = bookSource.getPageGrayscaleBytes(position);
                 for (PageGlyphRecord storedGlyph : storedGlyphs) {
                     PageGlyphInfo pageGlyphInfo = new PageGlyphInfo(
                             storedGlyph.isIndented(),

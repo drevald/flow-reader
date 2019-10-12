@@ -19,7 +19,7 @@ class Xycut {
     public:
         Xycut(cv::Mat image) {
             cv::Mat clone = image.clone();
-            cv::cvtColor(clone, clone, cv::COLOR_BGR2GRAY);
+            //cv::cvtColor(clone, clone, cv::COLOR_BGR2GRAY);
             this->image = clone;
         }
         std::vector<ImageNode> xycut();

@@ -238,8 +238,8 @@ void Xycut::xycut_horizontal_cut(cv::Mat img, double threshold, ImageNode* tree,
 
 std::vector<ImageNode> Xycut::xycut() {
     cv::Mat copy = image.clone();
-    cv::threshold(copy, copy, 0, 255, cv::THRESH_BINARY | cv::THRESH_OTSU);
-    cv::bitwise_not(copy,copy);
+    //cv::threshold(copy, copy, 0, 255, cv::THRESH_BINARY | cv::THRESH_OTSU);
+    //cv::bitwise_not(copy,copy);
 
     const cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
     cv::morphologyEx(copy, copy, cv::MORPH_CLOSE, kernel);
@@ -296,7 +296,6 @@ std::vector<ImageNode> Xycut::xycut() {
 
     if (result != lst.end()) {
         int threshold = (*result) - 1 ;
-        std::cout << "threshold = " << threshold << std::endl;
         xycut_vertical_cut(wo_borders, threshold, &tree, 0, height, image.size().width);
         int size = tree.to_vector().size();
         if (size > 20) {

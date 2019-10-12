@@ -1,8 +1,10 @@
 package com.veve.flowreader.model.impl.djvu;
 
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.veve.flowreader.model.BookPage;
+import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyphInfo;
 import com.veve.flowreader.model.impl.AbstractBookPage;
 import java.util.List;
@@ -21,9 +23,15 @@ public class DjvuBookPage extends AbstractBookPage implements BookPage  {
     }
 
     @Override
+    public byte[] getGrayscaleBytes(long bookId, int pageNumber) {
+        return getNativeGrayscaleBytes(bookId,pageNumber);
+    }
+
+    @Override
     public byte[] getPageGlyphs(long bookId, int pageNumber, List<PageGlyphInfo> pageGlyphs) {
         return getNativePageGlyphs(bookId, pageNumber, pageGlyphs);
     }
+
 
     @Override
     public int getWidth() {
@@ -50,6 +58,8 @@ public class DjvuBookPage extends AbstractBookPage implements BookPage  {
     private static native String getNativeAuthor(long bookId);
 
     private static native byte[] getNativeBytes(long bookId, int pageNumber);
+
+    private static native byte[] getNativeGrayscaleBytes(long bookId, int pageNumber);
 
     private static native byte[] getNativePageGlyphs(long bookId, int pageNumber, List<PageGlyphInfo> pageGlyphs);
 

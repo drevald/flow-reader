@@ -11,8 +11,10 @@ extern "C" {
 #endif
 
 
+JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeGrayscaleBytes
+        (JNIEnv *, jclass, jlong, jint);
 
-    JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeBytes
+JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeBytes
         (JNIEnv *, jclass, jlong, jint);
 
     JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativePageGlyphs
@@ -47,7 +49,7 @@ extern "C" {
     JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeHeight
         (JNIEnv *, jclass, jlong, jint);
 
-    image_format get_djvu_pixels(JNIEnv*, jlong, jint, char**);
+    image_format get_djvu_pixels(JNIEnv*, jlong, jint, jboolean, char**);
 
 #ifdef __cplusplus
 }

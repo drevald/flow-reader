@@ -11,6 +11,9 @@ public interface BookSource {
 
     Bitmap getPageBytes(int pageNumber);
 
+
+    Bitmap getPageGrayscaleBytes(int pageNumber);
+
     @Deprecated
     /**
      * Use PageLayoutParser.getGlyphs instead

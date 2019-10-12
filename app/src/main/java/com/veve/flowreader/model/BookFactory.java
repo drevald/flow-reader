@@ -39,11 +39,11 @@ public class BookFactory {
             book = new PdfBook(file.getPath());
         }
 
-        try {
-            Thread.sleep(10000);
-        } catch (Exception e) {
-            Log.e(getClass().getName(), e.getLocalizedMessage());
-        }
+        //try {
+        //    Thread.sleep(10000);
+        //} catch (Exception e) {
+        //    Log.e(getClass().getName(), e.getLocalizedMessage());
+        //}
         bookRecord.setPagesCount(book.getPagesCount());
         bookRecord.setName(book.getName());
 
