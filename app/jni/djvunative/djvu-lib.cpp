@@ -156,7 +156,7 @@ void waitAndHandleMessages(JNIEnv *env, ddjvu_context_t *contextHandle) {
     handleMessages(env, ctx);
 }
 
-image_format get_djvu_pixels(JNIEnv *env, jlong bookId, jint page_number, char** pixels) {
+image_format get_djvu_pixels(JNIEnv *env, jlong bookId, jint page_number, jboolean colored, char** pixels) {
 
     Document *document = (Document *) bookId;
     ddjvu_context_t *ctx = document->ctx;
@@ -184,24 +184,25 @@ image_format get_djvu_pixels(JNIEnv *env, jlong bookId, jint page_number, char**
     rrect = prect;
 
     unsigned int masks[] = {0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000};
-    ddjvu_format_t *pixelFormat = ddjvu_format_create(DDJVU_FORMAT_RGBMASK32, 4, masks);
+    ddjvu_format_t *pixelFormat = colored ? ddjvu_format_create(DDJVU_FORMAT_RGBMASK32, 4, masks) : ddjvu_format_create(DDJVU_FORMAT_GREY8, 0, NULL);
 
     ddjvu_format_set_row_order(pixelFormat, 1);
     ddjvu_format_set_y_direction(pixelFormat, 1);
 
-    int size = w * h * 4;
+    int size = colored ? w * h * PIXELS : w * h;
     *pixels = (char *) malloc(size);
 
     while (!ddjvu_page_decoding_done(page)) {
         waitAndHandleMessages(env, ctx);
     }
 
+    int strade = colored ? w * PIXELS : w;
     ddjvu_page_render(page, DDJVU_RENDER_COLOR,
                                      &prect,
                                      &rrect,
                                      pixelFormat,
-                                     w * PIXELS,
-                                     *pixels);
+                                     strade,
+                                      *pixels);
 
     ddjvu_format_release(pixelFormat);
     return image_format(w,h,size);
@@ -212,19 +213,22 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
 (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jobject list) {
 
     char* pixels;
-    image_format format = get_djvu_pixels(env, bookId, pageNumber, &pixels);
-    int size = format.size;
+    image_format format = get_djvu_pixels(env, bookId, pageNumber, false, &pixels);
     int w = format.w;
     int h= format.h;
-    jbyteArray array = env->NewByteArray(size);
-    env->SetByteArrayRegion(array, 0, size, (jbyte *) pixels);
 
-    Mat mat(h, w, CV_8UC4, &((char *) pixels)[0]);
+    Mat mat(h, w, CV_8UC1, &((char *) pixels)[0]);
+    threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
+    remove_skew(mat);
+
+
+    size_t sizeInBytes = mat.total() * mat.elemSize();
     vector<glyph> new_glyphs = get_glyphs(mat);
     put_glyphs(env, new_glyphs, list);
-    mat.release();
-    free(pixels);
 
+    jbyteArray array = env->NewByteArray(sizeInBytes);
+    env->SetByteArrayRegion(array, 0, sizeInBytes, (jbyte *) mat.data);
+    free(pixels);
     return array;
 
 }
@@ -233,14 +237,35 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
 (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber) {
 
     char* pixels;
-    image_format format = get_djvu_pixels(env, bookId, pageNumber,  &pixels);
+    image_format format = get_djvu_pixels(env, bookId, pageNumber,  true, &pixels);
+    int w = format.w;
+    int h= format.h;
     int size = format.size;
+
     jbyteArray array = env->NewByteArray(size);
     env->SetByteArrayRegion(array, 0, size, (jbyte *) pixels);
     free(pixels);
-    //free(page);
 
     return array;
 }
 
 
+JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeGrayscaleBytes
+        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber) {
+
+    char* pixels;
+    image_format format = get_djvu_pixels(env, bookId, pageNumber, false, &pixels);
+    int w = format.w;
+    int h= format.h;
+
+    Mat mat(h, w, CV_8UC1, &((char *) pixels)[0]);
+    threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
+    remove_skew(mat);
+
+    size_t sizeInBytes = mat.total() * mat.elemSize();
+
+    jbyteArray array = env->NewByteArray(sizeInBytes);
+    env->SetByteArrayRegion(array, 0, sizeInBytes, (jbyte *) mat.data);
+    free(pixels);
+    return array;
+}

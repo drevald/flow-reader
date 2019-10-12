@@ -68,8 +68,6 @@ JNIEXPORT jlong JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBook_openBook
     if (!doc) {
         return 1;
     }
-
-
     //FPDF_CloseDocument(doc);
 
     return (jlong)doc;
@@ -108,12 +106,16 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
     int height = format.h;
     int width = format.w;
 
-    jbyteArray array = env->NewByteArray(size);
-    env->SetByteArrayRegion(array, 0, size, (jbyte*)buffer);
-
     Mat mat(height,width,CV_8UC4,&((char*)buffer)[0]);
+
+    cv::cvtColor(mat, mat, cv::COLOR_BGR2GRAY);
+    threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
+
     std::vector<glyph> new_glyphs = get_glyphs(mat);
     put_glyphs(env, new_glyphs, list);
+    size_t sizeInBytes = mat.total() * mat.elemSize();
+    jbyteArray array = env->NewByteArray(sizeInBytes);
+    env->SetByteArrayRegion(array, 0, sizeInBytes, (jbyte *) mat.data);
     free((void*)buffer);
     mat.release();
 
@@ -138,14 +140,41 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
 
     image_format format = get_pdf_pixels(env, bookId, pageNumber, &buffer);
     int size = format.size;
+    int w = format.w;
+    int h = format.h;
 
     jbyteArray array = env->NewByteArray(size);
-    env->SetByteArrayRegion(array, 0, size, (jbyte*)buffer);
+    env->SetByteArrayRegion(array, 0, size, (jbyte *) buffer);
 
     free((void*)buffer);
     return array;
 }
 
+
+JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativeGrayscaleBytes
+        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber) {
+
+    char* buffer;
+
+    image_format format = get_pdf_pixels(env, bookId, pageNumber, &buffer);
+    int size = format.size;
+    int height = format.h;
+    int width = format.w;
+
+    Mat mat(height,width,CV_8UC4,&((char*)buffer)[0]);
+
+    cv::cvtColor(mat, mat, cv::COLOR_BGR2GRAY);
+    threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
+
+    size_t sizeInBytes = mat.total() * mat.elemSize();
+    jbyteArray array = env->NewByteArray(sizeInBytes);
+    env->SetByteArrayRegion(array, 0, sizeInBytes, (jbyte *) mat.data);
+    free((void*)buffer);
+    mat.release();
+
+    return array;
+
+}
 
 JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBook_getNumberOfPages
 (JNIEnv *env, jobject obj, jlong bookId) {

@@ -18,8 +18,14 @@ public class DjvuBookSource implements BookSource {
     @Override
     public Bitmap getPageBytes(int pageNumber) {
         DjvuBookPage djvuBookPage = (DjvuBookPage)djvuBook.getPage(pageNumber);
-
         return djvuBookPage.getAsBitmap();
+    }
+
+    @Override
+    public Bitmap getPageGrayscaleBytes(int pageNumber) {
+        DjvuBookPage djvuBookPage = (DjvuBookPage)djvuBook.getPage(pageNumber);
+        return djvuBookPage.getAsGrayscaleBitmap();
+
     }
 
     @Override

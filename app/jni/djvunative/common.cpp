@@ -187,3 +187,43 @@ int strlen16(char16_t* strarg)
         ; // empty body
     return str-strarg;
 }
+void remove_skew(cv::Mat& mat) {
+
+    cv::Size size = mat.size();
+    cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(40,1));
+    cv::Mat image;
+    dilate(mat, image, kernel, cv::Point(-1, -1), 1);
+
+    std::vector<std::vector<cv::Point>> contours;
+    cv::findContours(image, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
+
+    for (int j=0; j<contours.size(); j++) {
+        cv::RotatedRect rect = cv::minAreaRect(contours.at(j));
+        cv::Rect r = rect.boundingRect();
+
+        if (r.height / (double)r.width > 6 || r.width < size.width / 3) {
+            std::vector<std::vector<cv::Point>> cnts;
+            cnts.push_back(contours.at(j));
+            cv::drawContours(image, cnts, -1, cv::Scalar(0,0,0), -1);
+        }
+    }
+
+    std::vector<cv::Point> points;
+    cv::Mat_<uchar>::iterator it = image.begin<uchar>();
+    cv::Mat_<uchar>::iterator end = image.end<uchar>();
+    for (; it != end; ++it)
+        if (*it)
+            points.push_back(it.pos());
+
+    cv::RotatedRect box = cv::minAreaRect(cv::Mat(points));
+
+    float angle = box.angle;
+    if (angle < -45) {
+        angle = (90 + angle);
+
+    }
+
+    cv::Mat rot_mat = cv::getRotationMatrix2D(box.center, angle , 1);
+    cv::warpAffine(mat, mat, rot_mat, mat.size(), cv::INTER_CUBIC);
+
+}

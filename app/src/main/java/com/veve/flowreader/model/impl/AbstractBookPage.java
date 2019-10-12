@@ -23,6 +23,11 @@ public abstract class AbstractBookPage implements BookPage {
     }
 
     @Override
+    public Bitmap getAsGrayscaleBitmap(DevicePageContext context) {
+        return getAsGrayscaleBitmap();
+    }
+
+    @Override
     public Bitmap getAsBitmap(DevicePageContext context) {
         return getAsBitmap();
     }
@@ -31,7 +36,7 @@ public abstract class AbstractBookPage implements BookPage {
 
         List<PageGlyphInfo> pageGlyphInfos = new ArrayList<>();
 
-        Bitmap.Config bitmapConfig = Bitmap.Config.ARGB_8888;
+        Bitmap.Config bitmapConfig = Bitmap.Config.ALPHA_8;
         int width = getWidth();
         int height = getHeight();
 
@@ -75,6 +80,21 @@ public abstract class AbstractBookPage implements BookPage {
         return bm;
     }
 
+    public Bitmap getAsGrayscaleBitmap() {
+
+        byte[] imageBytes= getGrayscaleBytes(bookId, pageNumber);
+        int width = getWidth();
+        int height = getHeight();
+        Bitmap.Config bitmapConfig = Bitmap.Config.ALPHA_8;
+        final ByteBuffer bb = ByteBuffer.wrap(imageBytes);
+        Log.v("BITMAP_MEMORY", "Bitmap.createBitmap(" + width + ", " + height + ", bitmapConfig);");
+        Bitmap bm = Bitmap.createBitmap(width, height, bitmapConfig);
+        bb.rewind();
+        bm.copyPixelsFromBuffer(bb);
+        return bm;
+    }
+
+
     public int getPageNumber() {
         return pageNumber;
     }
@@ -84,6 +104,8 @@ public abstract class AbstractBookPage implements BookPage {
     }
 
     abstract public byte[] getBytes(long bookId, int pageNumber);
+
+    abstract public byte[] getGrayscaleBytes(long bookId, int pageNumber);
 
     abstract public byte[] getPageGlyphs(long bookId, int pageNumber, List<PageGlyphInfo> pageGlyphs);
 }

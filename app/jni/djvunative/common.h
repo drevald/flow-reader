@@ -90,5 +90,7 @@ int strlen16(char16_t* strarg);
 
 std::vector<glyph> get_glyphs(cv::Mat mat);
 
+void remove_skew(cv::Mat& mat);
+
 
 #endif

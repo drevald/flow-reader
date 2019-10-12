@@ -21,6 +21,10 @@ public class PdfBookPage extends AbstractBookPage implements BookPage {
         return getAsBitmap();
     }
 
+    @Override
+    public byte[] getGrayscaleBytes(long bookId, int pageNumber) {
+        return getNativeGrayscaleBytes(bookId,pageNumber);
+    }
 
     @Override
     public byte[] getBytes(long bookId, int pageNumber) {
@@ -31,9 +35,6 @@ public class PdfBookPage extends AbstractBookPage implements BookPage {
     public byte[] getPageGlyphs(long bookId, int pageNumber, List<PageGlyphInfo> pageGlyphs) {
         return getNativePageGlyphs(bookId, pageNumber, pageGlyphs);
     }
-
-
-
 
     @Override
     public int getWidth() {
@@ -64,6 +65,8 @@ public class PdfBookPage extends AbstractBookPage implements BookPage {
     private static native int getNativeHeight(long bookId, int pageNumber);
 
     private static native byte[] getNativeBytes(long bookId, int pageNumber);
+
+    private static native byte[] getNativeGrayscaleBytes(long bookId, int pageNumber);
 
     private static native byte[] getNativePageGlyphs(long bookId, int pageNumber, List<PageGlyphInfo> pageGlyphs);
 
