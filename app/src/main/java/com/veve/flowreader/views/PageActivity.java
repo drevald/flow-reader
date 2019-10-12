@@ -503,9 +503,9 @@ public class PageActivity extends AppCompatActivity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.smaller_text: {
-                    if (context.getZoom() < 0.5)
+                    if (context.getZoom() <= 0.25)
                         break;
-                    context.setZoom(-0.5f + context.getZoom());
+                    context.setZoom(-0.25f + context.getZoom());
                     Log.v(getClass().getName(), "Zoom set to " + context.getZoom());
                     book.setZoom(context.getZoom());
                     ((TextView)findViewById(R.id.zoom_percent))
@@ -515,7 +515,7 @@ public class PageActivity extends AppCompatActivity {
                 case R.id.larger_text: {
                     if (context.getZoom() > 5)
                         break;
-                    context.setZoom(0.5f + context.getZoom());
+                    context.setZoom(0.25f + context.getZoom());
                     Log.v(getClass().getName(), "Zoom set to " + context.getZoom());
                     book.setZoom(context.getZoom());
                     ((TextView)findViewById(R.id.zoom_percent))
