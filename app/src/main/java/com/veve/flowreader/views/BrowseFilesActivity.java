@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.constraint.ConstraintLayout;
@@ -65,16 +66,12 @@ public class BrowseFilesActivity extends AppCompatActivity {
                 startActivity(i);
         });
 
-
         // FILES LIST
         fileListAdapter = new FileListAdapter();
         ListView listView = findViewById(android.R.id.list);
         listView.setAdapter(fileListAdapter);
         listView.setOnItemClickListener(new FileListener(fileListAdapter));
     }
-
-
-
 
 ///    ADAPTERS    ///////////////////////////////////////////
 
@@ -260,7 +257,11 @@ public class BrowseFilesActivity extends AppCompatActivity {
     ///////////////////////////////////////////////
 
     public void browseInternalMemory(View view) {
-        fileListAdapter.setRoot(Environment.getExternalStorageDirectory().getAbsolutePath());
+        if(android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            fileListAdapter.setRoot(Environment.getExternalStorageDirectory().getAbsolutePath());
+        } else {
+            fileListAdapter.setRoot(getExternalFilesDir("").getAbsolutePath());
+        }
         fileListAdapter.notifyDataSetChanged();
     }
 
