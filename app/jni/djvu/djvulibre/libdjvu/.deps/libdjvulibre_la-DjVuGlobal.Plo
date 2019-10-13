@@ -1,3 +1,0 @@
-libdjvulibre_la-DjVuGlobal.lo: DjVuGlobal.cpp ../config.h
-
-../config.h:

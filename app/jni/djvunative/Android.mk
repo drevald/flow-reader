@@ -13,17 +13,17 @@ LOCAL_MODULE := native-lib
 
 
 LOCAL_C_INCLUDES := \
-		$(LOCAL_PATH)/../djvu/djvulibre \
-        $(LOCAL_PATH)/../libjpeg-version-9-android/libjpeg9 \
-		$(LOCAL_PATH)/.. \
+		$(LOCAL_PATH)/../djvu/include \
+		$(LOCAL_PATH)/../flann/include \
+		$(LOCAL_PATH)/../pdfium/include/fpdfsdk/include \
+		$(LOCAL_PATH)/../jpeg9/include/libjpeg9 \
 		$(LOCAL_PATH)/../lz4 \
-		$(LOCAL_PATH)/../pdfium/fpdfsdk/include  \
-		$(LOCAL_PATH)/../mupdf/include  \
+		$(LOCAL_PATH)/.. \
 		$(LOCAL_PATH)/../boost/include \
 		$(CVROOT)/include
 
 
-LOCAL_STATIC_LIBRARIES := myview djvu libjpeg9 liblz4  libopencv_imgproc libopencv_imgcodecs libopencv_core flann cpufeatures libboost_system libboost_graph c++_static
+LOCAL_STATIC_LIBRARIES := myview djvu jpeg9 lz4 libopencv_imgproc libopencv_imgcodecs libopencv_core flann cpufeatures libboost_system libboost_graph c++_static
 
 
 LOCAL_CFLAGS += -DHAVE_CONFIG_H -frtti -fexceptions -fopenmp -w -Ofast -DNDEBUG -nostdlib++ 

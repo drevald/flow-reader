@@ -1,5 +1,0 @@
-ddjvu-tiff2pdf.o: tiff2pdf.c tiff2pdf.h ../config.h
-
-tiff2pdf.h:
-
-../config.h:

@@ -1,5 +1,0 @@
-libdjvulibre_la-atomic.lo: atomic.cpp atomic.h ../config.h
-
-atomic.h:
-
-../config.h:

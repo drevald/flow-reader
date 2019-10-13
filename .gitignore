@@ -1,6 +1,6 @@
 # Built application files
 /*/build/
-
+build/
 # Local configuration file (sdk path, etc)
 local.properties
 
@@ -11,6 +11,8 @@ local.properties
 .signing/
 
 app/.externalNativeBuild/
+app/.cxx/
+app/*.iml
 
 # User-specific configurations
 .idea
