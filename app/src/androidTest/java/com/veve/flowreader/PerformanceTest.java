@@ -51,8 +51,8 @@ public class PerformanceTest {
         fos.close();
     }
 
-    @Test
-    public void testDjvu() {
+    @Test()
+    public void testDjvu() throws Exception {
 
         System.out.println("System.getProperty(\"TRAVIS\")=" + System.getProperty("TRAVIS"));
         System.out.println("System.getenv(\"TRAVIS\")=" + System.getenv("TRAVIS"));
@@ -60,11 +60,11 @@ public class PerformanceTest {
         System.out.println("\"true\".equals(System.getenv(\"TRAVIS\"))=" + ("true".equals(System.getenv("TRAVIS"))));
 
         if("true".equals(System.getProperty("TRAVIS"))) {
-            return;
+            throw new Exception();
         }
 
         if("true".equals(System.getenv("TRAVIS"))) {
-            return;
+            throw new Exception();
         }
 //
 //        long start, end;
