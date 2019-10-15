@@ -504,9 +504,9 @@ public class PageActivity extends AppCompatActivity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.smaller_text: {
-                    if (context.getZoom() <= 0.5)
+                    if (context.getZoom() <= Constants.ZOOM_MIN)
                         break;
-                    context.setZoom(-0.5f + context.getZoom());
+                    context.setZoom(-1 * Constants.ZOOM_STEP + context.getZoom());
                     Log.v(getClass().getName(), "Zoom set to " + context.getZoom());
                     book.setZoom(context.getZoom());
                     ((TextView)findViewById(R.id.zoom_percent))
@@ -514,9 +514,9 @@ public class PageActivity extends AppCompatActivity {
                     break;
                 }
                 case R.id.larger_text: {
-                    if (context.getZoom() > 5)
+                    if (context.getZoom() > Constants.ZOOM_MAX)
                         break;
-                    context.setZoom(0.5f + context.getZoom());
+                    context.setZoom(Constants.ZOOM_STEP + context.getZoom());
                     Log.v(getClass().getName(), "Zoom set to " + context.getZoom());
                     book.setZoom(context.getZoom());
                     ((TextView)findViewById(R.id.zoom_percent))
@@ -624,6 +624,10 @@ public class PageActivity extends AppCompatActivity {
                         pageActivity.page.removeAllViewsInLayout();
                         HorizontalScrollView horizontalScrollView = new HorizontalScrollView(getApplicationContext());
                         ImageView imageView = new ImageView(getApplicationContext());
+                        Log.v(getClass().getName(), "Bitmap size is " + bitmap.getWidth() + "x" + bitmap.getHeight());
+                        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(bitmap.getWidth(), bitmap.getHeight());
+                        imageView.setLayoutParams(layoutParams);
+                        imageView.setScaleType(ImageView.ScaleType.FIT_START);
                         imageView.setImageBitmap(bitmap);
                         pageActivity.page.addView(imageView);
                         horizontalScrollView.setOnTouchListener((v, event)->{

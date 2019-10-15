@@ -13,7 +13,7 @@ public class DevicePageContext implements Serializable {
 
     private Point startPoint;
     private Canvas canvas;
-    private float zoom;
+    private float zoom = 1;
     private int width;
     private Point remotestPoint;
     private float kerning;
