@@ -621,6 +621,8 @@ public class PageActivity extends AppCompatActivity {
                         }
                         Log.v(getClass().getName(), "End setting bitmap");
                     } else {
+                        ((ViewGroup)pageActivity.page.getParent()).removeView(pageActivity.page);
+                        pageActivity.scroll.removeAllViews();
                         pageActivity.page.removeAllViewsInLayout();
                         HorizontalScrollView horizontalScrollView = new HorizontalScrollView(getApplicationContext());
                         ImageView imageView = new ImageView(getApplicationContext());
@@ -629,11 +631,12 @@ public class PageActivity extends AppCompatActivity {
                         imageView.setLayoutParams(layoutParams);
                         imageView.setScaleType(ImageView.ScaleType.FIT_START);
                         imageView.setImageBitmap(bitmap);
-                        horizontalScrollView.addView(imageView);
-                        pageActivity.page.addView(horizontalScrollView);
-                        horizontalScrollView.setOnTouchListener((v, event)->{
-                            return false;
-                        });
+                        pageActivity.page.addView(imageView);
+                        horizontalScrollView.addView(pageActivity.page);
+                        pageActivity.scroll.addView(horizontalScrollView);
+//                        horizontalScrollView.setOnTouchListener((v, event)->{
+//                            return false;
+//                        });
                     }
                 }
                 pageActivity.scroll.setVisibility(VISIBLE);
