@@ -629,9 +629,9 @@ public class PageActivity extends AppCompatActivity {
                         imageView.setLayoutParams(layoutParams);
                         imageView.setScaleType(ImageView.ScaleType.FIT_START);
                         imageView.setImageBitmap(bitmap);
-                        pageActivity.page.addView(imageView);
+                        horizontalScrollView.addView(imageView);
+                        pageActivity.page.addView(horizontalScrollView);
                         horizontalScrollView.setOnTouchListener((v, event)->{
-//                            v.performClick();
                             return false;
                         });
                     }
