@@ -586,6 +586,8 @@ public class PageActivity extends AppCompatActivity {
                     pageActivity.booksCollection.updateBook(pageActivity.book);
                 //} else if (bitmap.getWidth() >= pageActivity.context.getWidth()) {
                 } else {
+                    ((ViewGroup)pageActivity.page.getParent()).removeView(pageActivity.page);
+                    pageActivity.scroll.removeAllViews();
                     if (viewMode == VIEW_MODE_PHONE) {
                         List<View> pageViews = new ArrayList<>();// UI code goes here
                         for (int offset = 0; offset < bitmapHeight; offset += Constants.IMAGE_VIEW_HEIGHT_LIMIT) {
@@ -619,10 +621,9 @@ public class PageActivity extends AppCompatActivity {
                         for (View view : pageViews) {
                             pageActivity.page.addView(view);
                         }
+                        pageActivity.scroll.addView(pageActivity.page);
                         Log.v(getClass().getName(), "End setting bitmap");
                     } else {
-                        ((ViewGroup)pageActivity.page.getParent()).removeView(pageActivity.page);
-                        pageActivity.scroll.removeAllViews();
                         pageActivity.page.removeAllViewsInLayout();
                         HorizontalScrollView horizontalScrollView = new HorizontalScrollView(getApplicationContext());
                         ImageView imageView = new ImageView(getApplicationContext());
@@ -634,9 +635,6 @@ public class PageActivity extends AppCompatActivity {
                         pageActivity.page.addView(imageView);
                         horizontalScrollView.addView(pageActivity.page);
                         pageActivity.scroll.addView(horizontalScrollView);
-//                        horizontalScrollView.setOnTouchListener((v, event)->{
-//                            return false;
-//                        });
                     }
                 }
                 pageActivity.scroll.setVisibility(VISIBLE);

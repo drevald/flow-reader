@@ -35,4 +35,5 @@ public interface Constants {
     float ZOOM_STEP = 0.25F;
     float ZOOM_MIN = 0.25F;
     float ZOOM_MAX = 5F;
+
 }
