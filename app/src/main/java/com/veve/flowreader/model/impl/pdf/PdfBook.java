@@ -8,7 +8,6 @@ public class PdfBook implements Book {
     private String path;
     private int pageNumber;
 
-
     private String name;
 
     private long bookId;
@@ -25,6 +24,10 @@ public class PdfBook implements Book {
 
     private native long openBook(String path);
     private native int getNumberOfPages(long bookId);
+    private native int getNativeTitle(long bookId);
+    private native int getNativeAuthor(long bookId);
+
+
 
     @Override
     public BookPage getPage(int pageNumber) {
@@ -39,7 +42,7 @@ public class PdfBook implements Book {
 
     @Override
     public String getName() {
-        return name;
+        return getNativeTitle(bookId);
     }
 
     @Override

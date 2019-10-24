@@ -1,5 +1,6 @@
 package com.veve.flowreader.views;
 
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -17,6 +18,9 @@ import com.veve.flowreader.model.BookFactory;
 import com.veve.flowreader.model.BooksCollection;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 
 public class GetBookActivity extends AppCompatActivity {
 
@@ -51,27 +55,27 @@ public class GetBookActivity extends AppCompatActivity {
     }
 
     private String getFilePath(Uri uri) throws Exception {
-        String filePath = null;
-        Log.d(getClass().getName(),"URI = "+ uri);
-        if (uri != null && "content".equals(uri.getScheme())) {
-            Cursor cursor = this.getContentResolver().query(uri,
-                    new String[] { android.provider.MediaStore.Files.FileColumns.DATA },
-                    null,
-                    null,
-                    null);
-            if(cursor.getColumnNames().length > 0) {
-                filePath = cursor.getString(0);
-            } else {
-                filePath = uri.toString().replace(DOWNLOAD_CONTENT_PREFIX, DOWNLOAD_FILE_PREFIX);
-            }
-            cursor.close();
+        Log.v(getClass().getName(), "URI=" + uri + " scheme=" + uri.getScheme());
+        if (uri.getScheme().equals("file")) {
+            return uri.getPath();
         } else {
-            filePath = uri.getPath();
+            ContentResolver resolver = getApplicationContext().getContentResolver();
+            InputStream fis = resolver.openInputStream(uri);
+            String extension = uri.getPath().substring(uri.getPath().lastIndexOf("."));
+            File bookFile = File.createTempFile("book", extension);
+            FileOutputStream fileOutputStream = new FileOutputStream(bookFile);
+            byte[] buffer = new byte[100];
+            while(fis.read(buffer)!=-1) {
+                fileOutputStream.write(buffer);
+                fileOutputStream.flush();
+            }
+            fileOutputStream.close();
+            fis.close();
+            Log.v(getClass().getName(), "bookFile.getAbsolutePath()=" + bookFile.getAbsolutePath());
+            return bookFile.getAbsolutePath();
         }
-        Log.d(getClass().getName(),"Chosen path = "+ filePath);
-        return filePath;
-    }
 
+    }
 
     class BookCreatorTask extends AsyncTask<File, Void, Void> {
 
