@@ -1,7 +1,13 @@
 package com.veve.flowreader;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.VectorDrawable;
 import android.support.test.rule.ActivityTestRule;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.GridView;
 import android.widget.ImageButton;
@@ -36,7 +42,10 @@ public class PageTest extends BookTest {
         PageActivity pageActivity = activityRule.launchActivity(intent);
         ImageButton showButton = pageActivity.findViewById(R.id.show);
         assertTrue(showButton.getVisibility() == VISIBLE);
+        VectorDrawable iconDrawable = (VectorDrawable)(showButton.getDrawable());
+        VectorDrawable iconDrawableToPhone = (VectorDrawable)appContext.getResources().getDrawable(R.drawable.ic_to_phone);
         assertTrue(pageActivity.findViewById(R.id.bottomBar).getVisibility() == INVISIBLE);
+        assertTrue(areDrawablesIdentical(iconDrawable, iconDrawableToPhone));
     }
 
 

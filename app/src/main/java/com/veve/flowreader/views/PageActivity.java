@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -481,7 +482,12 @@ public class PageActivity extends AppCompatActivity {
             if (viewMode == VIEW_MODE_ORIGINAL) {
                 viewMode = VIEW_MODE_PHONE;
                 book.setMode(VIEW_MODE_PHONE);
-                show.setImageResource(R.drawable.ic_to_book);
+                Drawable res = getApplicationContext().getResources().getDrawable(R.drawable.ic_to_book);
+                Log.d(getClass().getName(), "resource state is " + res.getConstantState().hashCode());
+                //show.setImageResource(R.drawable.ic_to_book);
+                show.setImageDrawable(res);
+                Log.d(getClass().getName(),
+                        "button resource state is now " + show.getDrawable().getConstantState().hashCode());
                 Snackbar.make(view, getString(R.string.ui_reflow_page), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                 Log.d(getClass().getName(), String.format("Setting page #%d for modified page", currentPage));
