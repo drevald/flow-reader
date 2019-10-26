@@ -1,4 +1,4 @@
-package com.veve.flowreader;
+package com.veve.flowreader.uitest;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,6 +7,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.test.InstrumentationRegistry;
 
+import com.veve.flowreader.R;
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.model.BookFactory;
 import com.veve.flowreader.model.BooksCollection;
@@ -22,7 +23,7 @@ import java.io.OutputStream;
 public class BookTest {
 
     long testBookId;
-
+    BookRecord bookRecord;
     Context appContext;
 
     @Before
@@ -43,7 +44,7 @@ public class BookTest {
         }
         os.close();
         is.close();
-        BookRecord bookRecord = BookFactory.getInstance().createBook(file);
+        bookRecord = BookFactory.getInstance().createBook(file);
         testBookId = booksCollection.addBook(bookRecord);
     }
 

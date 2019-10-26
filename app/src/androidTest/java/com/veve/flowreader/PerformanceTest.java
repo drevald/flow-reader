@@ -66,62 +66,64 @@ public class PerformanceTest {
         if("true".equals(System.getenv("TRAVIS"))) {
             throw new Exception();
         }
-//
-//        long start, end;
-//        start = System.currentTimeMillis();
-//
-//        DjvuBook djvuBook = new DjvuBook(djvuFile.getPath());
-//        Log.d(getClass().getName(), "Book creation took " + (System.currentTimeMillis() - start) + " millisecods");
-//        djvuBook.getId();
-//        DjvuBookSource djvuBookSource = new DjvuBookSource(djvuFile.getPath());
-//        BookRecord bookRecord = new BookRecord(djvuBook.getId(), 0, djvuBook.getPagesCount(), djvuBook.getName(), djvuBook.getPath());
-//
-//        bookRecordId = booksCollection.addBook(bookRecord);
-//
-//        CachedPageRendererImpl cachedPageRenderer = new CachedPageRendererImpl(booksCollection, bookRecord, djvuBookSource);
-//        DevicePageContext context = new DevicePageContextImpl(800);
-//
-//        start = System.currentTimeMillis();
-//        cachedPageRenderer.renderOriginalPage(context, 0);
-//        end = System.currentTimeMillis();
-//        Log.d(getClass().getName(), "First time opening original page" + " took " + (System.currentTimeMillis() - start) + " millisecods");
-//        assertTrue("First time opening original page" + " took " + (end - start ) + " milliseconds which is more than " + 10000, end - start < 10000);
-//
-//        start = System.currentTimeMillis();
-//        cachedPageRenderer.renderOriginalPage(context, 0);
-//        end = System.currentTimeMillis();
-//        Log.d(getClass().getName(), "Second time opening original page" + " took " + (System.currentTimeMillis() - start) + " millisecods");
-//        assertTrue("Second time opening original page" + " took " + (end - start ) + " milliseconds which is more than " + 2500, end - start < 2500);
-//
-//        start = System.currentTimeMillis();
-//        cachedPageRenderer.renderPage(context, 0);
-//        end = System.currentTimeMillis();
-//        Log.d(getClass().getName(), "First time opening page" + " took " + (System.currentTimeMillis() - start) + " millisecods");
-//        assertTrue("First time opening page" + " took " + (end - start ) + " milliseconds which is more than " + 15000, end - start < 15000);
-//
-//        start = System.currentTimeMillis();
-//        cachedPageRenderer.renderPage(context, 0);
-//        end = System.currentTimeMillis();
-//        Log.d(getClass().getName(), "Second time opening page" + " took " + (System.currentTimeMillis() - start) + " millisecods");
-//        assertTrue("Second time opening page" + " took " + (end - start ) + " milliseconds which is more than " + 5000, end - start < 5000);
-//
-//        start = System.currentTimeMillis();
-//        cachedPageRenderer.renderPage(context, 1);
-//        end = System.currentTimeMillis();
-//        Log.d(getClass().getName(), "First time opening next page" + " took " + (System.currentTimeMillis() - start) + " millisecods");
-//        assertTrue("First time opening next page" + " took " + (end - start ) + " milliseconds which is more than " + 15000, end - start < 15000);
-//
-//        start = System.currentTimeMillis();
-//        cachedPageRenderer.renderPage(context, 0);
-//        end = System.currentTimeMillis();
-//        Log.d(getClass().getName(), "Third time opening page" + " took " + (System.currentTimeMillis() - start) + " millisecods");
-//        assertTrue("Third time opening page" + " took " + (end - start ) + " milliseconds which is more than " + 5000, end - start < 5000);
+
+        long start, end;
+        start = System.currentTimeMillis();
+
+        DjvuBook djvuBook = new DjvuBook(djvuFile.getPath());
+        Log.d(getClass().getName(), "Book creation took " + (System.currentTimeMillis() - start) + " millisecods");
+        djvuBook.getId();
+        DjvuBookSource djvuBookSource = new DjvuBookSource(djvuFile.getPath());
+        BookRecord bookRecord = new BookRecord(djvuBook.getId(), 0, djvuBook.getPagesCount(), djvuBook.getName(), djvuBook.getPath());
+
+        bookRecordId = booksCollection.addBook(bookRecord);
+
+        CachedPageRendererImpl cachedPageRenderer = new CachedPageRendererImpl(booksCollection, bookRecord, djvuBookSource);
+        DevicePageContext context = new DevicePageContextImpl(800);
+
+        start = System.currentTimeMillis();
+        cachedPageRenderer.renderOriginalPage(context, 0);
+        end = System.currentTimeMillis();
+        Log.d(getClass().getName(), "First time opening original page" + " took " + (System.currentTimeMillis() - start) + " millisecods");
+        assertTrue("First time opening original page" + " took " + (end - start ) + " milliseconds which is more than " + 10000, end - start < 10000);
+
+        start = System.currentTimeMillis();
+        cachedPageRenderer.renderOriginalPage(context, 0);
+        end = System.currentTimeMillis();
+        Log.d(getClass().getName(), "Second time opening original page" + " took " + (System.currentTimeMillis() - start) + " millisecods");
+        assertTrue("Second time opening original page" + " took " + (end - start ) + " milliseconds which is more than " + 2500, end - start < 2500);
+
+        start = System.currentTimeMillis();
+        cachedPageRenderer.renderPage(context, 0);
+        end = System.currentTimeMillis();
+        Log.d(getClass().getName(), "First time opening page" + " took " + (System.currentTimeMillis() - start) + " millisecods");
+        assertTrue("First time opening page" + " took " + (end - start ) + " milliseconds which is more than " + 15000, end - start < 15000);
+
+        start = System.currentTimeMillis();
+        cachedPageRenderer.renderPage(context, 0);
+        end = System.currentTimeMillis();
+        Log.d(getClass().getName(), "Second time opening page" + " took " + (System.currentTimeMillis() - start) + " millisecods");
+        assertTrue("Second time opening page" + " took " + (end - start ) + " milliseconds which is more than " + 5000, end - start < 5000);
+
+        start = System.currentTimeMillis();
+        cachedPageRenderer.renderPage(context, 1);
+        end = System.currentTimeMillis();
+        Log.d(getClass().getName(), "First time opening next page" + " took " + (System.currentTimeMillis() - start) + " millisecods");
+        assertTrue("First time opening next page" + " took " + (end - start ) + " milliseconds which is more than " + 15000, end - start < 15000);
+
+        start = System.currentTimeMillis();
+        cachedPageRenderer.renderPage(context, 0);
+        end = System.currentTimeMillis();
+        Log.d(getClass().getName(), "Third time opening page" + " took " + (System.currentTimeMillis() - start) + " millisecods");
+        assertTrue("Third time opening page" + " took " + (end - start ) + " milliseconds which is more than " + 5000, end - start < 5000);
 
     }
 
     @After
     public void cleanup() {
-       booksCollection.deleteBook(bookRecordId);
+
+        booksCollection.deleteBook(bookRecordId);
+
     }
 
 //    private void checkTiming(BiConsumer<DevicePageContext, Integer> f, DevicePageContext context, int position, int limit, String message) {

@@ -190,6 +190,10 @@ public class PageActivity extends AppCompatActivity {
 
     }
 
+    public BookRecord getBook() {
+        return book;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 

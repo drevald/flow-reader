@@ -15,6 +15,7 @@ import com.veve.flowreader.model.impl.PageGlyphImpl;
 import com.veve.flowreader.model.impl.pdf.PdfBook;
 import com.veve.flowreader.model.impl.pdf.PdfBookPage;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,6 +35,7 @@ import static org.junit.Assert.*;
 public class BookCollectionTest {
 
     BooksCollection booksCollection;
+    BookRecord bookRecord;
 
     @Before
     public void prepareCollection() {
@@ -41,9 +43,14 @@ public class BookCollectionTest {
         booksCollection = BooksCollection.getInstance(appContext);
     }
 
+    @After
+    public void cleaUp() {
+        booksCollection.deleteBook(bookRecord.getId());
+    }
+
     @Test
     public void checkCollection() {
-        BookRecord bookRecord = new BookRecord();
+        bookRecord = new BookRecord();
         long bookId = booksCollection.addBook(bookRecord);
         bookRecord = booksCollection.getBook(bookId);
         assertNotEquals(-1, bookId);

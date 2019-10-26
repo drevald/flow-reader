@@ -1,4 +1,4 @@
-package com.veve.flowreader;
+package com.veve.flowreader.uitest;
 
 import android.content.Intent;
 import android.support.test.rule.ActivityTestRule;
@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.GridView;
 import android.widget.ImageButton;
 
+import com.veve.flowreader.R;
 import com.veve.flowreader.views.MainActivity;
 
 import org.junit.Rule;
@@ -34,8 +35,6 @@ public class MainActivityTest extends BookTest {
         mainActivity = activityRule.launchActivity(intent);
         ImageButton listButton = mainActivity.findViewById(R.id.books_list);
         ImageButton gridButton = mainActivity.findViewById(R.id.books_grid);
-//        gridButton.callOnClick();
-//        listButton.callOnClick();
         GridView grid = mainActivity.findViewById(R.id.grid);
         assertNotNull(grid);
         assertTrue(grid.getVisibility() == VISIBLE);
