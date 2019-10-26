@@ -51,12 +51,12 @@ JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_getNumb
 
 }
 
-JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeTitle
+JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_getNativeTitle
 (JNIEnv *env, jclass cls, jlong bookId) {
     return get_annotation(env, bookId, "Title");
 }
 
-JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeAuthor
+JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_getNativeAuthor
 (JNIEnv *env, jclass cls, jlong bookId) {
     return get_annotation(env, bookId, "Author");
 }

@@ -47,4 +47,14 @@ public class MockRasterBook implements Book {
         return null;
     }
 
+    @Override
+    public String getTitle() {
+        return null;
+    }
+
+    @Override
+    public String getAuthor() {
+        return null;
+    }
+
 }

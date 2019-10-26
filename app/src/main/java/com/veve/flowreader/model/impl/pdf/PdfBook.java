@@ -52,5 +52,19 @@ public class PdfBook implements Book {
         return path;
     }
 
+    @Override
+    public String getTitle() {
+        return getNativeTitle(bookId);
+    }
+
+    @Override
+    public String getAuthor() {
+        return getNativeAuthor(bookId);
+    }
+
+    private static native String getNativeTitle(long bookId);
+
+    private static native String getNativeAuthor(long bookId);
+
 
 }

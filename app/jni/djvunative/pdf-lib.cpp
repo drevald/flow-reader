@@ -123,12 +123,12 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
 
 }
 
-JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativeTitle
+JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBook_getNativeTitle
 (JNIEnv *env, jclass cls, jlong bookId) {
     return get_metadata(env, bookId, "Title");
 }
 
-JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativeAuthor
+JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBook_getNativeAuthor
 (JNIEnv *env, jclass cls, jlong bookId) {
     return get_metadata(env, bookId, "Author");
 }

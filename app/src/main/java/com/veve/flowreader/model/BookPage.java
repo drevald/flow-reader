@@ -21,8 +21,6 @@ public interface BookPage {
 
     int getHeight();
 
-    String getTitle();
 
-    String getAuthor();
 
 }

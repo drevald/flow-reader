@@ -20,4 +20,8 @@ public interface Book {
 
     String getPath();
 
+    String getTitle();
+
+    String getAuthor();
+
 }

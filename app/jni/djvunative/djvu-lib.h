@@ -20,11 +20,16 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
     JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativePageGlyphs
         (JNIEnv *, jclass, jlong, jint, jobject);
 
-    JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeTitle
+    JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_getNativeTitle
         (JNIEnv *, jclass, jlong);
 
 
-    JNIEXPORT jlong JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_openBook
+    JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_getNativeAuthor
+        (JNIEnv *, jclass, jlong);
+
+
+
+JNIEXPORT jlong JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_openBook
         (JNIEnv *, jobject, jstring);
 
     JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_getNumberOfPages

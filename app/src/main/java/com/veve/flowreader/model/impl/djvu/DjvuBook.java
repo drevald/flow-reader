@@ -56,6 +56,18 @@ public class DjvuBook implements Book {
     }
 
     @Override
+    public String getTitle() {
+        return getNativeTitle(bookId);
+    }
+
+    @Override
+    public String getAuthor() {
+        return getNativeAuthor(bookId);
+    }
+
+
+
+    @Override
     public long getId() {
         return bookId;
     }
@@ -64,4 +76,12 @@ public class DjvuBook implements Book {
     public String getPath() {
         return path;
     }
+
+    private static native String getNativeTitle(long bookId);
+
+    private static native String getNativeAuthor(long bookId);
+
+
+
+
 }

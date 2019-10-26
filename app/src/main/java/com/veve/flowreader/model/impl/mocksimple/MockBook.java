@@ -73,4 +73,14 @@ public class MockBook implements Book {
     public String getPath() {
         return null;
     }
+
+    @Override
+    public String getTitle() {
+        return null;
+    }
+
+    @Override
+    public String getAuthor() {
+        return null;
+    }
 }

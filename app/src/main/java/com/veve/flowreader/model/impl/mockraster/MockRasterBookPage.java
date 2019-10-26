@@ -96,13 +96,5 @@ class MockRasterBookPage implements BookPage {
         return 0;
     }
 
-    @Override
-    public String getTitle() {
-        return null;
-    }
 
-    @Override
-    public String getAuthor() {
-        return null;
-    }
 }

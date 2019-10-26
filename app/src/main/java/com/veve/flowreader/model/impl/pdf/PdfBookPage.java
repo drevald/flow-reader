@@ -46,19 +46,7 @@ public class PdfBookPage extends AbstractBookPage implements BookPage {
         return getNativeHeight(getBookId(), getPageNumber());
     }
 
-    @Override
-    public String getTitle() {
-        return getNativeTitle(getBookId());
-    }
 
-    @Override
-    public String getAuthor() {
-        return getNativeAuthor(getBookId());
-    }
-
-    private static native String getNativeTitle(long bookId);
-
-    private static native String getNativeAuthor(long bookId);
 
     private static native int getNativeWidth(long bookId, int pageNumber);
 
