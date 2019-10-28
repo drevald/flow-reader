@@ -25,6 +25,25 @@ public class BookRecord {
     private int mode = 2;
     private int scrollOffset = 0;
     private byte[] preview;
+    private String md5;
+
+    public String getMd5() {
+        return md5;
+    }
+
+    public void setMd5(String md5) {
+        this.md5 = md5;
+    }
+
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
+    }
+
+    private long size;
 
     public BookRecord() {
         this(null, 0, 0, null, null);
