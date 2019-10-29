@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         bookListAdapter = new BookListAdapter();
         bookGridAdapter = new BookGridAdapter();
 
-//        requestPermissions();
+        requestPermissions();
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
