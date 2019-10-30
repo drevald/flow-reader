@@ -137,7 +137,11 @@ public class PageActivity extends AppCompatActivity {
         booksCollection = BooksCollection.getInstance(getApplicationContext());
         book = booksCollection.getBook(bookId);
 
-        pageRenderer = PageRendererFactory.getRenderer(booksCollection, book);
+        try {
+            pageRenderer = PageRendererFactory.getRenderer(booksCollection, book, getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         currentPage = book.getCurrentPage();
 
         viewMode = book.getMode();
@@ -469,7 +473,11 @@ public class PageActivity extends AppCompatActivity {
         @Override
         public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
             if (pageRenderer == null) {
-                pageRenderer = PageRendererFactory.getRenderer(booksCollection, book);
+                try {
+                    pageRenderer = PageRendererFactory.getRenderer(booksCollection, book, getApplicationContext());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             PageMenuListener pageMenuListener = new PageMenuListener();
             findViewById(R.id.smaller_text).setOnClickListener(pageMenuListener);

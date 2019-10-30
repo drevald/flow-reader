@@ -83,7 +83,7 @@ public class GetBookActivity extends AppCompatActivity {
             Log.v(getClass().getName(), "Start parsing new book at " + bookFile.getPath());
             newBook = BookFactory.getInstance().createBook(bookFile);
             newBook.setCurrentPage(0);
-            newBook.setUrl(uri.getEncodedPath());
+            newBook.setUrl(uri.toString());
             bookId = BooksCollection.getInstance(getApplicationContext()).addBook(newBook);
 
             if(uri.getScheme() != null && uri.getScheme().equals("content")) {
