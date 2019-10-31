@@ -17,38 +17,16 @@ import java.io.InputStream;
 
 public class PageRendererFactory {
 
-    public static PageRenderer getRenderer(BooksCollection bookCollection, BookRecord bookRecord, Context context) throws Exception  {
+    public static PageRenderer getRenderer(BooksCollection bookCollection, BookRecord bookRecord) throws Exception  {
         if (bookRecord.getUrl().toLowerCase().endsWith("djvu")) {
-            BookSource bookSource = new DjvuBookSource(getTempPath(bookRecord.getUrl(), context));
+            BookSource bookSource = new DjvuBookSource(bookRecord.getUrl());
             return new CachedPageRendererImpl(bookCollection, bookRecord, bookSource);
         } else  if (bookRecord.getUrl().toLowerCase().endsWith("pdf")) {
-            BookSource bookSource = new PdfBookSource(getTempPath(bookRecord.getUrl(), context));
+            BookSource bookSource = new PdfBookSource(bookRecord.getUrl());
             return new CachedPageRendererImpl(bookCollection, bookRecord, bookSource);
         } else {
             return new MockRenderer(bookRecord);
         }
     }
-
-    private static String getTempPath(String url, Context context) throws Exception {
-        if (url.startsWith("file")) {
-            return url;
-        } else {
-            ContentResolver resolver = context.getContentResolver();
-            InputStream fis = resolver.openInputStream(Uri.parse(url));
-            String extension = url.substring(url.lastIndexOf("."));
-            File bookFile = File.createTempFile("book", extension);
-            bookFile.deleteOnExit();
-            FileOutputStream fileOutputStream = new FileOutputStream(bookFile);
-            byte[] buffer = new byte[100];
-            while(fis.read(buffer)!=-1) {
-                fileOutputStream.write(buffer);
-                fileOutputStream.flush();
-            }
-            fileOutputStream.close();
-            fis.close();
-            return bookFile.getPath();
-        }
-    }
-
 
 }

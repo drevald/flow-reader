@@ -138,7 +138,7 @@ public class PageActivity extends AppCompatActivity {
         book = booksCollection.getBook(bookId);
 
         try {
-            pageRenderer = PageRendererFactory.getRenderer(booksCollection, book, getApplicationContext());
+            pageRenderer = PageRendererFactory.getRenderer(booksCollection, book);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -474,7 +474,7 @@ public class PageActivity extends AppCompatActivity {
         public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
             if (pageRenderer == null) {
                 try {
-                    pageRenderer = PageRendererFactory.getRenderer(booksCollection, book, getApplicationContext());
+                    pageRenderer = PageRendererFactory.getRenderer(booksCollection, book);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.veve.flowreader.BookContentResolver;
 import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
 import com.veve.flowreader.dao.BookRecord;
@@ -29,15 +30,15 @@ public class GetBookActivity extends AppCompatActivity {
         Uri uri = getIntent().getData();
         try {
             BooksCollection booksCollection = BooksCollection.getInstance(getApplicationContext());
-            File file = getFile(uri);
+            File file = new File(BookContentResolver.contentToFile(getApplicationContext(), uri));
             if (booksCollection.hasBook(file)) {
-                BookRecord bookRecord = booksCollection.getBook(uri.getEncodedPath());
+                BookRecord bookRecord = booksCollection.getBook(file.getPath());
                 Intent ii = new Intent(GetBookActivity.this, PageActivity.class);
                 ii.putExtra(Constants.BOOK_ID, bookRecord.getId());
                 ii.putExtra(Constants.FILE_NAME, bookRecord.getUrl());
                 startActivity(ii);
             } else {
-                new BookCreatorTask().execute(file, uri);
+                new BookCreatorTask().execute(file);
             }
         } catch (Exception e) {
             Log.e(getClass().getName(), "URI is " + uri, e);
@@ -69,29 +70,21 @@ public class GetBookActivity extends AppCompatActivity {
         return bookFile;
     }
 
-    class BookCreatorTask extends AsyncTask<Object, Void, Void> {
+    class BookCreatorTask extends AsyncTask<File, Void, Void> {
 
         private BookRecord newBook;
 
         private long bookId;
 
         @Override
-        protected Void doInBackground(Object... objects){
-
-            File bookFile = (File)objects[0];
-            Uri uri = (Uri)objects[1];
+        protected Void doInBackground(File... files){
+            File bookFile = files[0];
             Log.v(getClass().getName(), "Start parsing new book at " + bookFile.getPath());
             newBook = BookFactory.getInstance().createBook(bookFile);
             newBook.setCurrentPage(0);
-            newBook.setUrl(uri.toString());
+            newBook.setUrl(bookFile.getPath());
             bookId = BooksCollection.getInstance(getApplicationContext()).addBook(newBook);
-
-            if(uri.getScheme() != null && uri.getScheme().equals("content")) {
-                bookFile.delete();
-            }
-
             return null;
-
         }
 
         @Override
