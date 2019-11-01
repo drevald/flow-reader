@@ -23,7 +23,6 @@ public interface BookContentResolver {
             String inputStr = uri.getEncodedPath();
             String filePath = null;
             path = outputFormat.format(new String[]{(String) (contentInputFormat.parse(inputStr)[1])});
-            return filePath;
         } else if (uri.getScheme().equals(SCHEME_FILE)) {
             String inputStr = uri.toString();
             path = (String)fileInputFormat.parse(inputStr)[0];

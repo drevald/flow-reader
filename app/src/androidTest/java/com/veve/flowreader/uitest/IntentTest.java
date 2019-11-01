@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.test.InstrumentationRegistry;
+import android.util.Log;
 
 import com.veve.flowreader.R;
 import com.veve.flowreader.dao.BookRecord;
@@ -40,6 +41,9 @@ public class IntentTest {
         BookRecord oldBookRecord = booksCollection.getBook(pdfBookFile.getPath());
         if (oldBookRecord != null) {
             booksCollection.deleteBook(oldBookRecord.getId());
+            Log.v("BOOK", "Deleting " + oldBookRecord.getUrl() + " with id " + oldBookRecord.getId());
+        } else {
+            Log.v("BOOK", "Book with id " + pdfBookFile.getPath() + " is missing");
         }
         InputStream is = appContext.getResources().openRawResource(R.raw.pdf_sample);
         OutputStream os = new FileOutputStream(pdfBookFile);
@@ -123,6 +127,7 @@ public class IntentTest {
         appContext.startActivity(intent);
         Thread.sleep(5000);
         BookRecord bookRecord = booksCollection.getBook(pdfBookFile.getPath());
+        Log.v("BOOK", "Retrieved with URL " + pdfBookFile.getPath() + " as " + bookRecord==null?"null":bookRecord.toString());
         djvuBookFileId = bookRecord.getId();
         assertNotNull(bookRecord);
     }

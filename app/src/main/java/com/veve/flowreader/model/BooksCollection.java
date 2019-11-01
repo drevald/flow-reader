@@ -66,6 +66,7 @@ public class BooksCollection {
     }
 
     public BookRecord getBook(String url) {
+        Log.v("BOOK", "Getting by URL " + url);
         BookByUrlGetterTask bookGetterTask = new BookByUrlGetterTask(daoAccess);
         bookGetterTask.execute(url);
         try {

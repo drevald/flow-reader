@@ -85,6 +85,7 @@ public class GetBookActivity extends AppCompatActivity {
             newBook.setCurrentPage(0);
             newBook.setUrl(bookFile.getPath());
             bookId = BooksCollection.getInstance(getApplicationContext()).addBook(newBook);
+            Log.v("BOOK", "Inserted with URL " + newBook.getUrl());
             return null;
         }
 
