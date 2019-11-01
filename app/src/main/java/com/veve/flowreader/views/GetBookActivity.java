@@ -9,7 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.veve.flowreader.BookContentResolver;
+import static com.veve.flowreader.BookContentResolver.contentToFile;
+
 import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
 import com.veve.flowreader.dao.BookRecord;
@@ -30,7 +31,7 @@ public class GetBookActivity extends AppCompatActivity {
         Uri uri = getIntent().getData();
         try {
             BooksCollection booksCollection = BooksCollection.getInstance(getApplicationContext());
-            File file = new File(BookContentResolver.contentToFile(getApplicationContext(), uri));
+            File file = new File(contentToFile(getApplicationContext(), uri));
             if (booksCollection.hasBook(file)) {
                 BookRecord bookRecord = booksCollection.getBook(file.getPath());
                 Intent ii = new Intent(GetBookActivity.this, PageActivity.class);
