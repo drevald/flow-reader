@@ -11,6 +11,9 @@ import java.util.List;
 @Dao
 public interface DaoAccess {
 
+    @Query("SELECT * FROM BookRecord WHERE size = :size")
+    BookRecord fetchBookBySize(long size);
+
     @Query("SELECT * FROM BookRecord WHERE url = :url")
     BookRecord fetchBook(String url);
 

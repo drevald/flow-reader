@@ -260,7 +260,7 @@ public class BrowseFilesActivity extends AppCompatActivity {
         if(android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             fileListAdapter.setRoot(Environment.getExternalStorageDirectory().getAbsolutePath());
         } else {
-            fileListAdapter.setRoot(getExternalFilesDir("").getAbsolutePath());
+            fileListAdapter.setRoot(Environment.getExternalStorageDirectory().getAbsolutePath());
         }
         fileListAdapter.notifyDataSetChanged();
     }

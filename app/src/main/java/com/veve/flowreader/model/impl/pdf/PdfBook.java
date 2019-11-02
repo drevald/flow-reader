@@ -6,8 +6,8 @@ import com.veve.flowreader.model.BookPage;
 public class PdfBook implements Book {
 
     private String path;
-    private int pageNumber;
 
+    private int pageNumber;
 
     private String name;
 
@@ -25,6 +25,8 @@ public class PdfBook implements Book {
 
     private native long openBook(String path);
     private native int getNumberOfPages(long bookId);
+    private native String getNativeTitle(long bookId);
+    private native String getNativeAuthor(long bookId);
 
     @Override
     public BookPage getPage(int pageNumber) {
@@ -39,7 +41,8 @@ public class PdfBook implements Book {
 
     @Override
     public String getName() {
-        return name;
+        //return getNativeTitle(bookId);
+        return path;
     }
 
     @Override
@@ -61,10 +64,5 @@ public class PdfBook implements Book {
     public String getAuthor() {
         return getNativeAuthor(bookId);
     }
-
-    private static native String getNativeTitle(long bookId);
-
-    private static native String getNativeAuthor(long bookId);
-
 
 }

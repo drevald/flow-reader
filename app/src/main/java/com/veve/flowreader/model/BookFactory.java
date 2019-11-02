@@ -52,7 +52,8 @@ public class BookFactory {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         thumbnail.compress(Bitmap.CompressFormat.JPEG,100, byteArrayOutputStream);
         bookRecord.setPreview(byteArrayOutputStream.toByteArray());
-
+        bookRecord.setName(file.getName());
+        bookRecord.setUrl(file.getPath());
         return bookRecord;
     }
 

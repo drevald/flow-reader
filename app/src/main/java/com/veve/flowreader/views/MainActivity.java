@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
@@ -127,32 +128,46 @@ public class MainActivity extends AppCompatActivity {
             (AdapterView<?> parent, View view, int position, long id) -> {
             Intent ii = new Intent(MainActivity.this, PageActivity.class);
             BookRecord selectedBook = (BookRecord)parent.getItemAtPosition(position);
+            ii.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             ii.putExtra(Constants.FILE_NAME, selectedBook.getUrl());
             ii.putExtra(Constants.BOOK_ID, selectedBook.getId());
             startActivity(ii);
         });
 
-//        gridView.setOnItemLongClickListener(
-//            (AdapterView<?> adapterView, View view, int i, long l) -> {
-//                Log.v(getClass().getName(), "adapterView = " + adapterView + "view = " + view +  " i = " + i + " l = " + l);
-//                return false;
+        gridView.setOnItemLongClickListener(
+            (AdapterView<?> adapterView, View view, int i, long l) -> {
+                Log.v(getClass().getName(), "adapterView = " + adapterView + "view = " + view +  " i = " + i + " l = " + l);
+                return false;
+            }
+        );
+
+//        gridView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//            @Override
+//            public void onGlobalLayout() {
+//                Log.d(getClass().getName(), "");
 //            }
-//        );
+//        });
 
         gridView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             int bookThumbPx = (int) (Constants.BOOK_THUMB_WIDTH
                     * Resources.getSystem().getDisplayMetrics().density);
+            Log.d(getClass().getName(), "1");
             int bookThumbPaddingPx = (int) (Constants.BOOK_THUMB_HOR_PADDING
                     * Resources.getSystem().getDisplayMetrics().density);
+            Log.d(getClass().getName(), "2");
             columnsNumber = gridView.getWidth()/(bookThumbPx + 2 * bookThumbPaddingPx);
-            gridView.setMinimumWidth(columnsNumber * (bookThumbPx + 2 * bookThumbPaddingPx));
+            Log.d(getClass().getName(), "3");
+//            gridView.setMinimumWidth(columnsNumber * (bookThumbPx + 2 * bookThumbPaddingPx));
+//            Log.d(getClass().getName(), "4");
             if(preferences.getInt(Constants.VIEW_TYPE, Constants.LIST_VIEW_TYPE) == Constants.LIST_VIEW_TYPE){
+                Log.d(getClass().getName(), "5");
                 gridView.setNumColumns(1);
             } else {
+                Log.d(getClass().getName(), "6");
                 gridView.setNumColumns(columnsNumber);
             }
         });
-
+//
         registerForContextMenu(gridView);
 
         /////    SWITCH TO LIST VIEW     ///////////////////////////////
@@ -215,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-///////////////////////   ADAPTERS   ///////////////////////////////////////////////////////////////
+/////////////////////////   ADAPTERS   ///////////////////////////////////////////////////////////////
 
     public class BookListAdapter extends BaseAdapter {
 
@@ -281,9 +296,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
-//////////////////////////////////////////////////////////////////////////////////////////////////
-
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
     public class BookGridAdapter extends BaseAdapter {
 
         private List<BookRecord> booksList;

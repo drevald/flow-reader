@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -136,7 +137,11 @@ public class PageActivity extends AppCompatActivity {
         booksCollection = BooksCollection.getInstance(getApplicationContext());
         book = booksCollection.getBook(bookId);
 
-        pageRenderer = PageRendererFactory.getRenderer(booksCollection, book);
+        try {
+            pageRenderer = PageRendererFactory.getRenderer(booksCollection, book);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         currentPage = book.getCurrentPage();
 
         viewMode = book.getMode();
@@ -187,6 +192,10 @@ public class PageActivity extends AppCompatActivity {
         ((TextView)findViewById(R.id.zoom_percent))
                 .setText((int)(context.getZoom() * 100)+"%");
 
+    }
+
+    public BookRecord getBook() {
+        return book;
     }
 
     @Override
@@ -464,7 +473,11 @@ public class PageActivity extends AppCompatActivity {
         @Override
         public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
             if (pageRenderer == null) {
-                pageRenderer = PageRendererFactory.getRenderer(booksCollection, book);
+                try {
+                    pageRenderer = PageRendererFactory.getRenderer(booksCollection, book);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             PageMenuListener pageMenuListener = new PageMenuListener();
             findViewById(R.id.smaller_text).setOnClickListener(pageMenuListener);
@@ -481,7 +494,12 @@ public class PageActivity extends AppCompatActivity {
             if (viewMode == VIEW_MODE_ORIGINAL) {
                 viewMode = VIEW_MODE_PHONE;
                 book.setMode(VIEW_MODE_PHONE);
-                show.setImageResource(R.drawable.ic_to_book);
+                Drawable res = getApplicationContext().getResources().getDrawable(R.drawable.ic_to_book);
+                Log.d(getClass().getName(), "resource state is " + res.getConstantState().hashCode());
+                //show.setImageResource(R.drawable.ic_to_book);
+                show.setImageDrawable(res);
+                Log.d(getClass().getName(),
+                        "button resource state is now " + show.getDrawable().getConstantState().hashCode());
                 Snackbar.make(view, getString(R.string.ui_reflow_page), Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
                 Log.d(getClass().getName(), String.format("Setting page #%d for modified page", currentPage));

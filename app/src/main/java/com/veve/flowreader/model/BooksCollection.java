@@ -1,6 +1,7 @@
 package com.veve.flowreader.model;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -65,6 +66,7 @@ public class BooksCollection {
     }
 
     public BookRecord getBook(String url) {
+        Log.v("BOOK", "Getting by URL " + url);
         BookByUrlGetterTask bookGetterTask = new BookByUrlGetterTask(daoAccess);
         bookGetterTask.execute(url);
         try {
@@ -79,9 +81,20 @@ public class BooksCollection {
         new BookDeleteTask(daoAccess).execute(bookId);
     }
 
+//    public boolean hasBook (Uri uri) {
+//        BookCheckerTask bookCheckerTask = new BookCheckerTask(daoAccess);
+//        bookCheckerTask.execute(uri.toString());
+//        try {
+//            return bookCheckerTask.get();
+//        } catch (Exception e) {
+//            Log.e(getClass().getName(), e.getLocalizedMessage());
+//            return false;
+//        }
+//    }
+
     public boolean hasBook (File file) {
         BookCheckerTask bookCheckerTask = new BookCheckerTask(daoAccess);
-        bookCheckerTask.execute(file.getAbsolutePath());
+        bookCheckerTask.execute(file);
         try {
             return bookCheckerTask.get();
         } catch (Exception e) {
@@ -227,7 +240,7 @@ public class BooksCollection {
 
     }
 
-    class BookCheckerTask extends AsyncTask<String, Void, Boolean> {
+    class BookCheckerTask extends AsyncTask<File, Void, Boolean> {
 
         private DaoAccess daoAccess;
 
@@ -236,8 +249,8 @@ public class BooksCollection {
         }
 
         @Override
-        protected Boolean doInBackground(String... strings) {
-            BookRecord bookRecords = daoAccess.fetchBook(strings[0]);
+        protected Boolean doInBackground(File... files) {
+            BookRecord bookRecords = daoAccess.fetchBookBySize(files[0].length());
             return bookRecords != null;
         }
 
