@@ -84,6 +84,7 @@ public class GetBookActivity extends AppCompatActivity {
             newBook = BookFactory.getInstance().createBook(bookFile);
             newBook.setCurrentPage(0);
             newBook.setUrl(bookFile.getPath());
+            newBook.setSize(bookFile.length());
             bookId = BooksCollection.getInstance(getApplicationContext()).addBook(newBook);
             Log.v("BOOK", "Inserted with URL " + newBook.getUrl());
             return null;

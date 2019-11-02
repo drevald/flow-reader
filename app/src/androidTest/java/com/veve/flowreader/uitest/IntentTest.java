@@ -1,6 +1,5 @@
 package com.veve.flowreader.uitest;
 
-import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -139,6 +138,5 @@ public class IntentTest {
         booksCollection.deleteBook(pdfBookFileId);
         booksCollection.deleteBook(djvuBookFileId);
     }
-
 
 }
