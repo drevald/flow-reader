@@ -42,13 +42,13 @@ JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_getNumb
     ddjvu_context_t *ctx = document->ctx;
 
     ddjvu_message_wait(ctx);
-    ddjvu_message_t *msg;
-    while (msg = ddjvu_message_peek(ctx)) {
+    while (ddjvu_message_peek(ctx)) {
+        if (ddjvu_document_decoding_done(doc)) {
+            break;
+        }
         ddjvu_message_pop(ctx);
     }
-
-    return ddjvu_document_get_pagenum(doc);
-
+   return ddjvu_document_get_pagenum(doc);
 }
 
 JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_getNativeTitle
