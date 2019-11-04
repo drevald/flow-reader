@@ -56,7 +56,7 @@ public class CachedPageRendererImpl implements PageRenderer {
     private List<PageGlyph> getGlyphs(BookSource bookSource, int position) {
         // if page changed or glyphs are not stored or glyphs absent - retrieve new ones
         if (position != currentPage || glyphs == null || glyphs.size() == 0) {
-            Log.v(getClass().getName(), "Glyphs not cached current = " + currentPage + " requested = " + position);
+            Log.d(getClass().getName(), "Glyphs not cached current = " + currentPage + " requested = " + position);
             currentPage = position;
             long start = System.currentTimeMillis();
             List<PageGlyphRecord> storedGlyphs = booksCollection.getPageGlyphs(bookRecord.getId(), position, false);
@@ -78,7 +78,7 @@ public class CachedPageRendererImpl implements PageRenderer {
                     ));
                 }
                 booksCollection.addGlyphs(glyphsToStore, false);
-                Log.v(getClass().getName(),
+                Log.d(getClass().getName(),
                         String.format("Getting glyphs for page #%d took #%d milliseconds",
                                 position, System.currentTimeMillis() - start));
             } else {
@@ -109,37 +109,40 @@ public class CachedPageRendererImpl implements PageRenderer {
                 }
                 Log.v(getClass().getName(), "Bitmap creation took " + timeBuildingGlyphs + " milliseconds");
                 glyphs = glyphsRestored;
-                Log.v(getClass().getName(),
+                Log.d(getClass().getName(),
                         String.format("Getting stored glyphs for page #%d took %d milliseconds",
                                 position, System.currentTimeMillis() - start));
             }
         } else {
-            Log.v(getClass().getName(), "Glyphs cached current = " + currentPage + " requested = " + position);
+            Log.d(getClass().getName(), "Glyphs cached current = " + currentPage + " requested = " + position);
         }
         return glyphs;
     }
 
     private Bitmap getOriginalPageBitmap(int position) {
         if (position != currentOriginalPage || originalBitmap == null) {
-            Log.v(getClass().getName(), "Page not cached current = " + currentOriginalPage + " requested = " + position);
+            Log.d(getClass().getName(), "Page not cached current = " + currentOriginalPage + " requested = " + position);
             currentOriginalPage = position;
             long start = System.currentTimeMillis();
             originalBitmap = bookSource.getPageBytes(position);
-            Log.v(getClass().getName(), String.format("Getting page #%d took #%d milliseconds",
+            Log.d(getClass().getName(), String.format("Getting page #%d took #%d milliseconds",
                     position, System.currentTimeMillis() - start));
         } else {
-            Log.v(getClass().getName(), "Page cached current = " + currentOriginalPage + " requested = " + position);
+            Log.d(getClass().getName(), "Page cached current = " + currentOriginalPage + " requested = " + position);
         }
         return originalBitmap;
     }
 
     @Override
     public Bitmap renderPage(DevicePageContext context, int position) {
-        Log.i(getClass().getName(), String.format("position=%d", position));
+        Log.v(getClass().getName(), String.format("position=%d", position));
         List<PageGlyph> pageGlyphList = getGlyphs(bookSource, position);
-
+        long start = System.currentTimeMillis();
         if (pageGlyphList.size() <= 1) {
-            return renderOriginalPage(context, position);
+            Bitmap bitmap = renderOriginalPage(context, position);
+            Log.v(getClass().getName(), "Reflowed page #" + position + " rendering took "
+                    + (System.currentTimeMillis() - start) + " milliseconds") ;
+            return bitmap;
         } else {
             for(PageGlyph pageGlyph : pageGlyphList) {
                 pageGlyph.draw(context, false);
@@ -165,7 +168,8 @@ public class CachedPageRendererImpl implements PageRenderer {
                 pageGlyph.draw(context, true);
             }
 
-            Log.d(getClass().getName(), "Drawing: Remotest point is X:" + context.getRemotestPoint().x + " Y" + context.getRemotestPoint().y + " Baseline: " + context.getCurrentBaseLine() ) ;
+            Log.d(getClass().getName(), "Reflowed page #" + position + " rendering took"
+                    + (System.currentTimeMillis() - start) + " milliseconds") ;
 
             context.resetPosition();
             context.setCurrentBaseLine(0);
@@ -178,11 +182,17 @@ public class CachedPageRendererImpl implements PageRenderer {
     @Override
     public Bitmap renderOriginalPage(DevicePageContext context, int position) {
         Bitmap bitmap = getOriginalPageBitmap(position);
-        return bitmap;
+
+        return Bitmap.createScaledBitmap(bitmap,
+                (int)(context.getZoom()*context.getWidth()),
+                (int)(context.getZoom()*(context.getWidth() * bitmap.getHeight())/bitmap.getWidth()),
+                false);
+
 //        return Bitmap.createScaledBitmap(bitmap,
 //                (int) (context.getZoom() * bitmap.getWidth()),
 //                (int) (context.getZoom() * bitmap.getHeight()),
 //                false);
+
     }
 
     public void setPageLayoutParser(PageLayoutParser pageLayoutParser) {

@@ -24,6 +24,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -521,9 +522,9 @@ public class PageActivity extends AppCompatActivity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.smaller_text: {
-                    if (context.getZoom() <= 0.25)
+                    if (context.getZoom() <= Constants.ZOOM_MIN)
                         break;
-                    context.setZoom(-0.25f + context.getZoom());
+                    context.setZoom(-1 * Constants.ZOOM_STEP + context.getZoom());
                     Log.v(getClass().getName(), "Zoom set to " + context.getZoom());
                     book.setZoom(context.getZoom());
                     ((TextView)findViewById(R.id.zoom_percent))
@@ -531,9 +532,9 @@ public class PageActivity extends AppCompatActivity {
                     break;
                 }
                 case R.id.larger_text: {
-                    if (context.getZoom() > 5)
+                    if (context.getZoom() > Constants.ZOOM_MAX)
                         break;
-                    context.setZoom(0.25f + context.getZoom());
+                    context.setZoom(Constants.ZOOM_STEP + context.getZoom());
                     Log.v(getClass().getName(), "Zoom set to " + context.getZoom());
                     book.setZoom(context.getZoom());
                     ((TextView)findViewById(R.id.zoom_percent))
@@ -553,41 +554,43 @@ public class PageActivity extends AppCompatActivity {
     class PageLoader extends AsyncTask<Integer, Void, Void> {
 
         Bitmap bitmap;
+        PageActivity pageActivity;
 
         private WeakReference<PageActivity> pageActivityReference;
 
         // only retain a weak reference to the activity
         PageLoader(PageActivity context) {
             pageActivityReference = new WeakReference<>(context);
+            pageActivity = pageActivityReference.get();
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            pageActivityReference.get().runningTasks.remove(this);
+            pageActivity.runningTasks.remove(this);
         }
 
         @Override
         protected void onCancelled() {
             super.onCancelled();
-            pageActivityReference.get().runningTasks.remove(this);
+            pageActivity.runningTasks.remove(this);
         }
 
         @Override
         protected Void doInBackground(Integer... integers) {
 
             runOnUiThread(()-> {
-                    pageActivityReference.get().scroll.setVisibility(INVISIBLE);
-                    pageActivityReference.get().progressBar.setVisibility(View.VISIBLE);
+                    pageActivity.scroll.setVisibility(INVISIBLE);
+                    pageActivity.progressBar.setVisibility(View.VISIBLE);
                 }
             );
 
             int pageNumber = integers[0];
 
-            if (pageActivityReference.get().viewMode == Constants.VIEW_MODE_PHONE) {
-                bitmap = pageActivityReference.get().pageRenderer.renderPage(context, pageNumber);
+            if (pageActivity.viewMode == Constants.VIEW_MODE_PHONE) {
+                bitmap = pageActivity.pageRenderer.renderPage(context, pageNumber);
             } else {
-                bitmap = pageActivityReference.get().pageRenderer.renderOriginalPage(pageActivityReference.get().context, pageNumber);
+                bitmap = pageActivity.pageRenderer.renderOriginalPage(pageActivity.context, pageNumber);
             }
 
             int bitmapHeight = bitmap.getHeight();
@@ -597,10 +600,12 @@ public class PageActivity extends AppCompatActivity {
                     Snackbar.make(topLayout, getString(R.string.could_not_zoom_more),
                             Snackbar.LENGTH_LONG).setAction("Action", null).show();
                     context.setZoom(context.getZoom() - 0.5f);
-                    pageActivityReference.get().book.setZoom(pageActivityReference.get().context.getZoom());
-                    pageActivityReference.get().booksCollection.updateBook(pageActivityReference.get().book);
-                //} else if (bitmap.getWidth() >= pageActivityReference.get().context.getWidth()) {
+                    pageActivity.book.setZoom(pageActivity.context.getZoom());
+                    pageActivity.booksCollection.updateBook(pageActivity.book);
+                //} else if (bitmap.getWidth() >= pageActivity.context.getWidth()) {
                 } else {
+                    ((ViewGroup)pageActivity.page.getParent()).removeView(pageActivity.page);
+                    pageActivity.scroll.removeAllViews();
                     if (viewMode == VIEW_MODE_PHONE) {
                         List<View> pageViews = new ArrayList<>();// UI code goes here
                         for (int offset = 0; offset < bitmapHeight; offset += Constants.IMAGE_VIEW_HEIGHT_LIMIT) {
@@ -630,27 +635,29 @@ public class PageActivity extends AppCompatActivity {
                             Log.d(getClass().getName(), "Image creation");
                             Log.d(getClass().getName(), "After image creation");
                         }
-                        pageActivityReference.get().page.removeAllViews();
+                        pageActivity.page.removeAllViews();
                         for (View view : pageViews) {
-                            pageActivityReference.get().page.addView(view);
+                            pageActivity.page.addView(view);
                         }
+                        pageActivity.scroll.addView(pageActivity.page);
                         Log.v(getClass().getName(), "End setting bitmap");
                     } else {
-                        pageActivityReference.get().page.removeAllViewsInLayout();
-                        Bitmap limitedBitmap = Bitmap.createScaledBitmap(bitmap, scroll.getWidth(),
-                                (scroll.getWidth() * bitmap.getHeight())/bitmap.getWidth(),false);
+                        pageActivity.page.removeAllViewsInLayout();
+                        HorizontalScrollView horizontalScrollView = new HorizontalScrollView(getApplicationContext());
                         ImageView imageView = new ImageView(getApplicationContext());
-                        ViewGroup.LayoutParams layoutParams =
-                                new ViewGroup.LayoutParams(limitedBitmap.getWidth(), limitedBitmap.getHeight());
+                        Log.v(getClass().getName(), "Bitmap size is " + bitmap.getWidth() + "x" + bitmap.getHeight());
+                        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(bitmap.getWidth(), bitmap.getHeight());
                         imageView.setLayoutParams(layoutParams);
                         imageView.setScaleType(ImageView.ScaleType.FIT_START);
-                        imageView.setImageBitmap(limitedBitmap);
-                        pageActivityReference.get().page.addView(imageView);
+                        imageView.setImageBitmap(bitmap);
+                        pageActivity.page.addView(imageView);
+                        horizontalScrollView.addView(pageActivity.page);
+                        pageActivity.scroll.addView(horizontalScrollView);
                     }
                 }
-                pageActivityReference.get().scroll.setVisibility(VISIBLE);
-                pageActivityReference.get().progressBar.setVisibility(INVISIBLE);
-                pageActivityReference.get().scroll.scrollTo(0, 0);
+                pageActivity.scroll.setVisibility(VISIBLE);
+                pageActivity.progressBar.setVisibility(INVISIBLE);
+                pageActivity.scroll.scrollTo(0, 0);
             });
             return null;
         }
