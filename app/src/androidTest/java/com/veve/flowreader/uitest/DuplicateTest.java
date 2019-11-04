@@ -27,8 +27,8 @@ public class DuplicateTest {
 
     private File firstBookFile;
     private File secondBookFile;
-    private long firstBookId = -1L;
-    private long secondBookId = -1L;
+    private BookRecord firstBookRecord;
+    private BookRecord secondBookRecord;
     private BooksCollection booksCollection;
     private Context appContext;
 
@@ -37,7 +37,7 @@ public class DuplicateTest {
         appContext = InstrumentationRegistry.getTargetContext();
         booksCollection = BooksCollection.getInstance(appContext);
         firstBookFile = new File(appContext.getExternalFilesDir(null), "first_sample.pdf");
-        firstBookFile.createNewFile();
+        assertTrue(firstBookFile.createNewFile());
         BookRecord oldBookRecord = booksCollection.getBook(firstBookFile.getPath());
         if (oldBookRecord != null) {
             booksCollection.deleteBook(oldBookRecord.getId());
@@ -51,7 +51,7 @@ public class DuplicateTest {
         os.close();
         is.close();
         secondBookFile = new File(appContext.getExternalFilesDir(null), "second_sample.pdf");
-        secondBookFile.createNewFile();
+        assertTrue(secondBookFile.createNewFile());
         oldBookRecord = booksCollection.getBook(secondBookFile.getPath());
         if (oldBookRecord != null) {
             booksCollection.deleteBook(oldBookRecord.getId());
@@ -81,8 +81,8 @@ public class DuplicateTest {
         appContext.startActivity(secondIntent);
         Thread.sleep(5000);
 
-        BookRecord firstBookRecord = booksCollection.getBook(firstBookFile.getPath());
-        BookRecord secondBookRecord = booksCollection.getBook(secondBookFile.getPath());
+        firstBookRecord = booksCollection.getBook(firstBookFile.getPath());
+        secondBookRecord = booksCollection.getBook(secondBookFile.getPath());
 
         assertTrue((firstBookRecord==null&&secondBookRecord!=null)
                 ||(secondBookRecord==null&&firstBookRecord!=null));
@@ -91,10 +91,10 @@ public class DuplicateTest {
 
     @After
     public void cleanup() {
-        firstBookFile.delete();
-        secondBookFile.delete();
-        booksCollection.deleteBook(firstBookId);
-        booksCollection.deleteBook(secondBookId);
+        assertTrue(firstBookFile.delete());
+        assertTrue(secondBookFile.delete());
+        if (firstBookRecord!=null) booksCollection.deleteBook(firstBookRecord.getId());
+        if (secondBookRecord!=null) booksCollection.deleteBook(secondBookRecord.getId());
     }
 
 }

@@ -46,6 +46,10 @@ public class BookFactory {
             book = new PdfBook(file.getPath());
         }
 
+        //Filling native book data
+        bookRecord.setPagesCount(book.getPagesCount());
+        bookRecord.setName(book.getName());
+
         //Generating and setting preview
         Bitmap bitmap = book.getPage(0).getAsBitmap(new DevicePageContext(100));
         Bitmap thumbnail = Bitmap.createScaledBitmap(bitmap, 100, 150, true);
@@ -53,9 +57,6 @@ public class BookFactory {
         thumbnail.compress(Bitmap.CompressFormat.JPEG,100, byteArrayOutputStream);
         bookRecord.setPreview(byteArrayOutputStream.toByteArray());
 
-        //Filling native book data
-        bookRecord.setPagesCount(book.getPagesCount());
-        bookRecord.setName(book.getName());
         bookRecord.setMd5(fileToMD5(file.getPath()));
         bookRecord.setSize(file.length());
         bookRecord.setName(file.getName());
