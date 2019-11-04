@@ -11,6 +11,9 @@ import java.util.List;
 @Dao
 public interface DaoAccess {
 
+    @Query("SELECT * FROM BookRecord WHERE md5 = :checksum")
+    BookRecord fetchBookByChecksum(String checksum);
+
     @Query("SELECT * FROM BookRecord WHERE size = :size")
     BookRecord fetchBookBySize(long size);
 

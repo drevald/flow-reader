@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.veve.flowreader.MD5;
 import com.veve.flowreader.dao.AppDatabase;
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.dao.DaoAccess;
@@ -250,7 +251,8 @@ public class BooksCollection {
 
         @Override
         protected Boolean doInBackground(File... files) {
-            BookRecord bookRecords = daoAccess.fetchBookBySize(files[0].length());
+            String checksum = MD5.fileToMD5(files[0].getPath());
+            BookRecord bookRecords = daoAccess.fetchBookByChecksum(checksum);
             return bookRecords != null;
         }
 

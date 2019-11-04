@@ -12,6 +12,7 @@ import android.util.Log;
 import static com.veve.flowreader.BookContentResolver.contentToFile;
 
 import com.veve.flowreader.Constants;
+import com.veve.flowreader.MD5;
 import com.veve.flowreader.R;
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.model.BookFactory;
@@ -32,6 +33,7 @@ public class GetBookActivity extends AppCompatActivity {
         try {
             BooksCollection booksCollection = BooksCollection.getInstance(getApplicationContext());
             File file = new File(contentToFile(getApplicationContext(), uri));
+            Log.d(getClass().getName(), "Getting doc " + uri.toString());
             if (booksCollection.hasBook(file)) {
                 BookRecord bookRecord = booksCollection.getBook(file.getPath());
                 Intent ii = new Intent(GetBookActivity.this, PageActivity.class);
@@ -49,28 +51,6 @@ public class GetBookActivity extends AppCompatActivity {
         }
     }
 
-    private File getFile(Uri uri) throws IOException {
-        File bookFile;
-        if (uri.getScheme().equals("file")) {
-            bookFile = new File(uri.getPath());
-        } else {
-            ContentResolver resolver = getApplicationContext().getContentResolver();
-            InputStream fis = resolver.openInputStream(uri);
-            String extension = uri.getPath().substring(uri.getPath().lastIndexOf("."));
-            bookFile = File.createTempFile("book", extension);
-            FileOutputStream fileOutputStream = new FileOutputStream(bookFile);
-            byte[] buffer = new byte[100];
-            while(fis.read(buffer)!=-1) {
-                fileOutputStream.write(buffer);
-                fileOutputStream.flush();
-            }
-            fileOutputStream.close();
-            fis.close();
-            Log.v(getClass().getName(), "bookFile.getAbsolutePath()=" + bookFile.getAbsolutePath());
-        }
-        return bookFile;
-    }
-
     class BookCreatorTask extends AsyncTask<File, Void, Void> {
 
         private BookRecord newBook;
@@ -82,9 +62,6 @@ public class GetBookActivity extends AppCompatActivity {
             File bookFile = files[0];
             Log.v(getClass().getName(), "Start parsing new book at " + bookFile.getPath());
             newBook = BookFactory.getInstance().createBook(bookFile);
-            newBook.setCurrentPage(0);
-            newBook.setUrl(bookFile.getPath());
-            newBook.setSize(bookFile.length());
             bookId = BooksCollection.getInstance(getApplicationContext()).addBook(newBook);
             Log.v("BOOK", "Inserted with URL " + newBook.getUrl());
             return null;
