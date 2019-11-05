@@ -172,7 +172,6 @@ public class PageActivity extends AppCompatActivity {
         home.setOnClickListener(new HomeButtonListener());
         show.setOnClickListener(new ShowListener());
         page.setOnTouchListener(new OnDoubleTapListener(this, page));
-        //scroll.setOnTouchListener(new OnDoubleTapListener(this, page));
         topLayout.addOnLayoutChangeListener(new LayoutListener());
 
         Display display = getWindowManager().getDefaultDisplay();
@@ -192,6 +191,11 @@ public class PageActivity extends AppCompatActivity {
         book.setZoom(context.getZoom());
         ((TextView)findViewById(R.id.zoom_percent))
                 .setText((int)(context.getZoom() * 100)+"%");
+
+        //runOnUiThread(()-> {
+            show.setImageResource(viewMode ==
+                    Constants.VIEW_MODE_PHONE ? R.drawable.ic_to_book : R.drawable.ic_to_phone);
+        //});
 
     }
 

@@ -1,8 +1,13 @@
 package com.veve.flowreader.uitest;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.Application;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.VectorDrawable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.test.rule.ActivityTestRule;
 import android.view.MotionEvent;
 import android.widget.ImageButton;
@@ -25,7 +30,7 @@ import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
 
-public class PageTest extends BookTest {
+public class ModeBookTest extends BookTest {
 
     PageActivity pageActivity;
     VectorDrawable iconDrawableToPhone;
@@ -38,13 +43,6 @@ public class PageTest extends BookTest {
                     true,     // initialTouchMode
                     false);   // launchActivity. False to customize the intent
 
-    @Rule
-    public ActivityTestRule<MainActivity> mainActivityRule =
-            new ActivityTestRule<>(
-                    MainActivity.class,
-                    true,     // initialTouchMode
-                    false);   // launchActivity. False to customize the intent
-
     @Before
     public void getIcons() {
         iconDrawableToPhone = (VectorDrawable)appContext.getResources().getDrawable(R.drawable.ic_to_phone);
@@ -53,6 +51,8 @@ public class PageTest extends BookTest {
 
     @Before
     public void getActivity() {
+        bookRecord.setMode(Constants.VIEW_MODE_ORIGINAL);
+        booksCollection.updateBook(bookRecord);
         Intent intent = new Intent("com.veve.flowreader.views.PageActivity");
         intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(Constants.BOOK_ID, testBookId);
@@ -75,34 +75,21 @@ public class PageTest extends BookTest {
 
     @Test
     public void testSwitchShowButton() throws Exception {
+
         ImageButton showButton = pageActivity.findViewById(R.id.show);
         VectorDrawable iconDrawable;
         iconDrawable = (VectorDrawable)(showButton.getDrawable());
         assertTrue(areDrawablesIdentical(iconDrawable, iconDrawableToPhone));
 
+        //make panel visible
+        LinearLayout page = pageActivity.findViewById(R.id.page);
+        page.callOnClick();
+
         //changing mode to "reflowed page"
         showButton.callOnClick();
         iconDrawable = (VectorDrawable)(showButton.getDrawable());
         assertTrue(areDrawablesIdentical(iconDrawable, iconDrawableToBook));
-
-        //getting back to main activity
-        Intent mainActivityIntent = new Intent("com.veve.flowreader.views.MainActivity");
-        mainActivityIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        mainActivityRule.launchActivity(mainActivityIntent);
-        Thread.sleep(3000);
-
-        //getting back to page
-//        Intent intent = new Intent("com.veve.flowreader.views.PageActivity");
-//        intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
-//        intent.putExtra(Constants.BOOK_ID, testBookId);
-//        intent.putExtra(Constants.POSITION, 1);
-        pageActivity = pageActivityRule.getActivity();
-//        Thread.sleep(3000);
-
-        //Confirming button is still "book"
-        showButton = pageActivity.findViewById(R.id.show);
-        iconDrawable = (VectorDrawable)(showButton.getDrawable());
-        assertTrue(areDrawablesIdentical(iconDrawable, iconDrawableToPhone));
+        assertTrue(pageActivity.getBook().getMode()==Constants.VIEW_MODE_PHONE);
 
     }
 

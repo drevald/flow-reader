@@ -25,12 +25,13 @@ public class BookTest {
     long testBookId;
     BookRecord bookRecord;
     Context appContext;
+    BooksCollection booksCollection;
 
     @Before
     public void prepareCollection() throws Exception {
         appContext = InstrumentationRegistry.getTargetContext();
-        BooksCollection booksCollection = BooksCollection.getInstance(appContext);
-        File file = new File(appContext.getFilesDir(), "pdf_sample.pdf");
+        booksCollection = BooksCollection.getInstance(appContext);
+        File file = new File(appContext.getExternalFilesDir(null), "pdf_sample.pdf");
         file.createNewFile();
         BookRecord oldBookRecord = booksCollection.getBook(file.getPath());
         if (oldBookRecord != null) {
@@ -46,6 +47,7 @@ public class BookTest {
         is.close();
         bookRecord = BookFactory.getInstance().createBook(file);
         testBookId = booksCollection.addBook(bookRecord);
+        bookRecord = booksCollection.getBook(testBookId);
     }
 
 
