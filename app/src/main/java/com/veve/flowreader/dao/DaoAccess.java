@@ -11,6 +11,9 @@ import java.util.List;
 @Dao
 public interface DaoAccess {
 
+    @Query("DELETE FROM BookRecord WHERE md5 = :checksum")
+    void deleteByChecksum(String checksum);
+
     @Query("SELECT * FROM BookRecord WHERE md5 = :checksum")
     BookRecord fetchBookByChecksum(String checksum);
 

@@ -141,29 +141,15 @@ public class MainActivity extends AppCompatActivity {
             }
         );
 
-//        gridView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-//            @Override
-//            public void onGlobalLayout() {
-//                Log.d(getClass().getName(), "");
-//            }
-//        });
-
         gridView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             int bookThumbPx = (int) (Constants.BOOK_THUMB_WIDTH
                     * Resources.getSystem().getDisplayMetrics().density);
-            Log.d(getClass().getName(), "1");
             int bookThumbPaddingPx = (int) (Constants.BOOK_THUMB_HOR_PADDING
                     * Resources.getSystem().getDisplayMetrics().density);
-            Log.d(getClass().getName(), "2");
             columnsNumber = gridView.getWidth()/(bookThumbPx + 2 * bookThumbPaddingPx);
-            Log.d(getClass().getName(), "3");
-//            gridView.setMinimumWidth(columnsNumber * (bookThumbPx + 2 * bookThumbPaddingPx));
-//            Log.d(getClass().getName(), "4");
             if(preferences.getInt(Constants.VIEW_TYPE, Constants.LIST_VIEW_TYPE) == Constants.LIST_VIEW_TYPE){
-                Log.d(getClass().getName(), "5");
                 gridView.setNumColumns(1);
             } else {
-                Log.d(getClass().getName(), "6");
                 gridView.setNumColumns(columnsNumber);
             }
         });
