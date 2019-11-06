@@ -156,13 +156,19 @@ public class CachedPageRendererImpl implements PageRenderer {
             context.resetPosition();
             context.setCanvas(canvas);
 
-            Paint paint1 = new Paint();
-            paint1.setStyle(Paint.Style.STROKE);
-            paint1.setColor(Color.RED);
-            paint1.setStrokeWidth(2);
+            Paint strokePaint = new Paint();
+            strokePaint.setStyle(Paint.Style.STROKE);
+            strokePaint.setColor(Color.RED);
+            strokePaint.setStrokeWidth(2);
+
+            Paint fillPaint = new Paint();
+            fillPaint.setStyle(Paint.Style.FILL);
+            fillPaint.setColor(Color.WHITE);
+
+            canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), fillPaint);
 
             if (Constants.DEBUG)
-                canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), paint1);
+                canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), strokePaint);
 
             for(PageGlyph pageGlyph : pageGlyphList) {
                 pageGlyph.draw(context, true);
@@ -182,21 +188,19 @@ public class CachedPageRendererImpl implements PageRenderer {
     @Override
     public Bitmap renderOriginalPage(DevicePageContext context, int position) {
         Bitmap bitmap = getOriginalPageBitmap(position);
-
         return Bitmap.createScaledBitmap(bitmap,
                 (int)(context.getZoom()*context.getWidth()),
                 (int)(context.getZoom()*(context.getWidth() * bitmap.getHeight())/bitmap.getWidth()),
                 false);
-
-//        return Bitmap.createScaledBitmap(bitmap,
-//                (int) (context.getZoom() * bitmap.getWidth()),
-//                (int) (context.getZoom() * bitmap.getHeight()),
-//                false);
-
     }
 
     public void setPageLayoutParser(PageLayoutParser pageLayoutParser) {
         this.pageLayoutParser = pageLayoutParser;
+    }
+
+    @Override
+    public Bitmap renderOriginalPage(int position) {
+        return getOriginalPageBitmap(position);
     }
 
 }

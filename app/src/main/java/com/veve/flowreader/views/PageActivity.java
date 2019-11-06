@@ -5,6 +5,9 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -245,7 +248,7 @@ public class PageActivity extends AppCompatActivity {
                 break;
             }
             case R.id.page_unreadable: {
-                Bitmap originalBitmap = pageRenderer.renderOriginalPage(context, currentPage);
+                Bitmap originalBitmap = pageRenderer.renderOriginalPage(currentPage);
                 Bitmap reflowedBitmap = pageLoader.bitmap;
                 ByteArrayOutputStream osOriginal = new ByteArrayOutputStream();
                 ByteArrayOutputStream osReflowed = new ByteArrayOutputStream();
@@ -253,7 +256,6 @@ public class PageActivity extends AppCompatActivity {
                 reflowedBitmap.compress(Bitmap.CompressFormat.JPEG, 25, osReflowed);
                 ObjectMapper mapper = new ObjectMapper(); // create once, reuse
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
 
                 File origBmpFile = null;
                 File reflowedBmpFile = null;

@@ -28,8 +28,15 @@ public class MockRenderer implements PageRenderer {
     }
 
     @Override
+    public Bitmap renderOriginalPage(int position) {
+        return null;
+    }
+
+    @Override
     public void setPageLayoutParser(PageLayoutParser parser) {
 
     }
+
+
 
 }
