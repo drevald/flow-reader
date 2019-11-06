@@ -74,6 +74,11 @@ public class PageRendererImpl implements PageRenderer {
     }
 
     @Override
+    public Bitmap renderOriginalPage(int position) {
+        return bookSource.getPageBytes(position);
+    }
+
+    @Override
     public Bitmap renderOriginalPage(DevicePageContext context, int position) {
         Bitmap bitmap = bookSource.getPageBytes(position);
         return Bitmap.createScaledBitmap(bitmap,

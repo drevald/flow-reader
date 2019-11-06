@@ -8,6 +8,8 @@ public interface PageRenderer {
 
     Bitmap renderOriginalPage(DevicePageContext context, int position);
 
+    Bitmap renderOriginalPage(int position);
+
     void setPageLayoutParser(PageLayoutParser parser);
 
 }

@@ -93,6 +93,18 @@ public class BooksCollection {
 //        }
 //    }
 
+    public BookRecord getBookByChecksum (String checksum) {
+        BookGetChecksumTask bookGetChecksumTask = new BookGetChecksumTask(daoAccess);
+        bookGetChecksumTask.execute(checksum);
+        try {
+            return bookGetChecksumTask.get();
+        } catch (Exception e) {
+            Log.e(getClass().getName(), e.getLocalizedMessage());
+            return null;
+        }
+    }
+
+
     public boolean hasBook (File file) {
         BookCheckerTask bookCheckerTask = new BookCheckerTask(daoAccess);
         bookCheckerTask.execute(file);
@@ -269,6 +281,21 @@ class BookByUrlGetterTask extends AsyncTask<String, Void, BookRecord> {
     @Override
     protected BookRecord doInBackground(String... strings) {
         return daoAccess.fetchBook(strings[0]);
+    }
+
+}
+
+class BookGetChecksumTask extends AsyncTask<String, Void, BookRecord> {
+
+    private DaoAccess daoAccess;
+
+    BookGetChecksumTask(DaoAccess daoAccess) {
+        this.daoAccess = daoAccess;
+    }
+
+    @Override
+    protected BookRecord doInBackground(String... strings) {
+        return daoAccess.fetchBookByChecksum(strings[0]);
     }
 
 }

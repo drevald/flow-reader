@@ -13,7 +13,7 @@ public interface BookContentResolver {
 
     static final MessageFormat fileInputFormat = new MessageFormat("file://{0}");
 
-    static final MessageFormat contentInputFormat = new MessageFormat("{0}external_files{1}");
+    static final MessageFormat contentInputFormat = new MessageFormat("{0}_files{1}");
 
     static final MessageFormat outputFormat = new MessageFormat("/storage/emulated/0{0}");
 

@@ -7,8 +7,11 @@ import android.net.Uri;
 import android.support.test.InstrumentationRegistry;
 import android.util.Log;
 
+import com.veve.flowreader.MD5;
 import com.veve.flowreader.R;
+import com.veve.flowreader.dao.AppDatabase;
 import com.veve.flowreader.dao.BookRecord;
+import com.veve.flowreader.dao.DaoAccess;
 import com.veve.flowreader.model.BooksCollection;
 
 import org.junit.After;
@@ -17,6 +20,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -36,34 +40,26 @@ public class DuplicateTest {
     public void prepareSamples() throws Exception {
         appContext = InstrumentationRegistry.getTargetContext();
         booksCollection = BooksCollection.getInstance(appContext);
-        firstBookFile = new File(appContext.getExternalFilesDir(null), "first_sample.pdf");
-        assertTrue(firstBookFile.createNewFile());
-        BookRecord oldBookRecord = booksCollection.getBook(firstBookFile.getPath());
-        if (oldBookRecord != null) {
-            booksCollection.deleteBook(oldBookRecord.getId());
-        }
+        AppDatabase appDatabase = AppDatabase.getInstance(appContext);
+        DaoAccess daoAccess = appDatabase.daoAccess();
+        firstBookFile = makeFile("first_sample.pdf");
+        secondBookFile = makeFile("second_sample.pdf");
+        String checksum = MD5.fileToMD5(secondBookFile.getPath());
+        daoAccess.deleteByChecksum(checksum);
+    }
+
+    private File makeFile(String fileName) throws IOException {
+        File file = new File(appContext.getExternalFilesDir(null), fileName);
+        if (!file.exists()) assertTrue(file.createNewFile());
         InputStream is = appContext.getResources().openRawResource(R.raw.pdf_sample);
-        OutputStream os = new FileOutputStream(firstBookFile);
-        byte[] buffer = new byte[100];
+        OutputStream os = new FileOutputStream(file);
+        byte[] buffer = new byte[1];
         while(is.read(buffer) != -1) {
             os.write(buffer);
         }
         os.close();
         is.close();
-        secondBookFile = new File(appContext.getExternalFilesDir(null), "second_sample.pdf");
-        assertTrue(secondBookFile.createNewFile());
-        oldBookRecord = booksCollection.getBook(secondBookFile.getPath());
-        if (oldBookRecord != null) {
-            booksCollection.deleteBook(oldBookRecord.getId());
-        }
-        is = appContext.getResources().openRawResource(R.raw.pdf_sample);
-        os = new FileOutputStream(secondBookFile);
-        buffer = new byte[100];
-        while(is.read(buffer) != -1) {
-            os.write(buffer);
-        }
-        os.close();
-        is.close();
+        return file;
     }
 
     @Test
@@ -91,8 +87,8 @@ public class DuplicateTest {
 
     @After
     public void cleanup() {
-        assertTrue(firstBookFile.delete());
-        assertTrue(secondBookFile.delete());
+        if(firstBookFile!=null) assertTrue(firstBookFile.delete());
+        if(secondBookFile!=null) assertTrue(secondBookFile.delete());
         if (firstBookRecord!=null) booksCollection.deleteBook(firstBookRecord.getId());
         if (secondBookRecord!=null) booksCollection.deleteBook(secondBookRecord.getId());
     }

@@ -33,9 +33,10 @@ public class GetBookActivity extends AppCompatActivity {
         try {
             BooksCollection booksCollection = BooksCollection.getInstance(getApplicationContext());
             File file = new File(contentToFile(getApplicationContext(), uri));
+            String checksum = MD5.fileToMD5(file.getPath());
+            BookRecord bookRecord = booksCollection.getBookByChecksum(checksum);
             Log.d(getClass().getName(), "Getting doc " + uri.toString());
-            if (booksCollection.hasBook(file)) {
-                BookRecord bookRecord = booksCollection.getBook(file.getPath());
+            if (bookRecord!=null) {
                 Intent ii = new Intent(GetBookActivity.this, PageActivity.class);
                 ii.putExtra(Constants.BOOK_ID, bookRecord.getId());
                 ii.putExtra(Constants.FILE_NAME, bookRecord.getUrl());
