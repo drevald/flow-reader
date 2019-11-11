@@ -1,20 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'cpp'
 
-model {
-    components {
-        hello(NativeExecutableSpec) {
-            sources {
-                cpp {
-                    source {
-                        srcDir "jni/reflowlib"
-                    }
-                }
-            }
-        }
-    }
-}
-
 def getGitHash = { ->
     def stdout = new ByteArrayOutputStream()
     exec {
