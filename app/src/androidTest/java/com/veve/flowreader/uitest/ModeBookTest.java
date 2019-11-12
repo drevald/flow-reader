@@ -19,7 +19,9 @@ import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.views.MainActivity;
 import com.veve.flowreader.views.PageActivity;
 
+import org.junit.Assume;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -35,6 +37,16 @@ public class ModeBookTest extends BookTest {
     PageActivity pageActivity;
     VectorDrawable iconDrawableToPhone;
     VectorDrawable iconDrawableToBook;
+
+    private static void initTestIfNotTravis() {
+        boolean cond = "true".equals(System.getenv("TRAVIS")) ;
+        Assume.assumeFalse(cond);
+    }
+
+    @BeforeClass
+    public static void before() {
+        initTestIfNotTravis();
+    }
 
     @Rule
     public ActivityTestRule<PageActivity> pageActivityRule =

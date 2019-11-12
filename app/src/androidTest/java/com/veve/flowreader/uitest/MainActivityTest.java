@@ -9,6 +9,8 @@ import android.widget.ImageButton;
 import com.veve.flowreader.R;
 import com.veve.flowreader.views.MainActivity;
 
+import org.junit.Assume;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -20,6 +22,16 @@ import static junit.framework.TestCase.assertTrue;
 public class MainActivityTest extends BookTest {
 
     MainActivity mainActivity;
+
+    private static void initTestIfNotTravis() {
+        boolean cond = "true".equals(System.getenv("TRAVIS")) ;
+        Assume.assumeFalse(cond);
+    }
+
+    @BeforeClass
+    public static void before() {
+        initTestIfNotTravis();
+    }
 
     @Rule
     public ActivityTestRule<MainActivity> activityRule =

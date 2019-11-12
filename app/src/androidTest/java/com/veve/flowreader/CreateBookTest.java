@@ -14,7 +14,9 @@ import com.veve.flowreader.model.BooksCollection;
 import com.veve.flowreader.model.impl.pdf.PdfBook;
 
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
@@ -35,6 +37,16 @@ public class CreateBookTest {
     private static final String BOOK_MD5 = "B5407E667B7BAA38FF6F10C3A8E1B8AD";
     private static final String BOOK_URI = "/storage/emulated/0/Android/data/com.veve.flowreader/files/pdf_sample.pdf";
     private static final long BOOK_SIZE = 30921L;
+
+    private static void initTestIfNotTravis() {
+        boolean cond = "true".equals(System.getenv("TRAVIS")) ;
+        Assume.assumeFalse(cond);
+    }
+
+    @BeforeClass
+    public static void before() {
+        initTestIfNotTravis();
+    }
 
     @Before
     public void preparePdfSample() throws Exception {

@@ -36,6 +36,7 @@ public class BookCollectionTest {
 
     BooksCollection booksCollection;
     BookRecord bookRecord;
+    long bookId;
 
     @Before
     public void prepareCollection() {
@@ -45,13 +46,13 @@ public class BookCollectionTest {
 
     @After
     public void cleaUp() {
-        booksCollection.deleteBook(bookRecord.getId());
+        booksCollection.deleteBook(bookId);
     }
 
     @Test
     public void checkCollection() {
         bookRecord = new BookRecord();
-        long bookId = booksCollection.addBook(bookRecord);
+        bookId = booksCollection.addBook(bookRecord);
         bookRecord = booksCollection.getBook(bookId);
         assertNotEquals(-1, bookId);
         /*

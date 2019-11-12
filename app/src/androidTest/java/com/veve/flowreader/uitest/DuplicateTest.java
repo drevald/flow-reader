@@ -15,7 +15,9 @@ import com.veve.flowreader.dao.DaoAccess;
 import com.veve.flowreader.model.BooksCollection;
 
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
@@ -35,6 +37,16 @@ public class DuplicateTest {
     private BookRecord secondBookRecord;
     private BooksCollection booksCollection;
     private Context appContext;
+
+    private static void initTestIfNotTravis() {
+        boolean cond = "true".equals(System.getenv("TRAVIS")) ;
+        Assume.assumeFalse(cond);
+    }
+
+    @BeforeClass
+    public static void before() {
+        initTestIfNotTravis();
+    }
 
     @Before
     public void prepareSamples() throws Exception {

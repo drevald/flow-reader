@@ -15,7 +15,9 @@ import com.veve.flowreader.model.impl.djvu.DjvuBook;
 import com.veve.flowreader.model.impl.djvu.DjvuBookSource;
 
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -34,6 +36,16 @@ public class PerformanceTest {
     BooksCollection booksCollection;
     Context appContext;
     long bookRecordId;
+
+    private static void initTestIfNotTravis() {
+        boolean cond = "true".equals(System.getenv("TRAVIS")) ;
+        Assume.assumeFalse(cond);
+    }
+
+    @BeforeClass
+    public static void before() {
+        initTestIfNotTravis();
+    }
 
     @Before
     public void getBookFile() throws Exception {
