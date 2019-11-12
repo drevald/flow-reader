@@ -22,7 +22,8 @@ before_script:
   - adb devices
   - adb push app/src/main/res/raw/pdf_sample.pdf /data/local/tmp/
   - adb shell input keyevent 82 &
-
+script:
+  - ./gradlew build
 env:
   TRAVIS=true
 

@@ -23,16 +23,6 @@ public class MainActivityTest extends BookTest {
 
     MainActivity mainActivity;
 
-    private static void initTestIfNotTravis() {
-        boolean cond = "true".equals(System.getenv("TRAVIS")) ;
-        Assume.assumeFalse(cond);
-    }
-
-    @BeforeClass
-    public static void before() {
-        initTestIfNotTravis();
-    }
-
     @Rule
     public ActivityTestRule<MainActivity> activityRule =
             new ActivityTestRule<>(

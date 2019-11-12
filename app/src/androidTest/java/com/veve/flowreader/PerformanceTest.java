@@ -37,15 +37,6 @@ public class PerformanceTest {
     Context appContext;
     long bookRecordId;
 
-    private static void initTestIfNotTravis() {
-        boolean cond = "true".equals(System.getenv("TRAVIS")) ;
-        Assume.assumeFalse(cond);
-    }
-
-    @BeforeClass
-    public static void before() {
-        initTestIfNotTravis();
-    }
 
     @Before
     public void getBookFile() throws Exception {

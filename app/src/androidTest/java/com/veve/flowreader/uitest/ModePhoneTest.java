@@ -26,16 +26,6 @@ public class ModePhoneTest extends BookTest {
     VectorDrawable iconDrawableToPhone;
     VectorDrawable iconDrawableToBook;
 
-    private static void initTestIfNotTravis() {
-        boolean cond = "true".equals(System.getenv("TRAVIS")) ;
-        Assume.assumeFalse(cond);
-    }
-
-    @BeforeClass
-    public static void before() {
-        initTestIfNotTravis();
-    }
-
     @Rule
     public ActivityTestRule<PageActivity> pageActivityRule =
             new ActivityTestRule<>(

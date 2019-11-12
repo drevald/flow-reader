@@ -33,16 +33,6 @@ public class IntentTest {
     private BooksCollection booksCollection;
     private Context appContext;
 
-    private static void initTestIfNotTravis() {
-        boolean cond = "true".equals(System.getenv("TRAVIS")) ;
-        Assume.assumeFalse(cond);
-    }
-
-    @BeforeClass
-    public static void before() {
-        initTestIfNotTravis();
-    }
-
     @Before
     public void preparePdfSample() throws Exception {
         appContext = InstrumentationRegistry.getTargetContext();

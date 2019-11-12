@@ -38,16 +38,6 @@ public class CreateBookTest {
     private static final String BOOK_URI = "/storage/emulated/0/Android/data/com.veve.flowreader/files/pdf_sample.pdf";
     private static final long BOOK_SIZE = 30921L;
 
-    private static void initTestIfNotTravis() {
-        boolean cond = "true".equals(System.getenv("TRAVIS")) ;
-        Assume.assumeFalse(cond);
-    }
-
-    @BeforeClass
-    public static void before() {
-        initTestIfNotTravis();
-    }
-
     @Before
     public void preparePdfSample() throws Exception {
         appContext = InstrumentationRegistry.getTargetContext();
