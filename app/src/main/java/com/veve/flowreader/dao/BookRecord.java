@@ -19,6 +19,7 @@ public class BookRecord {
     private String name;
     private String url;
     private float zoom = 1f;
+    private float zoomOriginal = 1f;
     private float kerning = 0.5f;
     private float leading = 12f;
     private int margin = 25;
@@ -145,5 +146,9 @@ public class BookRecord {
     public int getScrollOffset() {return scrollOffset; }
 
     public void setScrollOffset(int scrollOffset) {this.scrollOffset = scrollOffset; }
+
+    public float getZoomOriginal() { return zoomOriginal; }
+
+    public void setZoomOriginal(float zoomOriginal) { this.zoomOriginal = zoomOriginal; }
 
 }

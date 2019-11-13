@@ -189,8 +189,9 @@ public class CachedPageRendererImpl implements PageRenderer {
     public Bitmap renderOriginalPage(DevicePageContext context, int position) {
         Bitmap bitmap = getOriginalPageBitmap(position);
         return Bitmap.createScaledBitmap(bitmap,
-                (int)(context.getZoom()*context.getWidth()),
-                (int)(context.getZoom()*(context.getWidth() * bitmap.getHeight())/bitmap.getWidth()),
+                (int)(context.getZoomOriginal()*context.getWidth()),
+                (int)(context.getZoomOriginal()*(context.getWidth()
+                        * bitmap.getHeight())/bitmap.getWidth()),
                 false);
     }
 

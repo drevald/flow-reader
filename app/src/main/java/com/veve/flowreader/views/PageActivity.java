@@ -182,6 +182,7 @@ public class PageActivity extends AppCompatActivity {
         display.getSize(point);
         context = new DevicePageContextImpl(point.x);
         context.setZoom(book.getZoom());
+        context.setZoomOriginal(book.getZoomOriginal());
         context.setKerning(book.getKerning());
         context.setLeading(book.getLeading());
         context.setMargin(book.getMargin());
@@ -192,8 +193,6 @@ public class PageActivity extends AppCompatActivity {
         setPageNumber(currentPage);
 
         book.setZoom(context.getZoom());
-        ((TextView)findViewById(R.id.zoom_percent))
-                .setText((int)(context.getZoom() * 100)+"%");
 
         //runOnUiThread(()-> {
             show.setImageResource(viewMode ==
@@ -526,29 +525,41 @@ public class PageActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.smaller_text: {
-                    if (context.getZoom() <= Constants.ZOOM_MIN)
+            if (viewMode == VIEW_MODE_PHONE) {
+                switch (v.getId()) {
+                    case R.id.smaller_text: {
+                        if (context.getZoom() <= Constants.ZOOM_MIN)
+                            break;
+                        context.setZoom(-1 * Constants.ZOOM_STEP + context.getZoom());
+                        book.setZoom(context.getZoom());
                         break;
-                    context.setZoom(-1 * Constants.ZOOM_STEP + context.getZoom());
-                    Log.v(getClass().getName(), "Zoom set to " + context.getZoom());
-                    book.setZoom(context.getZoom());
-                    ((TextView)findViewById(R.id.zoom_percent))
-                            .setText((int)(context.getZoom() * 100)+"%");
-                    break;
+                    }
+                    case R.id.larger_text: {
+                        if (context.getZoom() > Constants.ZOOM_MAX)
+                            break;
+                        context.setZoom(Constants.ZOOM_STEP + context.getZoom());
+                        book.setZoom(context.getZoom());
+                        break;
+                    }
                 }
-                case R.id.larger_text: {
-                    if (context.getZoom() > Constants.ZOOM_MAX)
+            } else {
+                switch (v.getId()) {
+                    case R.id.smaller_text: {
+                        if (book.getZoomOriginal() <= Constants.ZOOM_MIN)
+                            break;
+                        context.setZoomOriginal(-1 * Constants.ZOOM_STEP + book.getZoomOriginal());
+                        book.setZoomOriginal(context.getZoomOriginal());
                         break;
-                    context.setZoom(Constants.ZOOM_STEP + context.getZoom());
-                    Log.v(getClass().getName(), "Zoom set to " + context.getZoom());
-                    book.setZoom(context.getZoom());
-                    ((TextView)findViewById(R.id.zoom_percent))
-                            .setText((int)(context.getZoom() * 100)+"%");
-                    break;
+                    }
+                    case R.id.larger_text: {
+                        if (book.getZoomOriginal() > Constants.ZOOM_MAX)
+                            break;
+                        context.setZoomOriginal(Constants.ZOOM_STEP + book.getZoomOriginal());
+                        book.setZoomOriginal(context.getZoomOriginal());
+                        break;
+                    }
                 }
             }
-
             pageActivity.setPageNumber(currentPage);
 
         }

@@ -82,8 +82,8 @@ public class PageRendererImpl implements PageRenderer {
     public Bitmap renderOriginalPage(DevicePageContext context, int position) {
         Bitmap bitmap = bookSource.getPageBytes(position);
         return Bitmap.createScaledBitmap(bitmap,
-                (int) (context.getZoom() * bitmap.getWidth()),
-                (int) (context.getZoom() * bitmap.getHeight()),
+                (int) (context.getZoomOriginal() * bitmap.getWidth()),
+                (int) (context.getZoomOriginal() * bitmap.getHeight()),
                 false);
     }
 
