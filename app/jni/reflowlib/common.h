@@ -58,6 +58,7 @@ typedef struct glyph_struct {
     bool indented;
     int x, y, width, height, line_height, baseline_shift;
     bool is_space;
+    bool is_last = false;
 } glyph;
 
 struct image_format {
@@ -73,6 +74,10 @@ struct SortSegments {
         return get<0>(lhs) < get<0>(rhs);
     }
 };
+
+std::vector<glyph> convert_java_glyphs(JNIEnv *env, jobject list);
+
+void reflow(cv::Mat& cvMat, cv::Mat& new_image, float scale, JNIEnv* env, std::vector<glyph> glyphs, jobject list);
 
 void put_glyphs(JNIEnv *env, vector<glyph>& glyphs, jobject& list);
 

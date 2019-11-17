@@ -3,7 +3,9 @@ package com.veve.flowreader.model.impl.djvu;
 import android.graphics.Bitmap;
 
 import com.veve.flowreader.model.BookSource;
+import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyph;
+import com.veve.flowreader.model.PageGlyphInfo;
 
 import java.util.List;
 
@@ -19,6 +21,12 @@ public class DjvuBookSource implements BookSource {
     public Bitmap getPageBytes(int pageNumber) {
         DjvuBookPage djvuBookPage = (DjvuBookPage)djvuBook.getPage(pageNumber);
         return djvuBookPage.getAsBitmap();
+    }
+
+    @Override
+    public Bitmap getReflownPageBytes(int pageNumber, DevicePageContext context, List<PageGlyphInfo> pageGlyphs) {
+        DjvuBookPage pdfBookPage = (DjvuBookPage)djvuBook.getPage(pageNumber);
+        return pdfBookPage.getAsReflownBitmap(context, pageGlyphs);
     }
 
     @Override

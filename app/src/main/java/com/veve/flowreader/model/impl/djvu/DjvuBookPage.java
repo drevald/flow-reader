@@ -6,7 +6,10 @@ import android.util.Log;
 import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyphInfo;
+import com.veve.flowreader.model.PageSize;
 import com.veve.flowreader.model.impl.AbstractBookPage;
+
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +37,21 @@ public class DjvuBookPage extends AbstractBookPage implements BookPage  {
 
 
     @Override
+    public Bitmap getAsReflownBitmap(DevicePageContext context, List<PageGlyphInfo> pageGlyphs) {
+        PageSize pageSize = new PageSize();
+        byte[] bytes = getNativeReflownBytes(getBookId(), getPageNumber(), context.getZoom(), pageSize, pageGlyphs);
+        int width = pageSize.getPageWidth();
+        int height = pageSize.getPageHeight();
+        Bitmap.Config bitmapConfig = Bitmap.Config.ALPHA_8;
+        final ByteBuffer bb = ByteBuffer.wrap(bytes);
+        Log.v("BITMAP_MEMORY", "Bitmap.createBitmap(" + width + ", " + height + ", bitmapConfig);");
+        Bitmap bm = Bitmap.createBitmap(width, height, bitmapConfig);
+        bb.rewind();
+        bm.copyPixelsFromBuffer(bb);
+        return bm;
+    }
+
+    @Override
     public int getWidth() {
         return getNativeWidth(getBookId(), getPageNumber());
     }
@@ -43,7 +61,7 @@ public class DjvuBookPage extends AbstractBookPage implements BookPage  {
         return getNativeHeight(getBookId(), getPageNumber());
     }
 
-
+    private static native byte[] getNativeReflownBytes(long bookId, int pageNumber, float scale, PageSize pageSize, List<PageGlyphInfo> pageGlyphs);
 
     private static native byte[] getNativeBytes(long bookId, int pageNumber);
 

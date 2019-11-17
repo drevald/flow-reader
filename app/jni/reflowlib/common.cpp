@@ -1,6 +1,57 @@
 #include "common.h"
 #include "Xycut.h"
 #include "PageSegmenter.h"
+#include "Reflow.h"
+
+std::vector<glyph> convert_java_glyphs(JNIEnv *env, jobject list) {
+    // get glyphs
+
+    jclass listcls = static_cast<jclass>(env->NewGlobalRef(env->FindClass("java/util/ArrayList")));
+    jclass pageGlyphInfoCls = static_cast<jclass>(env->NewGlobalRef(env->FindClass("com/veve/flowreader/model/PageGlyphInfo")));
+    jmethodID sizeMethod = env->GetMethodID(listcls, "size", "()I");
+
+    int listsize = (int)env->CallIntMethod(list, sizeMethod);
+    jmethodID getMethod = env->GetMethodID(listcls, "get", "(I)Ljava/lang/Object;");
+
+    std::vector<glyph> glyphs;
+    if (listsize > 0) {
+        jmethodID getXMethod = env->GetMethodID(pageGlyphInfoCls, "getX", "()I");
+        jmethodID getYMethod = env->GetMethodID(pageGlyphInfoCls, "getY", "()I");
+        jmethodID getWidthMethod = env->GetMethodID(pageGlyphInfoCls, "getWidth", "()I");
+        jmethodID getHeightMethod = env->GetMethodID(pageGlyphInfoCls, "getHeight", "()I");
+        jmethodID getIndentedMethod = env->GetMethodID(pageGlyphInfoCls, "isIndented", "()Z");
+        jmethodID getBaselineShiftMethod = env->GetMethodID(pageGlyphInfoCls, "getBaselineShift", "()I");
+        jmethodID getLastMethod = env->GetMethodID(pageGlyphInfoCls, "isLast", "()Z");
+        jmethodID getSpaceMethod = env->GetMethodID(pageGlyphInfoCls, "isSpace", "()Z");
+
+        for (int i=0;i<listsize;i++) {
+            jobject gobject = env->CallObjectMethod(list, getMethod, (jint)i);
+            int x = (int)env->CallIntMethod(gobject, getXMethod);
+            int y = (int)env->CallIntMethod(gobject, getYMethod);
+            int width = (int)env->CallIntMethod(gobject, getWidthMethod);
+            int height = (int)env->CallIntMethod(gobject, getHeightMethod);
+            int baseline_shift = (int)env->CallIntMethod(gobject, getBaselineShiftMethod);
+            bool indented = (bool)env->CallBooleanMethod(gobject, getIndentedMethod);
+            bool last = (bool)env->CallBooleanMethod(gobject, getLastMethod);
+            bool space = (bool)env->CallBooleanMethod(gobject, getSpaceMethod);
+            glyph g;
+            g.x = x;
+            g.y = y;
+            g.height = height;
+            g.width = width;
+            g.indented = indented;
+            g.is_last = last;
+            g.is_space = space;
+            g.baseline_shift = baseline_shift;
+            glyphs.push_back(g);
+            env->DeleteLocalRef(gobject);
+        }
+
+    }
+
+    return glyphs;
+    // end
+}
 
 
 
@@ -23,6 +74,8 @@ std::vector<glyph> get_glyphs(cv::Mat mat) {
             cv::Mat img = mat(rect);
             PageSegmenter ps(img);
             vector<glyph> glyphs = ps.get_glyphs();
+
+            __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "glyphs count = %d\n", glyphs.size());
 
             for (int j=0;j<glyphs.size(); j++) {
                 glyph g = glyphs.at(j);
@@ -50,7 +103,7 @@ void put_glyphs(JNIEnv *env, vector<glyph>& glyphs, jobject& list) {
     }
 
     //jclass clz = env->FindClass("com/veve/flowreader/model/PageGlyphInfo");
-    jmethodID constructor = env->GetMethodID(clz, "<init>", "(ZIIIIIIZ)V");
+    jmethodID constructor = env->GetMethodID(clz, "<init>", "(ZIIIIIIZZ)V");
 
     if (constructor == NULL) {
         __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "%s\n", "constructor is NULL");
@@ -59,7 +112,7 @@ void put_glyphs(JNIEnv *env, vector<glyph>& glyphs, jobject& list) {
 
     for (glyph g : glyphs) {
 
-        jobject object = env->NewObject(clz, constructor, g.indented, g.x, g.y, g.width, g.height, g.line_height, g.baseline_shift, g.is_space);
+        jobject object = env->NewObject(clz, constructor, g.indented, g.x, g.y, g.width, g.height, g.line_height, g.baseline_shift, g.is_space, g.is_last);
 
         env->CallBooleanMethod(
                 list,
@@ -74,6 +127,38 @@ void put_glyphs(JNIEnv *env, vector<glyph>& glyphs, jobject& list) {
     sprintf(msg, "glyphs count %d\n", glyphs.size());
 
     __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "%s\n", msg);
+}
+
+void reflow(cv::Mat& cvMat, cv::Mat& new_image, float scale, JNIEnv* env, std::vector<glyph> savedGlyphs, jobject list) {
+    const cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(2, 2));
+    cv::dilate(cvMat, cvMat, kernel, cv::Point(-1, -1), 1);
+
+    std::vector<glyph> glyphs;
+
+    if (savedGlyphs.size() == 0) {
+        glyphs = get_glyphs(cvMat);
+        put_glyphs(env, glyphs, list);
+    } else {
+        glyphs = savedGlyphs;
+    }
+
+    /*
+    for (int i=0;i<glyphs.size(); i++){
+        glyph g = glyphs.at(i);
+        cv::rectangle(cvMat,cv::Rect(g.x, g.y, g.width, g.height), cv::Scalar(255), 3);
+    }
+    */
+
+
+    if (glyphs.size() > 0) {
+        Reflow reflower(cvMat, glyphs);
+        new_image = reflower.reflow(scale);
+        //new_image = cvMat;
+    } else {
+        cv::bitwise_not(cvMat, cvMat);
+        new_image = cvMat;
+    }
+
 }
 
 

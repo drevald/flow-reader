@@ -6,7 +6,11 @@ import android.util.Log;
 import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyphInfo;
+import com.veve.flowreader.model.PageSize;
 import com.veve.flowreader.model.impl.AbstractBookPage;
+
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PdfBookPage extends AbstractBookPage implements BookPage {
@@ -20,6 +24,8 @@ public class PdfBookPage extends AbstractBookPage implements BookPage {
     public Bitmap getAsBitmap(DevicePageContext context) {
         return getAsBitmap();
     }
+
+
 
     @Override
     public byte[] getGrayscaleBytes(long bookId, int pageNumber) {
@@ -46,7 +52,23 @@ public class PdfBookPage extends AbstractBookPage implements BookPage {
         return getNativeHeight(getBookId(), getPageNumber());
     }
 
+    @Override
+    public Bitmap getAsReflownBitmap(DevicePageContext context, List<PageGlyphInfo> pageGlyphs) {
+        PageSize pageSize = new PageSize();
+        byte[] bytes = getNativeReflownBytes(getBookId(), getPageNumber(), context.getZoom(), pageSize, pageGlyphs);
+        int width = pageSize.getPageWidth();
+        int height = pageSize.getPageHeight();
+        Bitmap.Config bitmapConfig = Bitmap.Config.ALPHA_8;
+        final ByteBuffer bb = ByteBuffer.wrap(bytes);
+        Log.v("BITMAP_MEMORY", "Bitmap.createBitmap(" + width + ", " + height + ", bitmapConfig);");
+        Bitmap bm = Bitmap.createBitmap(width, height, bitmapConfig);
+        bb.rewind();
+        bm.copyPixelsFromBuffer(bb);
+        return bm;
+    }
 
+
+    private static native byte[] getNativeReflownBytes(long bookId, int pageNumber, float scale, PageSize pageSize, List<PageGlyphInfo> pageGlyphs);
 
     private static native int getNativeWidth(long bookId, int pageNumber);
 

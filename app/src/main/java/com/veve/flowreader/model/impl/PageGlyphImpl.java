@@ -50,6 +50,8 @@ public class PageGlyphImpl implements PageGlyph {
 
     private boolean isSpace;
 
+    private boolean isLast;
+
 
     PageGlyphImpl(Bitmap bitmap, PageGlyphInfo rect) {
         this.bitmap = bitmap;
@@ -59,6 +61,7 @@ public class PageGlyphImpl implements PageGlyph {
         this.y = rect.getY();
         this.indented = rect.isIndented();
         this.isSpace = rect.isSpace();
+        this.isLast = rect.isLast();
         paint_debug.setStyle(Paint.Style.STROKE);
         paint_debug.setColor(Color.BLUE);
         paint_debug.setStrokeWidth(1);
@@ -80,6 +83,9 @@ public class PageGlyphImpl implements PageGlyph {
         return bitmap.getHeight();
     }
 
+    public boolean isLast() {
+        return isLast;
+    }
     public boolean isSpace() {
         return isSpace;
     }

@@ -10,6 +10,7 @@
 
 line_limit PageSegmenter::find_baselines(vector<double_pair> &cc) {
 
+
     sort(cc.begin(), cc.end(), PairXOrder());
     vector<Rect> line_rects;
 
@@ -150,8 +151,7 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
 
     std::vector<int> c(num_vertices(g));
 
-    int num = connected_components
-            (g, make_iterator_property_map(c.begin(), get(vertex_index, g), c[0]));
+    connected_components(g, make_iterator_property_map(c.begin(), get(vertex_index, g), c[0]));
 
     for (int i = 0; i < c.size(); i++) {
         int cn = c[i];
@@ -167,6 +167,24 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
 
 
 vector<line_limit> PageSegmenter::get_line_limits(std::vector<cv::Rect>& big_rects) {
+
+    // make vertical sum
+
+    Mat hist;
+    reduce(gray_inverted_image, hist, 1, REDUCE_SUM, CV_32F);
+    auto runs = one_runs(hist);
+    hist.release();
+
+    std::vector<line_limit> limits = std::vector<line_limit>();
+    if (runs.size() == 1) {
+       line_limit ll(0, 0, mat.rows, mat.rows);
+       limits.push_back(ll);
+       return limits;
+
+    }
+
+    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "one runs size = %d\n", runs.size());
+
 
     const cc_result cc_results = get_cc_results(big_rects);
 
@@ -217,6 +235,8 @@ cc_result PageSegmenter::get_cc_results(std::vector<cv::Rect>& big_rects) {
 
     int count = rectComponents.rows - 1;
 
+    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "connected components = %d\n", count);
+
     double heights[count];
 
     vector<double_pair> center_list;
@@ -230,9 +250,6 @@ cc_result PageSegmenter::get_cc_results(std::vector<cv::Rect>& big_rects) {
         Rect rectangle(x, y, w, h);
         rects.push_back(rectangle);
         heights[i - 1] = h;
-
-        double cx = centComponents.at<double>(i, 0);
-        double cy = centComponents.at<double>(i, 1);
 
     }
 
@@ -481,7 +498,6 @@ vector<glyph> PageSegmenter::get_glyphs() {
 
             glyph g;
 
-
             if (k == 0 && left_indent_found && (left - left_indent) > 0.02 * w) {
                 g.indented = true;
             } else if (k==0 && !left_indent_found) {
@@ -493,9 +509,6 @@ vector<glyph> PageSegmenter::get_glyphs() {
             else {
                 g.indented = false;
             }
-
-
-
 
             // detect real height
 
@@ -520,6 +533,9 @@ vector<glyph> PageSegmenter::get_glyphs() {
             g.baseline_shift = l - bl   ;
             g.line_height = line_height;
             g.is_space = false;
+            if (k == oneRuns.size()-1) {
+                g.is_last = true;
+            }
             if (g.width > 0) {
                 return_value.push_back(g);
             }
@@ -528,7 +544,7 @@ vector<glyph> PageSegmenter::get_glyphs() {
             glyph space;
             space.x = right;
             //int nextx = k != oneRuns.size()-1 ? get<0>(oneRuns.at(k+1)) : right + std::accumulate(spaces.begin(), spaces.end(), 0.0)/spaces.size();
-            int lastspacewidth = std::min(5, w - right);
+            int lastspacewidth = 20;//std::min(10, w - right);
             int nextx = k != oneRuns.size()-1 ? get<0>(oneRuns.at(k+1)) : right + lastspacewidth;
 
             space_width = nextx - right;
@@ -540,7 +556,7 @@ vector<glyph> PageSegmenter::get_glyphs() {
             space.height = l - u - shift;
             space.indented = false;
             space.is_space = true;
-            if (space.width>0) {
+            if (k != oneRuns.size()-1) {
                 return_value.push_back(space);
             }
 
@@ -550,6 +566,17 @@ vector<glyph> PageSegmenter::get_glyphs() {
     }
 
     mat.release();
+
+    if (return_value.size() <= 5) {
+        std::vector<glyph> glyphs;
+        for (int t=0;t<return_value.size(); t++) {
+            glyph g = return_value.at(t);
+            g.baseline_shift = 0;
+            glyphs.push_back(g);
+        }
+        return_value = glyphs;
+    }
+
     gray_inverted_image.release();
 
     return return_value;

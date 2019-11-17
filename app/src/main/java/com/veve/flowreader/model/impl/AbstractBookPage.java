@@ -22,6 +22,7 @@ public abstract class AbstractBookPage implements BookPage {
         this.pageNumber = pageNumber;
     }
 
+
     @Override
     public Bitmap getAsGrayscaleBitmap(DevicePageContext context) {
         return getAsGrayscaleBitmap();

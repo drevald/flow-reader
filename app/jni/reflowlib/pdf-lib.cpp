@@ -96,6 +96,48 @@ image_format get_pdf_pixels(JNIEnv* env, jlong bookId, jint pageNumber, char** p
 
 }
 
+JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativeReflownBytes
+        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jfloat scale, jobject pageSize, jobject list) {
+
+
+    // get glyphs from java
+
+    std::vector<glyph> glyphs = convert_java_glyphs(env, list);
+    char* buffer;
+
+    image_format format = get_pdf_pixels(env, bookId, pageNumber, &buffer);
+    int size = format.size;
+    int height = format.h;
+    int width = format.w;
+
+    Mat mat(height,width,CV_8UC4,&((char*)buffer)[0]);
+
+    cv::cvtColor(mat, mat, cv::COLOR_BGR2GRAY);
+    threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
+
+    cv::Mat new_image;
+    reflow(mat, new_image, scale, env, glyphs, list);
+
+    jclass clz = env->GetObjectClass(pageSize);
+
+    jmethodID setPageWidthMid = env->GetMethodID(clz, "setPageWidth", "(I)V");
+    jmethodID setPageHeightMid = env->GetMethodID(clz, "setPageHeight", "(I)V");
+    env->CallVoidMethod(pageSize,setPageWidthMid, new_image.cols);
+    env->CallVoidMethod(pageSize,setPageHeightMid, new_image.rows);
+
+
+    size_t sizeInBytes = new_image.total() * new_image.elemSize();
+
+    jbyteArray array = env->NewByteArray(sizeInBytes);
+    env->SetByteArrayRegion(array, 0, sizeInBytes, (jbyte *) new_image.data);
+    free((void*)buffer);
+    mat.release();
+    new_image.release();
+
+    return array;
+
+}
+
 JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativePageGlyphs
 (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jobject list) {
 
@@ -110,6 +152,7 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
 
     cv::cvtColor(mat, mat, cv::COLOR_BGR2GRAY);
     threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
+
 
     std::vector<glyph> new_glyphs = get_glyphs(mat);
     put_glyphs(env, new_glyphs, list);

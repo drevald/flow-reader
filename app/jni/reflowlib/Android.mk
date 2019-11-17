@@ -26,15 +26,15 @@ LOCAL_C_INCLUDES := \
 LOCAL_STATIC_LIBRARIES := myview djvu jpeg9 lz4 libopencv_imgproc libopencv_imgcodecs libopencv_core flann cpufeatures libboost_system libboost_graph c++_static
 
 
-LOCAL_CFLAGS += -DHAVE_CONFIG_H -frtti -fexceptions -fopenmp -w -Ofast -DNDEBUG -nostdlib++ 
+LOCAL_CFLAGS += -DHAVE_CONFIG_H -frtti -fexceptions -fopenmp -w -Ofast -DNDEBUG  -nostdlib++
 LOCAL_LDLIBS += -llog -lz -L$(SYSROOT)/usr/lib
 LOCAL_LDFLAGS += -ldl -landroid -fopenmp  
 
-LOCAL_C_INCLUDES += common.h pdf-lib.h ImageLoader.h PageSegmenter.h Enclosure.h ImageNode.h Xycut.h
+LOCAL_C_INCLUDES += common.h Reflow.cpp PageSegmenter.h Enclosure.h pdf-lib.h  ImageNode.h Xycut.h
 
 
 LOCAL_SRC_FILES := \
-	common.cpp PageSegmenter.cpp Enclosure.cpp djvu-lib.cpp pdf-lib.cpp ImageNode.cpp Xycut.cpp
+	common.cpp Reflow.cpp  PageSegmenter.cpp Enclosure.cpp djvu-lib.cpp pdf-lib.cpp ImageNode.cpp Xycut.cpp
 
 
 include $(BUILD_SHARED_LIBRARY)

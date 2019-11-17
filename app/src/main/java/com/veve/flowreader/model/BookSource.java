@@ -11,6 +11,8 @@ public interface BookSource {
 
     Bitmap getPageBytes(int pageNumber);
 
+    Bitmap getReflownPageBytes(int pageNumber, DevicePageContext context, List<PageGlyphInfo> pageGlyphs);
+
 
     Bitmap getPageGrayscaleBytes(int pageNumber);
 
