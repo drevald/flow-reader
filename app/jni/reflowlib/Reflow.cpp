@@ -92,6 +92,11 @@ cv::Mat Reflow::reflow(float scale) {
 
         
     }
+    
+    if (line.size() > 0) {
+        line_number++;
+        lines.insert(std::make_pair(line_number, line));
+    }
 
     line_heights = std::vector<int>();
     for (int k=1; k<=line_number; k++) {
