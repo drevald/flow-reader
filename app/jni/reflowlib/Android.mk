@@ -24,6 +24,10 @@ LOCAL_C_INCLUDES := \
 		$(CVROOT)/include
 
 
+ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
+	LOCAL_STATIC_LIBRARIES := myview djvu jpeg9 lz4 libopencv_imgproc libopencv_imgcodecs libopencv_core flann cpufeatures ittnotify tbb tegra_hal libboost_system libboost_graph libm c++_static
+endif
+
 ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
 	LOCAL_STATIC_LIBRARIES := myview djvu jpeg9 lz4 libopencv_imgproc libopencv_imgcodecs libopencv_core flann cpufeatures ittnotify tbb tegra_hal libboost_system libboost_graph libm c++_static
 endif
@@ -31,6 +35,11 @@ endif
 ifeq ($(TARGET_ARCH_ABI),x86_64)
 	LOCAL_STATIC_LIBRARIES := myview djvu jpeg9 lz4 libopencv_imgproc libopencv_imgcodecs libopencv_core flann cpufeatures ittnotify tbb libboost_system ippiw ippicv libboost_graph c++_static
 endif
+
+ifeq ($(TARGET_ARCH_ABI),x86)
+	LOCAL_STATIC_LIBRARIES := myview djvu jpeg9 lz4 libopencv_imgproc libopencv_imgcodecs libopencv_core flann cpufeatures ittnotify tbb libboost_system ippiw ippicv libboost_graph c++_static
+endif
+
 
 $(warning $(LOCAL_STATIC_LIBRARIES))
 
