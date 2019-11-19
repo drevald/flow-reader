@@ -22,7 +22,7 @@ public class JsonConversionTest {
 
     @Test
     public void testJsonGlyph() throws Exception {
-        PageGlyphRecord glyphRecord = new PageGlyphRecord(1, 1, 1, 1, 1, 1, 1, 1, true, false);
+        PageGlyphRecord glyphRecord = new PageGlyphRecord(1, 1, 1, 1, 1, 1, 1, 1, true, false, false);
         ObjectMapper mapper = new ObjectMapper(); // create once, reuse
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         mapper.writeValue(baos, glyphRecord);
@@ -33,9 +33,9 @@ public class JsonConversionTest {
     @Test
     public void testJsonGlyphs() throws Exception {
         List<PageGlyphRecord> glyphRecords = Arrays.asList(
-                new PageGlyphRecord(1, 1, 1, 1, 1, 1, 1, 1, true, false),
-                new PageGlyphRecord(1, 1, 1, 1, 1, 1, 1, 1, true, false),
-                new PageGlyphRecord(1, 1, 1, 1, 1, 1, 1, 1, true, false)
+                new PageGlyphRecord(1, 1, 1, 1, 1, 1, 1, 1, true, false, false),
+                new PageGlyphRecord(1, 1, 1, 1, 1, 1, 1, 1, true, false, false),
+                new PageGlyphRecord(1, 1, 1, 1, 1, 1, 1, 1, true, false, false)
         );
         ObjectMapper mapper = new ObjectMapper(); // create once, reuse
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
