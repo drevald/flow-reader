@@ -41,8 +41,6 @@ ifeq ($(TARGET_ARCH_ABI),x86)
 endif
 
 
-$(warning $(LOCAL_STATIC_LIBRARIES))
-
 LOCAL_CFLAGS += -DHAVE_CONFIG_H -frtti -fexceptions -fopenmp -w -Ofast -DNDEBUG  -nostdlib++
 LOCAL_LDLIBS += -llog -lz -lm -L$(SYSROOT)/usr/lib
 LOCAL_LDFLAGS += -ldl -landroid -fopenmp  

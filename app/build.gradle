@@ -49,7 +49,7 @@ android {
         doFirst {
             JavaCompile jc = android.applicationVariants.find {
                 it.name == 'debug' || it.name == 'release'
-            }.javaCompile
+            }.javaCompileProvider.get() 
             jc.options.compilerArgs = ["-Xlint:unchecked"]
         }
     }
