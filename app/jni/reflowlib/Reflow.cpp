@@ -7,6 +7,7 @@
 //
 
 #include "Reflow.h"
+#include "LineSpacing.h"
 
 std::vector<int> Reflow::calculate_line_heights(std::vector<int> line_heights) {
 
@@ -18,7 +19,8 @@ std::vector<int> Reflow::calculate_line_heights(std::vector<int> line_heights) {
     for (int i=0;i<line_heights.size(); i++) {
         new_line_heights.push_back(line_heights.at(i) + addition);
     }
-    return new_line_heights;
+    LineSpacing ls(new_line_heights);
+    return ls.get_line_heights();
 }
 
 
