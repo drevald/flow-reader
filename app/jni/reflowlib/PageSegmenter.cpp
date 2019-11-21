@@ -341,14 +341,18 @@ vector<glyph> PageSegmenter::get_glyphs() {
     vector<line_limit> line_limits = get_line_limits(big_rects);
 
 
-    // detect lines inside other lines
-
+ // detect lines inside other lines
     set<int> small_line_limits;
     for (int i=0; i<line_limits.size(); i++) {
-        for (int j=0; j!=i && j<line_limits.size(); j++) {
+        for (int j=0; i!=j && j<line_limits.size(); j++) {
             line_limit lli = line_limits.at(i);
             line_limit llj = line_limits.at(j);
-            if (lli.upper >= llj.upper && lli.lower <= llj.lower) {
+            
+            if ( (llj.upper <= lli.upper && llj.lower >= lli.lower)) {
+                           small_line_limits.insert(i);
+            }
+            
+            if ( (lli.upper <= llj.upper && lli.lower >= llj.lower)) {
                 small_line_limits.insert(j);
             }
         }
