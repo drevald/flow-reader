@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.pdf.PdfDocument;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -56,15 +57,26 @@ public class ReportActivity extends AppCompatActivity {
     private static long bookId;
     private static int position;
 
+    Intent backToPageIntent;
+    TextView progressLabel;
+    Handler handler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        handler = new Handler();
         setContentView(R.layout.activity_report);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         progressBar = findViewById(R.id.progress);
         progressBar.setMax(100);
+        progressLabel = findViewById(R.id.progress_label);
+
+        backToPageIntent = new Intent(ReportActivity.this, PageActivity.class);
+        backToPageIntent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+        backToPageIntent.putExtra(Constants.BOOK_ID, bookId);
+        backToPageIntent.putExtra(Constants.POSITION, position);
 
         long bookId = getIntent().getLongExtra("reportId", -1);
 
@@ -76,15 +88,19 @@ public class ReportActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        findViewById(R.id.fab).setOnClickListener((view) -> {
                 requestPermissions();
                 ReportSenderTask reportSenderTask = new ReportSenderTask();
                 reportSenderTask.execute();
             }
-        });
+        );
+
+        findViewById(R.id.back).setOnClickListener((view) -> {
+                AppDatabase appDatabase = AppDatabase.getInstance(getApplicationContext());
+                appDatabase.daoAccess().deleteReport(reportId);
+                ReportActivity.this.startActivity(backToPageIntent);
+            }
+        );
 
     }
 
@@ -134,15 +150,16 @@ public class ReportActivity extends AppCompatActivity {
             totalSize += reflowedImage.length;
             totalSize += originalImage.length;
             totalSize += glyphs.length;
-            TextView textView = findViewById(R.id.size_note);
-            textView.setText(String.format(Locale.getDefault(),
+            progressLabel.setText(String.format(Locale.getDefault(),
                     getString(R.string.notify_send_size), totalSize));
         }
 
         @Override
         protected void onProgressUpdate(Void... values) {
             super.onProgressUpdate(values);
-            Log.v(getClass().getName(), "Progress " + values);
+            handler.post(() -> {
+                Log.v(getClass().getName(), "Progress " + values);
+            });
         }
     }
 
@@ -152,7 +169,7 @@ public class ReportActivity extends AppCompatActivity {
 
         @Override
         protected Long doInBackground(Void... voids) {
-            publishProgress();
+            publishProgress(0F);
             try {
                 URL url = new URL(Constants.REPORT_URL);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -161,44 +178,57 @@ public class ReportActivity extends AppCompatActivity {
                 conn.setDoOutput(true);
                 conn.connect();
                 OutputStream os = conn.getOutputStream();
+                handler.post(() -> {progressLabel.setText(R.string.sending_original);});
                 os.write(getFileData(originalImage, "image/jpeg", "originalImage", "originalImage.jpeg", false));
                 publishProgress(((float)originalImage.length/(float)totalSize));
+                Thread.sleep(1000);
+                handler.post(() -> {progressLabel.setText(R.string.sending_reflowed);});
                 os.write(getFileData(reflowedImage, "image/jpeg", "overturnedImage", "overturnedImage.jpeg", false));
                 publishProgress(((float)(originalImage.length+reflowedImage.length)/(float)totalSize));
+                Thread.sleep(1000);
+                handler.post(() -> {progressLabel.setText(R.string.sending_glyphs);});
                 os.write(getFileData(glyphs, "application/json", "glyphs", "glyphs.json", false));
                 publishProgress(((float)(originalImage.length+reflowedImage.length + glyphs.length)/(float)totalSize));
+                Thread.sleep(1000);
                 os.write(getTextData(BuildConfig.GitHash, "version", true));
                 os.flush();
-
-                Log.v("HIROKU_RESPONSE", "response code" + conn.getResponseCode());
+                handler.post(() -> {progressLabel.setText(R.string.report_response);});
+                Log.v(getClass().getName(), "HIROKU_RESPONSE response code" + conn.getResponseCode());
                 InputStream is = conn.getInputStream();
                 byte[] buffer = new byte[100];
+                int available = is.available();
+                int counter = 0;
+                publishProgress(0F);
                 while (is.read(buffer) != -1) {
-                    Log.v("HIROKU_RESPONSE", new String(buffer));
+//                    publishProgress((float)((counter + 100)/available));
+                    Log.v(getClass().getName(), "HIROKU_RESPONSE" + new String(buffer));
                 }
+                handler.post(() -> {progressLabel.setText(R.string.report_sent);});
                 is.close();
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-
-                AppDatabase appDatabase = AppDatabase.getInstance(getApplicationContext());
-                appDatabase.daoAccess().deleteReport(reportId);
-                Intent backToPageIntent = new Intent(ReportActivity.this, PageActivity.class);
-                backToPageIntent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
-                backToPageIntent.putExtra(Constants.BOOK_ID, bookId);
-                backToPageIntent.putExtra(Constants.POSITION, position);
-                startActivity(backToPageIntent);
-                return null;
-
             }
+            return null;
+        }
 
+        @Override
+        protected void onPostExecute(Long aLong) {
+            super.onPostExecute(aLong);
+            AppDatabase appDatabase = AppDatabase.getInstance(getApplicationContext());
+            appDatabase.daoAccess().deleteReport(reportId);
+            startActivity(backToPageIntent);
         }
 
         @Override
         protected void onProgressUpdate(Float... values) {
             super.onProgressUpdate(values);
-            if (values != null && values.length > 0)
-                progressBar.setProgress((int)(values[0] * 100));
+            handler.post(() -> {
+                Log.v(getClass().getName(), "Progress send" + values[0]);
+                if (values != null && values.length > 0) {
+                    progressBar.setVisibility(View.VISIBLE);
+                    progressBar.setProgress((int) (values[0] * 100));
+                }
+            });
         }
 
         private byte[] getTextData(String text, String fieldName, boolean lastOne) throws Exception {

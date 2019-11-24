@@ -33,4 +33,10 @@
     <string name="title_activity_report">Report unreadable page</string>
     <string name="page_unreadable">Page unreadable</string>
     <string name="notify_send_size">You are going to sent %d bytes over internet</string>
+    <string name="getting_report">Gathering information</string>
+    <string name="sending_original">Sending original page</string>
+    <string name="sending_reflowed">Sending re-flowed page</string>
+    <string name="sending_glyphs">Sending glyphs info</string>
+    <string name="report_response">Getting response</string>
+    <string name="report_sent">Report sent</string>
 </resources>

@@ -33,4 +33,10 @@
     <string name="title_activity_report">Отчет о нечитабельной странице</string>
     <string name="page_unreadable">Страница нечитабельна</string>
     <string name="notify_send_size">Вы согласны переслать %d байтов по интернет?</string>
+    <string name="getting_report">Составляем отчет</string>
+    <string name="sending_original">Отсылается оригинальная страница</string>
+    <string name="sending_reflowed">Отсылается переверстанная страница</string>
+    <string name="sending_glyphs">Отсылается разметка</string>
+    <string name="report_response">Ожидается ответ</string>
+    <string name="report_sent">Отчет отправлен</string>
 </resources>
