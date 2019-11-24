@@ -39,4 +39,8 @@
     <string name="sending_glyphs">Отсылается разметка</string>
     <string name="report_response">Ожидается ответ</string>
     <string name="report_sent">Отчет отправлен</string>
+    <string name="confirm_delete">Удалить %s</string>
+    <string name="book_deletion">Удаление книги</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
 </resources>

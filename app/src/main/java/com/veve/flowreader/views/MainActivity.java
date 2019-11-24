@@ -1,6 +1,8 @@
 package com.veve.flowreader.views;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -35,6 +37,8 @@ import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.model.BooksCollection;
 
 import java.util.List;
+
+import static com.veve.flowreader.Constants.BOOK_ID;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -74,9 +78,27 @@ public class MainActivity extends AppCompatActivity {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         if (item.getItemId() == R.id.delete_listed_book) {
             BookRecord bookRecord = (BookRecord)bookListAdapter.getItem(info.position);
-            BooksCollection.getInstance(getParent()).deleteBook(bookRecord.getId());
-            bookListAdapter.refresh();
-            bookGridAdapter.refresh();
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle(R.string.book_deletion)
+                    .setMessage(String.format(
+                            getResources().getString(R.string.confirm_delete), bookRecord.getName()))
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            BooksCollection.getInstance(getParent()).deleteBook(bookRecord.getId());
+                            bookListAdapter.refresh();
+                            bookGridAdapter.refresh();
+                        }
+                    })
+                    .setNegativeButton(R.string.no,
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+            AlertDialog alert = builder.create();
+            alert.show();
         }
         return true;
     }

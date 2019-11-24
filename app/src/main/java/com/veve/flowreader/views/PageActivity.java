@@ -2,7 +2,9 @@ package com.veve.flowreader.views;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -289,15 +291,33 @@ public class PageActivity extends AppCompatActivity {
                 break;
             }
             case R.id.delete_book: {
-                long bookId = book.getId();
-                BooksCollection.getInstance(getApplicationContext()).deleteBook(bookId);
-                Intent i = new Intent(PageActivity.this, MainActivity.class);
-                i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                i.putExtra(BOOK_ID, bookId);
-                startActivity(i);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(PageActivity.this);
+                builder.setTitle(R.string.book_deletion)
+                        .setMessage(String.format(
+                                getResources().getString(R.string.confirm_delete), book.getName()))
+                        .setCancelable(false)
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                long bookId = book.getId();
+                                BooksCollection.getInstance(getApplicationContext()).deleteBook(bookId);
+                                Intent i = new Intent(PageActivity.this, MainActivity.class);
+                                i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                                i.putExtra(BOOK_ID, bookId);
+                                startActivity(i);
+                            }
+                        })
+                        .setNegativeButton(R.string.no,
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+                AlertDialog alert = builder.create();
+                alert.show();
                 break;
             }
-
         }
         setPageNumber(currentPage);
         return true;

@@ -39,4 +39,8 @@
     <string name="sending_glyphs">Sending glyphs info</string>
     <string name="report_response">Getting response</string>
     <string name="report_sent">Report sent</string>
+    <string name="confirm_delete">Are you  sure to delete %s ?</string>
+    <string name="book_deletion">Book Deletion</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>
