@@ -43,4 +43,7 @@
     <string name="book_deletion">Book Deletion</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="books">Books</string>
+    <string name="about_program">About program</string>
+    <string name="close">Close</string>
 </resources>

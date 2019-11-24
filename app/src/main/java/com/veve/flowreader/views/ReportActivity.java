@@ -197,10 +197,12 @@ public class ReportActivity extends AppCompatActivity {
                 InputStream is = conn.getInputStream();
                 byte[] buffer = new byte[100];
                 int available = is.available();
+                Log.v(getClass().getName(), "HIROKU_RESPONSE available" + available);
                 int counter = 0;
                 publishProgress(0F);
                 while (is.read(buffer) != -1) {
 //                    publishProgress((float)((counter + 100)/available));
+                    Log.v(getClass().getName(), "HIROKU_RESPONSE available again" + is.available());
                     Log.v(getClass().getName(), "HIROKU_RESPONSE" + new String(buffer));
                 }
                 handler.post(() -> {progressLabel.setText(R.string.report_sent);});

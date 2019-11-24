@@ -31,16 +31,22 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.veve.flowreader.BuildConfig;
 import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.model.BooksCollection;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import static com.veve.flowreader.Constants.BOOK_ID;
 
 public class MainActivity extends AppCompatActivity {
+
+    SimpleDateFormat sdf = new SimpleDateFormat("dd MM yyyy", Locale.getDefault());
 
     BookListAdapter bookListAdapter;
 
@@ -220,8 +226,22 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         super.onOptionsItemSelected(item);
         int id = item.getItemId();
-        if (id == R.id.delete_listed_book) {
-            Log.v(getClass().getName(), item.toString());
+        if (id == R.id.about) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle(R.string.app_name)
+                    .setCancelable(false)
+                    .setIcon(R.drawable.ic_icon)
+                    .setMessage(String.format("Version %s\nBuild date %s",
+                            BuildConfig.GitHash, sdf.format(new Date())))
+                    .setNeutralButton(R.string.close, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+
         }
         return true;
     }

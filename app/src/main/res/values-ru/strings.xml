@@ -43,4 +43,7 @@
     <string name="book_deletion">Удаление книги</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
+    <string name="books">Книги</string>
+    <string name="about_program">О программе</string>
+    <string name="close">Закрыть</string>
 </resources>
