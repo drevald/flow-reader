@@ -75,6 +75,8 @@ struct SortSegments {
     }
 };
 
+void preprocess(cv::Mat& image);
+
 std::vector<glyph> convert_java_glyphs(JNIEnv *env, jobject list);
 
 void reflow(cv::Mat& cvMat, cv::Mat& new_image, float scale, JNIEnv* env, std::vector<glyph> glyphs, jobject list);

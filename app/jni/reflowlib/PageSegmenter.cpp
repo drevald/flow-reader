@@ -10,7 +10,6 @@
 
 line_limit PageSegmenter::find_baselines(vector<double_pair> &cc) {
 
-
     sort(cc.begin(), cc.end(), PairXOrder());
     vector<Rect> line_rects;
 
@@ -109,12 +108,11 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
 
         double mindist = numeric_limits<double>::max();
 
+        std::vector<int> right_intersections;
         for (int j = 0; j < k; j++) {
             int ind = indices[i][j];
             double_pair nb = center_list[ind];
-            if (get<0>(nb) - get<0>(p) != 0) {
-                double dist = sqrt(((get<1>(nb) - get<1>(p)) * (get<1>(nb) - get<1>(p))) +
-                                   (get<0>(nb) - get<0>(p)) * (get<0>(nb) - get<0>(p)));
+            if (get<0>(nb) > get<0>(p)) {
                 cv::Rect rect1 = rd.at(nb);
                 cv::Rect rect2 = rd.at(p);
                 int a_s = rect1.y;
@@ -125,15 +123,32 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
                     int o_s = std::max(a_s, b_s);
                     int o_e = std::min(a_e, b_e);
                     int diff = o_e - o_s;
-                    if (dist < mindist && get<0>(nb) > get<0>(p) &&
-                        diff >= 1./2. * average_height) {
+                    
+                    if (std::min(rect1.height, rect2.height) > 0.667*average_height && diff > 0.5 * std::max(rect2.height, rect1.height) ) {
+                        right_intersections.push_back(j);
+                    }
+                }
+            }
+        }
+        
+        for (int j = 0; j < k; j++) {
+            int ind = indices[i][j];
+            double_pair nb = center_list[ind];
+            if (get<0>(nb) > get<0>(p)) {
+                double dist = sqrt(((get<1>(nb) - get<1>(p)) * (get<1>(nb) - get<1>(p))) +
+                                   (get<0>(nb) - get<0>(p)) * (get<0>(nb) - get<0>(p)));
+                
+                if (std::find(right_intersections.begin(), right_intersections.end(), j) != right_intersections.end()) {
+                    if (dist < mindist) {
                         mindist = dist;
                         right_nb = make_tuple(get<0>(nb), get<1>(nb));
                         found_neighbor = true;
                     }
                 }
+                
             }
         }
+        
 
         if (found_neighbor) {
             double_pair point(get<0>(p), get<1>(p));
@@ -166,27 +181,21 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
 }
 
 
-vector<line_limit> PageSegmenter::get_line_limits(std::vector<cv::Rect>& big_rects) {
-
-    // make vertical sum
-
+vector<line_limit> PageSegmenter::get_line_limits() {
+    
+    const cc_result cc_results = get_cc_results();
+    
     Mat hist;
-    reduce(gray_inverted_image, hist, 1, REDUCE_SUM, CV_32F);
+    reduce(mat, hist, 1, REDUCE_SUM, CV_32F);
     auto runs = one_runs(hist);
     hist.release();
 
     std::vector<line_limit> limits = std::vector<line_limit>();
     if (runs.size() == 1) {
-       line_limit ll(0, 0, mat.rows, mat.rows);
-       limits.push_back(ll);
-       return limits;
-
+        line_limit ll(0, 0, mat.rows, mat.rows);
+        limits.push_back(ll);
+        return limits;
     }
-
-    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "one runs size = %d\n", runs.size());
-
-
-    const cc_result cc_results = get_cc_results(big_rects);
 
     if (cc_results.whole_page) {
         vector<line_limit> v;
@@ -212,9 +221,9 @@ vector<line_limit> PageSegmenter::get_line_limits(std::vector<cv::Rect>& big_rec
             int cn = keys.at(i);
             vector<double_pair> cc = components.at(cn);
             line_limit ll = find_baselines(cc);
-            if(cc.size() > 1) {
+            //if(cc.size() > 1) {
                 v.push_back(ll);
-            }
+            //}
 
         }
 
@@ -224,18 +233,19 @@ vector<line_limit> PageSegmenter::get_line_limits(std::vector<cv::Rect>& big_rec
 
 }
 
-cc_result PageSegmenter::get_cc_results(std::vector<cv::Rect>& big_rects) {
-
-    Mat image = gray_inverted_image;
-
-    Mat labeled(image.size(), image.type());
+cc_result PageSegmenter::get_cc_results() {
+    
+    Mat image;
+    const Mat kernel = getStructuringElement(MORPH_RECT, Size(2, 2));
+    erode(mat, image, kernel, Point(-1, -1), 1);
+    
+    
+    Mat labeled(mat.size(), mat.type());
     Mat rectComponents = Mat::zeros(Size(0, 0), 0);
     Mat centComponents = Mat::zeros(Size(0, 0), 0);
     connectedComponentsWithStats(image, labeled, rectComponents, centComponents);
 
     int count = rectComponents.rows - 1;
-
-    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "connected components = %d\n", count);
 
     double heights[count];
 
@@ -253,18 +263,10 @@ cc_result PageSegmenter::get_cc_results(std::vector<cv::Rect>& big_rects) {
 
     }
 
-    for (int i=0; i<rects.size(); i++) {
-        cv::Rect r = rects.at(i);
-        double  ratio = r.height/(double)r.width;
-        if (ratio > 5) {
-            big_rects.push_back(r);
-        }
-    }
-
     if (count == 0) {
         cc_result v;
         v.whole_page = true;
-        v.average_hight = image.size().height;
+        v.average_hight = mat.size().height;
         v.centers = center_list;
         return v;
     }
@@ -338,10 +340,9 @@ vector<glyph> PageSegmenter::get_glyphs() {
 
 
     std::vector<cv::Rect> big_rects;
-    vector<line_limit> line_limits = get_line_limits(big_rects);
+    vector<line_limit> line_limits = get_line_limits();
 
-
- // detect lines inside other lines
+    // detect lines inside other lines
     set<int> small_line_limits;
     for (int i=0; i<line_limits.size(); i++) {
         for (int j=0; i!=j && j<line_limits.size(); j++) {
@@ -373,25 +374,6 @@ vector<glyph> PageSegmenter::get_glyphs() {
 
 
     sort(line_limits.begin(), line_limits.end(), SortLineLimits());
-
-    for (int i=0; i<big_rects.size(); i++) {
-        cv::Rect r = big_rects.at(i);
-        cv::Mat region = mat(r);
-        std::vector<std::vector<cv::Point>> contours;
-        cv::findContours(region, contours, cv::RETR_LIST, cv::CHAIN_APPROX_NONE);
-
-        for (int j=0; j<contours.size(); j++) {
-            cv::RotatedRect rect = cv::minAreaRect(contours.at(j));
-            cv::Rect r = rect.boundingRect();
-
-            //if (r.height / (double)r.width > 10) {
-            std::vector<std::vector<cv::Point>> cnts;
-            cnts.push_back(contours.at(j));
-            cv::drawContours(mat, cnts, -1, cv::Scalar(255,255,255), -1);
-            //}
-        }
-    }
-
 
     Mat hist;
     reduce(gray_inverted_image, hist, 0, REDUCE_SUM, CV_32F);
@@ -502,6 +484,7 @@ vector<glyph> PageSegmenter::get_glyphs() {
 
             glyph g;
 
+
             if (k == 0 && left_indent_found && (left - left_indent) > 0.02 * w) {
                 g.indented = true;
             } else if (k==0 && !left_indent_found) {
@@ -513,7 +496,7 @@ vector<glyph> PageSegmenter::get_glyphs() {
             else {
                 g.indented = false;
             }
-
+            
             // detect real height
 
             Mat hist;
@@ -548,7 +531,7 @@ vector<glyph> PageSegmenter::get_glyphs() {
             glyph space;
             space.x = right;
             //int nextx = k != oneRuns.size()-1 ? get<0>(oneRuns.at(k+1)) : right + std::accumulate(spaces.begin(), spaces.end(), 0.0)/spaces.size();
-            int lastspacewidth = 20;//std::min(10, w - right);
+            int lastspacewidth = std::min(5, w - right);
             int nextx = k != oneRuns.size()-1 ? get<0>(oneRuns.at(k+1)) : right + lastspacewidth;
 
             space_width = nextx - right;
@@ -570,19 +553,8 @@ vector<glyph> PageSegmenter::get_glyphs() {
     }
 
     mat.release();
-
-    if (return_value.size() <= 5) {
-        std::vector<glyph> glyphs;
-        for (int t=0;t<return_value.size(); t++) {
-            glyph g = return_value.at(t);
-            g.baseline_shift = 0;
-            glyphs.push_back(g);
-        }
-        return_value = glyphs;
-    }
-
     gray_inverted_image.release();
-
+    
     return return_value;
 
 

@@ -64,8 +64,8 @@ class PageSegmenter {
         std::map<double_pair,cv::Rect> rd;
         Graph g;
         int line_height = 0;
-        std::vector<line_limit> get_line_limits(std::vector<cv::Rect>& big_rects);
-        cc_result get_cc_results(std::vector<cv::Rect>& big_rects);
+        std::vector<line_limit> get_line_limits();
+        cc_result get_cc_results();
         std::map<int,std::vector<double_pair>> get_connected_components(std::vector<double_pair>& center_list, double averahe_hight);
         line_limit find_baselines(std::vector<double_pair>& cc);
 };

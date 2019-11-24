@@ -221,7 +221,8 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
 
     Mat mat(h, w, CV_8UC1, &((char *) pixels)[0]);
     threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
-    remove_skew(mat);
+    preprocess(mat);
+    //remove_skew(mat);
 
     cv::Mat new_image;
     reflow(mat, new_image, scale, env, glyphs, list);
@@ -252,7 +253,9 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
 
     Mat mat(h, w, CV_8UC1, &((char *) pixels)[0]);
     threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
-    remove_skew(mat);
+    
+    preprocess(mat);
+    //remove_skew(mat);
 
 
     size_t sizeInBytes = mat.total() * mat.elemSize();
