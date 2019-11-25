@@ -523,7 +523,7 @@ vector<glyph> PageSegmenter::get_glyphs() {
             if (k == oneRuns.size()-1) {
                 g.is_last = true;
             }
-            if (g.width > 0) {
+            if (g.width > 0 && (float)g.height / g.width < 10) {
                 return_value.push_back(g);
             }
 
@@ -543,7 +543,7 @@ vector<glyph> PageSegmenter::get_glyphs() {
             space.height = l - u - shift;
             space.indented = false;
             space.is_space = true;
-            if (k != oneRuns.size()-1) {
+            if (k != oneRuns.size()-1 && (float)space.height/space.width < 10) {
                 return_value.push_back(space);
             }
 
