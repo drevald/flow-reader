@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/margins_plus" android:title="@string/margins_plus" />
-    <item android:id="@+id/margins_minus" android:title="@string/margins_minus" />
-    <item android:id="@+id/kerning_plus" android:title="@string/kerning_plus" />
-    <item android:id="@+id/kerning_minus" android:title="@string/kerning_minus" />
-    <item android:id="@+id/leading_plus" android:title="@string/leading_plus" />
-    <item android:id="@+id/leading_minus" android:title="@string/leading_minus" />
-    <item android:id="@+id/page_unreadable" android:title="@string/page_unreadable" />
-    <item android:id="@+id/delete_book" android:title="@string/delete_this_book" />
+    <item android:id="@+id/no_margins" android:title="@string/no_margins" android:icon="@drawable/ic_no_margins"/>
+    <item android:id="@+id/narrow_margins" android:title="@string/narrow_margins"  android:icon="@drawable/ic_narrow_margins"/>
+    <item android:id="@+id/wide_margins" android:title="@string/wide_margins"  android:icon="@drawable/ic_wide_margins"/>
+    <item android:id="@+id/page_unreadable" android:title="@string/page_unreadable" android:icon="@drawable/ic_page_unreadable"/>
+    <item android:id="@+id/delete_book" android:title="@string/delete_this_book" android:icon="@drawable/ic_trash_can"/>
 </menu>

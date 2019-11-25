@@ -46,4 +46,7 @@
     <string name="books">Книги</string>
     <string name="about_program">О программе</string>
     <string name="close">Закрыть</string>
+    <string name="no_margins">Без полей</string>
+    <string name="narrow_margins">Узкие поля</string>
+    <string name="wide_margins">Широкие поля</string>
 </resources>

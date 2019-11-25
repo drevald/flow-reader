@@ -46,4 +46,7 @@
     <string name="books">Books</string>
     <string name="about_program">About program</string>
     <string name="close">Close</string>
+    <string name="no_margins">No margins</string>
+    <string name="narrow_margins">Narrow margins</string>
+    <string name="wide_margins">Wide margins</string>
 </resources>

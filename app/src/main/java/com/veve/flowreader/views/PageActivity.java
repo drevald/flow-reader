@@ -19,6 +19,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Display;
@@ -101,10 +102,15 @@ public class PageActivity extends AppCompatActivity {
         booksCollection.updateBook(book);
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d(getClass().getName(), "onCreateOptionsMenu");
         getMenuInflater().inflate(R.menu.page_menu, menu);
+        if(menu instanceof MenuBuilder){
+            MenuBuilder m = (MenuBuilder) menu;
+            m.setOptionalIconsVisible(true);
+        }
         return true;
     }
 
@@ -211,41 +217,59 @@ public class PageActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.id.margins_minus: {
-                int margin = context.getMargin();
-                context.setMargin(margin > MARGIN_STEP ? margin - MARGIN_STEP : margin);
-                book.setMargin(margin);
+//            case R.id.margins_minus: {
+//                int margin = context.getMargin();
+//                context.setMargin(margin > MARGIN_STEP ? margin - MARGIN_STEP : margin);
+//                book.setMargin(margin);
+//                break;
+//            }
+//            case R.id.margins_plus: {
+//                int margin = context.getMargin();
+//                context.setMargin(margin < MARGIN_MAX ? margin + MARGIN_STEP : margin);
+//                book.setMargin(margin);
+//                break;
+//            }
+//
+//            case R.id.kerning_minus: {
+//                context.setKerning(0.8f * context.getKerning());
+//                Log.v(getClass().getName(), "Kerning set to " + context.getKerning());
+//                book.setKerning(context.getKerning());
+//                break;
+//            }
+//            case R.id.kerning_plus: {
+//                context.setKerning(1.25f * context.getKerning());
+//                Log.v(getClass().getName(), "Kerning set to " + context.getKerning());
+//                book.setKerning(context.getKerning());
+//                break;
+//            }
+//            case R.id.leading_minus: {
+//                context.setLeading(0.8f * context.getLeading());
+//                Log.v(getClass().getName(), "Leading set to " + context.getLeading());
+//                book.setLeading(context.getLeading());
+//                break;
+//            }
+//            case R.id.leading_plus: {
+//                context.setLeading(1.25f * context.getLeading());
+//                Log.v(getClass().getName(), "Leading set to " + context.getLeading());
+//                book.setLeading(context.getLeading());
+//                break;
+//            }
+            case R.id.no_margins: {
+                context.setMargin(0);
+                Log.v(getClass().getName(), "Margin set to " + context.getMargin());
+                book.setMargin(context.getMargin());
                 break;
             }
-            case R.id.margins_plus: {
-                int margin = context.getMargin();
-                context.setMargin(margin < MARGIN_MAX ? margin + MARGIN_STEP : margin);
-                book.setMargin(margin);
+            case R.id.narrow_margins: {
+                context.setMargin((int)(0.05f * context.getWidth()));
+                Log.v(getClass().getName(), "Margin set to " + context.getMargin());
+                book.setMargin(context.getMargin());
                 break;
             }
-
-            case R.id.kerning_minus: {
-                context.setKerning(0.8f * context.getKerning());
-                Log.v(getClass().getName(), "Kerning set to " + context.getKerning());
-                book.setKerning(context.getKerning());
-                break;
-            }
-            case R.id.kerning_plus: {
-                context.setKerning(1.25f * context.getKerning());
-                Log.v(getClass().getName(), "Kerning set to " + context.getKerning());
-                book.setKerning(context.getKerning());
-                break;
-            }
-            case R.id.leading_minus: {
-                context.setLeading(0.8f * context.getLeading());
-                Log.v(getClass().getName(), "Leading set to " + context.getLeading());
-                book.setLeading(context.getLeading());
-                break;
-            }
-            case R.id.leading_plus: {
-                context.setLeading(1.25f * context.getLeading());
-                Log.v(getClass().getName(), "Leading set to " + context.getLeading());
-                book.setLeading(context.getLeading());
+            case R.id.wide_margins: {
+                context.setMargin((int)(0.2f * context.getWidth()));
+                Log.v(getClass().getName(), "Margin set to " + context.getMargin());
+                book.setMargin(context.getMargin());
                 break;
             }
             case R.id.page_unreadable: {
