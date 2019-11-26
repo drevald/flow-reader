@@ -45,15 +45,6 @@ android {
 
     }
 
-    preBuild {
-        doFirst {
-            JavaCompile jc = android.applicationVariants.find {
-                it.name == 'debug' || it.name == 'release'
-            }.javaCompile
-            jc.options.compilerArgs = ["-Xlint:unchecked"]
-        }
-    }
-
     adbOptions {
         timeOutInMs 60 * 1000 * 10 
     }
@@ -88,7 +79,7 @@ dependencies {
     annotationProcessor 'android.arch.persistence.room:compiler:1.1.1'
     implementation 'com.android.volley:volley:1.1.1'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.0'
-    androidTestCompile ('com.android.support.test.espresso:espresso-contrib:2.2') {
+    androidTestImplementation ('com.android.support.test.espresso:espresso-contrib:2.2') {
         exclude group: 'com.android.support', module: 'appcompat'
         exclude group: 'com.android.support', module: 'support-v4'
         exclude module: 'recyclerview-v7'
