@@ -57,9 +57,21 @@ public class BookFactory {
         thumbnail.compress(Bitmap.CompressFormat.JPEG,100, byteArrayOutputStream);
         bookRecord.setPreview(byteArrayOutputStream.toByteArray());
 
+        String bookName = "";
+        if (book.getTitle() != null) {
+            bookName = book.getTitle();
+            if (book.getAuthor() != null) {
+                bookName += " ";
+                bookName += book.getAuthor();
+            }
+        } else {
+            bookName = file.getName().replaceAll("_", " ");
+            bookName = bookName.substring(0, bookName.lastIndexOf("."));
+        }
+
         bookRecord.setMd5(fileToMD5(file.getPath()));
         bookRecord.setSize(file.length());
-        bookRecord.setName(file.getName());
+        bookRecord.setName(bookName);
         bookRecord.setUrl(file.getPath());
         return bookRecord;
 

@@ -128,6 +128,7 @@ public class PageActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         booksCollection.updateBook(book);
+
     }
 
     @SuppressLint("ClickableViewAccessibility")

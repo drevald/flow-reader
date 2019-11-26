@@ -239,7 +239,6 @@ public class BrowseFilesActivity extends AppCompatActivity {
             newBook = BookFactory.getInstance().createBook(file);
             newBook.setCurrentPage(0);
             newBook.setUrl(file.getAbsolutePath());
-            newBook.setName(file.getName());
             bookId = BooksCollection.getInstance(getApplicationContext()).addBook(newBook);
             return null;
         }
