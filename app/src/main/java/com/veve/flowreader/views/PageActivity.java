@@ -260,8 +260,8 @@ public class PageActivity extends AppCompatActivity {
                 book.setMargin(context.getMargin());
                 break;
             }
-            case R.id.narrow_margins: {
-                context.setMargin((int)(0.05f * context.getWidth()));
+            case R.id.normal_margins: {
+                context.setMargin((int)(0.1f * context.getWidth()));
                 Log.v(getClass().getName(), "Margin set to " + context.getMargin());
                 book.setMargin(context.getMargin());
                 break;

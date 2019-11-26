@@ -50,10 +50,22 @@
                 <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\.djvu" android:scheme="file" />
                 <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\.djvu" android:scheme="file" />
                 <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\..*\\.djvu" android:scheme="file" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\..*\\..*\\.djvu" android:scheme="file" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.djvu" android:scheme="file" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.djvu" android:scheme="file" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.djvu" android:scheme="file" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.djvu" android:scheme="file" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.djvu" android:scheme="file" />
                 <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\.pdf" android:scheme="file" />
                 <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\.pdf" android:scheme="file" />
                 <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\.pdf" android:scheme="file" />
                 <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\..*\\.pdf" android:scheme="file" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\..*\\..*\\.pdf" android:scheme="file" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.pdf" android:scheme="file" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.pdf" android:scheme="file" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.pdf" android:scheme="file" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.pdf" android:scheme="file" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.pdf" android:scheme="file" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -62,16 +74,22 @@
                 <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\.djvu" android:scheme="content" />
                 <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\.djvu" android:scheme="content" />
                 <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\..*\\.djvu" android:scheme="content" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\..*\\..*\\.djvu" android:scheme="content" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.djvu" android:scheme="content" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.djvu" android:scheme="content" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.djvu" android:scheme="content" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.djvu" android:scheme="content" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.djvu" android:scheme="content" />
                 <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\.pdf" android:scheme="content" />
                 <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\.pdf" android:scheme="content" />
                 <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\.pdf" android:scheme="content" />
                 <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\..*\\.pdf" android:scheme="content" />
                 <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\..*\\..*\\.pdf" android:scheme="content" />
-                <data android:host="*" android:mimeType="application/pdf" android:pathPattern=".*\\.pdf" android:scheme="content" />
-                <data android:host="*" android:mimeType="application/pdf" android:pathPattern=".*\\..*\\.pdf" android:scheme="content" />
-                <data android:host="*" android:mimeType="application/pdf" android:pathPattern=".*\\..*\\..*\\.pdf" android:scheme="content" />
-                <data android:host="*" android:mimeType="application/pdf" android:pathPattern=".*\\..*\\..*\\..*\\.pdf" android:scheme="content" />
-                <data android:host="*" android:mimeType="application/pdf" android:pathPattern=".*\\..*\\..*\\..*\\..*\\.pdf" android:scheme="content" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\.pdf" android:scheme="content" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\.pdf" android:scheme="content" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.pdf" android:scheme="content" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.pdf" android:scheme="content" />
+                <data android:host="*" android:mimeType="*/*" android:pathPattern=".*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\..*\\.pdf" android:scheme="content" />
             </intent-filter>
         </activity>
     </application>

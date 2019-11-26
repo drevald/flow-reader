@@ -3,6 +3,7 @@ package com.veve.flowreader;
 import android.content.Context;
 import android.net.Uri;
 
+import java.net.URLDecoder;
 import java.text.MessageFormat;
 
 import static android.content.ContentResolver.SCHEME_CONTENT;
@@ -27,7 +28,7 @@ public interface BookContentResolver {
             String inputStr = uri.toString();
             path = (String)fileInputFormat.parse(inputStr)[0];
         }
-        return path;
+        return URLDecoder.decode(path, "UTF-8");
     }
 
 }
