@@ -195,7 +195,23 @@ public class PageActivity extends AppCompatActivity {
         context.setLeading(book.getLeading());
         context.setMargin(book.getMargin());
 
-        ((TextView)findViewById(R.id.book_title)).setText(book.getName());
+        TextView bookTitle = findViewById(R.id.book_title);
+        bookTitle.setText(book.getName());
+        bookTitle.setOnClickListener((view)->{
+            AlertDialog.Builder builder = new AlertDialog.Builder(PageActivity.this);
+            builder.setCancelable(false)
+                    .setMessage(book.getName())
+                    .setNeutralButton(R.string.close, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+        });
+
+
 
         pageActivity = this;
         setPageNumber(currentPage);
