@@ -47,6 +47,7 @@
     <string name="about_program">О программе</string>
     <string name="close">Закрыть</string>
     <string name="no_margins">Без полей</string>
-    <string name="narrow_margins">Узкие поля</string>
-    <string name="wide_margins">Широкие поля</string>
+    <string name="normal_margins">С полями</string>
+    <string name="wide_margins">С широкими полями</string>
+    <string name="program_info">Версия: %s\nДата сборки: %s</string>
 </resources>

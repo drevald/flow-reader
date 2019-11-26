@@ -46,7 +46,7 @@ import static com.veve.flowreader.Constants.BOOK_ID;
 
 public class MainActivity extends AppCompatActivity {
 
-    SimpleDateFormat sdf = new SimpleDateFormat("dd MM yyyy", Locale.getDefault());
+    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
 
     BookListAdapter bookListAdapter;
 
@@ -231,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
             builder.setTitle(R.string.app_name)
                     .setCancelable(false)
                     .setIcon(R.drawable.ic_icon)
-                    .setMessage(String.format("Version %s\nBuild date %s",
+                    .setMessage(String.format(getResources().getString(R.string.program_info),
                             BuildConfig.GitHash, sdf.format(new Date())))
                     .setNeutralButton(R.string.close, new DialogInterface.OnClickListener() {
                         @Override
