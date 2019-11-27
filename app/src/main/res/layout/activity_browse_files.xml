@@ -23,6 +23,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:onClick="browseInternalMemory"
+                android:visibility="invisible"
                 style="?android:attr/borderlessButtonStyle"
                 app:srcCompat="@drawable/ic_internal_memory" />
 
@@ -32,6 +33,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:onClick="browseExternalMemory"
+                android:visibility="invisible"
                 style="?android:attr/borderlessButtonStyle"
                 app:srcCompat="@drawable/ic_external_memory" />
 

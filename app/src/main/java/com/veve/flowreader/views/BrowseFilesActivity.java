@@ -1,10 +1,12 @@
 package com.veve.flowreader.views;
 
 import android.Manifest;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -40,6 +42,8 @@ public class BrowseFilesActivity extends AppCompatActivity {
 
     FileListAdapter fileListAdapter;
 
+    private static final String EXTERNAL_MEMORY_DIR = "/storage/sdcard1/";
+
     private ProgressBar progress;
 
     @Override
@@ -57,6 +61,11 @@ public class BrowseFilesActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         progress = findViewById(R.id.progress);
+
+        if (new File(EXTERNAL_MEMORY_DIR).exists()) {
+            findViewById(R.id.internal_memory).setVisibility(View.VISIBLE);
+            findViewById(R.id.external_memory).setVisibility(View.VISIBLE);
+        }
 
         //GET BACK BUTTON
         FloatingActionButton home = findViewById(R.id.home);
@@ -226,31 +235,14 @@ public class BrowseFilesActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(File... files) {
             File file = files[0];
-            runOnUiThread(
-                    new Thread(new Runnable(){
-                        @Override
-                        public void run() {
-                            Log.v(getClass().getName(), "Setting progress bar visible - adding book");
-                            progress.setVisibility(View.VISIBLE);
-                        }
-                    })
-            );
-            Log.v(getClass().getName(), "Start parsing new book");
-            newBook = BookFactory.getInstance().createBook(file);
-            newBook.setCurrentPage(0);
-            newBook.setUrl(file.getAbsolutePath());
-            bookId = BooksCollection.getInstance(getApplicationContext()).addBook(newBook);
+            Intent bookIntent = new Intent("android.intent.action.VIEW", Uri.fromFile(file));
+            bookIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            bookIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            bookIntent.setComponent(ComponentName.unflattenFromString("com.veve.flowreader/.views.GetBookActivity"));
+            getApplicationContext().startActivity(bookIntent);
             return null;
         }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            Intent ii = new Intent(BrowseFilesActivity.this, PageActivity.class);
-            ii.putExtra(Constants.BOOK_ID, bookId);
-            ii.putExtra(Constants.FILE_NAME, newBook.getUrl());
-            startActivity(ii);
-        }
     }
 
     ///////////////////////////////////////////////
@@ -265,7 +257,7 @@ public class BrowseFilesActivity extends AppCompatActivity {
     }
 
     public void browseExternalMemory(View view) {
-        fileListAdapter.setRoot("/storage/sdcard1/");
+        fileListAdapter.setRoot(EXTERNAL_MEMORY_DIR);
         fileListAdapter.notifyDataSetChanged();
     }
 
