@@ -2,8 +2,8 @@ package com.veve.flowreader;
 
 
 import android.content.Context;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import android.util.Log;
 
 import com.veve.flowreader.dao.BookRecord;
@@ -15,9 +15,7 @@ import com.veve.flowreader.model.impl.djvu.DjvuBook;
 import com.veve.flowreader.model.impl.djvu.DjvuBookSource;
 
 import org.junit.After;
-import org.junit.Assume;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -40,7 +38,7 @@ public class PerformanceTest {
 
     @Before
     public void getBookFile() throws Exception {
-        appContext = InstrumentationRegistry.getTargetContext();
+        appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         booksCollection = BooksCollection.getInstance(appContext);
         InputStream is = appContext.getResources().openRawResource(R.raw.djvu_sample);
         djvuFile = File.createTempFile("djvu", null);

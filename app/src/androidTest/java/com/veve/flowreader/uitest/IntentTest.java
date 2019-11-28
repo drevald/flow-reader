@@ -4,7 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.test.InstrumentationRegistry;
+import androidx.test.platform.app.InstrumentationRegistry;
 import android.util.Log;
 
 import com.veve.flowreader.R;
@@ -12,9 +12,7 @@ import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.model.BooksCollection;
 
 import org.junit.After;
-import org.junit.Assume;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
@@ -35,7 +33,7 @@ public class IntentTest {
 
     @Before
     public void preparePdfSample() throws Exception {
-        appContext = InstrumentationRegistry.getTargetContext();
+        appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         booksCollection = BooksCollection.getInstance(appContext);
         pdfBookFile = new File(appContext.getExternalFilesDir(null), "pdf_sample.pdf");
         pdfBookFile.createNewFile();
@@ -58,7 +56,7 @@ public class IntentTest {
 
     @Before
     public void prepareDjvuSample() throws Exception {
-        appContext = InstrumentationRegistry.getTargetContext();
+        appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         booksCollection = BooksCollection.getInstance(appContext);
         djvuBookFile = new File(appContext.getExternalFilesDir(null), "djvu_sample.djvu");
         if (djvuBookFile.createNewFile());

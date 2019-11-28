@@ -1,16 +1,10 @@
 package com.veve.flowreader.dao;
 
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Ignore;
-import android.arch.persistence.room.PrimaryKey;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
 
-import com.veve.flowreader.model.PageGlyph;
-import com.veve.flowreader.model.impl.PageGlyphImpl;
-
-import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
-import java.util.List;
-import java.util.Locale;
 
 @Entity
 public class PageGlyphRecord implements Serializable {

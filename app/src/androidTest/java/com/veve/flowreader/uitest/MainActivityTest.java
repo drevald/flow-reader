@@ -1,7 +1,7 @@
 package com.veve.flowreader.uitest;
 
 import android.content.Intent;
-import android.support.test.rule.ActivityTestRule;
+import androidx.test.rule.ActivityTestRule;
 import android.view.View;
 import android.widget.GridView;
 import android.widget.ImageButton;
@@ -9,8 +9,6 @@ import android.widget.ImageButton;
 import com.veve.flowreader.R;
 import com.veve.flowreader.views.MainActivity;
 
-import org.junit.Assume;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 

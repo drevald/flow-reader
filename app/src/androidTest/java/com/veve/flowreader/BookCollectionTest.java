@@ -1,26 +1,19 @@
 package com.veve.flowreader;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
+
+import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.dao.PageGlyphRecord;
-import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.BooksCollection;
-import com.veve.flowreader.model.DevicePageContext;
-import com.veve.flowreader.model.impl.DevicePageContextImpl;
-import com.veve.flowreader.model.impl.PageGlyphImpl;
-import com.veve.flowreader.model.impl.pdf.PdfBook;
-import com.veve.flowreader.model.impl.pdf.PdfBookPage;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +33,7 @@ public class BookCollectionTest {
 
     @Before
     public void prepareCollection() {
-        Context appContext = InstrumentationRegistry.getTargetContext();
+        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         booksCollection = BooksCollection.getInstance(appContext);
     }
 

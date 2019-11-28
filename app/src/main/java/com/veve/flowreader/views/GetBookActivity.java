@@ -1,11 +1,9 @@
 package com.veve.flowreader.views;
 
-import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -19,9 +17,6 @@ import com.veve.flowreader.model.BookFactory;
 import com.veve.flowreader.model.BooksCollection;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 public class GetBookActivity extends AppCompatActivity {
 

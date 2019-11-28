@@ -2,22 +2,18 @@ package com.veve.flowreader.uitest;
 
 import android.content.Intent;
 import android.graphics.drawable.VectorDrawable;
-import android.support.test.rule.ActivityTestRule;
+import androidx.test.rule.ActivityTestRule;
 import android.widget.ImageButton;
 
 import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
 import com.veve.flowreader.views.PageActivity;
 
-import org.junit.Assume;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
-import static android.view.View.INVISIBLE;
-import static android.view.View.VISIBLE;
 import static junit.framework.TestCase.assertTrue;
 
 public class ModePhoneTest extends BookTest {
