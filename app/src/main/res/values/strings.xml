@@ -50,4 +50,6 @@
     <string name="normal_margins">Normal margins</string>
     <string name="wide_margins">Wide margins</string>
     <string name="program_info">Version: %s\nBuild date: %s</string>
+    <string name="print">Print</string>
+    <string name="title_activity_print">PrintActivity</string>
 </resources>
