@@ -13,6 +13,8 @@ public class PdfBook implements Book {
 
     private long bookId;
 
+    private boolean preprocessing;
+
     public PdfBook(String path){
         this.bookId = openBook(path);
         this.path = path;
@@ -45,6 +47,10 @@ public class PdfBook implements Book {
         return path;
     }
 
+    public void setPreprocessing(boolean preprocessing) {
+        this.preprocessing = preprocessing;
+    }
+
     @Override
     public long getId() {
         return bookId;
@@ -63,6 +69,11 @@ public class PdfBook implements Book {
     @Override
     public String getAuthor() {
         return getNativeAuthor(bookId);
+    }
+
+    @Override
+    public boolean getPreprocessing() {
+        return preprocessing;
     }
 
 }

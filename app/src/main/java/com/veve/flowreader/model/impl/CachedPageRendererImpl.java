@@ -136,6 +136,11 @@ public class CachedPageRendererImpl implements PageRenderer {
     }
 
     @Override
+    public Bitmap renderPage(DevicePageContext context, int position, boolean preprocessing, boolean invalidateCache) {
+        return renderPage(context, position);
+    }
+
+    @Override
     public Bitmap renderPage(DevicePageContext context, int position) {
         Log.v(getClass().getName(), String.format("position=%d", position));
         List<PageGlyph> pageGlyphList = getGlyphs(bookSource, position);

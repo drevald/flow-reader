@@ -154,6 +154,11 @@ public class BooksCollection {
             Log.e(getClass().getName(),"Failed to insert glyphs", e);
         }
     }
+
+    public void deleteGlyphs(long bookId, long position) {
+        daoAccess.deleteBookPageGlyphs(bookId, position);
+
+    }
 }
 
 ///////////////////////   DB TASKS   ////////////////////////////////////////////

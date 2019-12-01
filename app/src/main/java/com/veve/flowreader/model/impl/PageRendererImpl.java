@@ -29,6 +29,11 @@ public class PageRendererImpl implements PageRenderer {
     }
 
     @Override
+    public Bitmap renderPage(DevicePageContext context, int position, boolean preprocessing, boolean invalidateCache) {
+        return renderPage(context, position);
+    }
+
+    @Override
     public Bitmap renderPage(DevicePageContext context, int position) {
         Log.d(getClass().getName(), "1");
 

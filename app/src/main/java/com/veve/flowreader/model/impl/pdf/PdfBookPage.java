@@ -53,9 +53,9 @@ public class PdfBookPage extends AbstractBookPage implements BookPage {
     }
 
     @Override
-    public Bitmap getAsReflownBitmap(DevicePageContext context, List<PageGlyphInfo> pageGlyphs) {
+    public Bitmap getAsReflownBitmap(DevicePageContext context, List<PageGlyphInfo> pageGlyphs, boolean preprocessing) {
         PageSize pageSize = new PageSize();
-        byte[] bytes = getNativeReflownBytes(getBookId(), getPageNumber(), context.getZoom(), pageSize, pageGlyphs);
+        byte[] bytes = getNativeReflownBytes(getBookId(), getPageNumber(), context.getZoom(), pageSize, pageGlyphs, preprocessing);
         int width = pageSize.getPageWidth();
         int height = pageSize.getPageHeight();
         Bitmap.Config bitmapConfig = Bitmap.Config.ALPHA_8;
@@ -68,7 +68,7 @@ public class PdfBookPage extends AbstractBookPage implements BookPage {
     }
 
 
-    private static native byte[] getNativeReflownBytes(long bookId, int pageNumber, float scale, PageSize pageSize, List<PageGlyphInfo> pageGlyphs);
+    private static native byte[] getNativeReflownBytes(long bookId, int pageNumber, float scale, PageSize pageSize, List<PageGlyphInfo> pageGlyphs, boolean preprocessing);
 
     private static native int getNativeWidth(long bookId, int pageNumber);
 

@@ -33,4 +33,5 @@
     <string name="title_activity_report">Report unreadable page</string>
     <string name="page_unreadable">Page unreadable</string>
     <string name="notify_send_size">You are going to sent %d bytes over internet</string>
+    <string name="preprocess">Toggle preprocessing</string>
 </resources>

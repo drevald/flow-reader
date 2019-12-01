@@ -50,6 +50,9 @@ public interface DaoAccess {
     @Query("DELETE FROM PageGlyphRecord WHERE bookId = :bookId")
     void deleteBookGlyphs(long bookId);
 
+    @Query("DELETE FROM PageGlyphRecord WHERE bookId = :bookId AND position = :position")
+    void deleteBookPageGlyphs(long bookId, long position);
+
     @Insert
     long insertReport(ReportRecord reportRecord);
 

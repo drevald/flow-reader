@@ -83,4 +83,14 @@ public class MockBook implements Book {
     public String getAuthor() {
         return null;
     }
+
+    @Override
+    public boolean getPreprocessing() {
+        return false;
+    }
+
+    @Override
+    public void setPreprocessing(boolean preprocessing) {
+
+    }
 }

@@ -17,7 +17,7 @@ public interface BookPage {
      */
     Bitmap getAsBitmap(DevicePageContext context);
 
-    Bitmap getAsReflownBitmap(DevicePageContext context, List<PageGlyphInfo> pageGlyphs);
+    Bitmap getAsReflownBitmap(DevicePageContext context, List<PageGlyphInfo> pageGlyphs, boolean preprocessing);
 
     Bitmap getAsGrayscaleBitmap(DevicePageContext context);
 

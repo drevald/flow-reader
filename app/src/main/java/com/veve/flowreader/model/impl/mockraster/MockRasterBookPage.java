@@ -85,7 +85,7 @@ class MockRasterBookPage implements BookPage {
     }
 
     @Override
-    public Bitmap getAsReflownBitmap(DevicePageContext context, List<PageGlyphInfo> pageGlyphs) {
+    public Bitmap getAsReflownBitmap(DevicePageContext context, List<PageGlyphInfo> pageGlyphs, boolean preprocessing) {
         return null;
     }
 

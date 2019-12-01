@@ -56,12 +56,18 @@ public class NativePageRendererImpl implements PageRenderer {
         return originalBitmap;
     }
 
-    private Bitmap getReflownPageBitmap(int position, DevicePageContext context) {
+    private Bitmap getReflownPageBitmap(int position, DevicePageContext context, boolean preprocessing, boolean invalidateCache) {
+
+        if (invalidateCache) {
+            booksCollection.deleteGlyphs(bookRecord.getId(), position);
+        }
+
         List<PageGlyphRecord> storedGlyphs = booksCollection.getPageGlyphs(bookRecord.getId(), position, false);
+
 
         if (storedGlyphs == null || storedGlyphs.isEmpty()) {
             List<PageGlyphInfo> glyphs = new ArrayList<>();
-            Bitmap reflownPageBytes = bookSource.getReflownPageBytes(position, context, glyphs);
+            Bitmap reflownPageBytes = bookSource.getReflownPageBytes(position, context, glyphs, preprocessing);
             List<PageGlyphRecord> glyphsToStore = new ArrayList<PageGlyphRecord>();
             for (PageGlyphInfo glyph : glyphs) {
                 glyphsToStore.add(new PageGlyphRecord(
@@ -95,19 +101,24 @@ public class NativePageRendererImpl implements PageRenderer {
                        record.isLast()
                ));
            }
-           Bitmap reflownPageBytes = bookSource.getReflownPageBytes(position, context, glyphs);
+           Bitmap reflownPageBytes = bookSource.getReflownPageBytes(position, context, glyphs, preprocessing);
            return reflownPageBytes;
         }
 
     }
 
     @Override
-    public Bitmap renderPage(DevicePageContext context, int position) {
+    public Bitmap renderPage(DevicePageContext context, int position, boolean preprocessing, boolean invalidateCache) {
 
-        Bitmap bitmap = getReflownPageBitmap(position, context);
+        Bitmap bitmap = getReflownPageBitmap(position, context, preprocessing, invalidateCache);
         return Bitmap.createScaledBitmap(bitmap, (context.getWidth()),
                 ((context.getWidth() * bitmap.getHeight())/bitmap.getWidth()),
                 false);
+    }
+
+    @Override
+    public Bitmap renderPage(DevicePageContext context, int position) {
+        return renderPage(context, position, false, false);
     }
 
     @Override

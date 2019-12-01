@@ -24,9 +24,9 @@ public class DjvuBookSource implements BookSource {
     }
 
     @Override
-    public Bitmap getReflownPageBytes(int pageNumber, DevicePageContext context, List<PageGlyphInfo> pageGlyphs) {
+    public Bitmap getReflownPageBytes(int pageNumber, DevicePageContext context, List<PageGlyphInfo> pageGlyphs, boolean preprocessing) {
         DjvuBookPage pdfBookPage = (DjvuBookPage)djvuBook.getPage(pageNumber);
-        return pdfBookPage.getAsReflownBitmap(context, pageGlyphs);
+        return pdfBookPage.getAsReflownBitmap(context, pageGlyphs, preprocessing);
     }
 
     @Override

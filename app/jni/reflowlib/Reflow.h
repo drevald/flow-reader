@@ -16,11 +16,12 @@
 class Reflow {
     
 public:
-    Reflow(cv::Mat image, std::vector<glyph> glyphs) : image(image), glyphs(glyphs) {
+    Reflow(cv::Mat image, cv::Mat& rotated_with_pictures, std::vector<glyph> glyphs) : image(image), rotated_with_pictures(rotated_with_pictures), glyphs(glyphs) {
     }
     cv::Mat reflow(float scale);
 private:
     cv::Mat image;
+    cv::Mat rotated_with_pictures;
     std::vector<glyph> glyphs;
     std::vector<int> calculate_line_heights(std::vector<int> line_heights);
 };

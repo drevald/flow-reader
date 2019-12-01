@@ -33,4 +33,5 @@
     <string name="title_activity_report">Отчет о нечитабельной странице</string>
     <string name="page_unreadable">Страница нечитабельна</string>
     <string name="notify_send_size">Вы согласны переслать %d байтов по интернет?</string>
+    <string name="preprocess">Перекл. предобработку</string>
 </resources>

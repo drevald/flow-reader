@@ -18,9 +18,15 @@ public class MockRenderer implements PageRenderer {
     }
 
     @Override
+    public Bitmap renderPage(DevicePageContext context, int position, boolean preprocessing, boolean invalidateCache) {
+        return renderPage(context, position);
+    }
+
+    @Override
     public Bitmap renderPage(DevicePageContext context, int position) {
         return book.getPage(position).getAsBitmap(context);
     }
+
 
     @Override
     public Bitmap renderOriginalPage(DevicePageContext context, int position) {

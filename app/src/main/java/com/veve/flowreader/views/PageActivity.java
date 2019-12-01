@@ -189,7 +189,7 @@ public class PageActivity extends AppCompatActivity {
         ((TextView)findViewById(R.id.book_title)).setText(book.getName());
 
         pageActivity = this;
-        setPageNumber(currentPage);
+        setPageNumber(currentPage , false );
 
         book.setZoom(context.getZoom());
         ((TextView)findViewById(R.id.zoom_percent))
@@ -208,6 +208,8 @@ public class PageActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+        boolean invalidateCache = false;
 
         switch (item.getItemId()) {
             case R.id.margins_minus: {
@@ -298,14 +300,18 @@ public class PageActivity extends AppCompatActivity {
                 startActivity(i);
                 break;
             }
+            case R.id.preprocess: {
+                book.setPreprocessing(!book.getPreprocessing());
+                invalidateCache = true;
+            }
 
         }
-        setPageNumber(currentPage);
+        setPageNumber(currentPage, invalidateCache);
         return true;
 
     }
 
-    private void setPageNumber(int pageNumber) {
+    private void setPageNumber(int pageNumber, boolean invalidateCache) {
         pager.setText(getString(R.string.ui_page_count, pageNumber + 1, book.getPagesCount()));
         seekBar.setProgress(pageNumber + 1);
         currentPage = pageNumber;
@@ -313,7 +319,8 @@ public class PageActivity extends AppCompatActivity {
         booksCollection.updateBook(book);
         pageLoader = new PageLoader(this);
         kickOthers(pageLoader);
-        pageLoader.execute(pageNumber);
+        Integer invCache = invalidateCache ? 1 : 0;
+        pageLoader.execute(pageNumber, invCache);
     }
 
     private void kickOthers(PageLoader pageLoader) {
@@ -380,12 +387,12 @@ public class PageActivity extends AppCompatActivity {
                     if (Math.abs(distanceX) > 2 * Math.abs(distanceY) && Math.abs(distanceX) > 50) {
                         if (distanceX > 0) {
                             if (book.getCurrentPage() < book.getPagesCount()-1) {
-                                setPageNumber(book.getCurrentPage()+1);
+                                setPageNumber(book.getCurrentPage()+1, false);
                                 scroll.scrollTo(0, 0);
                             }
                         } else {
                             if (book.getCurrentPage() > 0) {
-                                setPageNumber(book.getCurrentPage()-1);
+                                setPageNumber(book.getCurrentPage()-1, false);
                                 scroll.scrollTo(0, 0);
                             }
                         }
@@ -404,12 +411,12 @@ public class PageActivity extends AppCompatActivity {
 
                     if (x > p.getWidth() / 2) {
                         if (book.getCurrentPage() < book.getPagesCount()-1) {
-                            setPageNumber(book.getCurrentPage()+1);
+                            setPageNumber(book.getCurrentPage()+1, false);
                             scroll.scrollTo(0, 0);
                         }
                     } else {
                         if (book.getCurrentPage() > 0) {
-                            setPageNumber(book.getCurrentPage()-1);
+                            setPageNumber(book.getCurrentPage()-1, false);
                             scroll.scrollTo(0, 0);
                         }
                     }
@@ -460,7 +467,7 @@ public class PageActivity extends AppCompatActivity {
     public void onStopTrackingTouch(SeekBar seekBar) {
         Log.d(getClass().getName(), "onStopTrackingTouch");
         int progress = seekBar.getProgress();
-        setPageNumber(progress > 0 ? progress - 1: progress);
+        setPageNumber(progress > 0 ? progress - 1: progress, false);
         seekBar.setVisibility(GONE);
         pager.setVisibility(VISIBLE);
     }
@@ -518,7 +525,7 @@ public class PageActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
                 Log.d(getClass().getName(), String.format("Setting page #%d for original page", currentPage));
             }
-            pageActivity.setPageNumber(currentPage);
+            pageActivity.setPageNumber(currentPage, false);
         }
     }
 
@@ -549,7 +556,7 @@ public class PageActivity extends AppCompatActivity {
                 }
             }
 
-            pageActivity.setPageNumber(currentPage);
+            pageActivity.setPageNumber(currentPage,false);
 
         }
 
@@ -593,8 +600,10 @@ public class PageActivity extends AppCompatActivity {
 
             int pageNumber = integers[0];
 
+            boolean invalidateCache = integers[1] == 1;
+
             if (pageActivity.viewMode == Constants.VIEW_MODE_PHONE) {
-                bitmap = pageActivity.pageRenderer.renderPage(context, pageNumber);
+                bitmap = pageActivity.pageRenderer.renderPage(context, pageNumber, book.getPreprocessing(), invalidateCache);
             } else {
                 bitmap = pageActivity.pageRenderer.renderOriginalPage(pageActivity.context, pageNumber);
             }

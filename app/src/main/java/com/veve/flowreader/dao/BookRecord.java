@@ -26,6 +26,7 @@ public class BookRecord {
     private int scrollOffset = 0;
     private byte[] preview;
     private String md5;
+    private boolean preprocessing = false;
 
     public String getMd5() {
         return md5;
@@ -145,5 +146,13 @@ public class BookRecord {
     public int getScrollOffset() {return scrollOffset; }
 
     public void setScrollOffset(int scrollOffset) {this.scrollOffset = scrollOffset; }
+
+    public void setPreprocessing(boolean preprocessing) {
+        this.preprocessing = preprocessing;
+    }
+
+    public boolean getPreprocessing() {
+        return this.preprocessing;
+    }
 
 }

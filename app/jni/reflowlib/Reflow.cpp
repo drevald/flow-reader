@@ -19,11 +19,10 @@ std::vector<int> Reflow::calculate_line_heights(std::vector<int> line_heights) {
     for (int i=0;i<line_heights.size(); i++) {
         new_line_heights.push_back(line_heights.at(i) + addition);
     }
+
     LineSpacing ls(new_line_heights);
     return ls.get_line_heights();
 }
-
-
 
 
 cv::Mat Reflow::reflow(float scale) {
@@ -77,7 +76,6 @@ cv::Mat Reflow::reflow(float scale) {
                     line_number++;
                 }
 
-
                 line = std::vector<glyph>();
                 line_sum = left_margin + new_symbol_width;
                 max_symbol_height = new_symbol_height;
@@ -96,6 +94,10 @@ cv::Mat Reflow::reflow(float scale) {
 
                 line = std::vector<glyph>();
                 line.push_back(g);
+                if (line_number > 0) {
+                    line_number++;
+                }
+
                 lines.insert(std::make_pair(line_number, line));
                 line = std::vector<glyph>();
                 max_symbol_height = 0;
@@ -112,6 +114,13 @@ cv::Mat Reflow::reflow(float scale) {
         lines.insert(std::make_pair(line_number, line));
     }
 
+    std::vector<int> line_numbers;;
+    for (auto const& element : lines) {
+        line_numbers.push_back(element.first);
+    }
+
+    auto it = std::max_element(line_numbers.begin(), line_numbers.end());
+    line_number = (*it);
 
     line_heights = std::vector<int>();
     int g_counter = 0;
@@ -158,12 +167,12 @@ cv::Mat Reflow::reflow(float scale) {
                 line_sum += 30;
             }
 
-            cv::Mat symbol_mat = image(cv::Rect(g.x, g.y, g.width, g.height));
+            cv::Mat symbol_mat = g.is_picture ? rotated_with_pictures(cv::Rect(g.x, g.y, g.width, g.height)) : image(cv::Rect(g.x, g.y, g.width, g.height));
             int new_symbol_width = ceil(symbol_mat.size().width * scale);
             int new_symbol_height = ceil(symbol_mat.size().height * scale);
 
             cv::Mat dst(new_symbol_height, new_symbol_width, symbol_mat.type());
-            cv::resize(symbol_mat, dst, dst.size(), 0,0, cv::INTER_CUBIC);
+            cv::resize(symbol_mat, dst, dst.size(), 0,0, cv::INTER_AREA);
             int x_pos = line_sum;
 
             int y_pos = (current_vert_pos + line_height) + (g.baseline_shift - g.height)*scale;
@@ -180,7 +189,7 @@ cv::Mat Reflow::reflow(float scale) {
                     int y_pos = (current_vert_pos + line_height) + (g.baseline_shift - g.height)*scale*scale_coef;
                     int scaled_symbol_height = scale_coef * new_symbol_height;
                     cv::Mat dst(scaled_symbol_height, scaled_symbol_width, symbol_mat.type());
-                    cv::resize(symbol_mat, dst, dst.size(), 0,0, cv::INTER_CUBIC);
+                    cv::resize(symbol_mat, dst, dst.size(), 0,0, cv::INTER_AREA);
                     cv::Rect dstRect(x_pos, y_pos, scaled_symbol_width, scaled_symbol_height);
                     dst.copyTo(new_image(dstRect));
                 }

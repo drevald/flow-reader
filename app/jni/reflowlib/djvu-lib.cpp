@@ -210,7 +210,7 @@ image_format get_djvu_pixels(JNIEnv *env, jlong bookId, jint page_number, jboole
 }
 
 JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeReflownBytes
-        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jfloat scale, jobject pageSize, jobject list) {
+        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jfloat scale, jobject pageSize, jobject list, jboolean preprocessing) {
 
     std::vector<glyph> glyphs = convert_java_glyphs(env, list);
 
@@ -221,11 +221,16 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
 
     Mat mat(h, w, CV_8UC1, &((char *) pixels)[0]);
     threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
-    preprocess(mat);
-    //remove_skew(mat);
-
+    cv::Mat rotated_with_pictures;
     cv::Mat new_image;
-    reflow(mat, new_image, scale, env, glyphs, list);
+
+    bool do_preprocessing = (bool)preprocessing;
+    if (do_preprocessing) {
+        std::vector<glyph> pic_glyphs = preprocess(mat, rotated_with_pictures);
+        reflow(mat, new_image, scale, env, glyphs, list, pic_glyphs, rotated_with_pictures, true);
+    } else {
+        reflow(mat, new_image, scale, env, glyphs, list, std::vector<glyph>(), mat, false);
+    }
 
     jclass clz = env->GetObjectClass(pageSize);
 
@@ -253,8 +258,9 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
 
     Mat mat(h, w, CV_8UC1, &((char *) pixels)[0]);
     threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
-    
-    preprocess(mat);
+
+    cv::Mat rotated_with_pictures;
+    std::vector<glyph> pic_glyphs = preprocess(mat, rotated_with_pictures);
     //remove_skew(mat);
 
 
@@ -296,7 +302,7 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
 
     Mat mat(h, w, CV_8UC1, &((char *) pixels)[0]);
     threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
-    remove_skew(mat);
+
 
     size_t sizeInBytes = mat.total() * mat.elemSize();
 
