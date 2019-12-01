@@ -2,7 +2,7 @@ package com.veve.flowreader;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.support.test.runner.AndroidJUnit4;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import android.util.Log;
 
 import org.junit.Ignore;
@@ -10,7 +10,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
 import static org.junit.Assert.assertEquals;

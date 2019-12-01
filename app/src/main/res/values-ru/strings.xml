@@ -34,4 +34,21 @@
     <string name="page_unreadable">Страница нечитабельна</string>
     <string name="notify_send_size">Вы согласны переслать %d байтов по интернет?</string>
     <string name="preprocess">Перекл. предобработку</string>
+    <string name="getting_report">Составляем отчет</string>
+    <string name="sending_original">Отсылается оригинальная страница</string>
+    <string name="sending_reflowed">Отсылается переверстанная страница</string>
+    <string name="sending_glyphs">Отсылается разметка</string>
+    <string name="report_response">Ожидается ответ</string>
+    <string name="report_sent">Отчет отправлен</string>
+    <string name="confirm_delete">Удалить %s</string>
+    <string name="book_deletion">Удаление книги</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="books">Книги</string>
+    <string name="about_program">О программе</string>
+    <string name="close">Закрыть</string>
+    <string name="no_margins">Без полей</string>
+    <string name="normal_margins">С полями</string>
+    <string name="wide_margins">С широкими полями</string>
+    <string name="program_info">Версия: %s\nДата сборки: %s</string>
 </resources>

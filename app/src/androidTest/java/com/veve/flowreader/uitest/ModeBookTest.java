@@ -1,27 +1,18 @@
 package com.veve.flowreader.uitest;
 
-import android.app.Activity;
-import android.app.ActivityManager;
-import android.app.Application;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.VectorDrawable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.test.rule.ActivityTestRule;
-import android.view.MotionEvent;
+
+import androidx.test.rule.ActivityTestRule;
+
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
-import com.veve.flowreader.dao.BookRecord;
-import com.veve.flowreader.views.MainActivity;
 import com.veve.flowreader.views.PageActivity;
 
-import org.junit.Assume;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -98,13 +89,13 @@ public class ModeBookTest extends BookTest {
 
     @Test
     public void testZoom() {
-        assertEquals(pageActivity.getBook().getZoom(), 1.0F);
+        assertEquals(pageActivity.getBook().getZoomOriginal(), 1.0F);
         ImageButton zoomInButton = pageActivity.findViewById(R.id.larger_text);
         zoomInButton.callOnClick();
-        assertEquals(pageActivity.getBook().getZoom(), 1.25F);
+        assertEquals(pageActivity.getBook().getZoomOriginal(), 1.25F);
         ImageButton zoomOutButton = pageActivity.findViewById(R.id.smaller_text);
         zoomOutButton.callOnClick();
-        assertEquals(pageActivity.getBook().getZoom(), 1.0F);
+        assertEquals(pageActivity.getBook().getZoomOriginal(), 1.0F);
     }
 
 //    @Test

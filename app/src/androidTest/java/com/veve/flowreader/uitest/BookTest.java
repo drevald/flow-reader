@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.support.test.InstrumentationRegistry;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.veve.flowreader.R;
 import com.veve.flowreader.dao.BookRecord;
@@ -29,7 +29,7 @@ public class BookTest {
 
     @Before
     public void prepareCollection() throws Exception {
-        appContext = InstrumentationRegistry.getTargetContext();
+        appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         booksCollection = BooksCollection.getInstance(appContext);
         File file = new File(appContext.getExternalFilesDir(null), "pdf_sample.pdf");
         file.createNewFile();

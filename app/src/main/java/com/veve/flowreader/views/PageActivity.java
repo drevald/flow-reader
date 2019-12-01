@@ -2,22 +2,22 @@ package com.veve.flowreader.views;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.appbar.AppBarLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Display;
 import android.view.GestureDetector;
@@ -41,7 +41,6 @@ import com.veve.flowreader.R;
 import com.veve.flowreader.dao.AppDatabase;
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.dao.DaoAccess;
-import com.veve.flowreader.dao.PageGlyphRecord;
 import com.veve.flowreader.dao.ReportRecord;
 import com.veve.flowreader.model.BooksCollection;
 import com.veve.flowreader.model.DevicePageContext;
@@ -62,8 +61,6 @@ import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 import static com.veve.flowreader.Constants.BOOK_ID;
-import static com.veve.flowreader.Constants.MARGIN_MAX;
-import static com.veve.flowreader.Constants.MARGIN_STEP;
 import static com.veve.flowreader.Constants.MAX_BITMAP_SIZE;
 import static com.veve.flowreader.Constants.VIEW_MODE_ORIGINAL;
 import static com.veve.flowreader.Constants.VIEW_MODE_PHONE;
@@ -99,10 +96,15 @@ public class PageActivity extends AppCompatActivity {
         booksCollection.updateBook(book);
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d(getClass().getName(), "onCreateOptionsMenu");
         getMenuInflater().inflate(R.menu.page_menu, menu);
+        if(menu instanceof MenuBuilder){
+            MenuBuilder m = (MenuBuilder) menu;
+            m.setOptionalIconsVisible(true);
+        }
         return true;
     }
 
@@ -120,6 +122,7 @@ public class PageActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         booksCollection.updateBook(book);
+
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -182,18 +185,33 @@ public class PageActivity extends AppCompatActivity {
         display.getSize(point);
         context = new DevicePageContextImpl(point.x);
         context.setZoom(book.getZoom());
+        context.setZoomOriginal(book.getZoomOriginal());
         context.setKerning(book.getKerning());
         context.setLeading(book.getLeading());
         context.setMargin(book.getMargin());
 
-        ((TextView)findViewById(R.id.book_title)).setText(book.getName());
+        TextView bookTitle = findViewById(R.id.book_title);
+        bookTitle.setText(book.getName());
+        bookTitle.setOnClickListener((view)->{
+            AlertDialog.Builder builder = new AlertDialog.Builder(PageActivity.this);
+            builder.setCancelable(false)
+                    .setMessage(book.getName())
+                    .setNeutralButton(R.string.close, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+        });
+
+
 
         pageActivity = this;
         setPageNumber(currentPage , false );
 
         book.setZoom(context.getZoom());
-        ((TextView)findViewById(R.id.zoom_percent))
-                .setText((int)(context.getZoom() * 100)+"%");
 
         //runOnUiThread(()-> {
             show.setImageResource(viewMode ==
@@ -212,41 +230,59 @@ public class PageActivity extends AppCompatActivity {
         boolean invalidateCache = false;
 
         switch (item.getItemId()) {
-            case R.id.margins_minus: {
-                int margin = context.getMargin();
-                context.setMargin(margin > MARGIN_STEP ? margin - MARGIN_STEP : margin);
-                book.setMargin(margin);
+//            case R.id.margins_minus: {
+//                int margin = context.getMargin();
+//                context.setMargin(margin > MARGIN_STEP ? margin - MARGIN_STEP : margin);
+//                book.setMargin(margin);
+//                break;
+//            }
+//            case R.id.margins_plus: {
+//                int margin = context.getMargin();
+//                context.setMargin(margin < MARGIN_MAX ? margin + MARGIN_STEP : margin);
+//                book.setMargin(margin);
+//                break;
+//            }
+//
+//            case R.id.kerning_minus: {
+//                context.setKerning(0.8f * context.getKerning());
+//                Log.v(getClass().getName(), "Kerning set to " + context.getKerning());
+//                book.setKerning(context.getKerning());
+//                break;
+//            }
+//            case R.id.kerning_plus: {
+//                context.setKerning(1.25f * context.getKerning());
+//                Log.v(getClass().getName(), "Kerning set to " + context.getKerning());
+//                book.setKerning(context.getKerning());
+//                break;
+//            }
+//            case R.id.leading_minus: {
+//                context.setLeading(0.8f * context.getLeading());
+//                Log.v(getClass().getName(), "Leading set to " + context.getLeading());
+//                book.setLeading(context.getLeading());
+//                break;
+//            }
+//            case R.id.leading_plus: {
+//                context.setLeading(1.25f * context.getLeading());
+//                Log.v(getClass().getName(), "Leading set to " + context.getLeading());
+//                book.setLeading(context.getLeading());
+//                break;
+//            }
+            case R.id.no_margins: {
+                context.setMargin(0);
+                Log.v(getClass().getName(), "Margin set to " + context.getMargin());
+                book.setMargin(context.getMargin());
                 break;
             }
-            case R.id.margins_plus: {
-                int margin = context.getMargin();
-                context.setMargin(margin < MARGIN_MAX ? margin + MARGIN_STEP : margin);
-                book.setMargin(margin);
+            case R.id.normal_margins: {
+                context.setMargin((int)(0.1f * context.getWidth()));
+                Log.v(getClass().getName(), "Margin set to " + context.getMargin());
+                book.setMargin(context.getMargin());
                 break;
             }
-
-            case R.id.kerning_minus: {
-                context.setKerning(0.8f * context.getKerning());
-                Log.v(getClass().getName(), "Kerning set to " + context.getKerning());
-                book.setKerning(context.getKerning());
-                break;
-            }
-            case R.id.kerning_plus: {
-                context.setKerning(1.25f * context.getKerning());
-                Log.v(getClass().getName(), "Kerning set to " + context.getKerning());
-                book.setKerning(context.getKerning());
-                break;
-            }
-            case R.id.leading_minus: {
-                context.setLeading(0.8f * context.getLeading());
-                Log.v(getClass().getName(), "Leading set to " + context.getLeading());
-                book.setLeading(context.getLeading());
-                break;
-            }
-            case R.id.leading_plus: {
-                context.setLeading(1.25f * context.getLeading());
-                Log.v(getClass().getName(), "Leading set to " + context.getLeading());
-                book.setLeading(context.getLeading());
+            case R.id.wide_margins: {
+                context.setMargin((int)(0.2f * context.getWidth()));
+                Log.v(getClass().getName(), "Margin set to " + context.getMargin());
+                book.setMargin(context.getMargin());
                 break;
             }
             case R.id.page_unreadable: {
@@ -292,12 +328,31 @@ public class PageActivity extends AppCompatActivity {
                 break;
             }
             case R.id.delete_book: {
-                long bookId = book.getId();
-                BooksCollection.getInstance(getApplicationContext()).deleteBook(bookId);
-                Intent i = new Intent(PageActivity.this, MainActivity.class);
-                i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                i.putExtra(BOOK_ID, bookId);
-                startActivity(i);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(PageActivity.this);
+                builder.setTitle(R.string.book_deletion)
+                        .setMessage(String.format(
+                                getResources().getString(R.string.confirm_delete), book.getName()))
+                        .setCancelable(false)
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                long bookId = book.getId();
+                                BooksCollection.getInstance(getApplicationContext()).deleteBook(bookId);
+                                Intent i = new Intent(PageActivity.this, MainActivity.class);
+                                i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                                i.putExtra(BOOK_ID, bookId);
+                                startActivity(i);
+                            }
+                        })
+                        .setNegativeButton(R.string.no,
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+                AlertDialog alert = builder.create();
+                alert.show();
                 break;
             }
             case R.id.preprocess: {
@@ -533,26 +588,39 @@ public class PageActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.smaller_text: {
-                    if (context.getZoom() <= Constants.ZOOM_MIN)
+            if (viewMode == VIEW_MODE_PHONE) {
+                switch (v.getId()) {
+                    case R.id.smaller_text: {
+                        if (context.getZoom() <= Constants.ZOOM_MIN)
+                            break;
+                        context.setZoom(-1 * Constants.ZOOM_STEP + context.getZoom());
+                        book.setZoom(context.getZoom());
                         break;
-                    context.setZoom(-1 * Constants.ZOOM_STEP + context.getZoom());
-                    Log.v(getClass().getName(), "Zoom set to " + context.getZoom());
-                    book.setZoom(context.getZoom());
-                    ((TextView)findViewById(R.id.zoom_percent))
-                            .setText((int)(context.getZoom() * 100)+"%");
-                    break;
+                    }
+                    case R.id.larger_text: {
+                        if (context.getZoom() > Constants.ZOOM_MAX)
+                            break;
+                        context.setZoom(Constants.ZOOM_STEP + context.getZoom());
+                        book.setZoom(context.getZoom());
+                        break;
+                    }
                 }
-                case R.id.larger_text: {
-                    if (context.getZoom() > Constants.ZOOM_MAX)
+            } else {
+                switch (v.getId()) {
+                    case R.id.smaller_text: {
+                        if (book.getZoomOriginal() <= Constants.ZOOM_MIN)
+                            break;
+                        context.setZoomOriginal(-1 * Constants.ZOOM_STEP + book.getZoomOriginal());
+                        book.setZoomOriginal(context.getZoomOriginal());
                         break;
-                    context.setZoom(Constants.ZOOM_STEP + context.getZoom());
-                    Log.v(getClass().getName(), "Zoom set to " + context.getZoom());
-                    book.setZoom(context.getZoom());
-                    ((TextView)findViewById(R.id.zoom_percent))
-                            .setText((int)(context.getZoom() * 100)+"%");
-                    break;
+                    }
+                    case R.id.larger_text: {
+                        if (book.getZoomOriginal() > Constants.ZOOM_MAX)
+                            break;
+                        context.setZoomOriginal(Constants.ZOOM_STEP + book.getZoomOriginal());
+                        book.setZoomOriginal(context.getZoomOriginal());
+                        break;
+                    }
                 }
             }
 

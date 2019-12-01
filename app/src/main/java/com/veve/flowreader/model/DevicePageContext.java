@@ -14,6 +14,7 @@ public class DevicePageContext implements Serializable {
     private Point startPoint;
     private Canvas canvas;
     private float zoom = 1;
+    private float zoomOriginal = 1;
     private int width;
     private Point remotestPoint;
     private float kerning;
@@ -22,6 +23,10 @@ public class DevicePageContext implements Serializable {
     private int lineHeight;
     private int currentBaseLine;
     private boolean newline;
+
+    public float getZoomOriginal() {return zoomOriginal;}
+
+    public void setZoomOriginal(float originalZoom) {this.zoomOriginal = originalZoom;}
 
     public DevicePageContext() {
         newline = true;

@@ -4,8 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.test.InstrumentationRegistry;
-import android.util.Log;
+import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.veve.flowreader.MD5;
 import com.veve.flowreader.R;
@@ -15,9 +14,7 @@ import com.veve.flowreader.dao.DaoAccess;
 import com.veve.flowreader.model.BooksCollection;
 
 import org.junit.After;
-import org.junit.Assume;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
@@ -40,7 +37,7 @@ public class DuplicateTest {
 
     @Before
     public void prepareSamples() throws Exception {
-        appContext = InstrumentationRegistry.getTargetContext();
+        appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         booksCollection = BooksCollection.getInstance(appContext);
         AppDatabase appDatabase = AppDatabase.getInstance(appContext);
         DaoAccess daoAccess = appDatabase.daoAccess();

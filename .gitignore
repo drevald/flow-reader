@@ -13,6 +13,7 @@ local.properties
 app/.externalNativeBuild/
 app/.cxx/
 app/*.iml
+app/app.iml
 
 # User-specific configurations
 .idea

@@ -93,7 +93,7 @@ public class PageGlyphImpl implements PageGlyph {
     @Override
     public void draw(DevicePageContext context, boolean show) {
 
-        Log.v(getClass().getName(), "Baseline shift is " + baseLineShift);
+        //Log.v(getClass().getName(), "Baseline shift is " + baseLineShift);
 
         if (isSpace && context.isNewline()) {
             context.setNewline(false);

@@ -18,11 +18,11 @@
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="mainText">
-        <item name="android:labelTextSize">24sp</item>
+        <item name="android:labelTextSize">20sp</item>
     </style>
 
     <style name="label">
-        <item name="android:textSize">24sp</item>
+        <item name="android:textSize">20sp</item>
         <item name="android:textColor">#ffffff</item>
         <item name="android:textStyle">bold</item>
         <item name="android:padding">20sp</item>
