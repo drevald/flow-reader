@@ -1,6 +1,11 @@
 package com.veve.flowreader.model.impl;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.Log;
 
 import com.veve.flowreader.dao.BookRecord;
@@ -16,6 +21,8 @@ import com.veve.flowreader.model.PageRenderer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static android.graphics.Bitmap.Config.ARGB_8888;
 
 
 public class NativePageRendererImpl implements PageRenderer {
@@ -111,8 +118,25 @@ public class NativePageRendererImpl implements PageRenderer {
     public Bitmap renderPage(DevicePageContext context, int position, boolean preprocessing, boolean invalidateCache) {
 
         Bitmap bitmap = getReflownPageBitmap(position, context, preprocessing, invalidateCache);
-        return Bitmap.createScaledBitmap(bitmap, (context.getWidth()),
-                ((context.getWidth() * bitmap.getHeight())/bitmap.getWidth()),
+
+        Bitmap bmp = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), ARGB_8888);
+
+        Canvas canvas = new Canvas(bmp);
+        Paint paint = new Paint();
+        paint.setStyle(Paint.Style.FILL_AND_STROKE);
+
+        Rect srcRect = new Rect(0,0,bitmap.getWidth(), bitmap.getHeight());
+        Rect dstRect = new Rect(0,0,bitmap.getWidth(), bitmap.getHeight());
+
+        Paint fillPaint = new Paint();
+        fillPaint.setStyle(Paint.Style.FILL);
+        fillPaint.setColor(Color.WHITE);
+
+        canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), fillPaint);
+        canvas.drawBitmap(bitmap, srcRect,dstRect, paint);
+
+        return Bitmap.createScaledBitmap(bmp, (context.getWidth()),
+                ((context.getWidth() * bmp.getHeight())/bmp.getWidth()),
                 false);
     }
 
