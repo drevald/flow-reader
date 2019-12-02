@@ -33,7 +33,6 @@ import java.io.IOException;
 
 public class PrintActivity extends AppCompatActivity {
 
-
     class MyPrintDocumentAdapter extends PrintDocumentAdapter {
 
         public MyPrintDocumentAdapter(Activity activity) {
@@ -70,24 +69,23 @@ public class PrintActivity extends AppCompatActivity {
                             final CancellationSignal cancellationSignal,
                             final PrintDocumentAdapter.WriteResultCallback callback) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-            Log.v(getClass().getName(), "onWrite");
+                Log.v(getClass().getName(), "onWrite");
 
-            PdfDocument pdfDocument = null;
+                PdfDocument pdfDocument = null;
                 pdfDocument = new PdfDocument();
 
-            PdfDocument.PageInfo.Builder pageOneBuilder = new PdfDocument.PageInfo.Builder(640, 480, 1);
-            PdfDocument.Page page = pdfDocument.startPage(pageOneBuilder.create());
-            Canvas canvas = page.getCanvas();
-            Paint paint = new Paint();
-            paint.setColor(Color.RED);
-            canvas.drawText("HERE I AM", 100, 100, paint);
-            pdfDocument.finishPage(page);
-            try{
-                pdfDocument.writeTo(new FileOutputStream(destination.getFileDescriptor()));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
+                PdfDocument.PageInfo.Builder pageOneBuilder = new PdfDocument.PageInfo.Builder(640, 480, 1);
+                PdfDocument.Page page = pdfDocument.startPage(pageOneBuilder.create());
+                Canvas canvas = page.getCanvas();
+                Paint paint = new Paint();
+                paint.setColor(Color.RED);
+                canvas.drawText("HERE I AM", 100, 100, paint);
+                pdfDocument.finishPage(page);
+                try {
+                    pdfDocument.writeTo(new FileOutputStream(destination.getFileDescriptor()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
 
 //            // Iterate over each page of the document,
