@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/no_margins" android:name="@string/no_margins" android:icon="@drawable/ic_margins_no"/>
-    <item android:id="@+id/normal_margins" android:name="@string/normal_margins"  android:icon="@drawable/ic_margins_normal"/>
-    <item android:id="@+id/wide_margins" android:name="@string/wide_margins"  android:icon="@drawable/ic_margins_wide"/>
-    <item android:id="@+id/page_unreadable" android:name="@string/page_unreadable" android:icon="@drawable/ic_page_unreadable"/>
-    <item android:id="@+id/delete_book" android:name="@string/delete_this_book" android:icon="@drawable/ic_trash_can"/>
-    <item android:id="@+id/preprocess" android:name="@string/preprocess" />
+    <item android:id="@+id/no_margins" android:title="@string/no_margins" android:icon="@drawable/ic_margins_no"/>
+    <item android:id="@+id/normal_margins" android:title="@string/normal_margins"  android:icon="@drawable/ic_margins_normal"/>
+    <item android:id="@+id/wide_margins" android:title="@string/wide_margins"  android:icon="@drawable/ic_margins_wide"/>
+    <item android:id="@+id/page_unreadable" android:title="@string/page_unreadable" android:icon="@drawable/ic_page_unreadable"/>
+    <item android:id="@+id/preprocess" android:title="@string/preprocess" />
+    <group/>
+    <item android:id="@+id/delete_book" android:title="@string/delete_this_book" android:icon="@drawable/ic_trash_can"/>
 </menu>

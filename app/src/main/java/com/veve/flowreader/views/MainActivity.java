@@ -29,6 +29,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.veve.flowreader.BuildConfig;
@@ -109,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
             EditText titleEditView = new EditText(getApplicationContext());
             titleEditView.setText(bookRecord.getTitle());
             titleEditView.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+            titleEditView.setPadding(20, 0, 20, 0 );
             builder.setTitle(getResources().getString(R.string.rename_this_book))
                     .setMessage(R.string.new_title)
                     .setCancelable(false)
