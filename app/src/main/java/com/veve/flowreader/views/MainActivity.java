@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
         long bookId = intent.getLongExtra(Constants.BOOK_ID, 0);
         if (bookId > 0) {
             bookGridAdapter.removeBook(bookId);
@@ -108,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
             BookRecord bookRecord = (BookRecord)bookListAdapter.getItem(info.position);
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             EditText titleEditView = new EditText(getApplicationContext());
+            //EditText titleEditView = (EditText)getLayoutInflater().inflate(R.layout.book_edit, null);
             titleEditView.setText(bookRecord.getTitle());
             titleEditView.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
             titleEditView.setPadding(20, 5, 20, 5 );
@@ -431,3 +433,4 @@ public class MainActivity extends AppCompatActivity {
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 }
+
