@@ -16,7 +16,9 @@ public class BookRecord {
     private Long id;
     private Integer currentPage;
     private Integer pagesCount;
-    private String name;
+    private String title;
+    private String originalTitle;
+    private String author;
     private String url;
     private float zoom = 1f;
     private float zoomOriginal = 1f;
@@ -56,7 +58,7 @@ public class BookRecord {
         this.id = id;
         this.currentPage = currentPage;
         this.pagesCount = pagesCount;
-        this.name = name;
+        this.title = name;
         this.url = url;
     }
 
@@ -116,12 +118,12 @@ public class BookRecord {
         this.pagesCount = pagesCount;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getUrl() {
@@ -157,6 +159,24 @@ public class BookRecord {
     }
     public float getZoomOriginal() { return zoomOriginal; }
 
-    public void setZoomOriginal(float zoomOriginal) { this.zoomOriginal = zoomOriginal; }
+    public void setZoomOriginal(float zoomOriginal) {
+        this.zoomOriginal = zoomOriginal;
+    }
+
+    public String getOriginalTitle() {
+        return originalTitle;
+    }
+
+    public void setOriginalTitle(String originalTitle) {
+        this.originalTitle = originalTitle;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
 
 }

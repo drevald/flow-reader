@@ -116,7 +116,7 @@ public class BrowseFilesActivity extends AppCompatActivity {
                     } else return fileOne.getName().compareTo(fileTwo.getName());
                 });
             } catch (Exception e) {
-//                Log.e(this.getClass().getName(), e.getMessage());
+//                Log.e(this.getClass().getTitle(), e.getMessage());
                 e.printStackTrace();
             }
         }

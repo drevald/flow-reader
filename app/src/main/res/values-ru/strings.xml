@@ -51,4 +51,7 @@
     <string name="normal_margins">С полями</string>
     <string name="wide_margins">С широкими полями</string>
     <string name="program_info">Версия: %s\nДата сборки: %s</string>
+    <string name="new_title">Новое название</string>
+    <string name="save">Сохранить</string>
+    <string name="cancel">Отменить</string>
 </resources>

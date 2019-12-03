@@ -51,4 +51,7 @@
     <string name="normal_margins">Normal margins</string>
     <string name="wide_margins">Wide margins</string>
     <string name="program_info">Version: %s\nBuild date: %s</string>
+    <string name="new_title">New title</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
 </resources>
