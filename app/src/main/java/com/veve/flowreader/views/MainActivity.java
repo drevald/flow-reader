@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
             EditText titleEditView = new EditText(getApplicationContext());
             titleEditView.setText(bookRecord.getTitle());
             titleEditView.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-            titleEditView.setPadding(20, 0, 20, 0 );
+            titleEditView.setPadding(20, 5, 20, 5 );
             builder.setTitle(getResources().getString(R.string.rename_this_book))
                     .setMessage(R.string.new_title)
                     .setCancelable(false)
