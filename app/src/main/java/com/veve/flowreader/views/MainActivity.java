@@ -25,9 +25,11 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.veve.flowreader.BuildConfig;
@@ -83,18 +85,46 @@ public class MainActivity extends AppCompatActivity {
             BookRecord bookRecord = (BookRecord)bookListAdapter.getItem(info.position);
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setTitle(R.string.book_deletion)
-                    .setMessage(String.format(
-                            getResources().getString(R.string.confirm_delete), bookRecord.getName()))
+                .setMessage(String.format(
+                        getResources().getString(R.string.confirm_delete), bookRecord.getTitle()))
+                .setCancelable(false)
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        BooksCollection.getInstance(getParent()).deleteBook(bookRecord.getId());
+                        bookListAdapter.refresh();
+                        bookGridAdapter.refresh();
+                    }
+                })
+                .setNegativeButton(R.string.no,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+        } else if (item.getItemId() == R.id.rename_listed_book) {
+            BookRecord bookRecord = (BookRecord)bookListAdapter.getItem(info.position);
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            EditText titleEditView = new EditText(getApplicationContext());
+            titleEditView.setText(bookRecord.getTitle());
+            titleEditView.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+            titleEditView.setPadding(20, 5, 20, 5 );
+            builder.setTitle(getResources().getString(R.string.rename_this_book))
+                    .setMessage(R.string.new_title)
                     .setCancelable(false)
-                    .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    .setView(titleEditView)
+                    .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            BooksCollection.getInstance(getParent()).deleteBook(bookRecord.getId());
+                            bookRecord.setTitle(titleEditView.getText().toString());
+                            BooksCollection.getInstance(getParent()).updateBook(bookRecord);
                             bookListAdapter.refresh();
                             bookGridAdapter.refresh();
                         }
                     })
-                    .setNegativeButton(R.string.no,
+                    .setNegativeButton(R.string.cancel,
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     dialog.cancel();
@@ -300,7 +330,7 @@ public class MainActivity extends AppCompatActivity {
                 convertView = getLayoutInflater().inflate(R.layout.items_list, container, false);
             }
             TextView textView = (TextView)((ConstraintLayout)convertView).getChildAt(0);
-                textView.setText(booksList.get(position).getName());
+                textView.setText(booksList.get(position).getTitle());
             return convertView;
         }
 
@@ -376,7 +406,7 @@ public class MainActivity extends AppCompatActivity {
             byte[] bytes = booksList.get(position).getPreview();
             Bitmap thumbnailBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
             imageView.setImageBitmap(thumbnailBitmap);
-            textView.setText(booksList.get(position).getName());
+            textView.setText(booksList.get(position).getTitle());
             Log.v(getClass().getName(), convertView.toString());
             return convertView;
         }

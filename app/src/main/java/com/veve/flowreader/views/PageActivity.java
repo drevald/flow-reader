@@ -191,11 +191,11 @@ public class PageActivity extends AppCompatActivity {
         context.setMargin(book.getMargin());
 
         TextView bookTitle = findViewById(R.id.book_title);
-        bookTitle.setText(book.getName());
+        bookTitle.setText(book.getTitle());
         bookTitle.setOnClickListener((view)->{
             AlertDialog.Builder builder = new AlertDialog.Builder(PageActivity.this);
             builder.setCancelable(false)
-                    .setMessage(book.getName())
+                    .setMessage(book.getTitle())
                     .setNeutralButton(R.string.close, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -245,25 +245,25 @@ public class PageActivity extends AppCompatActivity {
 //
 //            case R.id.kerning_minus: {
 //                context.setKerning(0.8f * context.getKerning());
-//                Log.v(getClass().getName(), "Kerning set to " + context.getKerning());
+//                Log.v(getClass().getTitle(), "Kerning set to " + context.getKerning());
 //                book.setKerning(context.getKerning());
 //                break;
 //            }
 //            case R.id.kerning_plus: {
 //                context.setKerning(1.25f * context.getKerning());
-//                Log.v(getClass().getName(), "Kerning set to " + context.getKerning());
+//                Log.v(getClass().getTitle(), "Kerning set to " + context.getKerning());
 //                book.setKerning(context.getKerning());
 //                break;
 //            }
 //            case R.id.leading_minus: {
 //                context.setLeading(0.8f * context.getLeading());
-//                Log.v(getClass().getName(), "Leading set to " + context.getLeading());
+//                Log.v(getClass().getTitle(), "Leading set to " + context.getLeading());
 //                book.setLeading(context.getLeading());
 //                break;
 //            }
 //            case R.id.leading_plus: {
 //                context.setLeading(1.25f * context.getLeading());
-//                Log.v(getClass().getName(), "Leading set to " + context.getLeading());
+//                Log.v(getClass().getTitle(), "Leading set to " + context.getLeading());
 //                book.setLeading(context.getLeading());
 //                break;
 //            }
@@ -332,7 +332,7 @@ public class PageActivity extends AppCompatActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(PageActivity.this);
                 builder.setTitle(R.string.book_deletion)
                         .setMessage(String.format(
-                                getResources().getString(R.string.confirm_delete), book.getName()))
+                                getResources().getString(R.string.confirm_delete), book.getTitle()))
                         .setCancelable(false)
                         .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                             @Override
