@@ -21,7 +21,7 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
         (JNIEnv *, jclass, jlong, jint, jobject);
 
     JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeReflownBytes
-        (JNIEnv *, jclass, jlong, jint, jfloat, jobject, jobject, jboolean);
+        (JNIEnv *, jclass, jlong, jint, jfloat, jobject, jobject, jboolean, jfloat);
 
     JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_getNativeTitle
         (JNIEnv *, jclass, jlong);

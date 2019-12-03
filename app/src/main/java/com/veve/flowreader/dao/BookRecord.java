@@ -22,7 +22,7 @@ public class BookRecord {
     private float zoomOriginal = 1f;
     private float kerning = 0.5f;
     private float leading = 12f;
-    private int margin = 25;
+    private float margin = 1.0f;
     private int mode = 2;
     private int scrollOffset = 0;
     private byte[] preview;
@@ -84,11 +84,11 @@ public class BookRecord {
         this.leading = leading;
     }
 
-    public int getMargin() {
+    public float getMargin() {
         return margin;
     }
 
-    public void setMargin(int margin) {
+    public void setMargin(float margin) {
         this.margin = margin;
     }
 

@@ -132,10 +132,6 @@ public class CachedPageRendererImpl implements PageRenderer {
         return originalBitmap;
     }
 
-    @Override
-    public Bitmap renderPage(DevicePageContext context, int position, boolean preprocessing, boolean invalidateCache) {
-        return renderPage(context, position);
-    }
 
     @Override
     public Bitmap renderPage(DevicePageContext context, int position) {

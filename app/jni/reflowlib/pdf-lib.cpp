@@ -97,7 +97,7 @@ image_format get_pdf_pixels(JNIEnv* env, jlong bookId, jint pageNumber, char** p
 }
 
 JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativeReflownBytes
-        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jfloat scale, jobject pageSize, jobject list, jboolean preprocessing) {
+        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jfloat scale, jobject pageSize, jobject list, jboolean preprocessing, jfloat margin) {
 
 
     // get glyphs from java
@@ -122,9 +122,9 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
 
     if (do_preprocessing) {
         std::vector<glyph> pic_glyphs = preprocess(mat, rotated_with_pictures);
-        reflow(mat, new_image, scale, env, glyphs, list, pic_glyphs, rotated_with_pictures, true);
+        reflow(mat, new_image, scale, env, glyphs, list, pic_glyphs, rotated_with_pictures, true, margin);
     } else {
-        reflow(mat, new_image, scale, env, glyphs, list, std::vector<glyph>(), mat, false);
+        reflow(mat, new_image, scale, env, glyphs, list, std::vector<glyph>(), mat, false, margin);
     }
 
 

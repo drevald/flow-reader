@@ -39,7 +39,7 @@ public class DevicePageContextImpl extends DevicePageContext {
 
     private float leading;
 
-    private int margin;
+    private float margin;
 
     private int displayDpi;
 
@@ -50,9 +50,9 @@ public class DevicePageContextImpl extends DevicePageContext {
         this.kerning = DEFAULT_KERNING;
         this.leading = DEFAULT_LEADING;
         this.width = width;
-        this.margin = DEFAULT_MARGIN;
-        this.startPoint = new Point(margin, 0);
-        this.remotestPoint = new Point(margin, 0);
+        this.margin = 1.0f;
+        this.startPoint = new Point((int)margin*DEFAULT_MARGIN, 0);
+        this.remotestPoint = new Point((int)margin*DEFAULT_MARGIN, 0);
         this.displayDpi = DEFAULT_DISPLAY_DPI;
         this.currentBaseLine = 0;
     }
@@ -78,10 +78,10 @@ public class DevicePageContextImpl extends DevicePageContext {
     }
 
     @Override
-    public int getMargin() {return margin;}
+    public float getMargin() {return margin;}
 
     @Override
-    public void setMargin(int margin) {this.margin = margin;}
+    public void setMargin(float margin) {this.margin = margin;}
 
     @Override
     public Point getStartPoint() {
@@ -132,8 +132,8 @@ public class DevicePageContextImpl extends DevicePageContext {
 
     @Override
     public void resetPosition() {
-        this.startPoint = new Point(margin, 0);
-        this.remotestPoint = new Point(margin, 0);
+        this.startPoint = new Point((int)margin*DEFAULT_MARGIN, 0);
+        this.remotestPoint = new Point((int)margin*DEFAULT_MARGIN, 0);
     }
 
 }

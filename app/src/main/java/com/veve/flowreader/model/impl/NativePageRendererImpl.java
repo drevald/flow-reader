@@ -63,9 +63,9 @@ public class NativePageRendererImpl implements PageRenderer {
         return originalBitmap;
     }
 
-    private Bitmap getReflownPageBitmap(int position, DevicePageContext context, boolean preprocessing, boolean invalidateCache) {
+    private Bitmap getReflownPageBitmap(int position, DevicePageContext context) {
 
-        if (invalidateCache) {
+        if (context.isInvalidateCache()) {
             booksCollection.deleteGlyphs(bookRecord.getId(), position);
         }
 
@@ -74,7 +74,7 @@ public class NativePageRendererImpl implements PageRenderer {
 
         if (storedGlyphs == null || storedGlyphs.isEmpty()) {
             List<PageGlyphInfo> glyphs = new ArrayList<>();
-            Bitmap reflownPageBytes = bookSource.getReflownPageBytes(position, context, glyphs, preprocessing);
+            Bitmap reflownPageBytes = bookSource.getReflownPageBytes(position, context, glyphs);
             List<PageGlyphRecord> glyphsToStore = new ArrayList<PageGlyphRecord>();
             for (PageGlyphInfo glyph : glyphs) {
                 glyphsToStore.add(new PageGlyphRecord(
@@ -108,22 +108,22 @@ public class NativePageRendererImpl implements PageRenderer {
                        record.isLast()
                ));
            }
-           Bitmap reflownPageBytes = bookSource.getReflownPageBytes(position, context, glyphs, preprocessing);
+           Bitmap reflownPageBytes = bookSource.getReflownPageBytes(position, context, glyphs);
            return reflownPageBytes;
         }
 
     }
 
     @Override
-    public Bitmap renderPage(DevicePageContext context, int position, boolean preprocessing, boolean invalidateCache) {
+    public Bitmap renderPage(DevicePageContext context, int position) {
 
-        Bitmap bitmap = getReflownPageBitmap(position, context, preprocessing, invalidateCache);
+        Bitmap bitmap = getReflownPageBitmap(position, context);
 
         Bitmap bmp = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), ARGB_8888);
 
         Canvas canvas = new Canvas(bmp);
         Paint paint = new Paint();
-        paint.setStyle(Paint.Style.FILL_AND_STROKE);
+        paint.setStyle(Paint.Style.FILL);
 
         Rect srcRect = new Rect(0,0,bitmap.getWidth(), bitmap.getHeight());
         Rect dstRect = new Rect(0,0,bitmap.getWidth(), bitmap.getHeight());
@@ -140,10 +140,6 @@ public class NativePageRendererImpl implements PageRenderer {
                 false);
     }
 
-    @Override
-    public Bitmap renderPage(DevicePageContext context, int position) {
-        return renderPage(context, position, false, false);
-    }
 
     @Override
     public Bitmap renderOriginalPage(DevicePageContext context, int position) {

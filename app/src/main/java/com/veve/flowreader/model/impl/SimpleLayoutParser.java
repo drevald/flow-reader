@@ -186,7 +186,7 @@ class Glyph implements PageGlyph {
         int __height = bitmap.getHeight();
         int __width = bitmap.getWidth();
         if(__width * context.getZoom() + startPoint.x > context.getWidth() - context.getMargin()) {
-            startPoint.set(context.getMargin(), startPoint.y + (int)(__height * context.getZoom())
+            startPoint.set((int)context.getMargin()*25, startPoint.y + (int)(__height * context.getZoom())
                     + (int)(context.getLeading()* context.getZoom()));
         }
         Rect __srcRect = new Rect(0, 0, __width, __height);

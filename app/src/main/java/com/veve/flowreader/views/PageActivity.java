@@ -209,7 +209,7 @@ public class PageActivity extends AppCompatActivity {
 
 
         pageActivity = this;
-        setPageNumber(currentPage , false );
+        setPageNumber(currentPage);
 
         book.setZoom(context.getZoom());
 
@@ -227,8 +227,7 @@ public class PageActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        boolean invalidateCache = false;
-
+        context.setInvalidateCache(false);
         switch (item.getItemId()) {
 //            case R.id.margins_minus: {
 //                int margin = context.getMargin();
@@ -268,19 +267,19 @@ public class PageActivity extends AppCompatActivity {
 //                break;
 //            }
             case R.id.no_margins: {
-                context.setMargin(0);
+                context.setMargin(0.2f);
                 Log.v(getClass().getName(), "Margin set to " + context.getMargin());
                 book.setMargin(context.getMargin());
                 break;
             }
             case R.id.normal_margins: {
-                context.setMargin((int)(0.1f * context.getWidth()));
+                context.setMargin(1.0f);
                 Log.v(getClass().getName(), "Margin set to " + context.getMargin());
                 book.setMargin(context.getMargin());
                 break;
             }
             case R.id.wide_margins: {
-                context.setMargin((int)(0.2f * context.getWidth()));
+                context.setMargin(1.5f);
                 Log.v(getClass().getName(), "Margin set to " + context.getMargin());
                 book.setMargin(context.getMargin());
                 break;
@@ -356,17 +355,17 @@ public class PageActivity extends AppCompatActivity {
                 break;
             }
             case R.id.preprocess: {
-                book.setPreprocessing(!book.getPreprocessing());
-                invalidateCache = true;
+                context.setPreprocessing(!context.isPreprocessing());
+                context.setInvalidateCache(true);
             }
 
         }
-        setPageNumber(currentPage, invalidateCache);
+        setPageNumber(currentPage);
         return true;
 
     }
 
-    private void setPageNumber(int pageNumber, boolean invalidateCache) {
+    private void setPageNumber(int pageNumber) {
         pager.setText(getString(R.string.ui_page_count, pageNumber + 1, book.getPagesCount()));
         seekBar.setProgress(pageNumber + 1);
         currentPage = pageNumber;
@@ -374,7 +373,7 @@ public class PageActivity extends AppCompatActivity {
         booksCollection.updateBook(book);
         pageLoader = new PageLoader(this);
         kickOthers(pageLoader);
-        Integer invCache = invalidateCache ? 1 : 0;
+        Integer invCache = context.isInvalidateCache() ? 1 : 0;
         pageLoader.execute(pageNumber, invCache);
     }
 
@@ -442,12 +441,12 @@ public class PageActivity extends AppCompatActivity {
                     if (Math.abs(distanceX) > 2 * Math.abs(distanceY) && Math.abs(distanceX) > 50) {
                         if (distanceX > 0) {
                             if (book.getCurrentPage() < book.getPagesCount()-1) {
-                                setPageNumber(book.getCurrentPage()+1, false);
+                                setPageNumber(book.getCurrentPage()+1);
                                 scroll.scrollTo(0, 0);
                             }
                         } else {
                             if (book.getCurrentPage() > 0) {
-                                setPageNumber(book.getCurrentPage()-1, false);
+                                setPageNumber(book.getCurrentPage()-1);
                                 scroll.scrollTo(0, 0);
                             }
                         }
@@ -466,12 +465,12 @@ public class PageActivity extends AppCompatActivity {
 
                     if (x > p.getWidth() / 2) {
                         if (book.getCurrentPage() < book.getPagesCount()-1) {
-                            setPageNumber(book.getCurrentPage()+1, false);
+                            setPageNumber(book.getCurrentPage()+1);
                             scroll.scrollTo(0, 0);
                         }
                     } else {
                         if (book.getCurrentPage() > 0) {
-                            setPageNumber(book.getCurrentPage()-1, false);
+                            setPageNumber(book.getCurrentPage()-1);
                             scroll.scrollTo(0, 0);
                         }
                     }
@@ -522,7 +521,7 @@ public class PageActivity extends AppCompatActivity {
     public void onStopTrackingTouch(SeekBar seekBar) {
         Log.d(getClass().getName(), "onStopTrackingTouch");
         int progress = seekBar.getProgress();
-        setPageNumber(progress > 0 ? progress - 1: progress, false);
+        setPageNumber(progress > 0 ? progress - 1: progress);
         seekBar.setVisibility(GONE);
         pager.setVisibility(VISIBLE);
     }
@@ -580,7 +579,7 @@ public class PageActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
                 Log.d(getClass().getName(), String.format("Setting page #%d for original page", currentPage));
             }
-            pageActivity.setPageNumber(currentPage, false);
+            pageActivity.setPageNumber(currentPage);
         }
     }
 
@@ -624,7 +623,7 @@ public class PageActivity extends AppCompatActivity {
                 }
             }
 
-            pageActivity.setPageNumber(currentPage,false);
+            pageActivity.setPageNumber(currentPage);
 
         }
 
@@ -671,7 +670,7 @@ public class PageActivity extends AppCompatActivity {
             boolean invalidateCache = integers[1] == 1;
 
             if (pageActivity.viewMode == Constants.VIEW_MODE_PHONE) {
-                bitmap = pageActivity.pageRenderer.renderPage(context, pageNumber, book.getPreprocessing(), invalidateCache);
+                bitmap = pageActivity.pageRenderer.renderPage(context, pageNumber);
             } else {
                 bitmap = pageActivity.pageRenderer.renderOriginalPage(pageActivity.context, pageNumber);
             }
