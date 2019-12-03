@@ -25,7 +25,7 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
         (JNIEnv *, jclass, jlong, jint, jobject);
 
     JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativeReflownBytes
-        (JNIEnv *, jclass, jlong, jint, jfloat, jobject, jobject, jboolean);
+        (JNIEnv *, jclass, jlong, jint, jfloat, jobject, jobject, jboolean, jfloat);
 
     JNIEXPORT jlong JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBook_openBook
         (JNIEnv *, jobject, jstring);

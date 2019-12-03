@@ -17,10 +17,6 @@ public class MockRenderer implements PageRenderer {
         this.book = new MockRasterBook(bookRecord.getTitle());
     }
 
-    @Override
-    public Bitmap renderPage(DevicePageContext context, int position, boolean preprocessing, boolean invalidateCache) {
-        return renderPage(context, position);
-    }
 
     @Override
     public Bitmap renderPage(DevicePageContext context, int position) {

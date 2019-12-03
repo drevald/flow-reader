@@ -116,14 +116,14 @@ public class PageGlyphImpl implements PageGlyph {
         //checking if currect glyph is within page content
         if(__width * context.getZoom() + startPoint.x > context.getWidth() - context.getMargin() ) {
             //if not - start new line
-            startPoint.set(context.getMargin(), startPoint.y + (int)(__height * context.getZoom())
+            startPoint.set((int)context.getMargin()*25, startPoint.y + (int)(__height * context.getZoom())
                     + (int)(context.getLeading()* context.getZoom()));
             currentBaseline += context.getLineHeight() * context.getZoom() + (int)(context.getLeading()* context.getZoom());
             context.setNewline(true);
         }
 
         if(indented) {
-            startPoint.set(context.getMargin() + averageHeight/2, startPoint.y + (int)(__height * context.getZoom())
+            startPoint.set((int)context.getMargin()*25 + averageHeight/2, startPoint.y + (int)(__height * context.getZoom())
                     + (int)(context.getLeading()* context.getZoom()));
             currentBaseline += context.getLineHeight() * context.getZoom() + (int)(context.getLeading()* context.getZoom());
         }

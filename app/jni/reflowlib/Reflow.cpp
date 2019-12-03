@@ -25,10 +25,10 @@ std::vector<int> Reflow::calculate_line_heights(std::vector<int> line_heights) {
 }
 
 
-cv::Mat Reflow::reflow(float scale) {
+cv::Mat Reflow::reflow(float scale, float margin) {
 
     int new_width = ceil(image.size().width);
-    int left_margin = ceil(new_width * 0.075);
+    int left_margin = ceil(new_width * 0.075 * margin);
     int max_symbol_height = 0;
     std::vector<int> line_heights;
     std::map<int,int> glyph_number_to_line_number;
