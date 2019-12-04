@@ -35,6 +35,11 @@ LOCAL_MODULE := libopencv_imgcodecs
 LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libopencv_imgcodecs.a
 include $(PREBUILT_STATIC_LIBRARY)
 
+include $(CLEAR_VARS)
+LOCAL_MODULE := libopencv_photo
+LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libopencv_photo.a
+include $(PREBUILT_STATIC_LIBRARY)
+
 ifeq ($(TARGET_ARCH_ABI),x86_64)
 include $(CLEAR_VARS)
 LOCAL_MODULE := ippiw 

@@ -29,7 +29,7 @@ cv::Mat Reflow::reflow(float scale, float margin) {
 
     int new_width = ceil(image.size().width);
     int left_margin = ceil(new_width * 0.075 * margin);
-    int paragraph_indent = ceil(new_width * 0.075 * margin)/2.0;
+    int paragraph_indent = 30;
     int max_symbol_height = 0;
     std::vector<int> line_heights;
     std::map<int,int> glyph_number_to_line_number;

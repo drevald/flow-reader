@@ -257,10 +257,14 @@ cc_result PageSegmenter::get_cc_results() {
         int y = rectComponents.at<int>(Point(1, i));
         int w = rectComponents.at<int>(Point(2, i));
         int h = rectComponents.at<int>(Point(3, i));
+
+        int area = rectComponents.at<int>(i, cv::CC_STAT_AREA);
+
+        //if (area > 200) {
         Rect rectangle(x, y, w, h);
         rects.push_back(rectangle);
         heights[i - 1] = h;
-        
+        //}
     }
     
     if (count == 0) {
@@ -322,7 +326,7 @@ cc_result PageSegmenter::get_cc_results() {
 
 std::map<int,int> PageSegmenter::calculate_left_indents(std::vector<int> lefts) {
     
-    int w = gray_inverted_image.size().width;
+    int w = mat.size().width;
     
     std::map<int,int> left_indents;
     
@@ -432,9 +436,11 @@ std::vector<glyph> PageSegmenter::get_glyphs() {
     std::vector<cv::Rect> big_rects;
     vector<line_limit> line_limits = get_line_limits();
     line_limits = join_lines(line_limits);
+
+    //cv::fastNlMeansDenoising(gray_inverted_image,gray_inverted_image);
     
     Mat hist;
-    reduce(gray_inverted_image, hist, 0, REDUCE_SUM, CV_32F);
+    reduce(mat, hist, 0, REDUCE_SUM, CV_32F);
     
     int w = hist.cols;
     
@@ -451,7 +457,7 @@ std::vector<glyph> PageSegmenter::get_glyphs() {
         int u = ll.upper;
         int bu = ll.upper_baseline;
         
-        Mat lineimage(gray_inverted_image, Rect(0, u, w, l - u));
+        Mat lineimage(mat, Rect(0, u, w, l - u));
         reduce(lineimage, horHist, 0, REDUCE_SUM, CV_32F);
         
         int w = horHist.cols;
@@ -490,7 +496,7 @@ std::vector<glyph> PageSegmenter::get_glyphs() {
         int u = ll.upper;
         int bu = ll.upper_baseline;
         
-        Mat lineimage(gray_inverted_image, Rect(0, u, w, l - u));
+        Mat lineimage(mat, Rect(0, u, w, l - u));
         Mat horHist;
         reduce(lineimage, horHist, 0, REDUCE_SUM, CV_32F);
         const vector<std::tuple<int, int>> &oneRuns = one_runs(horHist);
@@ -518,7 +524,7 @@ std::vector<glyph> PageSegmenter::get_glyphs() {
             Mat hist;
             cv::Mat letter = lineimage(cv::Rect(left, 0, right-left, l-u));
             cv::Size size = letter.size();
-            if (size.width == 0 || size.height == 0) {
+            if (size.width < 2 || size.height < 2) {
                 continue;
             }
             reduce(letter, hist, 1, REDUCE_SUM, CV_32F);
@@ -565,7 +571,7 @@ std::vector<glyph> PageSegmenter::get_glyphs() {
     }
     
     mat.release();
-    gray_inverted_image.release();
+    //gray_inverted_image.release();
     
     return return_value;
     

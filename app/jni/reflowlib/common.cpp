@@ -351,8 +351,8 @@ void put_glyphs(JNIEnv *env, vector<glyph>& glyphs, jobject& list) {
 }
 
 void reflow(cv::Mat& cvMat, cv::Mat& new_image, float scale, JNIEnv* env, std::vector<glyph> savedGlyphs, jobject list, std::vector<glyph> pic_glyphs, cv::Mat rotated_with_pictures, bool preprocessing, float margin) {
-    const cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(2, 2));
-    cv::dilate(cvMat, cvMat, kernel, cv::Point(-1, -1), 1);
+    //const cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(2, 2));
+    //cv::dilate(cvMat, cvMat, kernel, cv::Point(-1, -1), 1);
 
     std::vector<glyph> glyphs;
 
@@ -406,13 +406,13 @@ std::vector<std::tuple<int, int>> one_runs(const cv::Mat &hist) {
 
         int pos = 0;
         for (int i = 0; i < w; i++) {
-            if ((i == 0 && hist.at<int>(0, i) > 0) ||
-                (i > 0 && hist.at<int>(0, i) > 0 && hist.at<int>(0, i - 1) == 0)) {
+            if ((i == 0 && hist.at<float>(0, i) > 0) ||
+                (i > 0 && hist.at<float>(0, i) > 0 && hist.at<float>(0, i - 1) == 0)) {
                 pos = i;
             }
 
-            if ((i == w - 1 && hist.at<int>(0, i) > 0) ||
-                (i < w - 1 && hist.at<int>(0, i) > 0 && hist.at<int>(0, i + 1) == 0)) {
+            if ((i == w - 1 && hist.at<float>(0, i) > 0) ||
+                (i < w - 1 && hist.at<float>(0, i) > 0 && hist.at<float>(0, i + 1) == 0)) {
                 return_value.push_back(make_tuple(pos, i));
             }
         }
