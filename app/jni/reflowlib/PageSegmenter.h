@@ -65,7 +65,9 @@ class PageSegmenter {
         Graph g;
         int line_height = 0;
         std::vector<line_limit> get_line_limits();
+        std::map<int,int> calculate_left_indents(std::vector<int> lefts);
         cc_result get_cc_results();
+        std::vector<line_limit> join_lines(std::vector<line_limit> line_limits);
         std::map<int,std::vector<double_pair>> get_connected_components(std::vector<double_pair>& center_list, double averahe_hight);
         line_limit find_baselines(std::vector<double_pair>& cc);
 };
