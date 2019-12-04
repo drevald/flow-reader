@@ -29,6 +29,7 @@ cv::Mat Reflow::reflow(float scale, float margin) {
 
     int new_width = ceil(image.size().width);
     int left_margin = ceil(new_width * 0.075 * margin);
+    int paragraph_indent = ceil(new_width * 0.075 * margin)/2.0;
     int max_symbol_height = 0;
     std::vector<int> line_heights;
     std::map<int,int> glyph_number_to_line_number;
@@ -54,10 +55,13 @@ cv::Mat Reflow::reflow(float scale, float margin) {
             max_symbol_height = new_symbol_height;
         }
 
-        if (last || g.indented) {
-            line_sum += 30;
+        if (g.is_space && line.empty()) {
+            continue;
         }
 
+        if (last || g.indented) {
+            line_sum += paragraph_indent;
+        }
 
         if (line_sum + new_symbol_width < new_width - left_margin && !indented) {
             line.push_back(g);
@@ -82,7 +86,7 @@ cv::Mat Reflow::reflow(float scale, float margin) {
                 glyph_number_to_line_number.insert(std::make_pair(i, line_number));
                 line.push_back(g);
                 if (last || g.indented) {
-                    line_sum += 30;
+                    line_sum += paragraph_indent;
                 }
             } else {
                 // this big glyph must be on a new line
@@ -129,6 +133,9 @@ cv::Mat Reflow::reflow(float scale, float margin) {
         int m = 0;
         for (int l=0;l<glyphs.size(); l++) {
             glyph g = glyphs.at(l);
+             if (l==0 && g.is_space) {
+                 continue;
+             }
             int new_symbol_height = ceil(g.height * scale);
             if (scaled_glyphs.find(g_counter) != scaled_glyphs.end()) {
                 new_symbol_height = scaled_glyphs.at(g_counter);
@@ -144,7 +151,7 @@ cv::Mat Reflow::reflow(float scale, float margin) {
     line_heights = calculate_line_heights(line_heights);
     int new_height = std::accumulate(line_heights.begin(), line_heights.end(), 0);
     line_sum = left_margin;
-    int top_margin = std::min(ceil(new_height * 0.075), left_margin * 1.5);
+    int top_margin = std::min(ceil(new_height * 0.075), left_margin * 1.25);
     int current_vert_pos = top_margin;
 
     // new image to copy pixels to
@@ -164,7 +171,7 @@ cv::Mat Reflow::reflow(float scale, float margin) {
             glyph g = glyphs.at(j);
 
             if (last || g.indented) {
-                line_sum += 30;
+                line_sum += paragraph_indent;
             }
 
             cv::Mat symbol_mat = g.is_picture ? rotated_with_pictures(cv::Rect(g.x, g.y, g.width, g.height)) : image(cv::Rect(g.x, g.y, g.width, g.height));
