@@ -185,7 +185,9 @@ cv::Mat Reflow::reflow(float scale, float margin) {
             int y_pos = (current_vert_pos + line_height) + (g.baseline_shift - g.height)*scale;
             if (x_pos + new_symbol_width < new_width - left_margin) {
                 cv::Rect dstRect(x_pos, y_pos, new_symbol_width, new_symbol_height);
-                dst.copyTo(new_image(dstRect));
+                if (!g.is_space) {
+                    dst.copyTo(new_image(dstRect));
+                }
             } else {
                 int scaled_symbol_width = (new_width - left_margin) - x_pos;
                 if (scaled_symbol_width > 0) {
@@ -198,7 +200,9 @@ cv::Mat Reflow::reflow(float scale, float margin) {
                     cv::Mat dst(scaled_symbol_height, scaled_symbol_width, symbol_mat.type());
                     cv::resize(symbol_mat, dst, dst.size(), 0,0, cv::INTER_AREA);
                     cv::Rect dstRect(x_pos, y_pos, scaled_symbol_width, scaled_symbol_height);
-                    dst.copyTo(new_image(dstRect));
+                    if (!g.is_space) {
+                        dst.copyTo(new_image(dstRect));
+                    }
                 }
 
             }

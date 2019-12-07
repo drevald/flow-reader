@@ -102,7 +102,10 @@ std::vector<glyph> preprocess(cv::Mat& image, cv::Mat& rotated_with_pictures) {
         Rect r(x, y, w, h);
         rects.push_back(r);
 
-        if (r.height / (float)r.width > 5.0) {
+        bool big_component = (r.height / (float)r.width > 5.0 || r.width / (float)r.height > 5.0) && (
+                r.x < 0.1*width || r.x > 0.9 *width || r.y < 0.1*height || r.y > 0.9*height);
+
+        if (big_component) {
 
             cv::Mat mask_i = labels == i;
 
@@ -178,6 +181,7 @@ std::vector<glyph> preprocess(cv::Mat& image, cv::Mat& rotated_with_pictures) {
             g.indented = true;
             g.baseline_shift = 0;
             g.is_picture = true;
+            g.is_space = false;
             g.line_height = g.height;
             pic_glyphs.push_back(g);
             clone(r).setTo(0);
@@ -219,7 +223,7 @@ std::vector<glyph> preprocess(cv::Mat& image, cv::Mat& rotated_with_pictures) {
 
     rect = cv::Rect(right, 0, width-right, height);
     image(rect).setTo(0);
-
+    
     return pic_glyphs;
 
 }
