@@ -169,7 +169,9 @@ cv::Mat Reflow::reflow(float scale, float margin) {
         last = false;
         for (int j=0;j<glyphs.size(); j++) {
             glyph g = glyphs.at(j);
-
+            if (j==0 && g.is_space) {
+                continue;
+            }
             if (last || g.indented) {
                 line_sum += paragraph_indent;
             }
