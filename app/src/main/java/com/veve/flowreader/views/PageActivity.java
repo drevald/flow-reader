@@ -356,6 +356,7 @@ public class PageActivity extends AppCompatActivity {
             }
             case R.id.preprocess: {
                 context.setPreprocessing(!context.isPreprocessing());
+                book.setPreprocessing(!context.isPreprocessing());
                 context.setInvalidateCache(true);
             }
 

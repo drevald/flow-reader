@@ -52,14 +52,14 @@ class PageSegmenter {
     public:
         PageSegmenter(cv::Mat& mat) {
             this->mat = mat;
-            gray_inverted_image = mat.clone();
+            //gray_inverted_image = mat.clone();
         }
 
         std::vector<glyph> get_glyphs();
 
     private:
         cv::Mat mat;
-        cv::Mat gray_inverted_image;
+        //cv::Mat gray_inverted_image;
         std::map<double_pair,int> center_numbers;
         std::map<double_pair,cv::Rect> rd;
         Graph g;

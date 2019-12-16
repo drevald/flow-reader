@@ -15,6 +15,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/imgcodecs/imgcodecs.hpp>
+#include <opencv2/photo.hpp>
 
 #include <boost/range/algorithm/copy.hpp>
 #include <boost/range/adaptor/copied.hpp>
