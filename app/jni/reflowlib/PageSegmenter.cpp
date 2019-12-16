@@ -176,6 +176,9 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
         return_value.at(cn).push_back(g[i]);
         
     }
+
+    delete [] indices.ptr();
+    delete [] dists.ptr();
     
     return return_value;
 }
