@@ -411,7 +411,7 @@ public class PageActivity extends AppCompatActivity {
 
     }
 
-    private void setPageNumber(int pageNumber) {
+    public void setPageNumber(int pageNumber) {
         pager.setText(getString(R.string.ui_page_count, pageNumber + 1, book.getPagesCount()));
         seekBar.setProgress(pageNumber + 1);
         currentPage = pageNumber;
