@@ -105,7 +105,9 @@ public class PageActivity extends AppCompatActivity {
             MenuBuilder m = (MenuBuilder) menu;
             m.setOptionalIconsVisible(true);
             m.getItem(4).setIcon(book.getPreprocessing()
-                    ? R.drawable.ic_unenhance : R.drawable.ic_enhance);
+                    ? R.drawable.ic_enhance : R.drawable.ic_unenhance);
+            m.getItem(4).setTitle(book.getPreprocessing()
+                    ? R.string.enhance : R.string.unenhance);
         }
         return true;
     }
@@ -362,8 +364,8 @@ public class PageActivity extends AppCompatActivity {
                 context.setPreprocessing(!context.isPreprocessing());
                 book.setPreprocessing(!context.isPreprocessing());
                 context.setInvalidateCache(true);
-                item.setIcon(book.getPreprocessing() ? R.drawable.ic_unenhance : R.drawable.ic_enhance);
-                item.setTitle(book.getPreprocessing() ? R.string.unenhance: R.string.enhance);
+                item.setIcon(book.getPreprocessing() ? R.drawable.ic_enhance : R.drawable.ic_unenhance);
+                item.setTitle(book.getPreprocessing() ? R.string.enhance: R.string.unenhance);
             }
         }
         setPageNumber(currentPage);
