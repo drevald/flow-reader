@@ -650,9 +650,6 @@ public class PageActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
                 Log.d(getClass().getName(), String.format("Setting page #%d for original page", currentPage));
             }
-
-
-
             pageActivity.setPageNumber(currentPage);
         }
     }
@@ -749,6 +746,7 @@ public class PageActivity extends AppCompatActivity {
                 bitmaps = Arrays.asList(pageActivity.pageRenderer.renderOriginalPage(pageActivity.context, pageNumber));
             }
 
+            int bitmapHeight = bitmap.getHeight();
 
             runOnUiThread(() -> {
 
@@ -817,9 +815,6 @@ public class PageActivity extends AppCompatActivity {
                         }
                     }
                 }
-
-
-
                 pageActivity.scroll.setVisibility(VISIBLE);
                 pageActivity.progressBar.setVisibility(INVISIBLE);
                 pageActivity.scroll.scrollTo(0, 0);
