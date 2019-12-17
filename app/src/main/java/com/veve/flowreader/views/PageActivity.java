@@ -104,6 +104,8 @@ public class PageActivity extends AppCompatActivity {
         if(menu instanceof MenuBuilder){
             MenuBuilder m = (MenuBuilder) menu;
             m.setOptionalIconsVisible(true);
+            m.getItem(4).setIcon(book.getPreprocessing()
+                    ? R.drawable.ic_unenhance : R.drawable.ic_enhance);
         }
         return true;
     }
@@ -217,6 +219,8 @@ public class PageActivity extends AppCompatActivity {
             show.setImageResource(viewMode ==
                     Constants.VIEW_MODE_PHONE ? R.drawable.ic_to_book : R.drawable.ic_to_phone);
         //});
+
+        //book.getPreprocessing() ?
 
     }
 
@@ -358,8 +362,9 @@ public class PageActivity extends AppCompatActivity {
                 context.setPreprocessing(!context.isPreprocessing());
                 book.setPreprocessing(!context.isPreprocessing());
                 context.setInvalidateCache(true);
+                item.setIcon(book.getPreprocessing() ? R.drawable.ic_unenhance : R.drawable.ic_enhance);
+                item.setTitle(book.getPreprocessing() ? R.string.unenhance: R.string.enhance);
             }
-
         }
         setPageNumber(currentPage);
         return true;
