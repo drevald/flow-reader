@@ -33,7 +33,6 @@
     <string name="title_activity_report">Отчет о нечитабельной странице</string>
     <string name="page_unreadable">Страница нечитабельна</string>
     <string name="notify_send_size">Вы согласны переслать %d байтов по интернет?</string>
-    <string name="preprocess">Перекл. предобработку</string>
     <string name="getting_report">Составляем отчет</string>
     <string name="sending_original">Отсылается оригинальная страница</string>
     <string name="sending_reflowed">Отсылается переверстанная страница</string>
@@ -51,7 +50,5 @@
     <string name="normal_margins">С полями</string>
     <string name="wide_margins">С широкими полями</string>
     <string name="program_info">Версия: %s\nДата сборки: %s</string>
-    <string name="new_title">Новое название</string>
-    <string name="save">Сохранить</string>
-    <string name="cancel">Отменить</string>
+    <string name="print">Распечатать</string>
 </resources>
