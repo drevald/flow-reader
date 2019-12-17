@@ -37,6 +37,7 @@ import android.widget.TextView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.veve.flowreader.Constants;
+import com.veve.flowreader.PrintActivity;
 import com.veve.flowreader.R;
 import com.veve.flowreader.dao.AppDatabase;
 import com.veve.flowreader.dao.BookRecord;
@@ -104,10 +105,6 @@ public class PageActivity extends AppCompatActivity {
         if(menu instanceof MenuBuilder){
             MenuBuilder m = (MenuBuilder) menu;
             m.setOptionalIconsVisible(true);
-            m.getItem(4).setIcon(book.getPreprocessing()
-                    ? R.drawable.ic_unenhance : R.drawable.ic_enhance);
-            m.getItem(4).setTitle(book.getPreprocessing()
-                    ? R.string.unenhance : R.string.enhance);
         }
         return true;
     }
@@ -193,14 +190,6 @@ public class PageActivity extends AppCompatActivity {
         context.setKerning(book.getKerning());
         context.setLeading(book.getLeading());
         context.setMargin(book.getMargin());
-        if (book.getPreprocessing()) {
-            context.setPreprocessing(true);
-            context.setInvalidateCache(true);
-        } else {
-            context.setPreprocessing(false);
-            context.setInvalidateCache(false);
-        }
-
 
         TextView bookTitle = findViewById(R.id.book_title);
         bookTitle.setText(book.getTitle());
@@ -230,21 +219,10 @@ public class PageActivity extends AppCompatActivity {
                     Constants.VIEW_MODE_PHONE ? R.drawable.ic_to_book : R.drawable.ic_to_phone);
         //});
 
-        //book.getPreprocessing() ?
-
     }
 
     public BookRecord getBook() {
         return book;
-    }
-
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem item = menu.findItem(R.id.preprocess);
-        item.setIcon(book.getPreprocessing() ? R.drawable.ic_unenhance : R.drawable.ic_enhance);
-        item.setTitle(book.getPreprocessing() ? R.string.unenhance : R.string.enhance );
-        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -354,7 +332,6 @@ public class PageActivity extends AppCompatActivity {
                 printIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 printIntent.putExtra(BOOK_ID, book.getId());
                 startActivity(printIntent);
-                break;
             }
             case R.id.delete_book: {
 
@@ -386,11 +363,9 @@ public class PageActivity extends AppCompatActivity {
             }
             case R.id.preprocess: {
                 context.setPreprocessing(!context.isPreprocessing());
-                book.setPreprocessing(!book.getPreprocessing());
                 context.setInvalidateCache(true);
-                item.setIcon(book.getPreprocessing() ? R.drawable.ic_unenhance : R.drawable.ic_enhance);
-                item.setTitle(book.getPreprocessing() ? R.string.unenhance : R.string.enhance );
             }
+
         }
         setPageNumber(currentPage);
         return true;
