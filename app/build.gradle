@@ -14,7 +14,7 @@ android {
     compileSdkVersion 29
     defaultConfig {
         applicationId "com.veve.flowreader"
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -24,7 +24,7 @@ android {
         ndk {
             // Tells Gradle to build outputs for the following ABIs and package
             // them into your APK.
-            abiFilters 'x86_64', 'armeabi-v7a'
+            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
         }
     }
     buildTypes {
@@ -34,7 +34,7 @@ android {
         }
     }
     sourceSets.main {
-        jniLibs.srcDir 'jni/djvunative'
+        jniLibs.srcDir 'jni/reflowlib'
     }
 
 
@@ -43,6 +43,15 @@ android {
             path 'jni/Android.mk'
         }
 
+    }
+
+    preBuild {
+        doFirst {
+            JavaCompile jc = android.applicationVariants.find {
+                it.name == 'debug' || it.name == 'release'
+            }.javaCompileProvider.get() 
+            jc.options.compilerArgs = ["-Xlint:unchecked"]
+        }
     }
 
     adbOptions {

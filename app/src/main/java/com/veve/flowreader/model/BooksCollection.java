@@ -88,7 +88,7 @@ public class BooksCollection {
 //        try {
 //            return bookCheckerTask.get();
 //        } catch (Exception e) {
-//            Log.e(getClass().getName(), e.getLocalizedMessage());
+//            Log.e(getClass().getTitle(), e.getLocalizedMessage());
 //            return false;
 //        }
 //    }
@@ -153,6 +153,11 @@ public class BooksCollection {
         } catch (Exception e) {
             Log.e(getClass().getName(),"Failed to insert glyphs", e);
         }
+    }
+
+    public void deleteGlyphs(long bookId, long position) {
+        daoAccess.deleteBookPageGlyphs(bookId, position);
+
     }
 }
 

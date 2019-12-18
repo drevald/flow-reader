@@ -24,4 +24,9 @@ public interface Book {
 
     String getAuthor();
 
+    boolean getPreprocessing();
+
+    void setPreprocessing(boolean preprocessing);
+
+
 }

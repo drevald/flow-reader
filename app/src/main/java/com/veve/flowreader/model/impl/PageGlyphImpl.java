@@ -50,6 +50,8 @@ public class PageGlyphImpl implements PageGlyph {
 
     private boolean isSpace;
 
+    private boolean isLast;
+
 
     PageGlyphImpl(Bitmap bitmap, PageGlyphInfo rect) {
         this.bitmap = bitmap;
@@ -59,6 +61,7 @@ public class PageGlyphImpl implements PageGlyph {
         this.y = rect.getY();
         this.indented = rect.isIndented();
         this.isSpace = rect.isSpace();
+        this.isLast = rect.isLast();
         paint_debug.setStyle(Paint.Style.STROKE);
         paint_debug.setColor(Color.BLUE);
         paint_debug.setStrokeWidth(1);
@@ -80,6 +83,9 @@ public class PageGlyphImpl implements PageGlyph {
         return bitmap.getHeight();
     }
 
+    public boolean isLast() {
+        return isLast;
+    }
     public boolean isSpace() {
         return isSpace;
     }
@@ -87,7 +93,7 @@ public class PageGlyphImpl implements PageGlyph {
     @Override
     public void draw(DevicePageContext context, boolean show) {
 
-        //Log.v(getClass().getName(), "Baseline shift is " + baseLineShift);
+        //Log.v(getClass().getTitle(), "Baseline shift is " + baseLineShift);
 
         if (isSpace && context.isNewline()) {
             context.setNewline(false);
@@ -110,14 +116,14 @@ public class PageGlyphImpl implements PageGlyph {
         //checking if currect glyph is within page content
         if(__width * context.getZoom() + startPoint.x > context.getWidth() - context.getMargin() ) {
             //if not - start new line
-            startPoint.set(context.getMargin(), startPoint.y + (int)(__height * context.getZoom())
+            startPoint.set((int)context.getMargin()*25, startPoint.y + (int)(__height * context.getZoom())
                     + (int)(context.getLeading()* context.getZoom()));
             currentBaseline += context.getLineHeight() * context.getZoom() + (int)(context.getLeading()* context.getZoom());
             context.setNewline(true);
         }
 
         if(indented) {
-            startPoint.set(context.getMargin() + averageHeight/2, startPoint.y + (int)(__height * context.getZoom())
+            startPoint.set((int)context.getMargin()*25 + averageHeight/2, startPoint.y + (int)(__height * context.getZoom())
                     + (int)(context.getLeading()* context.getZoom()));
             currentBaseline += context.getLineHeight() * context.getZoom() + (int)(context.getLeading()* context.getZoom());
         }

@@ -16,17 +16,20 @@ public class BookRecord {
     private Long id;
     private Integer currentPage;
     private Integer pagesCount;
-    private String name;
+    private String title;
+    private String originalTitle;
+    private String author;
     private String url;
     private float zoom = 1f;
     private float zoomOriginal = 1f;
     private float kerning = 0.5f;
     private float leading = 12f;
-    private int margin = 25;
+    private float margin = 1.0f;
     private int mode = 2;
     private int scrollOffset = 0;
     private byte[] preview;
     private String md5;
+    private boolean preprocessing = false;
 
     public String getMd5() {
         return md5;
@@ -55,7 +58,7 @@ public class BookRecord {
         this.id = id;
         this.currentPage = currentPage;
         this.pagesCount = pagesCount;
-        this.name = name;
+        this.title = name;
         this.url = url;
     }
 
@@ -83,11 +86,11 @@ public class BookRecord {
         this.leading = leading;
     }
 
-    public int getMargin() {
+    public float getMargin() {
         return margin;
     }
 
-    public void setMargin(int margin) {
+    public void setMargin(float margin) {
         this.margin = margin;
     }
 
@@ -115,12 +118,12 @@ public class BookRecord {
         this.pagesCount = pagesCount;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getUrl() {
@@ -147,8 +150,33 @@ public class BookRecord {
 
     public void setScrollOffset(int scrollOffset) {this.scrollOffset = scrollOffset; }
 
+    public void setPreprocessing(boolean preprocessing) {
+        this.preprocessing = preprocessing;
+    }
+
+    public boolean getPreprocessing() {
+        return this.preprocessing;
+    }
     public float getZoomOriginal() { return zoomOriginal; }
 
-    public void setZoomOriginal(float zoomOriginal) { this.zoomOriginal = zoomOriginal; }
+    public void setZoomOriginal(float zoomOriginal) {
+        this.zoomOriginal = zoomOriginal;
+    }
+
+    public String getOriginalTitle() {
+        return originalTitle;
+    }
+
+    public void setOriginalTitle(String originalTitle) {
+        this.originalTitle = originalTitle;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
 
 }

@@ -71,7 +71,8 @@ public class CachedPageRendererImpl implements PageRenderer {
                             ((PageGlyphImpl)glyph).getBaseLineShift(),
                             ((PageGlyphImpl)glyph).getAverageHeight(),
                             ((PageGlyphImpl)glyph).isIndented(),
-                            ((PageGlyphImpl)glyph).isSpace()
+                            ((PageGlyphImpl)glyph).isSpace(),
+                            ((PageGlyphImpl)glyph).isLast()
                     ));
                 }
                 booksCollection.addGlyphs(glyphsToStore, false);
@@ -91,7 +92,8 @@ public class CachedPageRendererImpl implements PageRenderer {
                             storedGlyph.getHeight(),
                             storedGlyph.getAverageHeight(),
                             storedGlyph.getBaselineShift(),
-                            storedGlyph.isSpace()
+                            storedGlyph.isSpace(),
+                            storedGlyph.isLast()
                             );
                     long startBuildingGlyph = System.currentTimeMillis();
                     Bitmap glyphBitmap = Bitmap.createBitmap(
@@ -129,6 +131,7 @@ public class CachedPageRendererImpl implements PageRenderer {
         }
         return originalBitmap;
     }
+
 
     @Override
     public Bitmap renderPage(DevicePageContext context, int position) {

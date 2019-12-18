@@ -14,13 +14,15 @@ public class MockRenderer implements PageRenderer {
     private Book book;
 
     public MockRenderer(BookRecord bookRecord) {
-        this.book = new MockRasterBook(bookRecord.getName());
+        this.book = new MockRasterBook(bookRecord.getTitle());
     }
+
 
     @Override
     public Bitmap renderPage(DevicePageContext context, int position) {
         return book.getPage(position).getAsBitmap(context);
     }
+
 
     @Override
     public Bitmap renderOriginalPage(DevicePageContext context, int position) {

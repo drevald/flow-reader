@@ -209,6 +209,45 @@ image_format get_djvu_pixels(JNIEnv *env, jlong bookId, jint page_number, jboole
 
 }
 
+JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeReflownBytes
+        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jfloat scale, jobject pageSize, jobject list, jboolean preprocessing, jfloat margin) {
+
+    std::vector<glyph> glyphs = convert_java_glyphs(env, list);
+
+    char* pixels;
+    image_format format = get_djvu_pixels(env, bookId, pageNumber, false, &pixels);
+    int w = format.w;
+    int h= format.h;
+
+    Mat mat(h, w, CV_8UC1, &((char *) pixels)[0]);
+    threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
+    cv::Mat rotated_with_pictures;
+    cv::Mat new_image;
+
+    bool do_preprocessing = (bool)preprocessing;
+    if (do_preprocessing) {
+        std::vector<glyph> pic_glyphs = preprocess(mat, rotated_with_pictures);
+        reflow(mat, new_image, scale, env, glyphs, list, pic_glyphs, rotated_with_pictures, true, margin);
+    } else {
+        reflow(mat, new_image, scale, env, glyphs, list, std::vector<glyph>(), mat, false, margin);
+    }
+
+    jclass clz = env->GetObjectClass(pageSize);
+
+    jmethodID setPageWidthMid = env->GetMethodID(clz, "setPageWidth", "(I)V");
+    jmethodID setPageHeightMid = env->GetMethodID(clz, "setPageHeight", "(I)V");
+    env->CallVoidMethod(pageSize,setPageWidthMid, new_image.cols);
+    env->CallVoidMethod(pageSize,setPageHeightMid, new_image.rows);
+    size_t sizeInBytes = new_image.total() * new_image.elemSize();
+
+
+    jbyteArray array = env->NewByteArray(sizeInBytes);
+    env->SetByteArrayRegion(array, 0, sizeInBytes, (jbyte *) new_image.data);
+    free(pixels);
+    return array;
+
+}
+
 JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativePageGlyphs
 (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jobject list) {
 
@@ -219,7 +258,10 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
 
     Mat mat(h, w, CV_8UC1, &((char *) pixels)[0]);
     threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
-    remove_skew(mat);
+
+    cv::Mat rotated_with_pictures;
+    std::vector<glyph> pic_glyphs = preprocess(mat, rotated_with_pictures);
+    //remove_skew(mat);
 
 
     size_t sizeInBytes = mat.total() * mat.elemSize();
@@ -260,7 +302,7 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
 
     Mat mat(h, w, CV_8UC1, &((char *) pixels)[0]);
     threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
-    remove_skew(mat);
+
 
     size_t sizeInBytes = mat.total() * mat.elemSize();
 

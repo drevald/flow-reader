@@ -4,9 +4,9 @@ CVROOT := $(LOCAL_PATH)/../../../opencv/sdk/native/jni
 
 include $(CLEAR_VARS)
 
-OPENCV_INSTALL_MODULES:=on
-OPENCV_LIB_TYPE:=STATIC
-include $(CVROOT)/OpenCV.mk
+#OPENCV_INSTALL_MODULES:=on
+#OPENCV_LIB_TYPE:=STATIC
+#include $(CVROOT)/OpenCV.mk
 
 
 LOCAL_MODULE := native-lib
@@ -14,6 +14,7 @@ LOCAL_MODULE := native-lib
 
 LOCAL_C_INCLUDES := \
 		$(LOCAL_PATH)/../djvu/include \
+		$(LOCAL_PATH)/../opencv/include \
 		$(LOCAL_PATH)/../flann/include \
 		$(LOCAL_PATH)/../pdfium/include/fpdfsdk/include \
 		$(LOCAL_PATH)/../jpeg9/include/libjpeg9 \
@@ -23,20 +24,35 @@ LOCAL_C_INCLUDES := \
 		$(CVROOT)/include
 
 
-LOCAL_STATIC_LIBRARIES := myview djvu jpeg9 lz4 libopencv_imgproc libopencv_imgcodecs libopencv_core flann cpufeatures libboost_system libboost_graph c++_static
+ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
+	LOCAL_STATIC_LIBRARIES := myview djvu jpeg9 lz4 libopencv_photo libopencv_imgproc libopencv_imgcodecs libopencv_core flann cpufeatures ittnotify tbb tegra_hal libboost_system libboost_graph libm c++_static
+endif
+
+ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
+	LOCAL_STATIC_LIBRARIES := myview djvu jpeg9 lz4 libopencv_photo libopencv_imgproc libopencv_imgcodecs libopencv_core flann cpufeatures ittnotify tbb tegra_hal libboost_system libboost_graph libm c++_static
+endif
+
+ifeq ($(TARGET_ARCH_ABI),x86_64)
+	LOCAL_STATIC_LIBRARIES := myview djvu jpeg9 lz4 libopencv_photo libopencv_imgproc libopencv_imgcodecs libopencv_core flann cpufeatures ittnotify tbb libboost_system ippiw ippicv libboost_graph c++_static
+endif
+
+ifeq ($(TARGET_ARCH_ABI),x86)
+	LOCAL_STATIC_LIBRARIES := myview djvu jpeg9 lz4 libopencv_photo libopencv_imgproc libopencv_imgcodecs libopencv_core flann cpufeatures ittnotify tbb libboost_system ippiw ippicv libboost_graph c++_static
+endif
 
 
-LOCAL_CFLAGS += -DHAVE_CONFIG_H -frtti -fexceptions -fopenmp -w -Ofast -DNDEBUG -nostdlib++ 
-LOCAL_LDLIBS += -llog -lz -L$(SYSROOT)/usr/lib
+LOCAL_CFLAGS += -DHAVE_CONFIG_H -frtti -fexceptions -fopenmp -w -Ofast -DNDEBUG  -nostdlib++
+LOCAL_LDLIBS += -llog -lz -lm -L$(SYSROOT)/usr/lib
 LOCAL_LDFLAGS += -ldl -landroid -fopenmp  
 
-LOCAL_C_INCLUDES += common.h pdf-lib.h ImageLoader.h PageSegmenter.h Enclosure.h ImageNode.h Xycut.h
+LOCAL_C_INCLUDES += common.h LineSpacing.h Reflow.cpp PageSegmenter.h Enclosure.h pdf-lib.h  ImageNode.h Xycut.h
 
 
 LOCAL_SRC_FILES := \
-	common.cpp PageSegmenter.cpp Enclosure.cpp djvu-lib.cpp pdf-lib.cpp ImageNode.cpp Xycut.cpp
+	common.cpp LineSpacing.cpp Reflow.cpp  PageSegmenter.cpp Enclosure.cpp djvu-lib.cpp pdf-lib.cpp ImageNode.cpp Xycut.cpp
 
 
 include $(BUILD_SHARED_LIBRARY)
 
+include $(CLEAR_VARS)
 

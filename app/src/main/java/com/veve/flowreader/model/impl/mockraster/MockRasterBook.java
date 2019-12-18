@@ -57,4 +57,14 @@ public class MockRasterBook implements Book {
         return null;
     }
 
+    @Override
+    public boolean getPreprocessing() {
+        return false;
+    }
+
+    @Override
+    public void setPreprocessing(boolean preprocessing) {
+
+    }
+
 }

@@ -52,20 +52,22 @@ class PageSegmenter {
     public:
         PageSegmenter(cv::Mat& mat) {
             this->mat = mat;
-            gray_inverted_image = mat.clone();
+            //gray_inverted_image = mat.clone();
         }
 
         std::vector<glyph> get_glyphs();
 
     private:
         cv::Mat mat;
-        cv::Mat gray_inverted_image;
+        //cv::Mat gray_inverted_image;
         std::map<double_pair,int> center_numbers;
         std::map<double_pair,cv::Rect> rd;
         Graph g;
         int line_height = 0;
-        std::vector<line_limit> get_line_limits(std::vector<cv::Rect>& big_rects);
-        cc_result get_cc_results(std::vector<cv::Rect>& big_rects);
+        std::vector<line_limit> get_line_limits();
+        std::map<int,int> calculate_left_indents(std::vector<int> lefts);
+        cc_result get_cc_results();
+        std::vector<line_limit> join_lines(std::vector<line_limit> line_limits);
         std::map<int,std::vector<double_pair>> get_connected_components(std::vector<double_pair>& center_list, double averahe_hight);
         line_limit find_baselines(std::vector<double_pair>& cc);
 };

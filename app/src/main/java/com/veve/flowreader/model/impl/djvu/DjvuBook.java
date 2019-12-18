@@ -23,6 +23,8 @@ public class DjvuBook implements Book {
 
     private int currentPageNumber = 0;
 
+    private boolean preprocessing;
+
     public DjvuBook(String path) {
        this.bookId = openBook(path);
        this.path = path;
@@ -65,7 +67,15 @@ public class DjvuBook implements Book {
         return getNativeAuthor(bookId);
     }
 
+    @Override
+    public boolean getPreprocessing() {
+        return preprocessing;
+    }
 
+    @Override
+    public void setPreprocessing(boolean preprocessing) {
+        this.preprocessing = preprocessing;
+    }
 
     @Override
     public long getId() {

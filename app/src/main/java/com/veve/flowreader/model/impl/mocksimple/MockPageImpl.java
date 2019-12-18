@@ -8,6 +8,9 @@ import android.graphics.Point;
 import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyph;
+import com.veve.flowreader.model.PageGlyphInfo;
+
+import java.util.List;
 
 import static android.graphics.Bitmap.Config.ARGB_8888;
 
@@ -73,6 +76,12 @@ public class MockPageImpl implements BookPage {
         return bitmap;
 
     }
+
+    @Override
+    public Bitmap getAsReflownBitmap(DevicePageContext context, List<PageGlyphInfo> pageGlyphs) {
+        return null;
+    }
+
 
     @Override
     public Bitmap getAsGrayscaleBitmap(DevicePageContext context) {

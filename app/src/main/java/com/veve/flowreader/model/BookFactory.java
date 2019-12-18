@@ -1,22 +1,14 @@
 package com.veve.flowreader.model;
 
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.net.Uri;
-import android.util.Log;
 
-import com.veve.flowreader.MD5;
 import com.veve.flowreader.dao.BookRecord;
-import com.veve.flowreader.model.impl.DevicePageContextImpl;
 import com.veve.flowreader.model.impl.djvu.DjvuBook;
 import com.veve.flowreader.model.impl.pdf.PdfBook;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
 
-import static com.veve.flowreader.BookContentResolver.contentToFile;
 import static com.veve.flowreader.MD5.fileToMD5;
 
 /**
@@ -48,7 +40,7 @@ public class BookFactory {
 
         //Filling native book data
         bookRecord.setPagesCount(book.getPagesCount());
-        bookRecord.setName(book.getName());
+        bookRecord.setTitle(book.getName());
 
         //Generating and setting preview
         Bitmap bitmap = book.getPage(0).getAsBitmap(new DevicePageContext(100));
@@ -60,9 +52,11 @@ public class BookFactory {
         String bookName = "";
         if (book.getTitle() != null) {
             bookName = book.getTitle();
+            bookRecord.setOriginalTitle(book.getTitle());
             if (book.getAuthor() != null) {
                 bookName += " ";
                 bookName += book.getAuthor();
+                bookRecord.setAuthor(book.getAuthor());
             }
         } else {
             bookName = file.getName().replaceAll("_", " ");
@@ -71,7 +65,7 @@ public class BookFactory {
 
         bookRecord.setMd5(fileToMD5(file.getPath()));
         bookRecord.setSize(file.length());
-        bookRecord.setName(bookName);
+        bookRecord.setTitle(bookName);
         bookRecord.setUrl(file.getPath());
         return bookRecord;
 

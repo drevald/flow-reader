@@ -23,13 +23,14 @@ public class PageGlyphRecord implements Serializable {
     private int averageHeight;
     private boolean indented;
     private boolean isSpace;
+    private boolean isLast;
 
     @Ignore
     public PageGlyphRecord() {
 
     }
 
-    public PageGlyphRecord(long bookId, int position, int x, int y, int width, int height, int baselineShift, int averageHeight, boolean indented, boolean isSpace) {
+    public PageGlyphRecord(long bookId, int position, int x, int y, int width, int height, int baselineShift, int averageHeight, boolean indented, boolean isSpace, boolean isLast) {
         this.bookId = bookId;
         this.position = position;
         this.x = x;
@@ -40,6 +41,7 @@ public class PageGlyphRecord implements Serializable {
         this.averageHeight = averageHeight;
         this.indented = indented;
         this.isSpace = isSpace;
+        this.isLast = isLast;
     }
 
     public long getId() {
@@ -130,6 +132,14 @@ public class PageGlyphRecord implements Serializable {
         isSpace = space;
     }
 
+    public boolean isLast() {
+        return isLast;
+    }
+
+    public void setLast(boolean last) {
+        isLast = last;
+    }
+
     public boolean equals(PageGlyphRecord record) {
         return this.indented == record.indented
                 &&this.x == record.x
@@ -138,7 +148,8 @@ public class PageGlyphRecord implements Serializable {
                 &&this.height == record.height
                 &&this.baselineShift == record.baselineShift
                 &&this.averageHeight == record.averageHeight
-                &&this.isSpace == record.isSpace;
+                &&this.isSpace == record.isSpace
+                &&this.isLast == record.isLast;
     }
 
     public int hashCode() {
@@ -151,6 +162,8 @@ public class PageGlyphRecord implements Serializable {
         result = prime * result + baselineShift;
         result = prime * result + averageHeight;
         result = prime * result + (indented ? 0 : 1);
+        result = prime * result + (isSpace ? 0 : 1);
+        result = prime * result + (isLast ? 0 : 1);
         return result;
     }
 

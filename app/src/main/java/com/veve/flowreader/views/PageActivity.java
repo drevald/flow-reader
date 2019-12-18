@@ -37,7 +37,6 @@ import android.widget.TextView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.veve.flowreader.Constants;
-import com.veve.flowreader.PrintActivity;
 import com.veve.flowreader.R;
 import com.veve.flowreader.dao.AppDatabase;
 import com.veve.flowreader.dao.BookRecord;
@@ -105,6 +104,10 @@ public class PageActivity extends AppCompatActivity {
         if(menu instanceof MenuBuilder){
             MenuBuilder m = (MenuBuilder) menu;
             m.setOptionalIconsVisible(true);
+            m.getItem(4).setIcon(book.getPreprocessing()
+                    ? R.drawable.ic_enhance : R.drawable.ic_unenhance);
+            m.getItem(4).setTitle(book.getPreprocessing()
+                    ? R.string.enhance : R.string.unenhance);
         }
         return true;
     }
@@ -192,11 +195,11 @@ public class PageActivity extends AppCompatActivity {
         context.setMargin(book.getMargin());
 
         TextView bookTitle = findViewById(R.id.book_title);
-        bookTitle.setText(book.getName());
+        bookTitle.setText(book.getTitle());
         bookTitle.setOnClickListener((view)->{
             AlertDialog.Builder builder = new AlertDialog.Builder(PageActivity.this);
             builder.setCancelable(false)
-                    .setMessage(book.getName())
+                    .setMessage(book.getTitle())
                     .setNeutralButton(R.string.close, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -219,6 +222,8 @@ public class PageActivity extends AppCompatActivity {
                     Constants.VIEW_MODE_PHONE ? R.drawable.ic_to_book : R.drawable.ic_to_phone);
         //});
 
+        //book.getPreprocessing() ?
+
     }
 
     public BookRecord getBook() {
@@ -228,6 +233,7 @@ public class PageActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
+        context.setInvalidateCache(false);
         switch (item.getItemId()) {
 //            case R.id.margins_minus: {
 //                int margin = context.getMargin();
@@ -244,42 +250,42 @@ public class PageActivity extends AppCompatActivity {
 //
 //            case R.id.kerning_minus: {
 //                context.setKerning(0.8f * context.getKerning());
-//                Log.v(getClass().getName(), "Kerning set to " + context.getKerning());
+//                Log.v(getClass().getTitle(), "Kerning set to " + context.getKerning());
 //                book.setKerning(context.getKerning());
 //                break;
 //            }
 //            case R.id.kerning_plus: {
 //                context.setKerning(1.25f * context.getKerning());
-//                Log.v(getClass().getName(), "Kerning set to " + context.getKerning());
+//                Log.v(getClass().getTitle(), "Kerning set to " + context.getKerning());
 //                book.setKerning(context.getKerning());
 //                break;
 //            }
 //            case R.id.leading_minus: {
 //                context.setLeading(0.8f * context.getLeading());
-//                Log.v(getClass().getName(), "Leading set to " + context.getLeading());
+//                Log.v(getClass().getTitle(), "Leading set to " + context.getLeading());
 //                book.setLeading(context.getLeading());
 //                break;
 //            }
 //            case R.id.leading_plus: {
 //                context.setLeading(1.25f * context.getLeading());
-//                Log.v(getClass().getName(), "Leading set to " + context.getLeading());
+//                Log.v(getClass().getTitle(), "Leading set to " + context.getLeading());
 //                book.setLeading(context.getLeading());
 //                break;
 //            }
             case R.id.no_margins: {
-                context.setMargin(0);
+                context.setMargin(0.2f);
                 Log.v(getClass().getName(), "Margin set to " + context.getMargin());
                 book.setMargin(context.getMargin());
                 break;
             }
             case R.id.normal_margins: {
-                context.setMargin((int)(0.1f * context.getWidth()));
+                context.setMargin(1.0f);
                 Log.v(getClass().getName(), "Margin set to " + context.getMargin());
                 book.setMargin(context.getMargin());
                 break;
             }
             case R.id.wide_margins: {
-                context.setMargin((int)(0.2f * context.getWidth()));
+                context.setMargin(1.5f);
                 Log.v(getClass().getName(), "Margin set to " + context.getMargin());
                 book.setMargin(context.getMargin());
                 break;
@@ -331,13 +337,14 @@ public class PageActivity extends AppCompatActivity {
                 printIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 printIntent.putExtra(BOOK_ID, book.getId());
                 startActivity(printIntent);
+                break;
             }
             case R.id.delete_book: {
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(PageActivity.this);
                 builder.setTitle(R.string.book_deletion)
                         .setMessage(String.format(
-                                getResources().getString(R.string.confirm_delete), book.getName()))
+                                getResources().getString(R.string.confirm_delete), book.getTitle()))
                         .setCancelable(false)
                         .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                             @Override
@@ -360,6 +367,13 @@ public class PageActivity extends AppCompatActivity {
                 alert.show();
                 break;
             }
+            case R.id.preprocess: {
+                context.setPreprocessing(!context.isPreprocessing());
+                book.setPreprocessing(!context.isPreprocessing());
+                context.setInvalidateCache(true);
+                item.setIcon(book.getPreprocessing() ? R.drawable.ic_enhance : R.drawable.ic_unenhance);
+                item.setTitle(book.getPreprocessing() ? R.string.enhance: R.string.unenhance);
+            }
         }
         setPageNumber(currentPage);
         return true;
@@ -374,7 +388,8 @@ public class PageActivity extends AppCompatActivity {
         booksCollection.updateBook(book);
         pageLoader = new PageLoader(this);
         kickOthers(pageLoader);
-        pageLoader.execute(pageNumber);
+        Integer invCache = context.isInvalidateCache() ? 1 : 0;
+        pageLoader.execute(pageNumber, invCache);
     }
 
     private void kickOthers(PageLoader pageLoader) {
@@ -622,6 +637,7 @@ public class PageActivity extends AppCompatActivity {
                     }
                 }
             }
+
             pageActivity.setPageNumber(currentPage);
 
         }
@@ -665,6 +681,8 @@ public class PageActivity extends AppCompatActivity {
             );
 
             int pageNumber = integers[0];
+
+            boolean invalidateCache = integers[1] == 1;
 
             if (pageActivity.viewMode == Constants.VIEW_MODE_PHONE) {
                 bitmap = pageActivity.pageRenderer.renderPage(context, pageNumber);

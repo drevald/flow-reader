@@ -1,0 +1,23 @@
+<vector android:height="24dp" android:viewportHeight="16"
+    android:viewportWidth="16" android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillAlpha="1" android:fillColor="#ff4081"
+        android:pathData="m5.3367,8.2146 l0.7827,2.4356 2.5075,0.7764 -2.1409,1.4505 0.0381,2.5436 -2.1055,-1.5392 -2.4838,0.7955 0.8388,-2.4014 -1.5728,-2.0522 2.624,0.0551z"
+        android:strokeAlpha="1" android:strokeColor="#ff4081"
+        android:strokeLineCap="butt" android:strokeLineJoin="miter" android:strokeWidth="0.71899998"/>
+    <path android:fillAlpha="1" android:fillColor="#ff4081"
+        android:pathData="m3.506,7.8022 l-1.1913,0.4222 -0.373,1.2075 -0.4222,-1.1913 -1.2076,-0.373 1.1914,-0.4222 0.3731,-1.2077 0.4224,1.1913z"
+        android:strokeAlpha="1" android:strokeColor="#00000000"
+        android:strokeLineCap="butt" android:strokeLineJoin="miter" android:strokeWidth="0.21851449"/>
+    <path android:fillAlpha="1" android:fillColor="#ff4081"
+        android:pathData="m8.8891,5.3312 l-1.4918,0.5286 -0.4673,1.5123 -0.5285,-1.4921 -1.5125,-0.4672 1.4921,-0.5287 0.4673,-1.512 0.5285,1.4916z"
+        android:strokeAlpha="1" android:strokeColor="#00000000"
+        android:strokeLineCap="butt" android:strokeLineJoin="miter" android:strokeWidth="0.24888875"/>
+    <path android:fillAlpha="1" android:fillColor="#ff4081"
+        android:pathData="m6.1996,2.4909 l-2.2059,0.6941 -0.6911,1.9864 -0.7814,-1.9596 -2.2363,-0.6135 2.2061,-0.6944 0.6911,-1.9858 0.7815,1.9593z"
+        android:strokeAlpha="1" android:strokeColor="#00000000"
+        android:strokeLineCap="butt" android:strokeLineJoin="miter" android:strokeWidth="0.30622569"/>
+    <path android:fillAlpha="1" android:fillColor="#ff4081"
+        android:pathData="m7.3828,9.4292 l0.9253,0.2805 7.6369,-6.2016 -1.1752,-1.1129 -7.5402,6.0325z"
+        android:strokeAlpha="1" android:strokeColor="#00000000"
+        android:strokeLineCap="butt" android:strokeLineJoin="miter" android:strokeWidth="0.20380975"/>
+</vector>

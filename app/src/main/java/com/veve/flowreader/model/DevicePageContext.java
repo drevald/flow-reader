@@ -19,10 +19,12 @@ public class DevicePageContext implements Serializable {
     private Point remotestPoint;
     private float kerning;
     private float leading;
-    private int margin;
+    private float margin;
     private int lineHeight;
     private int currentBaseLine;
     private boolean newline;
+    private boolean preprocessing;
+    private boolean invalidateCache;
 
     public float getZoomOriginal() {return zoomOriginal;}
 
@@ -84,11 +86,11 @@ public class DevicePageContext implements Serializable {
         this.leading = leading;
     }
 
-    public int getMargin() {
+    public float getMargin() {
         return margin;
     }
 
-    public void setMargin(int margin) {
+    public void setMargin(float margin) {
         this.margin = margin;
     }
 
@@ -118,5 +120,21 @@ public class DevicePageContext implements Serializable {
 
     public void setNewline(boolean newline) {
         this.newline = newline;
+    }
+
+    public boolean isPreprocessing() {
+        return preprocessing;
+    }
+
+    public void setPreprocessing(boolean preprocessing) {
+        this.preprocessing = preprocessing;
+    }
+
+    public boolean isInvalidateCache() {
+        return invalidateCache;
+    }
+
+    public void setInvalidateCache(boolean invalidateCache) {
+        this.invalidateCache = invalidateCache;
     }
 }

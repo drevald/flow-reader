@@ -15,6 +15,7 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/imgcodecs/imgcodecs.hpp>
+#include <opencv2/photo.hpp>
 
 #include <boost/range/algorithm/copy.hpp>
 #include <boost/range/adaptor/copied.hpp>
@@ -58,6 +59,8 @@ typedef struct glyph_struct {
     bool indented;
     int x, y, width, height, line_height, baseline_shift;
     bool is_space;
+    bool is_last = false;
+    bool is_picture = false;
 } glyph;
 
 struct image_format {
@@ -74,6 +77,12 @@ struct SortSegments {
     }
 };
 
+std::vector<glyph> preprocess(cv::Mat& image, cv::Mat& rotated_with_pictures);
+
+std::vector<glyph> convert_java_glyphs(JNIEnv *env, jobject list);
+
+void reflow(cv::Mat& cvMat, cv::Mat& new_image, float scale, JNIEnv* env, std::vector<glyph> glyphs, jobject list, std::vector<glyph> pic_glyphs, cv::Mat rotated_with_pictures, bool preprocessing, float margin);
+
 void put_glyphs(JNIEnv *env, vector<glyph>& glyphs, jobject& list);
 
 std::vector<std::tuple<int,int>> zero_runs(const Mat& hist);
@@ -89,8 +98,6 @@ int max_ind(std::vector<std::tuple<int,int>> zr);
 int strlen16(char16_t* strarg);
 
 std::vector<glyph> get_glyphs(cv::Mat mat);
-
-void remove_skew(cv::Mat& mat);
 
 
 #endif
