@@ -13,7 +13,14 @@ import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
+import com.veve.flowreader.dao.BookRecord;
+import com.veve.flowreader.model.BookSource;
+import com.veve.flowreader.model.BooksCollection;
+import com.veve.flowreader.model.PageRenderer;
+import com.veve.flowreader.model.PageRendererFactory;
+import com.veve.flowreader.model.impl.PageRendererImpl;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -38,9 +45,11 @@ import static android.graphics.Bitmap.Config.ARGB_4444;
 
 public class PrintActivity extends AppCompatActivity {
 
-    class MyPrintDocumentAdapter extends PrintDocumentAdapter {
+    class PrintBookAdapter extends PrintDocumentAdapter {
 
-        public MyPrintDocumentAdapter(Activity activity) {
+        BookRecord bookRecord;
+
+        public PrintBookAdapter(Activity activity, BookRecord bookRecord) {
             Log.v(getClass().getName(), "Construct");
         }
 
@@ -72,34 +81,13 @@ public class PrintActivity extends AppCompatActivity {
         public void onWrite(final PageRange[] pageRanges,
                             final ParcelFileDescriptor destination,
                             final CancellationSignal cancellationSignal,
-                            final WriteResultCallback callback) {
+                            final WriteResultCallback callback)  {
             Log.v(getClass().getName(), "onWrite");
 
             PdfDocument pdfDocument = new PdfDocument();
 
-//            PdfDocument.PageInfo.Builder pageOneBuilder = new PdfDocument.PageInfo.Builder(100, 100, 1);
-//            PdfDocument.Page page = pdfDocument.startPage(pageOneBuilder.create());
-//            Canvas canvas = page.getCanvas();
-//            Bitmap bitmap = Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), ARGB_4444);
-//            Paint paint = new Paint();
-//            paint.setStyle(Paint.Style.FILL);
-//            paint.setColor(Color.BLUE);
-//            canvas.drawText("HERE I AM", 100, 100, paint);
-//            canvas.drawRect(100, 100, 100, 100, paint);
-//
-//            View content = findViewById(R.id.box);
-//            content.draw(page.getCanvas());
-//
-//            pdfDocument.finishPage(page);
-//            try{
-//                File file = new File(getApplicationContext().getExternalFilesDir(null), "print.pdf");
-//                pdfDocument.writeTo(new FileOutputStream(file));
-//                pdfDocument.writeTo(new FileOutputStream(destination.getFileDescriptor()));
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//
-//            callback.onWriteFinished(new PageRange[]{PageRange.ALL_PAGES});
+            PageRenderer pageRenderer = PageRendererFactory.getRenderer(BooksCollection.getInstance(getApplicationContext()), bookRecord);
+            pageRenderer.renderOriginalPage();
 
             // Iterate over each page of the document,
             // check if it's in the output range.
@@ -166,7 +154,7 @@ public class PrintActivity extends AppCompatActivity {
 
     }
 
-    private void doPrint() {
+    private void doPrint(BookRecord bookRecord) {
         // Get a PrintManager instance
         PrintManager printManager = (PrintManager) getActivity()
                 .getSystemService(Context.PRINT_SERVICE);
@@ -176,7 +164,7 @@ public class PrintActivity extends AppCompatActivity {
 
         // Start a print job, passing in a PrintDocumentAdapter implementation
         // to handle the generation of a print document
-        printManager.print(jobName, new MyPrintDocumentAdapter(getActivity()),
+        printManager.print(jobName, new PrintBookAdapter(getActivity(), bookRecord),
                 null); //
     }
 
@@ -191,13 +179,14 @@ public class PrintActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        long bookRecordId = getIntent().getLongExtra(Constants.BOOK_ID, -1);
+        BookRecord bookRecord = BooksCollection.getInstance(getApplicationContext()).getBook(bookRecordId);
+
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                doPrint();
-
+                doPrint(bookRecord);
             }
         });
     }
