@@ -56,4 +56,6 @@
     <string name="new_title">New title</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
+    <string name="print">Print</string>
+    <string name="title_activity_print">Print</string>
 </resources>

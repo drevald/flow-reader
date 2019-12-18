@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".PrintActivity"
+            android:name=".views.PrintActivity"
             android:label="@string/title_activity_print"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
