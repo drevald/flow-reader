@@ -39,7 +39,6 @@ import android.widget.TextView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.veve.flowreader.Constants;
-import com.veve.flowreader.PrintActivity;
 import com.veve.flowreader.R;
 import com.veve.flowreader.dao.AppDatabase;
 import com.veve.flowreader.dao.BookRecord;
@@ -369,6 +368,7 @@ public class PageActivity extends AppCompatActivity {
                 printIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 printIntent.putExtra(BOOK_ID, book.getId());
                 startActivity(printIntent);
+                break;
             }
             case R.id.delete_book: {
 
