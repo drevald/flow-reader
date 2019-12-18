@@ -56,4 +56,6 @@
     <string name="new_title">Новое название</string>
     <string name="save">Сохранить</string>
     <string name="cancel">Отменить</string>
+    <string name="print">Печать</string>
+    <string name="title_activity_print">Печать</string>
 </resources>
