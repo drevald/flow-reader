@@ -193,6 +193,14 @@ public class PageActivity extends AppCompatActivity {
         context.setKerning(book.getKerning());
         context.setLeading(book.getLeading());
         context.setMargin(book.getMargin());
+        if (book.getPreprocessing()) {
+            context.setPreprocessing(true);
+            context.setInvalidateCache(true);
+        } else {
+            context.setPreprocessing(false);
+            context.setInvalidateCache(false);
+        }
+
 
         TextView bookTitle = findViewById(R.id.book_title);
         bookTitle.setText(book.getTitle());
@@ -228,6 +236,15 @@ public class PageActivity extends AppCompatActivity {
 
     public BookRecord getBook() {
         return book;
+    }
+
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item = menu.findItem(R.id.preprocess);
+        item.setIcon(book.getPreprocessing() ? R.drawable.ic_unenhance : R.drawable.ic_enhance);
+        item.setTitle(book.getPreprocessing() ? R.string.unenhance : R.string.enhance );
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -362,10 +379,10 @@ public class PageActivity extends AppCompatActivity {
             }
             case R.id.preprocess: {
                 context.setPreprocessing(!context.isPreprocessing());
-                book.setPreprocessing(!context.isPreprocessing());
+                book.setPreprocessing(!book.getPreprocessing());
                 context.setInvalidateCache(true);
-                item.setIcon(book.getPreprocessing() ? R.drawable.ic_enhance : R.drawable.ic_unenhance);
-                item.setTitle(book.getPreprocessing() ? R.string.enhance: R.string.unenhance);
+                item.setIcon(book.getPreprocessing() ? R.drawable.ic_unenhance : R.drawable.ic_enhance);
+                item.setTitle(book.getPreprocessing() ? R.string.unenhance : R.string.enhance );
             }
         }
         setPageNumber(currentPage);
