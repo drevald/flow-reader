@@ -1,19 +1,5 @@
 package com.veve.flowreader;
 
-import android.graphics.Canvas;
-import android.graphics.Point;
-import android.os.AsyncTask;
-
-import com.android.volley.toolbox.HttpResponse;
-import com.veve.flowreader.dao.BookRecord;
-import com.veve.flowreader.model.BookSource;
-import com.veve.flowreader.model.DevicePageContext;
-import com.veve.flowreader.model.PageRenderer;
-import com.veve.flowreader.model.PageRendererFactory;
-import com.veve.flowreader.model.impl.DevicePageContextImpl;
-import com.veve.flowreader.model.impl.PageRendererImpl;
-import com.veve.flowreader.model.impl.djvu.DjvuBookSource;
-
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
