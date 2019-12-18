@@ -90,7 +90,7 @@ public class PrintActivity extends AppCompatActivity {
         public void onWrite(final PageRange[] pageRanges,
                             final ParcelFileDescriptor destination,
                             final CancellationSignal cancellationSignal,
-                            final WriteResultCallback callback)  {
+                            final WriteResultCallback callback) {
             Log.v(getClass().getName(), "onWrite");
 
             PdfDocument pdfDocument = new PdfDocument();
@@ -216,6 +216,3 @@ public class PrintActivity extends AppCompatActivity {
     }
 
 }
-
-
-
