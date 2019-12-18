@@ -147,7 +147,6 @@ public class PrintActivity extends AppCompatActivity {
             // Signal the print framework the document is complete
             //callback.onWriteFinished(writtenPages);
             callback.onWriteFinished(new PageRange[]{PageRange.ALL_PAGES});
-
 //
 //    //...
         }
