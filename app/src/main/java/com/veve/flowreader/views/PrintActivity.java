@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.pdf.PdfDocument;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -18,8 +19,10 @@ import com.veve.flowreader.R;
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.model.BookSource;
 import com.veve.flowreader.model.BooksCollection;
+import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageRenderer;
 import com.veve.flowreader.model.PageRendererFactory;
+import com.veve.flowreader.model.impl.DevicePageContextImpl;
 import com.veve.flowreader.model.impl.PageRendererImpl;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -45,12 +48,17 @@ import static android.graphics.Bitmap.Config.ARGB_4444;
 
 public class PrintActivity extends AppCompatActivity {
 
+    static PageRenderer pageRenderer;
+
     class PrintBookAdapter extends PrintDocumentAdapter {
 
         BookRecord bookRecord;
 
+        PrintAttributes attributes;
+
         public PrintBookAdapter(Activity activity, BookRecord bookRecord) {
             Log.v(getClass().getName(), "Construct");
+            this.bookRecord = bookRecord;
         }
 
         @Override
@@ -72,6 +80,7 @@ public class PrintActivity extends AppCompatActivity {
                     .setContentType(PrintDocumentInfo.CONTENT_TYPE_DOCUMENT)
                     .setPageCount(10)
                     .build();
+                attributes = newAttributes;
                 callback.onLayoutFinished(info, false);
                 Log.v(getClass().getName(), "onLayout 1");
             }
@@ -86,13 +95,10 @@ public class PrintActivity extends AppCompatActivity {
 
             PdfDocument pdfDocument = new PdfDocument();
 
-            PageRenderer pageRenderer = PageRendererFactory.getRenderer(BooksCollection.getInstance(getApplicationContext()), bookRecord);
-            pageRenderer.renderOriginalPage();
-
             // Iterate over each page of the document,
             // check if it's in the output range.
             //for (int i = 0; i < totalPages; i++) {
-            for (int i = 0; i < 5; i++) {
+            for (int i = 1; i < 5; i++) {
                 // Check to see if this page is in the output range.
                 //if (containsPage(pageRanges, i)) {
                     // If so, add it to writtenPagesArray. writtenPagesArray.size()
@@ -100,32 +106,33 @@ public class PrintActivity extends AppCompatActivity {
                     //writtenPagesArray.append(writtenPagesArray.size(), i);
                     //PdfDocument.Page page = pdfDocument.startPage(i);
 
-                    PdfDocument.PageInfo.Builder pageBuilder = new PdfDocument.PageInfo.Builder(100, 100, i);
+                    PdfDocument.PageInfo.Builder pageBuilder = new PdfDocument.PageInfo.Builder(
+                            (int)(attributes.getMediaSize().getWidthMils()*300*0.001f) ,
+                            (int)(attributes.getMediaSize().getHeightMils()*300*0.001f),
+                            i);
                     PdfDocument.Page page = pdfDocument.startPage(pageBuilder.create());
 
                     // check for cancellation
                     if (cancellationSignal.isCanceled()) {
                         callback.onWriteCancelled();
                         pdfDocument.close();
-                        pdfDocument = null;
                         return;
                     }
 
-                    // Draw page content for printing
-                    // drawPage(page);
-
-//                    View content = findViewById(R.id.box);
-//                    content.draw(page.getCanvas());
-                    //Bitmap bitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.ic_icon_flowbook);
-
-                    Bitmap bitmap = Bitmap.createBitmap(160, 160,  Bitmap.Config.ARGB_8888);
-                    Canvas canvas = new Canvas(bitmap);
-                    Paint paint = new Paint();
-                    paint.setColor(Color.GREEN);
-                    paint.setStyle(Paint.Style.FILL);
-                    canvas.drawRect(0, 0, 50, 50, paint);
-
-                    page.getCanvas().drawBitmap(bitmap, 0, 0, new Paint());
+                    PageGetterTask pageGetterTask = new PageGetterTask();
+                    int widthInMils = attributes.getMediaSize().getWidthMils();
+                    int workWidthInMils = widthInMils - attributes.getMinMargins().getLeftMils() - attributes.getMinMargins().getRightMils();
+                    int gap = (attributes.getMinMargins().getLeftMils() - attributes.getMinMargins().getRightMils())/2;
+                    workWidthInMils = workWidthInMils - gap;
+                    int columnsWidthInMils = workWidthInMils / 2;
+                    int columnsWithInPixels = (int)(columnsWidthInMils * 0.001f * attributes.getResolution().getHorizontalDpi());
+                    pageGetterTask.execute(i, columnsWithInPixels);
+                    try {
+                        Bitmap bitmap = pageGetterTask.get();
+                        page.getCanvas().drawBitmap(bitmap, 0, 0, null);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
                     // Rendering is complete, so page can be finalized.
                     pdfDocument.finishPage(page);
@@ -181,6 +188,12 @@ public class PrintActivity extends AppCompatActivity {
         long bookRecordId = getIntent().getLongExtra(Constants.BOOK_ID, -1);
         BookRecord bookRecord = BooksCollection.getInstance(getApplicationContext()).getBook(bookRecordId);
 
+        try {
+            pageRenderer = PageRendererFactory.getRenderer(BooksCollection.getInstance(getApplicationContext()), bookRecord);
+        } catch (Exception e) {
+            Log.e(getClass().getName(), e.getLocalizedMessage());
+        }
+
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -190,4 +203,18 @@ public class PrintActivity extends AppCompatActivity {
         });
     }
 
+    static class PageGetterTask extends AsyncTask<Integer, Void, Bitmap> {
+
+        @Override
+        protected Bitmap doInBackground(Integer... integers) {
+            //return pageRenderer.renderOriginalPage(integers[0]);
+            DevicePageContext context = new DevicePageContextImpl(integers[1]);
+            return pageRenderer.renderPage(context, integers[0]);
+        }
+
+    }
+
 }
+
+
+
