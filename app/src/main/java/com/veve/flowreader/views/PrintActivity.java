@@ -19,8 +19,10 @@ import com.veve.flowreader.R;
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.model.BookSource;
 import com.veve.flowreader.model.BooksCollection;
+import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageRenderer;
 import com.veve.flowreader.model.PageRendererFactory;
+import com.veve.flowreader.model.impl.DevicePageContextImpl;
 import com.veve.flowreader.model.impl.PageRendererImpl;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -52,7 +54,7 @@ public class PrintActivity extends AppCompatActivity {
 
         BookRecord bookRecord;
 
-        PrintAttributes newAttributes;
+        PrintAttributes attributes;
 
         public PrintBookAdapter(Activity activity, BookRecord bookRecord) {
             Log.v(getClass().getName(), "Construct");
@@ -78,6 +80,7 @@ public class PrintActivity extends AppCompatActivity {
                     .setContentType(PrintDocumentInfo.CONTENT_TYPE_DOCUMENT)
                     .setPageCount(10)
                     .build();
+                attributes = newAttributes;
                 callback.onLayoutFinished(info, false);
                 Log.v(getClass().getName(), "onLayout 1");
             }
@@ -103,52 +106,33 @@ public class PrintActivity extends AppCompatActivity {
                     //writtenPagesArray.append(writtenPagesArray.size(), i);
                     //PdfDocument.Page page = pdfDocument.startPage(i);
 
-                    PdfDocument.PageInfo.Builder pageBuilder = new PdfDocument.PageInfo.Builder(100, 100, i);
+                    PdfDocument.PageInfo.Builder pageBuilder = new PdfDocument.PageInfo.Builder(
+                            (int)(attributes.getMediaSize().getWidthMils()*300*0.001f) ,
+                            (int)(attributes.getMediaSize().getHeightMils()*300*0.001f),
+                            i);
                     PdfDocument.Page page = pdfDocument.startPage(pageBuilder.create());
 
                     // check for cancellation
                     if (cancellationSignal.isCanceled()) {
                         callback.onWriteCancelled();
                         pdfDocument.close();
-                        pdfDocument = null;
                         return;
                     }
 
-                    // Draw page content for printing
-                    // drawPage(page);
-
-//                    View content = findViewById(R.id.box);
-//                    content.draw(page.getCanvas());
-                    //Bitmap bitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.ic_icon_flowbook);
-
-//                    Bitmap bitmap = Bitmap.createBitmap(160, 160,  Bitmap.Config.ARGB_8888);
-//                    Canvas canvas = new Canvas(bitmap);
-//                    Paint paint = new Paint();
-//                    paint.setColor(Color.GREEN);
-//                    paint.setStyle(Paint.Style.STROKE);
-//                    paint.setTextSize(100);
-//                    //paint.setFontFeatureSettings();               //
-//                    canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), paint);
-//                    paint.setColor(Color.RED);
-//                    paint.setStyle(Paint.Style.FILL);
-//                    canvas.drawText(String.valueOf(i), 50, 50, paint);
-//                    canvas.getDensity();
-//
-//                    Bitmap bitmap1 = pageRenderer.renderOriginalPage(i);
-
-                    //page.getCanvas().drawBitmap(bitmap1, 50, 50, null);
-
-                    //page.getCanvas().drawBitmap(bitmap3, 0, 0, new Paint());
-
                     PageGetterTask pageGetterTask = new PageGetterTask();
-                    pageGetterTask.execute(i);
+                    int widthInMils = attributes.getMediaSize().getWidthMils();
+                    int workWidthInMils = widthInMils - attributes.getMinMargins().getLeftMils() - attributes.getMinMargins().getRightMils();
+                    int gap = (attributes.getMinMargins().getLeftMils() - attributes.getMinMargins().getRightMils())/2;
+                    workWidthInMils = workWidthInMils - gap;
+                    int columnsWidthInMils = workWidthInMils / 2;
+                    int columnsWithInPixels = (int)(columnsWidthInMils * 0.001f * attributes.getResolution().getHorizontalDpi());
+                    pageGetterTask.execute(i, columnsWithInPixels);
                     try {
-                        Bitmap bitmap = Bitmap.createScaledBitmap(pageGetterTask.get(), 100, 100, true);
-                        page.getCanvas().drawBitmap(bitmap, 20, 20, null);
+                        Bitmap bitmap = pageGetterTask.get();
+                        page.getCanvas().drawBitmap(bitmap, 0, 0, null);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-
 
                     // Rendering is complete, so page can be finalized.
                     pdfDocument.finishPage(page);
@@ -223,7 +207,9 @@ public class PrintActivity extends AppCompatActivity {
 
         @Override
         protected Bitmap doInBackground(Integer... integers) {
-            return pageRenderer.renderOriginalPage(integers[0]);
+            //return pageRenderer.renderOriginalPage(integers[0]);
+            DevicePageContext context = new DevicePageContextImpl(integers[1]);
+            return pageRenderer.renderPage(context, integers[0]);
         }
 
     }
