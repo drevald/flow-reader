@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.pdf.PdfDocument;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -45,12 +46,15 @@ import static android.graphics.Bitmap.Config.ARGB_4444;
 
 public class PrintActivity extends AppCompatActivity {
 
+    static PageRenderer pageRenderer;
+
     class PrintBookAdapter extends PrintDocumentAdapter {
 
         BookRecord bookRecord;
 
         public PrintBookAdapter(Activity activity, BookRecord bookRecord) {
             Log.v(getClass().getName(), "Construct");
+            this.bookRecord = bookRecord;
         }
 
         @Override
@@ -86,13 +90,10 @@ public class PrintActivity extends AppCompatActivity {
 
             PdfDocument pdfDocument = new PdfDocument();
 
-            PageRenderer pageRenderer = PageRendererFactory.getRenderer(BooksCollection.getInstance(getApplicationContext()), bookRecord);
-            pageRenderer.renderOriginalPage();
-
             // Iterate over each page of the document,
             // check if it's in the output range.
             //for (int i = 0; i < totalPages; i++) {
-            for (int i = 0; i < 5; i++) {
+            for (int i = 1; i < 5; i++) {
                 // Check to see if this page is in the output range.
                 //if (containsPage(pageRanges, i)) {
                     // If so, add it to writtenPagesArray. writtenPagesArray.size()
@@ -118,14 +119,34 @@ public class PrintActivity extends AppCompatActivity {
 //                    content.draw(page.getCanvas());
                     //Bitmap bitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.ic_icon_flowbook);
 
-                    Bitmap bitmap = Bitmap.createBitmap(160, 160,  Bitmap.Config.ARGB_8888);
-                    Canvas canvas = new Canvas(bitmap);
-                    Paint paint = new Paint();
-                    paint.setColor(Color.GREEN);
-                    paint.setStyle(Paint.Style.FILL);
-                    canvas.drawRect(0, 0, 50, 50, paint);
+//                    Bitmap bitmap = Bitmap.createBitmap(160, 160,  Bitmap.Config.ARGB_8888);
+//                    Canvas canvas = new Canvas(bitmap);
+//                    Paint paint = new Paint();
+//                    paint.setColor(Color.GREEN);
+//                    paint.setStyle(Paint.Style.STROKE);
+//                    paint.setTextSize(100);
+//                    //paint.setFontFeatureSettings();               //
+//                    canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), paint);
+//                    paint.setColor(Color.RED);
+//                    paint.setStyle(Paint.Style.FILL);
+//                    canvas.drawText(String.valueOf(i), 50, 50, paint);
+//                    canvas.getDensity();
+//
+//                    Bitmap bitmap1 = pageRenderer.renderOriginalPage(i);
 
-                    page.getCanvas().drawBitmap(bitmap, 0, 0, new Paint());
+                    //page.getCanvas().drawBitmap(bitmap1, 50, 50, null);
+
+                    //page.getCanvas().drawBitmap(bitmap3, 0, 0, new Paint());
+
+                    PageGetterTask pageGetterTask = new PageGetterTask();
+                    pageGetterTask.execute(i);
+                    try {
+                        Bitmap bitmap = Bitmap.createScaledBitmap(pageGetterTask.get(), 100, 100, true);
+                        page.getCanvas().drawBitmap(bitmap, 20, 20, null);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
 
                     // Rendering is complete, so page can be finalized.
                     pdfDocument.finishPage(page);
@@ -181,6 +202,12 @@ public class PrintActivity extends AppCompatActivity {
         long bookRecordId = getIntent().getLongExtra(Constants.BOOK_ID, -1);
         BookRecord bookRecord = BooksCollection.getInstance(getApplicationContext()).getBook(bookRecordId);
 
+        try {
+            pageRenderer = PageRendererFactory.getRenderer(BooksCollection.getInstance(getApplicationContext()), bookRecord);
+        } catch (Exception e) {
+            Log.e(getClass().getName(), e.getLocalizedMessage());
+        }
+
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -190,4 +217,16 @@ public class PrintActivity extends AppCompatActivity {
         });
     }
 
+    static class PageGetterTask extends AsyncTask<Integer, Void, Bitmap> {
+
+        @Override
+        protected Bitmap doInBackground(Integer... integers) {
+            return pageRenderer.renderOriginalPage(integers[0]);
+        }
+
+    }
+
 }
+
+
+
