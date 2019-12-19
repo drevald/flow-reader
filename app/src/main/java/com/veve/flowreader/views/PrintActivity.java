@@ -52,6 +52,8 @@ public class PrintActivity extends AppCompatActivity {
 
         BookRecord bookRecord;
 
+        PrintAttributes newAttributes;
+
         public PrintBookAdapter(Activity activity, BookRecord bookRecord) {
             Log.v(getClass().getName(), "Construct");
             this.bookRecord = bookRecord;
