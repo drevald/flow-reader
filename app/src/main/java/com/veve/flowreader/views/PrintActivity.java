@@ -52,8 +52,15 @@ import android.widget.TextView;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.Stack;
+import java.util.TreeSet;
 
 import static android.graphics.Bitmap.Config.ARGB_4444;
 
@@ -271,6 +278,80 @@ public class PrintActivity extends AppCompatActivity {
             return pageRenderer.renderPage(context, integers[0]);
         }
 
+    }
+
+}
+
+class PageBitmapReader {
+
+    List<PagesSet> pages;
+    int width;
+    int height;
+    Bitmap bitmap;
+    Stack<Integer> singlePages;
+    PrintActivity.PageGetterTask pageGetterTask;
+    Bitmap bitmapSuffix;
+    Bitmap appendedBitmap;
+    Bitmap cutBitmap;
+    Canvas canvas;
+
+    public PageBitmapReader(List<PagesSet> pages, int width, int height) {
+        this.pages = pages;
+        this.width = width;
+        this.height = height;
+        this.pageGetterTask = new PrintActivity.PageGetterTask();
+        initPages();
+    }
+
+    public Bitmap read() throws Exception {
+        Bitmap result = null;
+        // If bitmap is empty and there are pages to render then get bitmap
+        if (bitmap == null && !singlePages.empty()) {
+            pageGetterTask.execute(singlePages.pop(), width);
+            bitmap = pageGetterTask.get();
+        // If bitmap is empty and there are no pages to render then finish
+        } else if (bitmap == null && singlePages.empty()) {
+            return null;
+        }
+        // If bitmap is shorter
+        if (bitmap.getHeight() < height) {
+            Integer nextPage = singlePages.pop();
+            // ... and there are pages to render then append bitmap with new page
+            if (nextPage != null) {
+                pageGetterTask.execute(singlePages.pop(), width);
+                bitmapSuffix = pageGetterTask.get();
+                appendedBitmap = Bitmap.createBitmap(width,
+                        bitmap.getHeight() + bitmapSuffix.getHeight(), Bitmap.Config.ALPHA_8);
+                canvas = new Canvas(appendedBitmap);
+                canvas.drawBitmap(bitmap, 0, 0, null);
+                canvas.drawBitmap(bitmapSuffix, 0, bitmap.getHeight(), null);
+                result = Bitmap.createBitmap(appendedBitmap, 0, 0, width, height);
+                bitmap = Bitmap.createBitmap(appendedBitmap, 0, height, width, appendedBitmap.getHeight()-height);
+            // ... and there are no pages to render then return the remains
+            } else {
+                result = Bitmap.createBitmap(bitmap);
+                bitmap = null;
+            }
+        // If we got bitmap large enough then cut required piece and keep the rest
+        } else {
+            result = Bitmap.createBitmap(bitmap, 0, 0, width, height);
+            cutBitmap = Bitmap.createBitmap(bitmap, 0, height, width, bitmap.getHeight()-height);
+            bitmap = cutBitmap;
+        }
+        return result;
+    }
+
+    private void initPages() {
+        SortedSet<Integer> sortedPages = new TreeSet<Integer>();
+        for (PagesSet pagesSet : pages) {
+            for (int i=pagesSet.getStart(); i<=pagesSet.getEnd(); i++) {
+                sortedPages.add(i);
+            }
+        }
+        singlePages = new Stack<Integer>();
+        for(Integer page : singlePages) {
+            singlePages.push(page);
+        }
     }
 
 }
