@@ -105,9 +105,9 @@ public class PageActivity extends AppCompatActivity {
             MenuBuilder m = (MenuBuilder) menu;
             m.setOptionalIconsVisible(true);
             m.getItem(4).setIcon(book.getPreprocessing()
-                    ? R.drawable.ic_enhance : R.drawable.ic_unenhance);
+                    ? R.drawable.ic_unenhance : R.drawable.ic_enhance);
             m.getItem(4).setTitle(book.getPreprocessing()
-                    ? R.string.enhance : R.string.unenhance);
+                    ? R.string.unenhance : R.string.enhance);
         }
         return true;
     }
