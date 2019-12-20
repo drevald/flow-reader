@@ -25,6 +25,7 @@ import com.veve.flowreader.model.PageRendererFactory;
 import com.veve.flowreader.model.impl.DevicePageContextImpl;
 import com.veve.flowreader.model.impl.PageRendererImpl;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -39,6 +40,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.RadioGroup;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -49,6 +53,8 @@ import static android.graphics.Bitmap.Config.ARGB_4444;
 public class PrintActivity extends AppCompatActivity {
 
     static PageRenderer pageRenderer;
+
+    BookRecord bookRecord;
 
     class PrintBookAdapter extends PrintDocumentAdapter {
 
@@ -107,8 +113,8 @@ public class PrintActivity extends AppCompatActivity {
                     //PdfDocument.Page page = pdfDocument.startPage(i);
 
                     PdfDocument.PageInfo.Builder pageBuilder = new PdfDocument.PageInfo.Builder(
-                            (int)(attributes.getMediaSize().getWidthMils()*300*0.001f) ,
-                            (int)(attributes.getMediaSize().getHeightMils()*300*0.001f),
+                            (int)(attributes.getMediaSize().getWidthMils()*attributes.getResolution().getHorizontalDpi()*0.001f) ,
+                            (int)(attributes.getMediaSize().getHeightMils()*attributes.getResolution().getVerticalDpi()*0.001f),
                             i);
                     PdfDocument.Page page = pdfDocument.startPage(pageBuilder.create());
 
@@ -187,7 +193,7 @@ public class PrintActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         long bookRecordId = getIntent().getLongExtra(Constants.BOOK_ID, -1);
-        BookRecord bookRecord = BooksCollection.getInstance(getApplicationContext()).getBook(bookRecordId);
+        bookRecord = BooksCollection.getInstance(getApplicationContext()).getBook(bookRecordId);
 
         try {
             pageRenderer = PageRendererFactory.getRenderer(BooksCollection.getInstance(getApplicationContext()), bookRecord);
@@ -202,7 +208,30 @@ public class PrintActivity extends AppCompatActivity {
                 doPrint(bookRecord);
             }
         });
+
     }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        findViewById(R.id.current_page).setSelected(true);
+        ((EditText)findViewById(R.id.pages)).setText("" + bookRecord.getCurrentPage());
+    }
+
+    public void setPrintCurrentPage(View view) {
+        ((EditText)findViewById(R.id.pages)).setText("" + bookRecord.getCurrentPage());
+        ((EditText)findViewById(R.id.pages)).setInputType(EditorInfo.TYPE_NULL);
+    }
+
+    public void setPrintAllPages(View view) {
+        ((EditText)findViewById(R.id.pages)).setText("1-" + bookRecord.getCurrentPage());
+        ((EditText)findViewById(R.id.pages)).setInputType(EditorInfo.TYPE_NULL);
+    }
+
+    public void setPrintCustomRange(View view) {
+        ((EditText)findViewById(R.id.pages)).setInputType(EditorInfo.TYPE_CLASS_TEXT);
+    }
+
 
     static class PageGetterTask extends AsyncTask<Integer, Void, Bitmap> {
 

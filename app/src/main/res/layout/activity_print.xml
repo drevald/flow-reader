@@ -20,59 +20,47 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+            <RadioGroup
+                android:id="@+id/page_range"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/colorPrimary"
+                android:padding="50dp"
+                android:paddingTop="10dp"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/colorPrimary"
-            android:padding="50sp"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <ImageView
-                    android:layout_width="200dp"
-                    android:layout_height="100dp"
-                    app:srcCompat="@drawable/ic_print_onside"/>
                 <RadioButton
+                    android:id="@+id/current_page"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <ImageView
-                    android:layout_width="200dp"
-                    android:layout_height="100dp"
-                    app:srcCompat="@drawable/ic_print_twoside_long"/>
+                    android:layout_height="wrap_content"
+                    style="@style/label"
+                    app:buttonTint="#ffffff"
+                    android:onClick="setPrintCurrentPage"
+                    android:text="Current page"/>
                 <RadioButton
+                    android:id="@+id/all_pages"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-                <ImageView
-                    android:layout_width="200dp"
-                    android:layout_height="100dp"
-                    app:srcCompat="@drawable/ic_print_twoside_short"/>
+                    android:layout_height="wrap_content"
+                    style="@style/label"
+                    app:buttonTint="#ffffff"
+                    android:onClick="setPrintAllPages"
+                    android:text="All Pages"/>
                 <RadioButton
+                    android:id="@+id/custom_page_range"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
+                    android:layout_height="wrap_content"
+                    app:buttonTint="#ffffff"
+                    style="@style/label"
+                    android:onClick="setPrintCustomRange"
+                    android:text="Pages Range"/>
+                <EditText
+                    android:id="@+id/pages"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    style="@style/label"/>
 
-        </LinearLayout>
-
-    </ScrollView>
+            </RadioGroup>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"

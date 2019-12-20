@@ -33,6 +33,9 @@
     <string name="title_activity_report">Report unreadable page</string>
     <string name="page_unreadable">Page unreadable</string>
     <string name="notify_send_size">You are going to sent %d bytes over internet</string>
+    <string name="preprocess">Toggle preprocessing</string>
+    <string name="enhance">Turn on enhancement</string>
+    <string name="unenhance">Turn off enhancement</string>
     <string name="getting_report">Gathering information</string>
     <string name="sending_original">Sending original page</string>
     <string name="sending_reflowed">Sending re-flowed page</string>
@@ -50,6 +53,9 @@
     <string name="normal_margins">Normal margins</string>
     <string name="wide_margins">Wide margins</string>
     <string name="program_info">Version: %s\nBuild date: %s</string>
+    <string name="new_title">New title</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
     <string name="print">Print</string>
-    <string name="title_activity_print">PrintActivity</string>
+    <string name="title_activity_print">Print</string>
 </resources>
