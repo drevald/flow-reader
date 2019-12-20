@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FlowBook</string>
+    <string name="app_name">FlowReader</string>
     <string name="action_settings">More Settings</string>
     <string name="title_activity_browse_files">Choose book file</string>
     <string name="title_activity_page">Page</string>

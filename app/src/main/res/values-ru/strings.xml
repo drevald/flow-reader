@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Флоу Бук</string>
+    <string name="app_name">Флоу Ридер</string>
     <string name="action_settings">Другие настройки</string>
     <string name="title_activity_browse_files">Выбрать файл</string>
     <string name="title_activity_page">Страница</string>

@@ -77,6 +77,10 @@ struct SortSegments {
     }
 };
 
+std::pair<std::vector<int>,std::vector<float>> make_hist(std::vector<int>& v, int num_buckets, int min, int max);
+
+double deviation(vector<int> v, double ave);
+
 std::vector<glyph> preprocess(cv::Mat& image, cv::Mat& rotated_with_pictures);
 
 std::vector<glyph> convert_java_glyphs(JNIEnv *env, jobject list);

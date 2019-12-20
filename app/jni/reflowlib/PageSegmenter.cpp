@@ -124,7 +124,7 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
                     int o_e = std::min(a_e, b_e);
                     int diff = o_e - o_s;
                     
-                    if (std::min(rect1.height, rect2.height) > 0.667*average_height && diff > 0.5 * std::max(rect2.height, rect1.height) ) {
+                    if (std::min(rect1.height, rect2.height) > average_height && diff > 0.5 * std::max(rect2.height, rect1.height)) {
                         right_intersections.push_back(j);
                     }
                 }
@@ -149,8 +149,8 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
             }
         }
         
-        
         if (found_neighbor) {
+            //cv::line(mat, cv::Point(get<0>(p), get<1>(p)), cv::Point(get<0>(right_nb), get<1>(right_nb)), cv::Scalar(255));
             double_pair point(get<0>(p), get<1>(p));
             
             int n = center_numbers.at(point);
@@ -160,9 +160,12 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
             vertex_t v2 = vertex(m, g);
             add_edge(v1, v2, g);
             
-        }
+        } 
         
     }
+    
+    delete [] indices.ptr();
+    delete [] dists.ptr();
     
     std::vector<int> c(num_vertices(g));
     
@@ -176,9 +179,8 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
         return_value.at(cn).push_back(g[i]);
         
     }
-
-    delete [] indices.ptr();
-    delete [] dists.ptr();
+    
+    
     
     return return_value;
 }
@@ -191,13 +193,13 @@ vector<line_limit> PageSegmenter::get_line_limits() {
     Mat hist;
     reduce(mat, hist, 1, REDUCE_SUM, CV_32F);
     auto runs = one_runs(hist);
-    hist.release();
+    //hist.release();
     
     std::vector<line_limit> limits = std::vector<line_limit>();
-    if (runs.size() == 1) {
-        line_limit ll(0, 0, mat.rows, mat.rows);
-        limits.push_back(ll);
-        return limits;
+    if (runs.size()==1) {
+        //line_limit ll(0, 0, mat.rows, mat.rows);
+        //limits.push_back(ll);
+        //return limits;
     }
     
     if (cc_results.whole_page) {
@@ -239,8 +241,8 @@ vector<line_limit> PageSegmenter::get_line_limits() {
 cc_result PageSegmenter::get_cc_results() {
     
     Mat image;
-    const Mat kernel = getStructuringElement(MORPH_RECT, Size(2, 2));
-    erode(mat, image, kernel, Point(-1, -1), 1);
+    const Mat kernel = getStructuringElement(MORPH_RECT, Size(1, 1));
+    dilate(mat, image, kernel, Point(-1, -1), 1);
     
     
     Mat labeled(mat.size(), mat.type());
@@ -252,8 +254,10 @@ cc_result PageSegmenter::get_cc_results() {
     
     double heights[count];
     
+    
     vector<double_pair> center_list;
     vector<Rect> rects;
+    vector<int> v_heights;
     
     for (int i = 1; i < rectComponents.rows; i++) {
         int x = rectComponents.at<int>(Point(0, i));
@@ -261,12 +265,13 @@ cc_result PageSegmenter::get_cc_results() {
         int w = rectComponents.at<int>(Point(2, i));
         int h = rectComponents.at<int>(Point(3, i));
 
-        int area = rectComponents.at<int>(i, cv::CC_STAT_AREA);
+        //int area = rectComponents.at<int>(i, cv::CC_STAT_AREA);
 
         //if (area > 200) {
         Rect rectangle(x, y, w, h);
         rects.push_back(rectangle);
-        heights[i - 1] = h;
+        v_heights.push_back(h);
+        heights[i-1] = h;
         //}
     }
     
@@ -284,8 +289,15 @@ cc_result PageSegmenter::get_cc_results() {
     
     double min, max;
     cv::minMaxLoc(hist, &min, &max);
-    double average_height = m(0);
     
+    std::pair<std::vector<int>,std::vector<float>> p = make_hist(v_heights, std::min((int)v_heights.size(), 5), min, max);
+    
+    std::vector<int> hst = std::get<0>(p);
+    std::vector<float> steps = std::get<1>(p);
+    
+    auto max_iter = std::max_element(hst.begin(), hst.end());
+    int max_ind = (int)std::distance(hst.begin(), max_iter);
+    double average_height = steps[max_ind] ;
     
     double std = stdv(0);
     
@@ -328,10 +340,14 @@ cc_result PageSegmenter::get_cc_results() {
 
 
 std::map<int,int> PageSegmenter::calculate_left_indents(std::vector<int> lefts) {
+
+    std::map<int,int> left_indents;
+    
+    if (lefts.empty()) {
+        return left_indents;
+    }
     
     int w = mat.size().width;
-    
-    std::map<int,int> left_indents;
     
     std::vector<int> current_inds;
     std::vector<int> current_points;
@@ -438,9 +454,9 @@ std::vector<glyph> PageSegmenter::get_glyphs() {
     vector<glyph> return_value;
     std::vector<cv::Rect> big_rects;
     vector<line_limit> line_limits = get_line_limits();
+   
     line_limits = join_lines(line_limits);
-
-    //cv::fastNlMeansDenoising(gray_inverted_image,gray_inverted_image);
+    
     
     Mat hist;
     reduce(mat, hist, 0, REDUCE_SUM, CV_32F);
@@ -504,7 +520,7 @@ std::vector<glyph> PageSegmenter::get_glyphs() {
         reduce(lineimage, horHist, 0, REDUCE_SUM, CV_32F);
         const vector<std::tuple<int, int>> &oneRuns = one_runs(horHist);
         
-        horHist.release();
+        //horHist.release();
         
         int space_width = 0;
         std::vector<double> spaces;
@@ -516,10 +532,10 @@ std::vector<glyph> PageSegmenter::get_glyphs() {
             glyph g;
             
             if (k == 0 &&  (left - left_indent) > 0.02 * w) {
-                g.indented = true;
+                g.indented = 1;
             }
             else {
-                g.indented = false;
+                g.indented = 0;
             }
             
             // detect real height
@@ -544,9 +560,9 @@ std::vector<glyph> PageSegmenter::get_glyphs() {
             g.height = l - u - shift;
             g.baseline_shift = l - bl   ;
             g.line_height = line_height;
-            g.is_space = false;
+            g.is_space = 0;
             if (k == oneRuns.size()-1) {
-                g.is_last = true;
+                g.is_last = 1;
             }
             if (g.width > 0 & (float)g.height / g.width < 10) {
                 return_value.push_back(g);
@@ -565,16 +581,15 @@ std::vector<glyph> PageSegmenter::get_glyphs() {
             space.baseline_shift = l - bl;
             space.line_height = line_height;
             space.height = l - u - shift;
-            space.indented = false;
-            space.is_space = true;
+            space.indented = 0;
+            space.is_space = 1;
             if (k != oneRuns.size()-1 && (float)space.height / space.width < 10) {
                 return_value.push_back(space);
             }
         }
     }
     
-    mat.release();
-    //gray_inverted_image.release();
+    //mat.release();
     
     return return_value;
     

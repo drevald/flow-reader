@@ -47,6 +47,7 @@ cv::Mat Reflow::reflow(float scale, float margin) {
 
     for (int i=0; i<glyphs.size(); i++) {
         glyph g = glyphs.at(i);
+        
 
         bool indented = g.indented;
         int new_symbol_width = ceil(g.width * scale);
@@ -134,6 +135,7 @@ cv::Mat Reflow::reflow(float scale, float margin) {
         for (int l=0;l<glyphs.size(); l++) {
             glyph g = glyphs.at(l);
              if (l==0 && g.is_space) {
+                 g_counter++;
                  continue;
              }
             int new_symbol_height = ceil(g.height * scale);
@@ -169,9 +171,11 @@ cv::Mat Reflow::reflow(float scale, float margin) {
         last = false;
         for (int j=0;j<glyphs.size(); j++) {
             glyph g = glyphs.at(j);
+            
             if (j==0 && g.is_space) {
                 continue;
             }
+
             if (last || g.indented) {
                 line_sum += paragraph_indent;
             }
@@ -181,7 +185,7 @@ cv::Mat Reflow::reflow(float scale, float margin) {
             int new_symbol_height = ceil(symbol_mat.size().height * scale);
 
             cv::Mat dst(new_symbol_height, new_symbol_width, symbol_mat.type());
-            cv::resize(symbol_mat, dst, dst.size(), 0,0, cv::INTER_AREA);
+            cv::resize(symbol_mat, dst, dst.size(), 0,0, cv::INTER_CUBIC);
             int x_pos = line_sum;
 
             int y_pos = (current_vert_pos + line_height) + (g.baseline_shift - g.height)*scale;
@@ -200,7 +204,7 @@ cv::Mat Reflow::reflow(float scale, float margin) {
                     int y_pos = (current_vert_pos + line_height) + (g.baseline_shift - g.height)*scale*scale_coef;
                     int scaled_symbol_height = scale_coef * new_symbol_height;
                     cv::Mat dst(scaled_symbol_height, scaled_symbol_width, symbol_mat.type());
-                    cv::resize(symbol_mat, dst, dst.size(), 0,0, cv::INTER_AREA);
+                    cv::resize(symbol_mat, dst, dst.size(), 0,0, cv::INTER_CUBIC);
                     cv::Rect dstRect(x_pos, y_pos, scaled_symbol_width, scaled_symbol_height);
                     if (!g.is_space) {
                         dst.copyTo(new_image(dstRect));
