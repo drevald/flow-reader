@@ -15,6 +15,7 @@ import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.veve.flowreader.Constants;
+import com.veve.flowreader.PagesSet;
 import com.veve.flowreader.R;
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.model.BookSource;
@@ -36,17 +37,23 @@ import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
 import android.print.PrintDocumentInfo;
 import android.print.PrintManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static android.graphics.Bitmap.Config.ARGB_4444;
 
@@ -55,6 +62,10 @@ public class PrintActivity extends AppCompatActivity {
     static PageRenderer pageRenderer;
 
     BookRecord bookRecord;
+
+    List<PagesSet> pagesSets;
+
+    EditText pages;
 
     class PrintBookAdapter extends PrintDocumentAdapter {
 
@@ -84,7 +95,7 @@ public class PrintActivity extends AppCompatActivity {
             PrintDocumentInfo info = new PrintDocumentInfo
                     .Builder("print_output.pdf")
                     .setContentType(PrintDocumentInfo.CONTENT_TYPE_DOCUMENT)
-                    .setPageCount(10)
+//                    .setPageCount(10)
                     .build();
                 attributes = newAttributes;
                 callback.onLayoutFinished(info, false);
@@ -173,7 +184,7 @@ public class PrintActivity extends AppCompatActivity {
                 .getSystemService(Context.PRINT_SERVICE);
 
         // Set job name, which will be displayed in the print queue
-        String jobName = getActivity().getString(R.string.app_name) + " Document";
+        String jobName = getActivity().getString(R.string.app_name) + "_" + bookRecord.getTitle();
 
         // Start a print job, passing in a PrintDocumentAdapter implementation
         // to handle the generation of a print document
@@ -214,24 +225,42 @@ public class PrintActivity extends AppCompatActivity {
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        findViewById(R.id.current_page).setSelected(true);
-        ((EditText)findViewById(R.id.pages)).setText("" + bookRecord.getCurrentPage());
+        ((RadioGroup)findViewById(R.id.page_range)).check(R.id.current_page);
+        pages = ((EditText) findViewById(R.id.pages));
+        pages.setText("" + bookRecord.getCurrentPage());
+        pages.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                parsePagesString();
+            }
+        });
+    }
+
+    private void parsePagesString() {
+        try {
+            pagesSets = PagesSet.getPagesSet((pages).getEditableText().toString());
+            pages.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        } catch (NumberFormatException e) {
+            pages.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+        }
     }
 
     public void setPrintCurrentPage(View view) {
         ((EditText)findViewById(R.id.pages)).setText("" + bookRecord.getCurrentPage());
         ((EditText)findViewById(R.id.pages)).setInputType(EditorInfo.TYPE_NULL);
+        parsePagesString();
     }
 
     public void setPrintAllPages(View view) {
-        ((EditText)findViewById(R.id.pages)).setText("1-" + bookRecord.getCurrentPage());
+        ((EditText)findViewById(R.id.pages)).setText("1-" + bookRecord.getPagesCount());
         ((EditText)findViewById(R.id.pages)).setInputType(EditorInfo.TYPE_NULL);
+        parsePagesString();
     }
 
     public void setPrintCustomRange(View view) {
         ((EditText)findViewById(R.id.pages)).setInputType(EditorInfo.TYPE_CLASS_TEXT);
+        parsePagesString();
     }
-
 
     static class PageGetterTask extends AsyncTask<Integer, Void, Bitmap> {
 
@@ -245,6 +274,11 @@ public class PrintActivity extends AppCompatActivity {
     }
 
 }
+
+
+
+
+
 
 
 
