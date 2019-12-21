@@ -10,9 +10,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_icon"
+        android:icon="@drawable/ic_icon_flowbook_pink"
         android:largeHeap="true"
-        android:roundIcon="@drawable/ic_icon"
+        android:roundIcon="@drawable/ic_icon_flowbook_pink"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
@@ -24,7 +24,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".views.MainActivity"
-            android:label="@string/books"
+            android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

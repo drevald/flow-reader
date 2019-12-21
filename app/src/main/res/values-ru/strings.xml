@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Флоу Ридер</string>
+    <string name="app_name">Флоу Бук</string>
     <string name="action_settings">Другие настройки</string>
     <string name="title_activity_browse_files">Выбрать файл</string>
     <string name="title_activity_page">Страница</string>
@@ -34,6 +34,8 @@
     <string name="page_unreadable">Страница нечитабельна</string>
     <string name="notify_send_size">Вы согласны переслать %d байтов по интернет?</string>
     <string name="preprocess">Перекл. предобработку</string>
+    <string name="enhance">Включить предобработку</string>
+    <string name="unenhance">Выключить предобработку</string>
     <string name="getting_report">Составляем отчет</string>
     <string name="sending_original">Отсылается оригинальная страница</string>
     <string name="sending_reflowed">Отсылается переверстанная страница</string>

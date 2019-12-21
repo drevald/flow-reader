@@ -13,7 +13,6 @@ typedef boost::adjacency_list < boost::vecS, boost::vecS, boost::undirectedS, do
 typedef boost::graph_traits<Graph>::vertex_descriptor vertex_t;
 
 
-
 struct line_limit {
     line_limit(int upper, int upper_baseline, int lower_baseline, int lower) {
         this->upper = upper;
@@ -47,19 +46,22 @@ struct SortLineLimits {
 };
 
 
+
 class PageSegmenter {
 
     public:
         PageSegmenter(cv::Mat& mat) {
             this->mat = mat;
-            //gray_inverted_image = mat.clone();
         }
 
         std::vector<glyph> get_glyphs();
+    
+    virtual ~PageSegmenter() {
+        g.clear();
+    }
 
     private:
         cv::Mat mat;
-        //cv::Mat gray_inverted_image;
         std::map<double_pair,int> center_numbers;
         std::map<double_pair,cv::Rect> rd;
         Graph g;
@@ -70,6 +72,8 @@ class PageSegmenter {
         std::vector<line_limit> join_lines(std::vector<line_limit> line_limits);
         std::map<int,std::vector<double_pair>> get_connected_components(std::vector<double_pair>& center_list, double averahe_hight);
         line_limit find_baselines(std::vector<double_pair>& cc);
+        
+        
 };
 
 

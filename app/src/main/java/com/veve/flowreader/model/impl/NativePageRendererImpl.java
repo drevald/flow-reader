@@ -140,13 +140,13 @@ public class NativePageRendererImpl implements PageRenderer {
                 false);
     }
 
-
     @Override
     public Bitmap renderOriginalPage(DevicePageContext context, int position) {
         Bitmap bitmap = getOriginalPageBitmap(position);
         return Bitmap.createScaledBitmap(bitmap,
-                (context.getWidth()),
-                ((context.getWidth() * bitmap.getHeight())/bitmap.getWidth()),
+                (int)(context.getZoomOriginal()*context.getWidth()),
+                (int)(context.getZoomOriginal()*(context.getWidth()
+                        * bitmap.getHeight())/bitmap.getWidth()),
                 false);
     }
 

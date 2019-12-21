@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FlowReader</string>
+    <string name="app_name">FlowBook</string>
     <string name="action_settings">More Settings</string>
     <string name="title_activity_browse_files">Choose book file</string>
     <string name="title_activity_page">Page</string>
@@ -34,6 +34,8 @@
     <string name="page_unreadable">Page unreadable</string>
     <string name="notify_send_size">You are going to sent %d bytes over internet</string>
     <string name="preprocess">Toggle preprocessing</string>
+    <string name="enhance">Turn on enhancement</string>
+    <string name="unenhance">Turn off enhancement</string>
     <string name="getting_report">Gathering information</string>
     <string name="sending_original">Sending original page</string>
     <string name="sending_reflowed">Sending re-flowed page</string>
