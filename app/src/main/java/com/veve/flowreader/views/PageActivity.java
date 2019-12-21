@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
@@ -199,6 +200,13 @@ public class PageActivity extends AppCompatActivity {
         } else {
             context.setPreprocessing(false);
             context.setInvalidateCache(false);
+        }
+
+        int orientation = getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            context.setPortrait(false);
+        } else {
+            context.setPortrait(true);
         }
 
 
@@ -737,6 +745,7 @@ public class PageActivity extends AppCompatActivity {
                                     height - offset);
                             ImageView imageView = new ImageView(getApplicationContext());
                             imageView.setScaleType(ImageView.ScaleType.FIT_START);
+                            imageView.setMaxHeight(Integer.MAX_VALUE);
                             imageView.setImageBitmap(limitedBitmap);
                             pageViews.add(imageView);
                             Log.d(getClass().getName(), "Image creation");

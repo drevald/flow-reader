@@ -210,7 +210,7 @@ image_format get_djvu_pixels(JNIEnv *env, jlong bookId, jint page_number, jboole
 }
 
 JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeReflownBytes
-        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jfloat scale, jobject pageSize, jobject list, jboolean preprocessing, jfloat margin) {
+        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jfloat scale, jboolean portrait, jobject pageSize, jobject list, jboolean preprocessing, jfloat margin) {
 
     std::vector<glyph> glyphs = convert_java_glyphs(env, list);
 
@@ -227,9 +227,9 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
     bool do_preprocessing = (bool)preprocessing;
     if (do_preprocessing) {
         std::vector<glyph> pic_glyphs = preprocess(mat, rotated_with_pictures);
-        reflow(mat, new_image, scale, env, glyphs, list, pic_glyphs, rotated_with_pictures, true, margin);
+        reflow(mat, new_image, scale, portrait, env, glyphs, list, pic_glyphs, rotated_with_pictures, true, margin);
     } else {
-        reflow(mat, new_image, scale, env, glyphs, list, std::vector<glyph>(), mat, false, margin);
+        reflow(mat, new_image, scale, portrait, env, glyphs, list, std::vector<glyph>(), mat, false, margin);
     }
 
     jclass clz = env->GetObjectClass(pageSize);

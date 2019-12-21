@@ -25,6 +25,15 @@ public class DevicePageContext implements Serializable {
     private boolean newline;
     private boolean preprocessing;
     private boolean invalidateCache;
+    private boolean portrait;
+
+    public boolean getPrtrait() {
+        return portrait;
+    }
+
+    public void setPortrait(boolean portrait) {
+        this.portrait = portrait;
+    }
 
     public float getZoomOriginal() {return zoomOriginal;}
 
