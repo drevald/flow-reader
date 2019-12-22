@@ -27,7 +27,9 @@ std::vector<int> Reflow::calculate_line_heights(std::vector<int> line_heights) {
 
 cv::Mat Reflow::reflow(float scale, bool portrait, float margin) {
 
+    float image_ratio = image.size().height/image.size().width;
     int new_width = portrait ? ceil(image.size().width) : ceil(image.size().height);
+    scale = portrait ? scale : scale * image_ratio;
     //int new_width = ceil(image.size().width);
     //int new_width = ceil(page_width);
     int left_margin = ceil(new_width * 0.075 * margin);
