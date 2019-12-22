@@ -1,6 +1,7 @@
 package com.veve.flowreader.model.impl.pdf;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.veve.flowreader.model.BookPage;
@@ -56,6 +57,17 @@ public class PdfBookPage extends AbstractBookPage implements BookPage {
         PageSize pageSize = new PageSize();
         byte[] bytes = getNativeReflownBytes(getBookId(), getPageNumber(), context.getZoom(),
                 context.getPrtrait(), pageSize, pageGlyphs, context.isPreprocessing(), context.getMargin());
+
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        //opts.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        //opts.inJustDecodeBounds= true;
+
+        Bitmap bm = BitmapFactory.decodeByteArray(bytes,0, bytes.length, opts);
+        Log.d("FLOW-READER", "bitmap height = " + bm.getHeight());
+        return bm;
+
+
+        /*
         int width = pageSize.getPageWidth();
         int height = pageSize.getPageHeight();
         Bitmap.Config bitmapConfig = Bitmap.Config.ALPHA_8;
@@ -66,6 +78,8 @@ public class PdfBookPage extends AbstractBookPage implements BookPage {
         bb.rewind();
         bm.copyPixelsFromBuffer(bb);
         return bm;
+
+         */
     }
 
 

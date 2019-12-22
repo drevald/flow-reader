@@ -158,10 +158,6 @@ cv::Mat Reflow::reflow(float scale, bool portrait, float margin) {
     int top_margin = std::min(ceil(new_height * 0.075), left_margin * 1.25);
     int current_vert_pos = top_margin;
 
-    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "image height = %d\n", new_height + 2*top_margin);
-    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "new height = %d\n", new_height);
-    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "top margin = %d\n", top_margin);
-
     // new image to copy pixels to
 
     cv::Mat new_image(new_height + 2*top_margin, new_width, image.type());
@@ -170,13 +166,9 @@ cv::Mat Reflow::reflow(float scale, bool portrait, float margin) {
     current_vert_pos = top_margin;
 
 
-    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "line number = %d\n", line_number);
     for (int i=0; i<=line_number; i++) {
         std::vector<glyph> glyphs = lines.at(i);
         int line_height = line_heights.at(i);
-        __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "i = %d\n", i);
-
-
         //cv::line(new_image, cv::Point(0,current_vert_pos), cv::Point(new_width, current_vert_pos), cv::Scalar(255), 5);
         line_sum = left_margin ;
         last = false;
@@ -233,8 +225,6 @@ cv::Mat Reflow::reflow(float scale, bool portrait, float margin) {
 
     //cv::imwrite(std::string("/data/local/tmp/im.png"), new_image);
     //cv::imwrite(std::string("/storage/emulated/0/Download/im.png"), new_image);
-    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "current vert pos= %d\n", current_vert_pos);
-
 
     //cv::bitwise_not(new_image, new_image);
     return new_image;

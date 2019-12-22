@@ -118,7 +118,7 @@ public class NativePageRendererImpl implements PageRenderer {
     public Bitmap renderPage(DevicePageContext context, int position) {
 
         Bitmap bitmap = getReflownPageBitmap(position, context);
-
+        /*
         Bitmap bmp = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), ARGB_8888);
 
         Canvas canvas = new Canvas(bmp);
@@ -134,9 +134,9 @@ public class NativePageRendererImpl implements PageRenderer {
 
         canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), fillPaint);
         canvas.drawBitmap(bitmap, srcRect,dstRect, paint);
-
-        return Bitmap.createScaledBitmap(bmp, (context.getWidth()),
-                ((context.getWidth() * bmp.getHeight())/bmp.getWidth()),
+         */
+        return Bitmap.createScaledBitmap(bitmap, (context.getWidth()),
+                ((context.getWidth() * bitmap.getHeight())/bitmap.getWidth()),
                 false);
     }
 

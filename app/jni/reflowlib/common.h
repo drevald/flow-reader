@@ -10,7 +10,7 @@
 #include <errno.h>
 #include <math.h>
 #include <limits>
-#include <cstdlib>
+#include <stdlib.h>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -76,6 +76,7 @@ struct SortSegments {
         return get<0>(lhs) < get<0>(rhs);
     }
 };
+
 
 std::pair<std::vector<int>,std::vector<float>> make_hist(std::vector<int>& v, int num_buckets, int min, int max);
 

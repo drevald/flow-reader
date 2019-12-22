@@ -5,9 +5,40 @@ LOCAL_MODULE := libm
 LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libm.a
 include $(PREBUILT_STATIC_LIBRARY)
 
+
 include $(CLEAR_VARS)
 LOCAL_MODULE := cpufeatures
 LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libcpufeatures.a
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := libIlmImf
+LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libIlmImf.a
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := libjpeg-turbo
+LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/liblibjpeg-turbo.a
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := libjasper
+LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/liblibjasper.a
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := libwebp
+LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/liblibwebp.a
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := libtiff
+LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/liblibtiff.a
+include $(PREBUILT_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := libpng
+LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/liblibpng.a
 include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
@@ -44,6 +75,13 @@ ifeq ($(TARGET_ARCH_ABI),x86_64)
 include $(CLEAR_VARS)
 LOCAL_MODULE := ippiw 
 LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libippiw.a
+include $(PREBUILT_STATIC_LIBRARY)
+endif
+
+ifeq ($(TARGET_ARCH_ABI),x86)
+include $(CLEAR_VARS)
+LOCAL_MODULE := libprotobuf 
+LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/liblibprotobuf.a
 include $(PREBUILT_STATIC_LIBRARY)
 endif
 

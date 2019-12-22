@@ -134,11 +134,21 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
     env->CallVoidMethod(pageSize,setPageWidthMid, new_image.cols);
     env->CallVoidMethod(pageSize,setPageHeightMid, new_image.rows);
 
+    cv::bitwise_not(new_image, new_image);
 
-    size_t sizeInBytes = new_image.total() * new_image.elemSize();
+    std::vector<uchar> buff;//buffer for coding
+    std::vector<int> param(2);
+    param[0] = cv::IMWRITE_PNG_COMPRESSION;
+    param[1] = 100;
+    cv::imencode(".png", new_image, buff);
+
+
+    //size_t sizeInBytes = new_image.total() * new_image.elemSize();
+    size_t sizeInBytes = buff.size(); //new_image.total() * new_image.elemSize();
 
     jbyteArray array = env->NewByteArray(sizeInBytes);
-    env->SetByteArrayRegion(array, 0, sizeInBytes, (jbyte *) new_image.data);
+    //env->SetByteArrayRegion(array, 0, sizeInBytes, (jbyte *) new_image.data);
+    env->SetByteArrayRegion(array, 0, sizeInBytes, (jbyte *) &buff[0]);
     free((void*)buffer);
     mat.release();
     new_image.release();

@@ -9,3 +9,4 @@ NDK_ALL_ABIS=armeabi armeabi-v7a arm64-v8a x86 x86_64
 APP_OPTIM := release
 #APP_STL := c++_shared
 #NDK_TOOLCHAIN_VERSION := 4.9
+APP_PLATFORM := android-19

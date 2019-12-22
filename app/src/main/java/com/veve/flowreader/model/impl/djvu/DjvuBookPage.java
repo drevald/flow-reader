@@ -1,6 +1,7 @@
 package com.veve.flowreader.model.impl.djvu;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.veve.flowreader.model.BookPage;
@@ -41,6 +42,15 @@ public class DjvuBookPage extends AbstractBookPage implements BookPage  {
         PageSize pageSize = new PageSize();
         byte[] bytes = getNativeReflownBytes(getBookId(), getPageNumber(), context.getZoom(), context.getPrtrait(),
                 pageSize, pageGlyphs, context.isPreprocessing(), context.getMargin());
+
+
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        //opts.inPreferredConfig = Bitmap.Config.ARGB_8888;
+        //opts.inJustDecodeBounds= true;
+
+        return BitmapFactory.decodeByteArray(bytes,0, bytes.length, opts);
+
+        /*
         int width = pageSize.getPageWidth();
         int height = pageSize.getPageHeight();
         Bitmap.Config bitmapConfig = Bitmap.Config.ALPHA_8;
@@ -50,6 +60,8 @@ public class DjvuBookPage extends AbstractBookPage implements BookPage  {
         bb.rewind();
         bm.copyPixelsFromBuffer(bb);
         return bm;
+        */
+
     }
 
     @Override

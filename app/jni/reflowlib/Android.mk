@@ -1,3 +1,4 @@
+
 LOCAL_PATH := $(call my-dir)
 
 CVROOT := $(LOCAL_PATH)/../../../opencv/sdk/native/jni
@@ -25,23 +26,23 @@ LOCAL_C_INCLUDES := \
 
 
 ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
-	LOCAL_STATIC_LIBRARIES := myview djvu jpeg9 lz4 libopencv_photo libopencv_imgproc libopencv_imgcodecs libopencv_core flann cpufeatures ittnotify tbb tegra_hal libboost_system libboost_graph libm c++_static
+	LOCAL_STATIC_LIBRARIES := myview djvu jpeg9 lz4 libopencv_photo libopencv_imgproc libopencv_imgcodecs libopencv_core libtiff libpng libjpeg-turbo libjasper libwebp libIlmImf flann cpufeatures ittnotify tbb tegra_hal libboost_system libboost_graph libm c++_static
 endif
 
 ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
-	LOCAL_STATIC_LIBRARIES := myview djvu jpeg9 lz4 libopencv_photo libopencv_imgproc libopencv_imgcodecs libopencv_core flann cpufeatures ittnotify tbb tegra_hal libboost_system libboost_graph libm c++_static
+	LOCAL_STATIC_LIBRARIES := myview djvu lz4 libopencv_photo libopencv_imgproc libopencv_imgcodecs libopencv_core libtiff libpng libjpeg-turbo libjasper libwebp libIlmImf flann cpufeatures ittnotify tbb tegra_hal libboost_system libboost_graph libm c++_static
 endif
 
 ifeq ($(TARGET_ARCH_ABI),x86_64)
-	LOCAL_STATIC_LIBRARIES := myview djvu jpeg9 lz4 libopencv_photo libopencv_imgproc libopencv_imgcodecs libopencv_core flann cpufeatures ittnotify tbb libboost_system ippiw ippicv libboost_graph c++_static
+	LOCAL_STATIC_LIBRARIES := myview djvu lz4 libopencv_photo libopencv_imgproc libopencv_imgcodecs libopencv_core libtiff libpng libjpeg-turbo libjasper libwebp libIlmImf flann cpufeatures ittnotify tbb libboost_system ippiw ippicv libboost_graph c++_static
 endif
 
 ifeq ($(TARGET_ARCH_ABI),x86)
-	LOCAL_STATIC_LIBRARIES := myview djvu jpeg9 lz4 libopencv_photo libopencv_imgproc libopencv_imgcodecs libopencv_core flann cpufeatures ittnotify tbb libboost_system ippiw ippicv libboost_graph c++_static
+	LOCAL_STATIC_LIBRARIES := myview djvu lz4 libopencv_photo libopencv_imgproc libopencv_imgcodecs libopencv_core libtiff libpng libjpeg-turbo libjasper libwebp libIlmImf libprotobuf flann cpufeatures ittnotify tbb libboost_system ippiw ippicv libboost_graph c++_static
 endif
 
 
-LOCAL_CFLAGS += -DHAVE_CONFIG_H -frtti -fexceptions -fopenmp -w -Ofast -DNDEBUG  -nostdlib++
+LOCAL_CFLAGS += -DHAVE_CONFIG_H -frtti -fexceptions -fopenmp -w -Ofast -DNDEBUG
 LOCAL_LDLIBS += -llog -lz -lm -L$(SYSROOT)/usr/lib
 LOCAL_LDFLAGS += -ldl -landroid -fopenmp  
 
@@ -55,4 +56,3 @@ LOCAL_SRC_FILES := \
 include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
-
