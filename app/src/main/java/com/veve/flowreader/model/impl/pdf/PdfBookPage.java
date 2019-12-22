@@ -66,7 +66,14 @@ public class PdfBookPage extends AbstractBookPage implements BookPage {
             byte[] b = bytes.get(i);
             BitmapFactory.Options opts = new BitmapFactory.Options();
             //opts.inPreferredConfig = Bitmap.Config.ARGB_8887;
-            //opts.inJustDecodeBounds= true
+            opts.inJustDecodeBounds= true;
+
+            BitmapFactory.decodeByteArray(b,0, b.length, opts);
+            int h = opts.outHeight;
+            int w = opts.outWidth;
+            opts.inSampleSize = calculateInSampleSize(opts, context.getWidth(), context.getWidth()*(opts.outHeight/opts.outWidth));
+
+            opts.inJustDecodeBounds= false;
             Bitmap bm = BitmapFactory.decodeByteArray(b,0, b.length, opts);
             Log.d("FLOW-READER", "bitmap height = " + bm.getHeight());
 
@@ -106,5 +113,28 @@ public class PdfBookPage extends AbstractBookPage implements BookPage {
     private static native byte[] getNativeGrayscaleBytes(long bookId, int pageNumber);
 
     private static native byte[] getNativePageGlyphs(long bookId, int pageNumber, List<PageGlyphInfo> pageGlyphs);
+
+    public static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
+    }
 
 }
