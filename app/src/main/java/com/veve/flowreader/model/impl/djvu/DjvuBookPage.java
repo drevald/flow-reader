@@ -41,7 +41,7 @@ public class DjvuBookPage extends AbstractBookPage implements BookPage  {
     @Override
     public List<Bitmap> getAsReflownBitmap(DevicePageContext context, List<PageGlyphInfo> pageGlyphs) {
         PageSize pageSize = new PageSize();
-        byte[] bytes = getNativeReflownBytes(getBookId(), getPageNumber(), context.getZoom(), context.getPrtrait(),
+        byte[] bytes = getNativeReflownBytes(getBookId(), getPageNumber(), context.getZoom(), context.getPrtrait(), context.getScreenRatio(),
                 pageSize, pageGlyphs, context.isPreprocessing(), context.getMargin());
 
 
@@ -75,7 +75,7 @@ public class DjvuBookPage extends AbstractBookPage implements BookPage  {
         return getNativeHeight(getBookId(), getPageNumber());
     }
 
-    private static native byte[] getNativeReflownBytes(long bookId, int pageNumber, float scale, boolean portrait, PageSize pageSize, List<PageGlyphInfo> pageGlyphs, boolean preprocessing, float margin);
+    private static native byte[] getNativeReflownBytes(long bookId, int pageNumber, float scale, boolean portrait, float screenRatio, PageSize pageSize, List<PageGlyphInfo> pageGlyphs, boolean preprocessing, float margin);
 
     private static native byte[] getNativeBytes(long bookId, int pageNumber);
 

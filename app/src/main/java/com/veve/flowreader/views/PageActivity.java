@@ -414,6 +414,20 @@ public class PageActivity extends AppCompatActivity {
         kickOthers(pageLoader);
         Integer invCache = context.isInvalidateCache() ? 1 : 0;
 
+
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+
+        int orientation = this.getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            context.setScreenRatio(width/(float)height);
+        } else {
+            context.setScreenRatio(height/(float)width);
+        }
+
         int childCount = pageActivity.page.getChildCount();
         for (int k=0;k<childCount;k++) {
             View v = pageActivity.page.getChildAt(k);

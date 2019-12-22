@@ -25,14 +25,14 @@ std::vector<int> Reflow::calculate_line_heights(std::vector<int> line_heights) {
 }
 
 
-cv::Mat Reflow::reflow(float scale, bool portrait, float margin) {
+cv::Mat Reflow::reflow(float scale, bool portrait, float screen_ratio, float margin) {
 
-    float image_ratio = image.size().height/image.size().width;
-    int new_width = portrait ? ceil(image.size().width) : ceil(image.size().height);
-    scale = portrait ? scale : scale * image_ratio;
+    float image_ratio = image.size().width/image.size().height;
+    int new_width = portrait ? ceil(image.size().width) : ceil(image.size().width / screen_ratio);
+    //scale = portrait ? scale : scale * screen_ratio;
     //int new_width = ceil(image.size().width);
     //int new_width = ceil(page_width);
-    int left_margin = ceil(new_width * 0.075 * margin);
+    int left_margin = ceil(image.size().width * 0.075 * margin);
     int paragraph_indent = 30;
     int max_symbol_height = 0;
     std::vector<int> line_heights;

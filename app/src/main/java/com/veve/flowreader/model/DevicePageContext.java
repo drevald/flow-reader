@@ -26,6 +26,7 @@ public class DevicePageContext implements Serializable {
     private boolean preprocessing;
     private boolean invalidateCache;
     private boolean portrait;
+    private float screenRatio;
 
     public boolean getPrtrait() {
         return portrait;
@@ -145,5 +146,13 @@ public class DevicePageContext implements Serializable {
 
     public void setInvalidateCache(boolean invalidateCache) {
         this.invalidateCache = invalidateCache;
+    }
+
+    public float getScreenRatio() {
+        return screenRatio;
+    }
+
+    public void setScreenRatio(float screenRatio) {
+        this.screenRatio = screenRatio;
     }
 }
