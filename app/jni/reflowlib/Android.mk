@@ -41,16 +41,33 @@ ifeq ($(TARGET_ARCH_ABI),x86)
 	LOCAL_STATIC_LIBRARIES := myview djvu lz4 libopencv_photo libopencv_imgproc libopencv_imgcodecs libopencv_core libtiff libpng libjpeg-turbo libjasper libwebp libIlmImf libprotobuf flann cpufeatures ittnotify tbb libboost_system ippiw ippicv libboost_graph c++_static
 endif
 
+LOCAL_ALLOW_UNDEFINED_SYMBOLS=true
 
 LOCAL_CFLAGS += -DHAVE_CONFIG_H -frtti -fexceptions -fopenmp -w -Ofast -DNDEBUG
 LOCAL_LDLIBS += -llog -lz -lm -L$(SYSROOT)/usr/lib
-LOCAL_LDFLAGS += -ldl -landroid -fopenmp  
+LOCAL_LDFLAGS += -ldl -landroid -fopenmp
 
-LOCAL_C_INCLUDES += common.h LineSpacing.h Reflow.cpp PageSegmenter.h Enclosure.h pdf-lib.h  ImageNode.h Xycut.h
+LOCAL_C_INCLUDES += common.h mylib.h LineSpacing.h Reflow.cpp PageSegmenter.h Enclosure.h pdf-lib.h  ImageNode.h Xycut.h
 
-
+ifeq ($(TARGET_ARCH_ABI),x86)
 LOCAL_SRC_FILES := \
 	common.cpp LineSpacing.cpp Reflow.cpp  PageSegmenter.cpp Enclosure.cpp djvu-lib.cpp pdf-lib.cpp ImageNode.cpp Xycut.cpp
+endif
+
+ifeq ($(TARGET_ARCH_ABI),x86_64)
+LOCAL_SRC_FILES := \
+	common.cpp LineSpacing.cpp Reflow.cpp  PageSegmenter.cpp Enclosure.cpp djvu-lib.cpp pdf-lib.cpp ImageNode.cpp Xycut.cpp
+endif
+
+ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
+LOCAL_SRC_FILES := \
+	common.cpp LineSpacing.cpp Reflow.cpp  PageSegmenter.cpp Enclosure.cpp djvu-lib.cpp pdf-lib.cpp ImageNode.cpp Xycut.cpp
+endif
+ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
+LOCAL_SRC_FILES := \
+	common.cpp LineSpacing.cpp Reflow.cpp  PageSegmenter.cpp Enclosure.cpp djvu-lib.cpp pdf-lib.cpp ImageNode.cpp Xycut.cpp
+endif
+
 
 
 include $(BUILD_SHARED_LIBRARY)

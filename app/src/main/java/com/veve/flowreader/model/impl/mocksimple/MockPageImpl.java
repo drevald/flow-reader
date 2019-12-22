@@ -78,7 +78,7 @@ public class MockPageImpl implements BookPage {
     }
 
     @Override
-    public Bitmap getAsReflownBitmap(DevicePageContext context, List<PageGlyphInfo> pageGlyphs) {
+    public List<Bitmap> getAsReflownBitmap(DevicePageContext context, List<PageGlyphInfo> pageGlyphs) {
         return null;
     }
 

@@ -1,7 +1,12 @@
 #include "mylib.h"
+#include "common.h"
 
-double atof(const char *nptr) {
-    return 1.0f; // (strtod(nptr, nullptr));
+static u_long myNextRandom = 1;
+
+static double atof(const char *nptr) {
+    return (strtod(nptr, NULL));
 }
+
+
 
 

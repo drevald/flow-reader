@@ -11,6 +11,7 @@ import com.veve.flowreader.model.PageSize;
 import com.veve.flowreader.model.impl.AbstractBookPage;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PdfBookPage extends AbstractBookPage implements BookPage {
@@ -53,18 +54,29 @@ public class PdfBookPage extends AbstractBookPage implements BookPage {
     }
 
     @Override
-    public Bitmap getAsReflownBitmap(DevicePageContext context, List<PageGlyphInfo> pageGlyphs) {
+    public List<Bitmap> getAsReflownBitmap(DevicePageContext context, List<PageGlyphInfo> pageGlyphs) {
         PageSize pageSize = new PageSize();
-        byte[] bytes = getNativeReflownBytes(getBookId(), getPageNumber(), context.getZoom(),
+
+        List<byte[]> bytes = getNativeReflownBytes(getBookId(), getPageNumber(), context.getZoom(),
                 context.getPrtrait(), pageSize, pageGlyphs, context.isPreprocessing(), context.getMargin());
 
-        BitmapFactory.Options opts = new BitmapFactory.Options();
-        //opts.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        //opts.inJustDecodeBounds= true;
+        List<Bitmap> retVal = new ArrayList<>();
 
-        Bitmap bm = BitmapFactory.decodeByteArray(bytes,0, bytes.length, opts);
-        Log.d("FLOW-READER", "bitmap height = " + bm.getHeight());
-        return bm;
+        for (int i=0;i<bytes.size(); i++) {
+            byte[] b = bytes.get(i);
+            BitmapFactory.Options opts = new BitmapFactory.Options();
+            //opts.inPreferredConfig = Bitmap.Config.ARGB_8887;
+            //opts.inJustDecodeBounds= true
+            Bitmap bm = BitmapFactory.decodeByteArray(b,0, b.length, opts);
+            Log.d("FLOW-READER", "bitmap height = " + bm.getHeight());
+
+            retVal.add(bm);
+            bytes.set(i, null);
+        }
+        bytes = null;
+
+
+        return retVal;
 
 
         /*
@@ -83,7 +95,7 @@ public class PdfBookPage extends AbstractBookPage implements BookPage {
     }
 
 
-    private static native byte[] getNativeReflownBytes(long bookId, int pageNumber, float scale,boolean portrait, PageSize pageSize, List<PageGlyphInfo> pageGlyphs, boolean preprocessing, float margin);
+    private static native List<byte[]> getNativeReflownBytes(long bookId, int pageNumber, float scale,boolean portrait, PageSize pageSize, List<PageGlyphInfo> pageGlyphs, boolean preprocessing, float margin);
 
     private static native int getNativeWidth(long bookId, int pageNumber);
 

@@ -63,7 +63,7 @@ public class NativePageRendererImpl implements PageRenderer {
         return originalBitmap;
     }
 
-    private Bitmap getReflownPageBitmap(int position, DevicePageContext context) {
+    private List<Bitmap> getReflownPageBitmap(int position, DevicePageContext context) {
 
         if (context.isInvalidateCache()) {
             booksCollection.deleteGlyphs(bookRecord.getId(), position);
@@ -74,7 +74,7 @@ public class NativePageRendererImpl implements PageRenderer {
 
         if (storedGlyphs == null || storedGlyphs.isEmpty()) {
             List<PageGlyphInfo> glyphs = new ArrayList<>();
-            Bitmap reflownPageBytes = bookSource.getReflownPageBytes(position, context, glyphs);
+            List<Bitmap> reflownPageBytes = bookSource.getReflownPageBytes(position, context, glyphs);
             List<PageGlyphRecord> glyphsToStore = new ArrayList<PageGlyphRecord>();
             for (PageGlyphInfo glyph : glyphs) {
                 glyphsToStore.add(new PageGlyphRecord(
@@ -108,16 +108,16 @@ public class NativePageRendererImpl implements PageRenderer {
                        record.isLast()
                ));
            }
-           Bitmap reflownPageBytes = bookSource.getReflownPageBytes(position, context, glyphs);
+           List<Bitmap> reflownPageBytes = bookSource.getReflownPageBytes(position, context, glyphs);
            return reflownPageBytes;
         }
 
     }
 
     @Override
-    public Bitmap renderPage(DevicePageContext context, int position) {
+    public List<Bitmap> renderPage(DevicePageContext context, int position) {
 
-        Bitmap bitmap = getReflownPageBitmap(position, context);
+        List<Bitmap> bitmaps = getReflownPageBitmap(position, context);
         /*
         Bitmap bmp = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), ARGB_8888);
 
@@ -135,9 +135,16 @@ public class NativePageRendererImpl implements PageRenderer {
         canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), fillPaint);
         canvas.drawBitmap(bitmap, srcRect,dstRect, paint);
          */
-        return Bitmap.createScaledBitmap(bitmap, (context.getWidth()),
-                ((context.getWidth() * bitmap.getHeight())/bitmap.getWidth()),
-                false);
+        List<Bitmap> retVal = new ArrayList<>();
+        Bitmap bm;
+        for (Bitmap b : bitmaps) {
+            bm = Bitmap.createScaledBitmap(b, (context.getWidth()),
+                    ((context.getWidth() * b.getHeight())/b.getWidth()),
+                    false);
+            b.recycle();
+            retVal.add(bm);
+        }
+        return  retVal;
     }
 
     @Override

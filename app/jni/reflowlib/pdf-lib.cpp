@@ -136,11 +136,18 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
 
     cv::bitwise_not(new_image, new_image);
 
+    int w = new_image.size().width;
+    int h = new_image.size().height;
+    cv::Mat upper = new_image(cv::Rect(0,0,w, h/2));
+    cv::Mat lower = new_image(cv::Rect(0,h/2,w, h - h/2));
+
+
     std::vector<uchar> buff;//buffer for coding
-    std::vector<int> param(2);
-    param[0] = cv::IMWRITE_PNG_COMPRESSION;
-    param[1] = 100;
-    cv::imencode(".png", new_image, buff);
+    cv::imencode(".png", upper, buff);
+
+
+    std::vector<uchar> buff1;//buffer for coding
+    cv::imencode(".png", lower, buff1);
 
 
     //size_t sizeInBytes = new_image.total() * new_image.elemSize();
@@ -149,11 +156,29 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
     jbyteArray array = env->NewByteArray(sizeInBytes);
     //env->SetByteArrayRegion(array, 0, sizeInBytes, (jbyte *) new_image.data);
     env->SetByteArrayRegion(array, 0, sizeInBytes, (jbyte *) &buff[0]);
+
+    //size_t sizeInBytes = new_image.total() * new_image.elemSize();
+    size_t sizeInBytes1 = buff1.size(); //new_image.total() * new_image.elemSize();
+
+    jbyteArray array1 = env->NewByteArray(sizeInBytes1);
+    //env->SetByteArrayRegion(array, 0, sizeInBytes, (jbyte *) new_image.data);
+    env->SetByteArrayRegion(array1, 0, sizeInBytes1, (jbyte *) &buff1[0]);
+
+
+    static jclass java_util_ArrayList      = static_cast<jclass>(env->NewGlobalRef(env->FindClass("java/util/ArrayList")));
+    static jmethodID java_util_ArrayList_     = env->GetMethodID(java_util_ArrayList, "<init>", "(I)V");
+    static jmethodID java_util_ArrayList_add  = env->GetMethodID(java_util_ArrayList, "add", "(Ljava/lang/Object;)Z");
+
+    jobject arrayList = env->NewObject(java_util_ArrayList, java_util_ArrayList_, 1);
+    env->CallBooleanMethod(arrayList, java_util_ArrayList_add, array);
+    env->CallBooleanMethod(arrayList, java_util_ArrayList_add, array1);
+
+
     free((void*)buffer);
     mat.release();
     new_image.release();
 
-    return array;
+    return arrayList;
 
 }
 

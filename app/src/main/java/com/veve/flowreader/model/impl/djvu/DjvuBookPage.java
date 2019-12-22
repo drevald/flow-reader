@@ -11,6 +11,7 @@ import com.veve.flowreader.model.PageSize;
 import com.veve.flowreader.model.impl.AbstractBookPage;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,7 +39,7 @@ public class DjvuBookPage extends AbstractBookPage implements BookPage  {
 
 
     @Override
-    public Bitmap getAsReflownBitmap(DevicePageContext context, List<PageGlyphInfo> pageGlyphs) {
+    public List<Bitmap> getAsReflownBitmap(DevicePageContext context, List<PageGlyphInfo> pageGlyphs) {
         PageSize pageSize = new PageSize();
         byte[] bytes = getNativeReflownBytes(getBookId(), getPageNumber(), context.getZoom(), context.getPrtrait(),
                 pageSize, pageGlyphs, context.isPreprocessing(), context.getMargin());
@@ -48,7 +49,7 @@ public class DjvuBookPage extends AbstractBookPage implements BookPage  {
         //opts.inPreferredConfig = Bitmap.Config.ARGB_8888;
         //opts.inJustDecodeBounds= true;
 
-        return BitmapFactory.decodeByteArray(bytes,0, bytes.length, opts);
+        return Arrays.asList(BitmapFactory.decodeByteArray(bytes,0, bytes.length, opts));
 
         /*
         int width = pageSize.getPageWidth();

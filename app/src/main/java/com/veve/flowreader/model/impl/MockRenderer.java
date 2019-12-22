@@ -9,6 +9,9 @@ import com.veve.flowreader.model.PageLayoutParser;
 import com.veve.flowreader.model.PageRenderer;
 import com.veve.flowreader.model.impl.mockraster.MockRasterBook;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class MockRenderer implements PageRenderer {
 
     private Book book;
@@ -19,8 +22,8 @@ public class MockRenderer implements PageRenderer {
 
 
     @Override
-    public Bitmap renderPage(DevicePageContext context, int position) {
-        return book.getPage(position).getAsBitmap(context);
+    public List<Bitmap> renderPage(DevicePageContext context, int position) {
+        return Arrays.asList(book.getPage(position).getAsBitmap(context));
     }
 
 

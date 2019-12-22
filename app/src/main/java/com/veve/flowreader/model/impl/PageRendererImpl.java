@@ -13,6 +13,7 @@ import com.veve.flowreader.model.PageGlyph;
 import com.veve.flowreader.model.PageLayoutParser;
 import com.veve.flowreader.model.PageRenderer;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static android.graphics.Bitmap.Config.ARGB_8888;
@@ -29,14 +30,14 @@ public class PageRendererImpl implements PageRenderer {
     }
 
     @Override
-    public Bitmap renderPage(DevicePageContext context, int position) {
+    public List<Bitmap> renderPage(DevicePageContext context, int position) {
         Log.d(getClass().getName(), "1");
 
         Log.i(getClass().getName(), String.format("position=%d", position));
         List<PageGlyph> pageGlyphList = pageLayoutParser.getGlyphs(bookSource, position);
 
         if (pageGlyphList.size() <= 1) {
-            return renderOriginalPage(context, position);
+            return Arrays.asList(renderOriginalPage(context, position));
         } else {
             Log.d(getClass().getName(),"2");
 
@@ -68,7 +69,7 @@ public class PageRendererImpl implements PageRenderer {
 
             context.resetPosition();
             context.setCanvas(canvas);
-            return bitmap;
+            return Arrays.asList(bitmap);
         }
 
     }

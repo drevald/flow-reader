@@ -21,6 +21,7 @@ import com.veve.flowreader.model.PageLayoutParser;
 import com.veve.flowreader.model.PageRenderer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static android.graphics.Bitmap.Config.ARGB_8888;
@@ -134,7 +135,7 @@ public class CachedPageRendererImpl implements PageRenderer {
 
 
     @Override
-    public Bitmap renderPage(DevicePageContext context, int position) {
+    public List<Bitmap> renderPage(DevicePageContext context, int position) {
         Log.v(getClass().getName(), String.format("position=%d", position));
         List<PageGlyph> pageGlyphList = getGlyphs(bookSource, position);
         long start = System.currentTimeMillis();
@@ -142,7 +143,7 @@ public class CachedPageRendererImpl implements PageRenderer {
             Bitmap bitmap = renderOriginalPage(context, position);
             Log.v(getClass().getName(), "Reflowed page #" + position + " rendering took "
                     + (System.currentTimeMillis() - start) + " milliseconds") ;
-            return bitmap;
+            return Arrays.asList(bitmap);
         } else {
             for(PageGlyph pageGlyph : pageGlyphList) {
                 pageGlyph.draw(context, false);
@@ -180,7 +181,7 @@ public class CachedPageRendererImpl implements PageRenderer {
             context.resetPosition();
             context.setCurrentBaseLine(0);
             context.setCanvas(canvas);
-            return bitmap;
+            return Arrays.asList(bitmap);
         }
 
     }

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -54,6 +55,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -317,11 +319,15 @@ public class PageActivity extends AppCompatActivity {
             }
             case R.id.page_unreadable: {
                 Bitmap originalBitmap = pageRenderer.renderOriginalPage(currentPage);
-                Bitmap reflowedBitmap = pageLoader.bitmap;
+                List<Bitmap> reflowedBitmaps = pageLoader.bitmaps;
                 ByteArrayOutputStream osOriginal = new ByteArrayOutputStream();
                 ByteArrayOutputStream osReflowed = new ByteArrayOutputStream();
                 originalBitmap.compress(Bitmap.CompressFormat.JPEG, 75, osOriginal);
+
+                // only send the first bitmap, otherwise need to join bitmaps, risking OutOfMemory
+                Bitmap reflowedBitmap = reflowedBitmaps.get(0);
                 reflowedBitmap.compress(Bitmap.CompressFormat.JPEG, 25, osReflowed);
+
                 ObjectMapper mapper = new ObjectMapper(); // create once, reuse
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -407,6 +413,17 @@ public class PageActivity extends AppCompatActivity {
         pageLoader = new PageLoader(this);
         kickOthers(pageLoader);
         Integer invCache = context.isInvalidateCache() ? 1 : 0;
+
+        int childCount = pageActivity.page.getChildCount();
+        for (int k=0;k<childCount;k++) {
+            View v = pageActivity.page.getChildAt(k);
+            if (v instanceof ImageView) {
+                ImageView iv = (ImageView)v;
+                ((BitmapDrawable)iv.getDrawable()).getBitmap().recycle();
+            }
+        }
+
+
         pageLoader.execute(pageNumber, invCache);
     }
 
@@ -612,6 +629,9 @@ public class PageActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
                 Log.d(getClass().getName(), String.format("Setting page #%d for original page", currentPage));
             }
+
+
+
             pageActivity.setPageNumber(currentPage);
         }
     }
@@ -666,7 +686,7 @@ public class PageActivity extends AppCompatActivity {
 
     class PageLoader extends AsyncTask<Integer, Void, Void> {
 
-        Bitmap bitmap;
+        List<Bitmap> bitmaps;
         PageActivity pageActivity;
 
         private WeakReference<PageActivity> pageActivityReference;
@@ -703,74 +723,82 @@ public class PageActivity extends AppCompatActivity {
             boolean invalidateCache = integers[1] == 1;
 
             if (pageActivity.viewMode == Constants.VIEW_MODE_PHONE) {
-                bitmap = pageActivity.pageRenderer.renderPage(context, pageNumber);
+                bitmaps = pageActivity.pageRenderer.renderPage(context, pageNumber);
             } else {
-                bitmap = pageActivity.pageRenderer.renderOriginalPage(pageActivity.context, pageNumber);
+                bitmaps = Arrays.asList(pageActivity.pageRenderer.renderOriginalPage(pageActivity.context, pageNumber));
             }
 
-            int bitmapHeight = bitmap.getHeight();
 
             runOnUiThread(() -> {
-                if (bitmap.getByteCount() > MAX_BITMAP_SIZE) {
-                    Snackbar.make(topLayout, getString(R.string.could_not_zoom_more),
-                            Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                    context.setZoom(context.getZoom() - 0.5f);
-                    pageActivity.book.setZoom(pageActivity.context.getZoom());
-                    pageActivity.booksCollection.updateBook(pageActivity.book);
-                //} else if (bitmap.getWidth() >= pageActivity.context.getWidth()) {
-                } else {
-                    ((ViewGroup)pageActivity.page.getParent()).removeView(pageActivity.page);
-                    pageActivity.scroll.removeAllViews();
-                    if (viewMode == VIEW_MODE_PHONE) {
-                        List<View> pageViews = new ArrayList<>();// UI code goes here
-                        for (int offset = 0; offset < bitmapHeight; offset += Constants.IMAGE_VIEW_HEIGHT_LIMIT) {
-                            Log.d(getClass().getName(), "Before image creation");
-                            int height = Math.min(bitmapHeight, offset + Constants.IMAGE_VIEW_HEIGHT_LIMIT);
-                            Log.v(getClass().getName(),
-                                    String.format(" Bitmap.createBitmap(bitmap, 0, %d, %d, %d)",
-                                            offset, context.getWidth(), height - offset));
-                            Log.v(getClass().getName(),
-                                    String.format("bitmap size is width : %d height :%d",
-                                            bitmap.getWidth(), bitmap.getHeight()));
 
-                            ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
-                            ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-                            activityManager.getMemoryInfo(mi);
-                            Log.v("BITMAP_MEMORY", "mi.availMem " + mi.availMem);
-                            Log.v("BITMAP_MEMORY", "mi.totalMem " + mi.totalMem);
-                            Log.v("BITMAP_MEMORY", "mi.lowMemory " + mi.lowMemory);
+
+                List<View> pageViews = new ArrayList<>();// UI code goes here
+                for (Bitmap bitmap : bitmaps){
+                    Log.d("FLOW-READER", "bitmaps " + bitmaps.size());
+                    int bitmapHeight = bitmap.getHeight();
+                    if (bitmap.getByteCount() > MAX_BITMAP_SIZE) {
+                        Snackbar.make(topLayout, getString(R.string.could_not_zoom_more),
+                                Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                        context.setZoom(context.getZoom() - 0.5f);
+                        pageActivity.book.setZoom(pageActivity.context.getZoom());
+                        pageActivity.booksCollection.updateBook(pageActivity.book);
+                        //} else if (bitmap.getWidth() >= pageActivity.context.getWidth()) {
+                    } else {
+                        ((ViewGroup)pageActivity.page.getParent()).removeView(pageActivity.page);
+                        pageActivity.scroll.removeAllViews();
+                        if (viewMode == VIEW_MODE_PHONE) {
+                            for (int offset = 0; offset < bitmapHeight; offset += Constants.IMAGE_VIEW_HEIGHT_LIMIT) {
+                                Log.d(getClass().getName(), "Before image creation");
+                                int height = Math.min(bitmapHeight, offset + Constants.IMAGE_VIEW_HEIGHT_LIMIT);
+                                Log.v(getClass().getName(),
+                                        String.format(" Bitmap.createBitmap(bitmap, 0, %d, %d, %d)",
+                                                offset, context.getWidth(), height - offset));
+                                Log.v(getClass().getName(),
+                                        String.format("bitmap size is width : %d height :%d",
+                                                bitmap.getWidth(), bitmap.getHeight()));
+
+                                ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
+                                ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+                                activityManager.getMemoryInfo(mi);
+                                Log.v("BITMAP_MEMORY", "mi.availMem " + mi.availMem);
+                                Log.v("BITMAP_MEMORY", "mi.totalMem " + mi.totalMem);
+                                Log.v("BITMAP_MEMORY", "mi.lowMemory " + mi.lowMemory);
 //                            Log.v("BITMAP_MEMORY", "mi.visibleAppThreshold " + mi.hiddenAppThreshold);
 
-                            Bitmap limitedBitmap = Bitmap.createBitmap(bitmap, 0, offset, context.getWidth(),
-                                    height - offset);
+                                Bitmap limitedBitmap = Bitmap.createBitmap(bitmap, 0, offset, context.getWidth(),
+                                        height - offset);
+                                ImageView imageView = new ImageView(getApplicationContext());
+                                imageView.setScaleType(ImageView.ScaleType.FIT_START);
+                                imageView.setMaxHeight(Integer.MAX_VALUE);
+                                imageView.setImageBitmap(limitedBitmap);
+                                pageViews.add(imageView);
+                                Log.d(getClass().getName(), "Image creation");
+                                Log.d(getClass().getName(), "After image creation");
+                            }
+                            pageActivity.page.removeAllViews();
+                            for (View view : pageViews) {
+                                pageActivity.page.addView(view);
+                            }
+                            pageActivity.scroll.addView(pageActivity.page);
+                            Log.v(getClass().getName(), "End setting bitmap");
+                        } else {
+                            pageActivity.page.removeAllViewsInLayout();
+                            HorizontalScrollView horizontalScrollView = new HorizontalScrollView(getApplicationContext());
                             ImageView imageView = new ImageView(getApplicationContext());
+                            Log.v(getClass().getName(), "Bitmap size is " + bitmap.getWidth() + "x" + bitmap.getHeight());
+                            ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(bitmap.getWidth(), bitmap.getHeight());
+                            imageView.setLayoutParams(layoutParams);
                             imageView.setScaleType(ImageView.ScaleType.FIT_START);
-                            imageView.setMaxHeight(Integer.MAX_VALUE);
-                            imageView.setImageBitmap(limitedBitmap);
-                            pageViews.add(imageView);
-                            Log.d(getClass().getName(), "Image creation");
-                            Log.d(getClass().getName(), "After image creation");
+                            imageView.setImageBitmap(bitmap);
+                            pageActivity.page.addView(imageView);
+                            horizontalScrollView.addView(pageActivity.page);
+                            pageActivity.scroll.addView(horizontalScrollView);
                         }
-                        pageActivity.page.removeAllViews();
-                        for (View view : pageViews) {
-                            pageActivity.page.addView(view);
-                        }
-                        pageActivity.scroll.addView(pageActivity.page);
-                        Log.v(getClass().getName(), "End setting bitmap");
-                    } else {
-                        pageActivity.page.removeAllViewsInLayout();
-                        HorizontalScrollView horizontalScrollView = new HorizontalScrollView(getApplicationContext());
-                        ImageView imageView = new ImageView(getApplicationContext());
-                        Log.v(getClass().getName(), "Bitmap size is " + bitmap.getWidth() + "x" + bitmap.getHeight());
-                        ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(bitmap.getWidth(), bitmap.getHeight());
-                        imageView.setLayoutParams(layoutParams);
-                        imageView.setScaleType(ImageView.ScaleType.FIT_START);
-                        imageView.setImageBitmap(bitmap);
-                        pageActivity.page.addView(imageView);
-                        horizontalScrollView.addView(pageActivity.page);
-                        pageActivity.scroll.addView(horizontalScrollView);
                     }
                 }
+
+
+
                 pageActivity.scroll.setVisibility(VISIBLE);
                 pageActivity.progressBar.setVisibility(INVISIBLE);
                 pageActivity.scroll.scrollTo(0, 0);
