@@ -185,7 +185,7 @@ public class PageActivity extends AppCompatActivity {
         home.setOnClickListener(new HomeButtonListener());
         show.setOnClickListener(new ShowListener());
         page.setOnTouchListener(new OnDoubleTapListener(this, page));
-        topLayout.addOnLayoutChangeListener(new LayoutListener());
+        //topLayout.addOnLayoutChangeListener(new LayoutListener());
 
         Display display = getWindowManager().getDefaultDisplay();
         Point point = new Point();
@@ -746,7 +746,7 @@ public class PageActivity extends AppCompatActivity {
                 bitmaps = Arrays.asList(pageActivity.pageRenderer.renderOriginalPage(pageActivity.context, pageNumber));
             }
 
-            int bitmapHeight = bitmap.getHeight();
+            //int bitmapHeight = bitmap.getHeight();
 
             runOnUiThread(() -> {
 

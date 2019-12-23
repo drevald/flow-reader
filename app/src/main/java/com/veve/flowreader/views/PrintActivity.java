@@ -275,7 +275,7 @@ public class PrintActivity extends AppCompatActivity {
         protected Bitmap doInBackground(Integer... integers) {
             //return pageRenderer.renderOriginalPage(integers[0]);
             DevicePageContext context = new DevicePageContextImpl(integers[1]);
-            return pageRenderer.renderPage(context, integers[0]);
+            return pageRenderer.renderPage(context, integers[0]).get(0);
         }
 
     }
@@ -300,45 +300,63 @@ class PageBitmapReader {
         this.width = width;
         this.height = height;
         this.pageGetterTask = new PrintActivity.PageGetterTask();
-        initPages();
+//        initPages();
     }
 
+
+    int counter = 10;
+
     public Bitmap read() throws Exception {
-        Bitmap result = null;
-        // If bitmap is empty and there are pages to render then get bitmap
-        if (bitmap == null && !singlePages.empty()) {
-            pageGetterTask.execute(singlePages.pop(), width);
-            bitmap = pageGetterTask.get();
-            // If bitmap is empty and there are no pages to render then finish
-        } else if (bitmap == null && singlePages.empty()) {
-            return null;
+
+        Bitmap bitmap = null;
+
+        if (counter-- > 0) {
+            bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            Paint paint = new Paint();
+            paint.setColor(Color.RED);
+            paint.setStyle(Paint.Style.FILL);
+            canvas.drawRect(0, 0, width, height, paint);
         }
-        // If bitmap is shorter
-        if (bitmap.getHeight() < height) {
-            Integer nextPage = singlePages.pop();
-            // ... and there are pages to render then append bitmap with new page
-            if (nextPage != null) {
-                pageGetterTask.execute(singlePages.pop(), width);
-                bitmapSuffix = pageGetterTask.get();
-                appendedBitmap = Bitmap.createBitmap(width,
-                        bitmap.getHeight() + bitmapSuffix.getHeight(), Bitmap.Config.ALPHA_8);
-                canvas = new Canvas(appendedBitmap);
-                canvas.drawBitmap(bitmap, 0, 0, null);
-                canvas.drawBitmap(bitmapSuffix, 0, bitmap.getHeight(), null);
-                result = Bitmap.createBitmap(appendedBitmap, 0, 0, width, height);
-                bitmap = Bitmap.createBitmap(appendedBitmap, 0, height, width, appendedBitmap.getHeight()-height);
-                // ... and there are no pages to render then return the remains
-            } else {
-                result = Bitmap.createBitmap(bitmap);
-                bitmap = null;
-            }
-            // If we got bitmap large enough then cut required piece and keep the rest
-        } else {
-            result = Bitmap.createBitmap(bitmap, 0, 0, width, height);
-            cutBitmap = Bitmap.createBitmap(bitmap, 0, height, width, bitmap.getHeight()-height);
-            bitmap = cutBitmap;
-        }
-        return result;
+
+        return bitmap;
+
+
+//        Bitmap result = null;
+//        // If bitmap is empty and there are pages to render then get bitmap
+//        if (bitmap == null && !singlePages.empty()) {
+//            pageGetterTask.execute(singlePages.pop(), width);
+//            bitmap = pageGetterTask.get();
+//            // If bitmap is empty and there are no pages to render then finish
+//        } else if (bitmap == null && singlePages.empty()) {
+//            return null;
+//        }
+//        // If bitmap is shorter
+//        if (bitmap.getHeight() < height) {
+//            Integer nextPage = singlePages.pop();
+//            // ... and there are pages to render then append bitmap with new page
+//            if (nextPage != null) {
+//                pageGetterTask.execute(singlePages.pop(), width);
+//                bitmapSuffix = pageGetterTask.get();
+//                appendedBitmap = Bitmap.createBitmap(width,
+//                        bitmap.getHeight() + bitmapSuffix.getHeight(), Bitmap.Config.ALPHA_8);
+//                canvas = new Canvas(appendedBitmap);
+//                canvas.drawBitmap(bitmap, 0, 0, null);
+//                canvas.drawBitmap(bitmapSuffix, 0, bitmap.getHeight(), null);
+//                result = Bitmap.createBitmap(appendedBitmap, 0, 0, width, height);
+//                bitmap = Bitmap.createBitmap(appendedBitmap, 0, height, width, appendedBitmap.getHeight()-height);
+//                // ... and there are no pages to render then return the remains
+//            } else {
+//                result = Bitmap.createBitmap(bitmap);
+//                bitmap = null;
+//            }
+//            // If we got bitmap large enough then cut required piece and keep the rest
+//        } else {
+//            result = Bitmap.createBitmap(bitmap, 0, 0, width, height);
+//            cutBitmap = Bitmap.createBitmap(bitmap, 0, height, width, bitmap.getHeight()-height);
+//            bitmap = cutBitmap;
+//        }
+//        return result;
     }
 
     private void initPages() {
