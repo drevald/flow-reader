@@ -3,7 +3,7 @@
     <item android:id="@+id/no_margins" android:title="@string/no_margins" android:icon="@drawable/ic_margins_no"/>
     <item android:id="@+id/normal_margins" android:title="@string/normal_margins"  android:icon="@drawable/ic_margins_normal"/>
     <item android:id="@+id/wide_margins" android:title="@string/wide_margins"  android:icon="@drawable/ic_margins_wide"/>
-    <item android:id="@+id/page_unreadable" android:title="@string/page_unreadable" android:icon="@drawable/ic_page_unreadable"/>
+    <item android:id="@+id/page_unreadable" android:title="@string/page_unreadable" android:icon="@drawable/ic_unreadable"/>
     <item android:id="@+id/preprocess" android:title="@string/enhance"  android:icon="@drawable/ic_enhance"/>
     <item android:id="@+id/print" android:title="@string/print" android:icon="@drawable/ic_print"/>
     <item android:id="@+id/delete_book" android:title="@string/delete_this_book" android:icon="@drawable/ic_trash_can"/>
