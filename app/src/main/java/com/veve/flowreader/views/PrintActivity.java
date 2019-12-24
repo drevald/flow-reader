@@ -114,66 +114,64 @@ public class PrintActivity extends AppCompatActivity {
         public void onWrite(final PageRange[] pageRanges,
                             final ParcelFileDescriptor destination,
                             final CancellationSignal cancellationSignal,
-                            final WriteResultCallback callback)  {
+                            final WriteResultCallback callback) {
             Log.v(getClass().getName(), "onWrite");
 
             PdfDocument pdfDocument = new PdfDocument();
 
-            // Iterate over each page of the document,
-            // check if it's in the output range.
-            //for (int i = 0; i < totalPages; i++) {
-            for (int i = 1; i < 5; i++) {
-                // Check to see if this page is in the output range.
-                //if (containsPage(pageRanges, i)) {
-                // If so, add it to writtenPagesArray. writtenPagesArray.size()
-                // is used to compute the next output page index.
-                //writtenPagesArray.append(writtenPagesArray.size(), i);
-                //PdfDocument.Page page = pdfDocument.startPage(i);
-
-                PdfDocument.PageInfo.Builder pageBuilder = new PdfDocument.PageInfo.Builder(
-                        (int)(attributes.getMediaSize().getWidthMils()*attributes.getResolution().getHorizontalDpi()*0.001f) ,
-                        (int)(attributes.getMediaSize().getHeightMils()*attributes.getResolution().getVerticalDpi()*0.001f),
-                        i);
-                PdfDocument.Page page = pdfDocument.startPage(pageBuilder.create());
-
-                // check for cancellation
-                if (cancellationSignal.isCanceled()) {
-                    callback.onWriteCancelled();
-                    pdfDocument.close();
-                    return;
-                }
-
-                PageGetterTask pageGetterTask = new PageGetterTask();
-                int widthInMils = attributes.getMediaSize().getWidthMils();
-                int workWidthInMils = widthInMils - attributes.getMinMargins().getLeftMils() - attributes.getMinMargins().getRightMils();
-                int gap = (attributes.getMinMargins().getLeftMils() - attributes.getMinMargins().getRightMils())/2;
-                workWidthInMils = workWidthInMils - gap;
-                int columnsWidthInMils = workWidthInMils / 2;
-                int columnsWithInPixels = (int)(columnsWidthInMils * 0.001f * attributes.getResolution().getHorizontalDpi());
-                pageGetterTask.execute(i, columnsWithInPixels);
-                try {
-                    Bitmap bitmap = pageGetterTask.get();
-                    page.getCanvas().drawBitmap(bitmap, 0, 0, null);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                // Rendering is complete, so page can be finalized.
-                pdfDocument.finishPage(page);
-                //}
-            }
-//
-            // Write PDF document to file
-            try {
-                pdfDocument.writeTo(new FileOutputStream(
-                        destination.getFileDescriptor()));
-            } catch (IOException e) {
-                callback.onWriteFailed(e.toString());
-                return;
-            } finally {
+            // check for cancellation
+            if (cancellationSignal.isCanceled()) {
+                callback.onWriteCancelled();
                 pdfDocument.close();
-                pdfDocument = null;
+                return;
             }
+
+            PageGetterTask pageGetterTask = new PageGetterTask();
+            int widthInMils = attributes.getMediaSize().getWidthMils();
+            int heightInMils = attributes.getMediaSize().getHeightMils();
+            int workWidthInMils = widthInMils - attributes.getMinMargins().getLeftMils() - attributes.getMinMargins().getRightMils();
+            int workHeightInMils = heightInMils - attributes.getMinMargins().getTopMils() - attributes.getMinMargins().getBottomMils();
+            int gap = (attributes.getMinMargins().getLeftMils() - attributes.getMinMargins().getRightMils()) / 2;
+            workWidthInMils = workWidthInMils - gap;
+            int columnsWidthInMils = workWidthInMils / 2;
+            int columnsWithInPixels = (int) (columnsWidthInMils * 0.001f * attributes.getResolution().getHorizontalDpi());
+            int columnsHeightInPixels = (int) (workHeightInMils * 0.001f * attributes.getResolution().getVerticalDpi());
+            try {
+
+                PageBitmapReader pageBitmapReader = new PageBitmapReader(pagesSets, columnsWithInPixels, columnsHeightInPixels);
+                Bitmap bitmap;
+                int counter = 0;
+                while ((bitmap = pageBitmapReader.read()) != null) {
+                    PdfDocument.PageInfo.Builder pageBuilder = new PdfDocument.PageInfo.Builder(
+                            (int) (attributes.getMediaSize().getWidthMils() * attributes.getResolution().getHorizontalDpi() * 0.001f),
+                            (int) (attributes.getMediaSize().getHeightMils() * attributes.getResolution().getVerticalDpi() * 0.001f),
+                            counter++);
+                    PdfDocument.Page page = pdfDocument.startPage(pageBuilder.create());
+                    page.getCanvas().drawBitmap(bitmap, 0, 0, null);
+                    // Rendering is complete, so page can be finalized.
+                    pdfDocument.finishPage(page);
+                    //}
+
+                }
+
+                //
+                // Write PDF document to file
+                try {
+                    pdfDocument.writeTo(new FileOutputStream(
+                            destination.getFileDescriptor()));
+                } catch (IOException e) {
+                    callback.onWriteFailed(e.toString());
+                    return;
+                } finally {
+                    pdfDocument.close();
+                    pdfDocument = null;
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
             //PageRange[] writtenPages = computeWrittenPages();
             // Signal the print framework the document is complete
             //callback.onWriteFinished(writtenPages);
@@ -181,9 +179,12 @@ public class PrintActivity extends AppCompatActivity {
 
 //
 //    //...
+            //}
+
         }
 
     }
+
 
     private void doPrint(BookRecord bookRecord) {
         // Get a PrintManager instance

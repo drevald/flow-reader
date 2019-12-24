@@ -20,11 +20,15 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary">
+
             <RadioGroup
                 android:id="@+id/page_range"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/colorPrimary"
+                android:layout_height="wrap_content"
                 android:padding="50dp"
                 android:paddingTop="10dp"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -61,6 +65,8 @@
                     style="@style/label"/>
 
             </RadioGroup>
+
+    </ScrollView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
