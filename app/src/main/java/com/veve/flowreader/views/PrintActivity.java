@@ -15,6 +15,7 @@ import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.veve.flowreader.Constants;
+import com.veve.flowreader.PageTailor;
 import com.veve.flowreader.PagesSet;
 import com.veve.flowreader.R;
 import com.veve.flowreader.dao.BookRecord;
@@ -126,7 +127,6 @@ public class PrintActivity extends AppCompatActivity {
                 return;
             }
 
-            PageGetterTask pageGetterTask = new PageGetterTask();
             int widthInMils = attributes.getMediaSize().getWidthMils();
             int heightInMils = attributes.getMediaSize().getHeightMils();
             int workWidthInMils = widthInMils - attributes.getMinMargins().getLeftMils() - attributes.getMinMargins().getRightMils();
@@ -138,10 +138,10 @@ public class PrintActivity extends AppCompatActivity {
             int columnsHeightInPixels = (int) (workHeightInMils * 0.001f * attributes.getResolution().getVerticalDpi());
             try {
 
-                PageBitmapReader pageBitmapReader = new PageBitmapReader(pagesSets, columnsWithInPixels, columnsHeightInPixels);
+                PageTailor pageTailor = new PageTailor(pageRenderer, pagesSets, columnsWithInPixels, columnsHeightInPixels);
                 Bitmap bitmap;
                 int counter = 0;
-                while ((bitmap = pageBitmapReader.read()) != null) {
+                while ((bitmap = pageTailor.read()) != null) {
                     PdfDocument.PageInfo.Builder pageBuilder = new PdfDocument.PageInfo.Builder(
                             (int) (attributes.getMediaSize().getWidthMils() * attributes.getResolution().getHorizontalDpi() * 0.001f),
                             (int) (attributes.getMediaSize().getHeightMils() * attributes.getResolution().getVerticalDpi() * 0.001f),
@@ -154,7 +154,6 @@ public class PrintActivity extends AppCompatActivity {
 
                 }
 
-                //
                 // Write PDF document to file
                 try {
                     pdfDocument.writeTo(new FileOutputStream(
@@ -236,6 +235,7 @@ public class PrintActivity extends AppCompatActivity {
         ((RadioGroup)findViewById(R.id.page_range)).check(R.id.current_page);
         pages = ((EditText) findViewById(R.id.pages));
         pages.setText("" + bookRecord.getCurrentPage());
+        parsePagesString();
         pages.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -268,109 +268,6 @@ public class PrintActivity extends AppCompatActivity {
     public void setPrintCustomRange(View view) {
         ((EditText)findViewById(R.id.pages)).setInputType(EditorInfo.TYPE_CLASS_TEXT);
         parsePagesString();
-    }
-
-    static class PageGetterTask extends AsyncTask<Integer, Void, Bitmap> {
-
-        @Override
-        protected Bitmap doInBackground(Integer... integers) {
-            //return pageRenderer.renderOriginalPage(integers[0]);
-            DevicePageContext context = new DevicePageContextImpl(integers[1]);
-            return pageRenderer.renderPage(context, integers[0]).get(0);
-        }
-
-    }
-
-}
-
-class PageBitmapReader {
-
-    List<PagesSet> pages;
-    int width;
-    int height;
-    Bitmap bitmap;
-    Stack<Integer> singlePages;
-    PrintActivity.PageGetterTask pageGetterTask;
-    Bitmap bitmapSuffix;
-    Bitmap appendedBitmap;
-    Bitmap cutBitmap;
-    Canvas canvas;
-
-    public PageBitmapReader(List<PagesSet> pages, int width, int height) {
-        this.pages = pages;
-        this.width = width;
-        this.height = height;
-        this.pageGetterTask = new PrintActivity.PageGetterTask();
-//        initPages();
-    }
-
-
-    int counter = 10;
-
-    public Bitmap read() throws Exception {
-
-        Bitmap bitmap = null;
-
-        if (counter-- > 0) {
-            bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-            Canvas canvas = new Canvas(bitmap);
-            Paint paint = new Paint();
-            paint.setColor(Color.RED);
-            paint.setStyle(Paint.Style.FILL);
-            canvas.drawRect(0, 0, width, height, paint);
-        }
-
-        return bitmap;
-
-
-//        Bitmap result = null;
-//        // If bitmap is empty and there are pages to render then get bitmap
-//        if (bitmap == null && !singlePages.empty()) {
-//            pageGetterTask.execute(singlePages.pop(), width);
-//            bitmap = pageGetterTask.get();
-//            // If bitmap is empty and there are no pages to render then finish
-//        } else if (bitmap == null && singlePages.empty()) {
-//            return null;
-//        }
-//        // If bitmap is shorter
-//        if (bitmap.getHeight() < height) {
-//            Integer nextPage = singlePages.pop();
-//            // ... and there are pages to render then append bitmap with new page
-//            if (nextPage != null) {
-//                pageGetterTask.execute(singlePages.pop(), width);
-//                bitmapSuffix = pageGetterTask.get();
-//                appendedBitmap = Bitmap.createBitmap(width,
-//                        bitmap.getHeight() + bitmapSuffix.getHeight(), Bitmap.Config.ALPHA_8);
-//                canvas = new Canvas(appendedBitmap);
-//                canvas.drawBitmap(bitmap, 0, 0, null);
-//                canvas.drawBitmap(bitmapSuffix, 0, bitmap.getHeight(), null);
-//                result = Bitmap.createBitmap(appendedBitmap, 0, 0, width, height);
-//                bitmap = Bitmap.createBitmap(appendedBitmap, 0, height, width, appendedBitmap.getHeight()-height);
-//                // ... and there are no pages to render then return the remains
-//            } else {
-//                result = Bitmap.createBitmap(bitmap);
-//                bitmap = null;
-//            }
-//            // If we got bitmap large enough then cut required piece and keep the rest
-//        } else {
-//            result = Bitmap.createBitmap(bitmap, 0, 0, width, height);
-//            cutBitmap = Bitmap.createBitmap(bitmap, 0, height, width, bitmap.getHeight()-height);
-//            bitmap = cutBitmap;
-//        }
-//        return result;
-    }
-
-    private void initPages() {
-        SortedSet<Integer> sortedPages = new TreeSet<Integer>();
-        for (PagesSet pagesSet : pages) {
-            for (int i=pagesSet.getStart(); i<=pagesSet.getEnd(); i++) {
-                sortedPages.add(i);
-            }
-        }
-        singlePages = new Stack<Integer>();
-        for(Integer page : singlePages) {
-            singlePages.push(page);
-        }
     }
 
 }
