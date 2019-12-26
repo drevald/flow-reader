@@ -44,11 +44,11 @@ public class RendererTailorTest extends BookTest {
         BookSource bookSource = new PdfBookSource(bookRecord.getUrl());
         PageRenderer pageRenderer = new CachedPageRendererImpl(booksCollection, bookRecord, bookSource);
         List<PagesSet> pagesSet = PagesSet.getPagesSet("1-3");
-        PageTailor pageTailor = new PageTailor(pageRenderer, pagesSet,50, 100);
+        PageTailor pageTailor = new PageTailor(pageRenderer, pagesSet,500, 1000);
         Bitmap pageBitmap;
         while ((pageBitmap = pageTailor.read()) != null) {
-            assertEquals(50, pageBitmap.getWidth());
-            assertEquals(100, pageBitmap.getHeight());
+            assertEquals(500, pageBitmap.getWidth());
+            assertEquals(1000, pageBitmap.getHeight());
         }
     }
 

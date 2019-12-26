@@ -18,6 +18,7 @@ import java.util.SortedSet;
 import java.util.Stack;
 import java.util.TreeSet;
 
+
 public class PageTailor {
 
     PageRenderer pageRenderer;
@@ -83,13 +84,10 @@ public class PageTailor {
         if (bitmapBuffer.isEmpty()) {
             if(!singlePages.isEmpty()) {
                 int pageNum = singlePages.pop();
-//                pageGetterTask = new PageGetterTask();
-//                pageGetterTask.execute(pageNum, width);
+                pageGetterTask = new PageGetterTask();
+                pageGetterTask.execute(pageNum, width);
                 try {
-                    Log.v(getClass().getName(), "Getting new portion of bitmaps for page " + pageNum);
-                    List<Bitmap> bitmaps = pageRenderer.renderPage(new DevicePageContextImpl(width), pageNum);
-                    Log.v(getClass().getName(), bitmaps.size() + " bitmaps retrieved for page " + pageNum);
-                    bitmapBuffer.addAll(bitmaps);
+                    bitmapBuffer.addAll(pageGetterTask.get());
                 } catch (Exception e) {
                     Log.e(getClass().getName(), e.getLocalizedMessage());
                     return null;
@@ -118,8 +116,13 @@ public class PageTailor {
 
         @Override
         protected List<Bitmap> doInBackground(Integer... integers) {
-            DevicePageContext context = new DevicePageContextImpl(integers[1]);
-            return pageRenderer.renderPage(new DevicePageContextImpl(width), integers[1]);
+            int pageNum = integers[0];
+            int width = integers[1];
+            DevicePageContext context = new DevicePageContextImpl(pageNum);
+            Log.v(getClass().getName(), "Getting new portion of bitmaps for page " + pageNum);
+            List<Bitmap> bitmaps = pageRenderer.renderPage(new DevicePageContextImpl(width), pageNum);
+            Log.v(getClass().getName(), bitmaps.size() + " bitmaps retrieved for page " + pageNum);
+            return bitmaps;
         }
 
     }

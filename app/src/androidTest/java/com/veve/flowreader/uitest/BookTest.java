@@ -32,6 +32,7 @@ public class BookTest {
         appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         booksCollection = BooksCollection.getInstance(appContext);
         File file = new File(appContext.getExternalFilesDir(null), "pdf_sample.pdf");
+//        File file = new File(appContext.getExternalFilesDir(null), "djvu_sample.djvu");
         file.createNewFile();
         BookRecord oldBookRecord = booksCollection.getBook(file.getPath());
         if (oldBookRecord != null) {

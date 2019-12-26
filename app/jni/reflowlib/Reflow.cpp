@@ -27,6 +27,8 @@ std::vector<int> Reflow::calculate_line_heights(std::vector<int> line_heights) {
 
 cv::Mat Reflow::reflow(float scale, bool portrait, float screen_ratio, float margin) {
 
+    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "REFLOW_0");
+
     float image_ratio = image.size().width/image.size().height;
     int new_width = portrait ? ceil(image.size().width) : ceil(image.size().width / screen_ratio);
     //scale = portrait ? scale : scale * screen_ratio;
@@ -43,6 +45,8 @@ cv::Mat Reflow::reflow(float scale, bool portrait, float screen_ratio, float mar
     //---------------------------
     // calculate line  heights
     //---------------------------
+
+    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "REFLOW_1");
 
     int line_sum = left_margin;
     int line_number = 0;
@@ -78,6 +82,8 @@ cv::Mat Reflow::reflow(float scale, bool portrait, float screen_ratio, float mar
             if (line.size() > 0) {
                 lines.insert(std::make_pair(line_number, line));
             }
+
+            __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "REFLOW_2");
 
             if (new_symbol_width <= new_width - 2*left_margin) {
 
@@ -119,6 +125,8 @@ cv::Mat Reflow::reflow(float scale, bool portrait, float screen_ratio, float mar
 
     }
 
+    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "REFLOW_3");
+
     if (line.size() > 0) {
         lines.insert(std::make_pair(line_number, line));
     }
@@ -154,19 +162,26 @@ cv::Mat Reflow::reflow(float scale, bool portrait, float screen_ratio, float mar
         line_heights.push_back(m);
     }
 
+    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "REFLOW_4");
+
     line_heights = calculate_line_heights(line_heights);
+    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "REFLOW_41");
     int new_height = std::accumulate(line_heights.begin(), line_heights.end(), 0);
+    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "REFLOW_42");
     line_sum = left_margin;
     int top_margin = std::min(ceil(new_height * 0.075), left_margin * 1.25);
+    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "REFLOW_43");
     int current_vert_pos = top_margin;
-
     // new image to copy pixels to
-
+    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "REFLOW_43 new image w: %d h: %d", new_width, new_height + 2*top_margin);
     cv::Mat new_image(new_height + 2*top_margin, new_width, image.type());
-    new_image.setTo(cv::Scalar(0));
-
+    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "REFLOW_44");
+    //new_image.setTo(cv::Scalar(0));
+    new_image = cv::Mat::zeros(cv::Size(new_width, new_height + 2*top_margin),image.type());
+    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "REFLOW_45");
     current_vert_pos = top_margin;
 
+    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "REFLOW_5");
 
     for (int i=0; i<=line_number; i++) {
         std::vector<glyph> glyphs = lines.at(i);
@@ -224,6 +239,8 @@ cv::Mat Reflow::reflow(float scale, bool portrait, float screen_ratio, float mar
 
 
     }
+
+    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "REFLOW_6");
 
     //cv::imwrite(std::string("/data/local/tmp/im.png"), new_image);
     //cv::imwrite(std::string("/storage/emulated/0/Download/im.png"), new_image);
