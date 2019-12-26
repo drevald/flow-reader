@@ -76,13 +76,9 @@ public class DjvuBookPage extends AbstractBookPage implements BookPage  {
     }
 
     private static native byte[] getNativeReflownBytes(long bookId, int pageNumber, float scale, boolean portrait, float screenRatio, PageSize pageSize, List<PageGlyphInfo> pageGlyphs, boolean preprocessing, float margin);
-
     private static native byte[] getNativeBytes(long bookId, int pageNumber);
-
     private static native byte[] getNativeGrayscaleBytes(long bookId, int pageNumber);
-
     private static native byte[] getNativePageGlyphs(long bookId, int pageNumber, List<PageGlyphInfo> pageGlyphs);
-
     private static native int getNativeWidth(long bookId, int pageNumber);
     private static native int getNativeHeight(long bookId, int pageNumber);
 
