@@ -63,7 +63,7 @@ public class NativePageRendererImpl implements PageRenderer {
         return originalBitmap;
     }
 
-    private List<Bitmap> getReflownPageBitmap(int position, DevicePageContext context) {
+    public List<Bitmap> getReflownPageBitmap(int position, DevicePageContext context) {
 
         if (context.isInvalidateCache()) {
             booksCollection.deleteGlyphs(bookRecord.getId(), position);

@@ -34,6 +34,8 @@ public class PageTailor {
     Stack<Bitmap> bitmapBuffer;
     Canvas canvas;
 
+    static final Bitmap.Config BITMAP_CONFIG = Bitmap.Config.ARGB_8888;
+
     public PageTailor(PageRenderer pageRenderer, List<PagesSet> pages, int width, int height) {
         this.pages = pages;
         this.width = width;
@@ -50,19 +52,24 @@ public class PageTailor {
         while (tailoredBitmap == null || tailoredBitmap.getHeight() <= height) {
             Bitmap nextBitmap = getNextBitmap();
             if (tailoredBitmap == null && nextBitmap == null) {
+                Log.v(getClass().getName(), "no data buffered and nothing retrieved, returning null");
                 return null;
             } else if (tailoredBitmap == null) {
+                Log.v(getClass().getName(), "no data buffered, buffering retrieved");
                 tailoredBitmap = nextBitmap;
             } else if (nextBitmap == null) {
+                Log.v(getClass().getName(), "no data retrieved, returning buffered");
                 result = Bitmap.createBitmap(tailoredBitmap);
                 tailoredBitmap = null;
                 return result;
             } else {
-                Bitmap concatenatedBitmap = Bitmap.createBitmap(width, tailoredBitmap.getHeight() + nextBitmap.getHeight(), Bitmap.Config.ARGB_8888);
+                Log.v(getClass().getName(), "appending retrieved data");
+                Bitmap concatenatedBitmap = Bitmap.createBitmap(width, tailoredBitmap.getHeight() + nextBitmap.getHeight(), BITMAP_CONFIG);
                 Canvas canvas = new Canvas(concatenatedBitmap);
                 canvas.drawBitmap(tailoredBitmap, 0, 0, null);
                 canvas.drawBitmap(nextBitmap, 0, tailoredBitmap.getHeight(), null);
                 tailoredBitmap = concatenatedBitmap;
+                Log.v(getClass().getName(), concatenatedBitmap.getHeight() + " data buffered now");
             }
         }
 
@@ -76,10 +83,13 @@ public class PageTailor {
         if (bitmapBuffer.isEmpty()) {
             if(!singlePages.isEmpty()) {
                 int pageNum = singlePages.pop();
-                pageGetterTask = new PageGetterTask();
-                pageGetterTask.execute(pageNum, width);
+//                pageGetterTask = new PageGetterTask();
+//                pageGetterTask.execute(pageNum, width);
                 try {
-                    bitmapBuffer.addAll(pageGetterTask.get());
+                    Log.v(getClass().getName(), "Getting new portion of bitmaps for page " + pageNum);
+                    List<Bitmap> bitmaps = pageRenderer.renderPage(new DevicePageContextImpl(width), pageNum);
+                    Log.v(getClass().getName(), bitmaps.size() + " bitmaps retrieved for page " + pageNum);
+                    bitmapBuffer.addAll(bitmaps);
                 } catch (Exception e) {
                     Log.e(getClass().getName(), e.getLocalizedMessage());
                     return null;

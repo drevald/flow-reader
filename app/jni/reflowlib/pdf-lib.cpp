@@ -110,6 +110,8 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
     int height = format.h;
     int width = format.w;
 
+    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "FORMAT w:%d h:%d\n", format.w, format.h);
+
     Mat mat(height,width,CV_8UC4,&((char*)buffer)[0]);
 
     cv::cvtColor(mat, mat, cv::COLOR_BGR2GRAY);
