@@ -280,7 +280,7 @@ public class PrintActivity extends AppCompatActivity {
     }
 
     public void setPrintAllPages(View view) {
-        ((EditText)findViewById(R.id.pages)).setText("1 - " + bookRecord.getPagesCount());
+        ((EditText)findViewById(R.id.pages)).setText("1-" + (1 + bookRecord.getPagesCount()));
         ((EditText)findViewById(R.id.pages)).setInputType(EditorInfo.TYPE_NULL);
         parsePagesString();
     }
