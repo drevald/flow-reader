@@ -27,7 +27,7 @@ std::vector<int> Reflow::calculate_line_heights(std::vector<int> line_heights) {
 
 cv::Mat Reflow::reflow(float scale, bool portrait, float screen_ratio, float margin) {
 
-    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "REFLOW_0");
+    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "REFLOW_0 image.size().width = %d, screen_ratio = %f", image.size().width, screen_ratio);
 
     float image_ratio = image.size().width/image.size().height;
     int new_width = portrait ? ceil(image.size().width) : ceil(image.size().width / screen_ratio);

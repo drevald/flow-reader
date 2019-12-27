@@ -2,6 +2,8 @@ package com.veve.flowreader.model;
 
 import android.graphics.Canvas;
 import android.graphics.Point;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.io.Serializable;
 
@@ -9,14 +11,14 @@ import java.io.Serializable;
  * Created by ddreval on 16.01.2018.
  */
 
-public class DevicePageContext implements Serializable {
+public class DevicePageContext implements Serializable  {
 
-    private Point startPoint;
+    private transient Point startPoint;
     private Canvas canvas;
     private float zoom = 1;
     private float zoomOriginal = 1;
     private int width;
-    private Point remotestPoint;
+    private transient Point remotestPoint;
     private float kerning;
     private float leading;
     private float margin;

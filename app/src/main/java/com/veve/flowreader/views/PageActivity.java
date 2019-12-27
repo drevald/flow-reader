@@ -63,6 +63,7 @@ import java.util.Set;
 import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
+import static com.veve.flowreader.Constants.BOOK_CONTEXT;
 import static com.veve.flowreader.Constants.BOOK_ID;
 import static com.veve.flowreader.Constants.MAX_BITMAP_SIZE;
 import static com.veve.flowreader.Constants.VIEW_MODE_ORIGINAL;
@@ -367,6 +368,7 @@ public class PageActivity extends AppCompatActivity {
                 Intent printIntent = new Intent(PageActivity.this, PrintActivity.class);
                 printIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 printIntent.putExtra(BOOK_ID, book.getId());
+                printIntent.putExtra(BOOK_CONTEXT, context);
                 startActivity(printIntent);
                 break;
             }

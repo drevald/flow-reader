@@ -75,6 +75,8 @@ public class PrintActivity extends AppCompatActivity {
 
     EditText pages;
 
+    DevicePageContext context;
+
     class PrintBookAdapter extends PrintDocumentAdapter {
 
         BookRecord bookRecord;
@@ -138,7 +140,7 @@ public class PrintActivity extends AppCompatActivity {
             int columnsHeightInPixels = (int) (workHeightInMils * 0.001f * attributes.getResolution().getVerticalDpi());
             try {
 
-                PageTailor pageTailor = new PageTailor(pageRenderer, pagesSets, columnsWithInPixels, columnsHeightInPixels);
+                PageTailor pageTailor = new PageTailor(pageRenderer, pagesSets, context, columnsHeightInPixels);
                 Bitmap bitmap;
                 int counter = 0;
                 while ((bitmap = pageTailor.read()) != null) {
@@ -211,6 +213,7 @@ public class PrintActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         long bookRecordId = getIntent().getLongExtra(Constants.BOOK_ID, -1);
+        context = (DevicePageContext) getIntent().getSerializableExtra(Constants.BOOK_CONTEXT);
         bookRecord = BooksCollection.getInstance(getApplicationContext()).getBook(bookRecordId);
 
         try {
@@ -232,9 +235,9 @@ public class PrintActivity extends AppCompatActivity {
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        ((RadioGroup)findViewById(R.id.page_range)).check(R.id.current_page);
+        ((RadioGroup)findViewById(R.id.page_range)).check(R.id.custom_page_range);
         pages = ((EditText) findViewById(R.id.pages));
-        pages.setText("" + bookRecord.getCurrentPage());
+        pages.setText("1-10");
         parsePagesString();
         pages.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -254,13 +257,13 @@ public class PrintActivity extends AppCompatActivity {
     }
 
     public void setPrintCurrentPage(View view) {
-        ((EditText)findViewById(R.id.pages)).setText("" + bookRecord.getCurrentPage());
+        ((EditText)findViewById(R.id.pages)).setText("" + (1 + bookRecord.getCurrentPage()));
         ((EditText)findViewById(R.id.pages)).setInputType(EditorInfo.TYPE_NULL);
         parsePagesString();
     }
 
     public void setPrintAllPages(View view) {
-        ((EditText)findViewById(R.id.pages)).setText("1-" + bookRecord.getPagesCount());
+        ((EditText)findViewById(R.id.pages)).setText("1 - " + bookRecord.getPagesCount());
         ((EditText)findViewById(R.id.pages)).setInputType(EditorInfo.TYPE_NULL);
         parsePagesString();
     }

@@ -13,8 +13,8 @@ public class PagesSet {
         if (str.indexOf('-') == -1) {
             this.start = this.end = Integer.parseInt(str.trim());
         } else {
-            this.start = Integer.parseInt(str.substring(0, str.lastIndexOf('-')).trim());
-            this.end = Integer.parseInt(str.substring(1 + str.lastIndexOf('-')).trim());
+            this.start = -1 + Integer.parseInt(str.substring(0, str.lastIndexOf('-')).trim());
+            this.end = -1 + Integer.parseInt(str.substring(1 + str.lastIndexOf('-')).trim());
         }
     }
 

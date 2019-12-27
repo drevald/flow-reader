@@ -2,17 +2,13 @@ package com.veve.flowreader;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageRenderer;
 import com.veve.flowreader.model.impl.DevicePageContextImpl;
-import com.veve.flowreader.views.PrintActivity;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.Stack;
@@ -25,7 +21,7 @@ public class PageTailor {
     PageGetterTask pageGetterTask;
 
     List<PagesSet> pages;
-    int width;
+    DevicePageContext context;
     int height;
     Bitmap bitmap;
     Stack<Integer> singlePages;
@@ -37,9 +33,9 @@ public class PageTailor {
 
     static final Bitmap.Config BITMAP_CONFIG = Bitmap.Config.ARGB_8888;
 
-    public PageTailor(PageRenderer pageRenderer, List<PagesSet> pages, int width, int height) {
+    public PageTailor(PageRenderer pageRenderer, List<PagesSet> pages, DevicePageContext context, int height) {
         this.pages = pages;
-        this.width = width;
+        this.context = context;
         this.height = height;
         this.pageRenderer = pageRenderer;
         bitmapBuffer = new Stack<Bitmap>();
@@ -65,7 +61,7 @@ public class PageTailor {
                 return result;
             } else {
                 Log.v(getClass().getName(), "appending retrieved data");
-                Bitmap concatenatedBitmap = Bitmap.createBitmap(width, tailoredBitmap.getHeight() + nextBitmap.getHeight(), BITMAP_CONFIG);
+                Bitmap concatenatedBitmap = Bitmap.createBitmap(context.getWidth(), tailoredBitmap.getHeight() + nextBitmap.getHeight(), BITMAP_CONFIG);
                 Canvas canvas = new Canvas(concatenatedBitmap);
                 canvas.drawBitmap(tailoredBitmap, 0, 0, null);
                 canvas.drawBitmap(nextBitmap, 0, tailoredBitmap.getHeight(), null);
@@ -74,8 +70,8 @@ public class PageTailor {
             }
         }
 
-        result = Bitmap.createBitmap(tailoredBitmap, 0, tailoredBitmap.getHeight() - height, width, height);
-        tailoredBitmap = Bitmap.createBitmap(tailoredBitmap, 0, 0, width, tailoredBitmap.getHeight() - height);
+        result = Bitmap.createBitmap(tailoredBitmap, 0, tailoredBitmap.getHeight() - height, context.getWidth(), height);
+        tailoredBitmap = Bitmap.createBitmap(tailoredBitmap, 0, 0, context.getWidth(), tailoredBitmap.getHeight() - height);
 
         return result;
     }
@@ -85,7 +81,7 @@ public class PageTailor {
             if(!singlePages.isEmpty()) {
                 int pageNum = singlePages.pop();
                 pageGetterTask = new PageGetterTask();
-                pageGetterTask.execute(pageNum, width);
+                pageGetterTask.execute(context, pageNum);
                 try {
                     bitmapBuffer.addAll(pageGetterTask.get());
                 } catch (Exception e) {
@@ -112,15 +108,14 @@ public class PageTailor {
         }
     }
 
-    class PageGetterTask extends AsyncTask<Integer, Void, List<Bitmap>> {
+    class PageGetterTask extends AsyncTask<Object, Void, List<Bitmap>> {
 
         @Override
-        protected List<Bitmap> doInBackground(Integer... integers) {
-            int pageNum = integers[0];
-            int width = integers[1];
-            DevicePageContext context = new DevicePageContextImpl(pageNum);
+        protected List<Bitmap> doInBackground(Object... objects) {
+            DevicePageContext context = (DevicePageContext) objects[0];
+            int pageNum = (Integer)objects[1];
             Log.v(getClass().getName(), "Getting new portion of bitmaps for page " + pageNum);
-            List<Bitmap> bitmaps = pageRenderer.renderPage(new DevicePageContextImpl(width), pageNum);
+            List<Bitmap> bitmaps = pageRenderer.renderPage(context, pageNum);
             Log.v(getClass().getName(), bitmaps.size() + " bitmaps retrieved for page " + pageNum);
             return bitmaps;
         }
