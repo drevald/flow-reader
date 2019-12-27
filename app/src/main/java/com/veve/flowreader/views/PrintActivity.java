@@ -155,7 +155,9 @@ public class PrintActivity extends AppCompatActivity {
                             (int) (attributes.getMediaSize().getWidthMils() * attributes.getResolution().getHorizontalDpi() * 0.001f),
                             (int) (attributes.getMediaSize().getHeightMils() * attributes.getResolution().getVerticalDpi() * 0.001f),
                             pageNum);
-                    page = pdfDocument.startPage(pageBuilder.create());
+                    if (counter%colNum == 0) {
+                        page = pdfDocument.startPage(pageBuilder.create());
+                    }
                     Log.v(getClass().getName(), String.format("Drawing column from x:%d y:%d w:%d h:%d on page %d",
                             leftMarginInPixel + ((counter % colNum)*(leftMarginInPixel + columnsWithInPixels)),
                             topMarginInPixel,
@@ -165,6 +167,7 @@ public class PrintActivity extends AppCompatActivity {
                     page.getCanvas().drawBitmap(bitmap, leftMarginInPixel + ((counter % colNum)*(leftMarginInPixel + columnsWithInPixels)), topMarginInPixel, null);
 
                     if ((counter + 1)%colNum == 0) {
+                        Log.v(getClass().getName(), String.format("Closing page %d, counter is %d number of columns %d", pageNum, counter, colNum));
                         pdfDocument.finishPage(page);
                     }
 
