@@ -128,33 +128,51 @@ public class PrintActivity extends AppCompatActivity {
                 pdfDocument.close();
                 return;
             }
-
+            int colNum = 2;
             int widthInMils = attributes.getMediaSize().getWidthMils();
             int heightInMils = attributes.getMediaSize().getHeightMils();
             int workWidthInMils = widthInMils - attributes.getMinMargins().getLeftMils() - attributes.getMinMargins().getRightMils();
             int workHeightInMils = heightInMils - attributes.getMinMargins().getTopMils() - attributes.getMinMargins().getBottomMils();
-            int gap = (attributes.getMinMargins().getLeftMils() - attributes.getMinMargins().getRightMils()) / 2;
+            int gap = (attributes.getMinMargins().getLeftMils() - attributes.getMinMargins().getRightMils()) / colNum;
             workWidthInMils = workWidthInMils - gap;
-            int columnsWidthInMils = workWidthInMils / 2;
+            int columnsWidthInMils = workWidthInMils / colNum;
+            int gapPixels = (int)(gap * 0.001f  * attributes.getResolution().getHorizontalDpi());
+            int topMarginInPixel = (int)(attributes.getMinMargins().getTopMils() * 0.001f * attributes.getResolution().getVerticalDpi());
+            int leftMarginInPixel = (int)(attributes.getMinMargins().getLeftMils() * 0.001f * attributes.getResolution().getHorizontalDpi());
             int columnsWithInPixels = (int) (columnsWidthInMils * 0.001f * attributes.getResolution().getHorizontalDpi());
             int columnsHeightInPixels = (int) (workHeightInMils * 0.001f * attributes.getResolution().getVerticalDpi());
             try {
-
+                context.setZoom(1);
+                context.setWidth(columnsWithInPixels);
+                context.setScreenRatio(columnsWithInPixels/(float)columnsHeightInPixels);
                 PageTailor pageTailor = new PageTailor(pageRenderer, pagesSets, context, columnsHeightInPixels);
                 Bitmap bitmap;
                 int counter = 0;
+                PdfDocument.Page page = null;
                 while ((bitmap = pageTailor.read()) != null) {
+                    int pageNum = (int)(counter/colNum);
                     PdfDocument.PageInfo.Builder pageBuilder = new PdfDocument.PageInfo.Builder(
                             (int) (attributes.getMediaSize().getWidthMils() * attributes.getResolution().getHorizontalDpi() * 0.001f),
                             (int) (attributes.getMediaSize().getHeightMils() * attributes.getResolution().getVerticalDpi() * 0.001f),
-                            counter++);
-                    PdfDocument.Page page = pdfDocument.startPage(pageBuilder.create());
-                    page.getCanvas().drawBitmap(bitmap, 0, 0, null);
-                    // Rendering is complete, so page can be finalized.
-                    pdfDocument.finishPage(page);
-                    //}
+                            pageNum);
+                    page = pdfDocument.startPage(pageBuilder.create());
+                    Log.v(getClass().getName(), String.format("Drawing column from x:%d y:%d w:%d h:%d on page %d",
+                            leftMarginInPixel + ((counter % colNum)*(leftMarginInPixel + columnsWithInPixels)),
+                            topMarginInPixel,
+                            bitmap.getWidth(),
+                            bitmap.getHeight(),
+                            pageNum));
+                    page.getCanvas().drawBitmap(bitmap, leftMarginInPixel + ((counter % colNum)*(leftMarginInPixel + columnsWithInPixels)), topMarginInPixel, null);
+
+                    if ((counter + 1)%colNum == 0) {
+                        pdfDocument.finishPage(page);
+                    }
+
+                    counter++;
 
                 }
+                pdfDocument.finishPage(page);
+
 
                 // Write PDF document to file
                 try {
@@ -171,7 +189,6 @@ public class PrintActivity extends AppCompatActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
 
             //PageRange[] writtenPages = computeWrittenPages();
             // Signal the print framework the document is complete

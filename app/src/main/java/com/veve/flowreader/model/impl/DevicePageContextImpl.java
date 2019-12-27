@@ -23,9 +23,13 @@ public class DevicePageContextImpl extends DevicePageContext {
 
     private static final int DEFAULT_DISPLAY_DPI = 72;
 
-    private Point startPoint;
+    private int startPointX;
 
-    private Point remotestPoint;
+    private int startPointY;
+
+    private int remotestPointX;
+
+    private int remotestPointY;
 
     private Canvas canvas;
 
@@ -51,8 +55,10 @@ public class DevicePageContextImpl extends DevicePageContext {
         this.leading = DEFAULT_LEADING;
         this.width = width;
         this.margin = 1.0f;
-        this.startPoint = new Point((int)margin*DEFAULT_MARGIN, 0);
-        this.remotestPoint = new Point((int)margin*DEFAULT_MARGIN, 0);
+        this.startPointX = (int)margin*DEFAULT_MARGIN;
+        this.startPointY = 0;
+        this.remotestPointX = (int)margin*DEFAULT_MARGIN;
+        this.remotestPointY = 0;
         this.displayDpi = DEFAULT_DISPLAY_DPI;
         this.currentBaseLine = 0;
     }
@@ -85,7 +91,7 @@ public class DevicePageContextImpl extends DevicePageContext {
 
     @Override
     public Point getStartPoint() {
-        return startPoint;
+        return new Point(startPointX, startPointY);
     }
 
     @Override
@@ -112,7 +118,7 @@ public class DevicePageContextImpl extends DevicePageContext {
     public int getWidth() {return this.width;}
 
     @Override
-    public Point getRemotestPoint() {return this.remotestPoint;}
+    public Point getRemotestPoint() {return new Point (remotestPointX, remotestPointY);}
 
     public float getKerning() {
         return kerning;
@@ -132,8 +138,10 @@ public class DevicePageContextImpl extends DevicePageContext {
 
     @Override
     public void resetPosition() {
-        this.startPoint = new Point((int)margin*DEFAULT_MARGIN, 0);
-        this.remotestPoint = new Point((int)margin*DEFAULT_MARGIN, 0);
+        this.startPointX = (int)margin*DEFAULT_MARGIN;
+        this.startPointY = 0;
+        this.remotestPointX = (int)margin*DEFAULT_MARGIN;
+        this.remotestPointY = 0;
     }
 
 }
