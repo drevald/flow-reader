@@ -9,6 +9,7 @@ import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageRenderer;
 import com.veve.flowreader.model.impl.DevicePageContextImpl;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.Stack;
@@ -96,7 +97,9 @@ public class PageTailor {
     }
 
     private void initPages() {
-        SortedSet<Integer> sortedPages = new TreeSet<Integer>();
+        SortedSet<Integer> sortedPages = new TreeSet<Integer>((x, y) -> {
+            return - Integer.compare(x, y);
+        });
         for (PagesSet pagesSet : pages) {
             for (int i=pagesSet.getStart(); i<=pagesSet.getEnd(); i++) {
                 sortedPages.add(i);

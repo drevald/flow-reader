@@ -32,11 +32,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.os.CancellationSignal;
+import android.os.Debug;
 import android.os.ParcelFileDescriptor;
 import android.print.PageRange;
 import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
 import android.print.PrintDocumentInfo;
+import android.print.PrintJob;
 import android.print.PrintManager;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -76,6 +78,8 @@ public class PrintActivity extends AppCompatActivity {
     EditText pages;
 
     DevicePageContext context;
+
+    PrintJob printJob;
 
     class PrintBookAdapter extends PrintDocumentAdapter {
 
@@ -118,16 +122,10 @@ public class PrintActivity extends AppCompatActivity {
                             final ParcelFileDescriptor destination,
                             final CancellationSignal cancellationSignal,
                             final WriteResultCallback callback) {
-            Log.v(getClass().getName(), "onWrite");
 
+            Log.v(getClass().getName(), "onWrite");
             PdfDocument pdfDocument = new PdfDocument();
 
-            // check for cancellation
-            if (cancellationSignal.isCanceled()) {
-                callback.onWriteCancelled();
-                pdfDocument.close();
-                return;
-            }
             int colNum = 2;
             int widthInMils = attributes.getMediaSize().getWidthMils();
             int heightInMils = attributes.getMediaSize().getHeightMils();
@@ -150,6 +148,14 @@ public class PrintActivity extends AppCompatActivity {
                 int counter = 0;
                 PdfDocument.Page page = null;
                 while ((bitmap = pageTailor.read()) != null) {
+
+                    // check for cancellation
+                    if (cancellationSignal.isCanceled()) {
+                        callback.onWriteCancelled();
+                        pdfDocument.close();
+                        return;
+                    }
+
                     int pageNum = (int)(counter/colNum);
                     PdfDocument.PageInfo.Builder pageBuilder = new PdfDocument.PageInfo.Builder(
                             (int) (attributes.getMediaSize().getWidthMils() * attributes.getResolution().getHorizontalDpi() * 0.001f),
@@ -165,6 +171,9 @@ public class PrintActivity extends AppCompatActivity {
                             bitmap.getHeight(),
                             pageNum));
                     page.getCanvas().drawBitmap(bitmap, leftMarginInPixel + ((counter % colNum)*(leftMarginInPixel + columnsWithInPixels)), topMarginInPixel, null);
+                    if (Constants.DEBUG) {
+                        page.getCanvas().drawRect(leftMarginInPixel + ((counter % colNum)*(leftMarginInPixel + columnsWithInPixels)), topMarginInPixel, bitmap.getWidth(), bitmap.getHeight(), new Paint());
+                    }
 
                     if ((counter + 1)%colNum == 0) {
                         Log.v(getClass().getName(), String.format("Closing page %d, counter is %d number of columns %d", pageNum, counter, colNum));
@@ -174,7 +183,13 @@ public class PrintActivity extends AppCompatActivity {
                     counter++;
 
                 }
-                pdfDocument.finishPage(page);
+
+                try{
+                    pdfDocument.finishPage(page);
+                } catch (Exception e) {
+                    Log.e(getClass().getName(), e.getLocalizedMessage());
+                }
+
 
 
                 // Write PDF document to file
@@ -217,8 +232,11 @@ public class PrintActivity extends AppCompatActivity {
 
         // Start a print job, passing in a PrintDocumentAdapter implementation
         // to handle the generation of a print document
-        printManager.print(jobName, new PrintBookAdapter(getActivity(), bookRecord),
-                null); //
+        PrintAttributes.Builder builder = new PrintAttributes.Builder();
+        builder.setMediaSize(PrintAttributes.MediaSize.ISO_A4);
+        PrintAttributes printAttributes = builder.build();
+        printJob = printManager.print(jobName, new PrintBookAdapter(getActivity(), bookRecord), printAttributes); //
+
     }
 
     private Activity getActivity() {
@@ -242,13 +260,16 @@ public class PrintActivity extends AppCompatActivity {
             Log.e(getClass().getName(), e.getLocalizedMessage());
         }
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        findViewById(R.id.print).setOnClickListener((view) -> {
                 doPrint(bookRecord);
             }
-        });
+        );
+
+        findViewById(R.id.cancel).setOnClickListener((view) -> {
+            if (printJob != null && printJob.isStarted() || printJob.isQueued())
+                printJob.cancel();
+            }
+        );
 
     }
 
