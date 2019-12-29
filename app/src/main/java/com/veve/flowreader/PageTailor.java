@@ -71,8 +71,8 @@ public class PageTailor {
             }
         }
 
-        result = Bitmap.createBitmap(tailoredBitmap, 0, tailoredBitmap.getHeight() - height, context.getWidth(), height);
-        tailoredBitmap = Bitmap.createBitmap(tailoredBitmap, 0, 0, context.getWidth(), tailoredBitmap.getHeight() - height);
+        result = Bitmap.createBitmap(tailoredBitmap, 0, 0, context.getWidth(), height);
+        tailoredBitmap = Bitmap.createBitmap(tailoredBitmap, 0, height, context.getWidth(), tailoredBitmap.getHeight() - height);
 
         return result;
     }

@@ -87,6 +87,8 @@ public class PrintActivity extends AppCompatActivity {
 
         PrintAttributes attributes;
 
+        PdfDocument pdfDocument;
+
         public PrintBookAdapter(Activity activity, BookRecord bookRecord) {
             Log.v(getClass().getName(), "Construct");
             this.bookRecord = bookRecord;
@@ -96,6 +98,32 @@ public class PrintActivity extends AppCompatActivity {
         public void onStart() {
             super.onStart();
             Log.v(getClass().getName(), "on start");
+        }
+
+        @Override
+        public void onWrite(PageRange[] pages, ParcelFileDescriptor destination, CancellationSignal cancellationSignal, WriteResultCallback callback) {
+
+            Log.v(getClass().getName(), "onWrite");
+
+
+            // Write PDF document to file
+            try {
+                pdfDocument.writeTo(new FileOutputStream(
+                        destination.getFileDescriptor()));
+            } catch (IOException e) {
+                callback.onWriteFailed(e.toString());
+                return;
+            } finally {
+                pdfDocument.close();
+                pdfDocument = null;
+            }
+
+
+            //PageRange[] writtenPages = computeWrittenPages();
+            // Signal the print framework the document is complete
+            //callback.onWriteFinished(writtenPages);
+            callback.onWriteFinished(new PageRange[]{PageRange.ALL_PAGES});
+
         }
 
         @Override
@@ -112,115 +140,79 @@ public class PrintActivity extends AppCompatActivity {
 //                    .setPageCount(10)
                         .build();
                 attributes = newAttributes;
-                callback.onLayoutFinished(info, false);
-                Log.v(getClass().getName(), "onLayout 1");
-            }
-        }
+                pdfDocument = new PdfDocument();
 
-        @Override
-        public void onWrite(final PageRange[] pageRanges,
-                            final ParcelFileDescriptor destination,
-                            final CancellationSignal cancellationSignal,
-                            final WriteResultCallback callback) {
-
-            Log.v(getClass().getName(), "onWrite");
-            PdfDocument pdfDocument = new PdfDocument();
-
-            int colNum = 2;
-            int widthInMils = attributes.getMediaSize().getWidthMils();
-            int heightInMils = attributes.getMediaSize().getHeightMils();
-            int workWidthInMils = widthInMils - attributes.getMinMargins().getLeftMils() - attributes.getMinMargins().getRightMils();
-            int workHeightInMils = heightInMils - attributes.getMinMargins().getTopMils() - attributes.getMinMargins().getBottomMils();
-            int gap = (attributes.getMinMargins().getLeftMils() - attributes.getMinMargins().getRightMils()) / colNum;
-            workWidthInMils = workWidthInMils - gap;
-            int columnsWidthInMils = workWidthInMils / colNum;
-            int gapPixels = (int)(gap * 0.001f  * attributes.getResolution().getHorizontalDpi());
-            int topMarginInPixel = (int)(attributes.getMinMargins().getTopMils() * 0.001f * attributes.getResolution().getVerticalDpi());
-            int leftMarginInPixel = (int)(attributes.getMinMargins().getLeftMils() * 0.001f * attributes.getResolution().getHorizontalDpi());
-            int columnsWithInPixels = (int) (columnsWidthInMils * 0.001f * attributes.getResolution().getHorizontalDpi());
-            int columnsHeightInPixels = (int) (workHeightInMils * 0.001f * attributes.getResolution().getVerticalDpi());
-            try {
-                context.setZoom(1);
-                context.setWidth(columnsWithInPixels);
-                context.setScreenRatio(columnsWithInPixels/(float)columnsHeightInPixels);
-                PageTailor pageTailor = new PageTailor(pageRenderer, pagesSets, context, columnsHeightInPixels);
-                Bitmap bitmap;
-                int counter = 0;
-                PdfDocument.Page page = null;
-                while ((bitmap = pageTailor.read()) != null) {
-
-                    // check for cancellation
-                    if (cancellationSignal.isCanceled()) {
-                        callback.onWriteCancelled();
-                        pdfDocument.close();
-                        return;
-                    }
-
-                    int pageNum = (int)(counter/colNum);
-                    PdfDocument.PageInfo.Builder pageBuilder = new PdfDocument.PageInfo.Builder(
-                            (int) (attributes.getMediaSize().getWidthMils() * attributes.getResolution().getHorizontalDpi() * 0.001f),
-                            (int) (attributes.getMediaSize().getHeightMils() * attributes.getResolution().getVerticalDpi() * 0.001f),
-                            pageNum);
-                    if (counter%colNum == 0) {
-                        page = pdfDocument.startPage(pageBuilder.create());
-                    }
-                    Log.v(getClass().getName(), String.format("Drawing column from x:%d y:%d w:%d h:%d on page %d",
-                            leftMarginInPixel + ((counter % colNum)*(leftMarginInPixel + columnsWithInPixels)),
-                            topMarginInPixel,
-                            bitmap.getWidth(),
-                            bitmap.getHeight(),
-                            pageNum));
-                    page.getCanvas().drawBitmap(bitmap, leftMarginInPixel + ((counter % colNum)*(leftMarginInPixel + columnsWithInPixels)), topMarginInPixel, null);
-                    if (Constants.DEBUG) {
-                        page.getCanvas().drawRect(leftMarginInPixel + ((counter % colNum)*(leftMarginInPixel + columnsWithInPixels)), topMarginInPixel, bitmap.getWidth(), bitmap.getHeight(), new Paint());
-                    }
-
-                    if ((counter + 1)%colNum == 0) {
-                        Log.v(getClass().getName(), String.format("Closing page %d, counter is %d number of columns %d", pageNum, counter, colNum));
-                        pdfDocument.finishPage(page);
-                    }
-
-                    counter++;
-
-                }
-
-                try{
-                    pdfDocument.finishPage(page);
-                } catch (Exception e) {
-                    Log.e(getClass().getName(), e.getLocalizedMessage());
-                }
-
-
-
-                // Write PDF document to file
+                int colNum = 3;
+                int widthInMils = attributes.getMediaSize().getWidthMils();
+                int heightInMils = attributes.getMediaSize().getHeightMils();
+                int workWidthInMils = widthInMils - attributes.getMinMargins().getLeftMils() - attributes.getMinMargins().getRightMils();
+                int workHeightInMils = heightInMils - attributes.getMinMargins().getTopMils() - attributes.getMinMargins().getBottomMils();
+                int gap = (attributes.getMinMargins().getLeftMils() - attributes.getMinMargins().getRightMils()) / colNum;
+                workWidthInMils = workWidthInMils - gap * (colNum - 1);
+                int columnsWidthInMils = workWidthInMils / colNum;
+                int gapPixels = (int) (gap * 0.001f * attributes.getResolution().getHorizontalDpi());
+                int topMarginInPixel = (int) (attributes.getMinMargins().getTopMils() * 0.001f * attributes.getResolution().getVerticalDpi());
+                int leftMarginInPixel = (int) (attributes.getMinMargins().getLeftMils() * 0.001f * attributes.getResolution().getHorizontalDpi());
+                int columnsWithInPixels = (int) (columnsWidthInMils * 0.001f * attributes.getResolution().getHorizontalDpi());
+                int columnsHeightInPixels = (int) (workHeightInMils * 0.001f * attributes.getResolution().getVerticalDpi());
                 try {
-                    pdfDocument.writeTo(new FileOutputStream(
-                            destination.getFileDescriptor()));
-                } catch (IOException e) {
-                    callback.onWriteFailed(e.toString());
-                    return;
-                } finally {
-                    pdfDocument.close();
-                    pdfDocument = null;
+                    context.setZoom(1);
+                    context.setWidth(columnsWithInPixels);
+                    context.setScreenRatio(columnsWithInPixels / (float) columnsHeightInPixels);
+                    PageTailor pageTailor = new PageTailor(pageRenderer, pagesSets, context, columnsHeightInPixels);
+                    Bitmap bitmap;
+                    int counter = 0;
+                    PdfDocument.Page page = null;
+                    while ((bitmap = pageTailor.read()) != null) {
+
+                        // check for cancellation
+                        if (cancellationSignal.isCanceled()) {
+                            callback.onLayoutCancelled();
+                            pdfDocument.close();
+                            return;
+                        }
+
+                        int pageNum = (int) (counter / colNum);
+                        PdfDocument.PageInfo.Builder pageBuilder = new PdfDocument.PageInfo.Builder(
+                                (int) (attributes.getMediaSize().getWidthMils() * attributes.getResolution().getHorizontalDpi() * 0.001f),
+                                (int) (attributes.getMediaSize().getHeightMils() * attributes.getResolution().getVerticalDpi() * 0.001f),
+                                pageNum);
+                        if (counter % colNum == 0) {
+                            page = pdfDocument.startPage(pageBuilder.create());
+                        }
+                        Log.v(getClass().getName(), String.format("Drawing column from x:%d y:%d w:%d h:%d on page %d",
+                                leftMarginInPixel + ((counter % colNum) * (leftMarginInPixel + columnsWithInPixels)),
+                                topMarginInPixel,
+                                bitmap.getWidth(),
+                                bitmap.getHeight(),
+                                pageNum));
+                        page.getCanvas().drawBitmap(bitmap, leftMarginInPixel + ((counter % colNum) * (leftMarginInPixel + columnsWithInPixels)), topMarginInPixel, null);
+                        if (Constants.DEBUG) {
+                            page.getCanvas().drawRect(leftMarginInPixel + ((counter % colNum) * (leftMarginInPixel + columnsWithInPixels)), topMarginInPixel, bitmap.getWidth(), bitmap.getHeight(), new Paint());
+                        }
+
+                        if ((counter + 1) % colNum == 0) {
+                            Log.v(getClass().getName(), String.format("Closing page %d, counter is %d number of columns %d", pageNum, counter, colNum));
+                            pdfDocument.finishPage(page);
+                        }
+
+                        counter++;
+
+                    }
+
+                    try {
+                        pdfDocument.finishPage(page);
+                    } catch (Exception e) {
+                        Log.e(getClass().getName(), e.getLocalizedMessage());
+                    }
+                    callback.onLayoutFinished(info, false);
+                    Log.v(getClass().getName(), "onLayout 1");
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-
-            } catch (Exception e) {
-                e.printStackTrace();
             }
-
-            //PageRange[] writtenPages = computeWrittenPages();
-            // Signal the print framework the document is complete
-            //callback.onWriteFinished(writtenPages);
-            callback.onWriteFinished(new PageRange[]{PageRange.ALL_PAGES});
-
-//
-//    //...
-            //}
-
         }
-
     }
-
 
     private void doPrint(BookRecord bookRecord) {
         // Get a PrintManager instance
@@ -304,7 +296,7 @@ public class PrintActivity extends AppCompatActivity {
     }
 
     public void setPrintAllPages(View view) {
-        ((EditText)findViewById(R.id.pages)).setText("1-" + (1 + bookRecord.getPagesCount()));
+        ((EditText)findViewById(R.id.pages)).setText("1-" + bookRecord.getPagesCount());
         ((EditText)findViewById(R.id.pages)).setInputType(EditorInfo.TYPE_NULL);
         parsePagesString();
     }
