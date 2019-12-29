@@ -25,6 +25,11 @@
         android:layout_height="match_parent"
         android:background="@color/colorPrimary">
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
             <RadioGroup
                 android:id="@+id/page_range"
                 android:layout_width="match_parent"
@@ -66,6 +71,57 @@
                     style="@style/label"/>
 
             </RadioGroup>
+
+            <RadioGroup
+                android:id="@+id/set_columns"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="50dp"
+                android:paddingTop="10dp"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                <RadioButton
+                    android:id="@+id/mobile_screen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/label"
+                    app:buttonTint="#ffffff"
+                    android:onClick="setPrintCurrentPage"
+                    android:text="Current page"/>
+                <RadioButton
+                    android:id="@+id/set_column_width"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/label"
+                    app:buttonTint="#ffffff"
+                    android:onClick="setPrintAllPages"
+                    android:text="All Pages"/>
+                <EditText
+                    android:id="@+id/column_width"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:text="1 - 10"
+                    style="@style/label"/>
+                <RadioButton
+                    android:id="@+id/set_columns_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:buttonTint="#ffffff"
+                    style="@style/label"
+                    android:onClick="setPrintCustomRange"
+                    android:text="Set columns width"/>
+                <EditText
+                    android:id="@+id/columns_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:text="1 - 10"
+                    style="@style/label"/>
+
+            </RadioGroup>
+
+        </LinearLayout>
 
     </ScrollView>
 
