@@ -54,73 +54,83 @@
                     app:buttonTint="#ffffff"
                     android:onClick="setPrintAllPages"
                     android:text="All Pages"/>
-                <RadioButton
-                    android:id="@+id/custom_page_range"
-                    android:layout_width="wrap_content"
+                <LinearLayout
                     android:layout_height="wrap_content"
-                    app:buttonTint="#ffffff"
-                    style="@style/label"
-                    android:onClick="setPrintCustomRange"
-                    android:text="Pages Range"/>
-                <EditText
-                    android:id="@+id/pages"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:inputType="none"
-                    android:text="1 - 10"
-                    style="@style/label"/>
-
+                    android:orientation="horizontal">
+                    <RadioButton
+                        android:id="@+id/custom_page_range"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:buttonTint="#ffffff"
+                        style="@style/label"
+                        android:onClick="setPrintCustomRange"
+                        android:text="Pages Range"/>
+                    <EditText
+                        android:id="@+id/pages"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:text="1 - 10"
+                        style="@style/label"/>
+                </LinearLayout>
             </RadioGroup>
 
             <RadioGroup
-                android:id="@+id/set_columns"
+                android:id="@+id/column"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="50dp"
-                android:paddingTop="10dp"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
+                android:paddingTop="10dp">
                 <RadioButton
-                    android:id="@+id/mobile_screen"
+                    android:id="@+id/set_column_width_as_device"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/label"
                     app:buttonTint="#ffffff"
-                    android:onClick="setPrintCurrentPage"
-                    android:text="Current page"/>
-                <RadioButton
-                    android:id="@+id/set_column_width"
-                    android:layout_width="wrap_content"
+                    android:onClick="setPrintDeviceScreen"
+                    android:text="Use device width"/>
+                <LinearLayout
                     android:layout_height="wrap_content"
-                    style="@style/label"
-                    app:buttonTint="#ffffff"
-                    android:onClick="setPrintAllPages"
-                    android:text="All Pages"/>
-                <EditText
-                    android:id="@+id/column_width"
                     android:layout_width="wrap_content"
+                    android:orientation="horizontal">
+                    <RadioButton
+                        android:id="@+id/set_column_width"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/label"
+                        app:buttonTint="#ffffff"
+                        android:onClick="setColumnWidth"
+                        android:text="Columns width, mm"/>
+                    <EditText
+                        android:id="@+id/column_width"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:text="100"
+                        style="@style/label"/>
+                </LinearLayout>
+                <LinearLayout
                     android:layout_height="wrap_content"
-                    android:inputType="none"
-                    android:text="1 - 10"
-                    style="@style/label"/>
-                <RadioButton
-                    android:id="@+id/set_columns_number"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:buttonTint="#ffffff"
-                    style="@style/label"
-                    android:onClick="setPrintCustomRange"
-                    android:text="Set columns width"/>
-                <EditText
-                    android:id="@+id/columns_number"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:inputType="none"
-                    android:text="1 - 10"
-                    style="@style/label"/>
-
+                    android:orientation="horizontal">
+                    <RadioButton
+                        android:id="@+id/set_columns_number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:buttonTint="#ffffff"
+                        style="@style/label"
+                        android:onClick="setColumnsNumber"
+                        android:text="Columns number"/>
+                    <EditText
+                        android:id="@+id/columns_number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:text="2"
+                        style="@style/label"/>
+                </LinearLayout>
             </RadioGroup>
-
         </LinearLayout>
 
     </ScrollView>
@@ -148,15 +158,6 @@
             android:layout_width="match_parent"
             android:gravity="center"
             android:layout_weight = "1"/>
-
-<!--        <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-<!--            android:id="@+id/fab"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_gravity="bottom|end"-->
-<!--            android:layout_margin="@dimen/fab_margin"-->
-<!--            app:srcCompat="@android:drawable/ic_dialog_email"-->
-<!--            android:layout_weight = "0"/>-->
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/print"

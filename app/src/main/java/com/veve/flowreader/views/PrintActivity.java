@@ -42,6 +42,7 @@ import android.print.PrintJob;
 import android.print.PrintManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -56,6 +57,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.Reader;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -66,10 +68,15 @@ import java.util.Stack;
 import java.util.TreeSet;
 
 import static android.graphics.Bitmap.Config.ARGB_4444;
+import static com.veve.flowreader.Constants.MM_IN_INCH;
 
 public class PrintActivity extends AppCompatActivity {
 
     static PageRenderer pageRenderer;
+
+    static final PrintAttributes.MediaSize DEFAULT_MEDIA_SIZE = PrintAttributes.MediaSize.ISO_A4;
+
+    static final int DEFAULT_RESOLUTION = 300;
 
     BookRecord bookRecord;
 
@@ -80,6 +87,12 @@ public class PrintActivity extends AppCompatActivity {
     DevicePageContext context;
 
     PrintJob printJob;
+
+    RadioGroup columnGroup;
+
+    RadioGroup pagesGroup;
+
+    int screenWidthMm;
 
     class PrintBookAdapter extends PrintDocumentAdapter {
 
@@ -268,14 +281,41 @@ public class PrintActivity extends AppCompatActivity {
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        ((RadioGroup)findViewById(R.id.page_range)).check(R.id.custom_page_range);
+
+        pagesGroup = findViewById(R.id.page_range);
+        pagesGroup.check(R.id.custom_page_range);
         pages = ((EditText) findViewById(R.id.pages));
         pages.setText("1-10");
         parsePagesString();
-        pages.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
+        pages.setOnFocusChangeListener((v, hasFocus) -> {
                 parsePagesString();
+        });
+
+        columnGroup = findViewById(R.id.column);
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        float widthInInches = displayMetrics.widthPixels / (float) displayMetrics.xdpi;
+        float heightInInches = displayMetrics.heightPixels / (float) displayMetrics.ydpi;
+        screenWidthMm =  (int) ((Math.min(widthInInches, heightInInches) * MM_IN_INCH));
+        setPrintDeviceScreen(findViewById(R.id.set_column_width_as_device));
+        findViewById(R.id.column_width).setOnFocusChangeListener((v, hasFocus) -> {
+            columnGroup.check(R.id.set_column_width);
+            try {
+                int colsNum = calculateColumnWidthMm(Integer.parseInt(((EditText)findViewById(R.id.column_width)).getText().toString().trim()), DEFAULT_MEDIA_SIZE);
+                ((EditText)findViewById(R.id.columns_number)).setText(String.valueOf(colsNum));
+                findViewById(R.id.columns_number).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            } catch (Exception e) {
+                findViewById(R.id.columns_number).setBackgroundColor(getResources().getColor(R.color.colorAccent));
+            }
+        });
+        findViewById(R.id.columns_number).setOnFocusChangeListener((v, hasFocus) -> {
+            columnGroup.check(R.id.set_columns_number);
+            try {
+                int columnWidth = calculateColumnsNum(Integer.parseInt(((EditText)v).getText().toString().trim()), DEFAULT_MEDIA_SIZE);
+                ((EditText)findViewById(R.id.columns_number)).setText(String.valueOf(columnWidth));
+                findViewById(R.id.column_width).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            } catch (Exception e) {
+                findViewById(R.id.column_width).setBackgroundColor(getResources().getColor(R.color.colorAccent));
             }
         });
     }
@@ -290,20 +330,49 @@ public class PrintActivity extends AppCompatActivity {
     }
 
     public void setPrintCurrentPage(View view) {
-        ((EditText)findViewById(R.id.pages)).setText("" + (1 + bookRecord.getCurrentPage()));
+        pagesGroup.check(R.id.current_page);
+        ((EditText)findViewById(R.id.pages)).setText(String.valueOf(1 + bookRecord.getCurrentPage()));
         ((EditText)findViewById(R.id.pages)).setInputType(EditorInfo.TYPE_NULL);
         parsePagesString();
     }
 
     public void setPrintAllPages(View view) {
+        pagesGroup.check(R.id.all_pages);
         ((EditText)findViewById(R.id.pages)).setText("1-" + bookRecord.getPagesCount());
         ((EditText)findViewById(R.id.pages)).setInputType(EditorInfo.TYPE_NULL);
         parsePagesString();
     }
 
     public void setPrintCustomRange(View view) {
+        pagesGroup.check(R.id.custom_page_range);
         ((EditText)findViewById(R.id.pages)).setInputType(EditorInfo.TYPE_CLASS_TEXT);
         parsePagesString();
+    }
+
+    //////////////////
+
+    public void setPrintDeviceScreen(View view) {
+        columnGroup.check(R.id.set_column_width_as_device);
+        ((EditText)findViewById(R.id.column_width)).setText(String.valueOf(screenWidthMm));
+        ((EditText)findViewById(R.id.columns_number)).setText(String.valueOf(calculateColumnsNum(screenWidthMm, DEFAULT_MEDIA_SIZE)));
+    }
+
+    public void setColumnWidth(View view) {
+        columnGroup.check(R.id.set_column_width);
+    }
+
+
+    public void setColumnsNumber(View view) {
+        columnGroup.check(R.id.set_columns_number);
+    }
+
+    private int calculateColumnsNum(int columnWidthMm, PrintAttributes.MediaSize mediaSize) {
+        int mediaWidthMm = (int)((mediaSize.getWidthMils()/DEFAULT_RESOLUTION) * MM_IN_INCH * 0.001f);
+        return (int)Math.floor(mediaWidthMm / columnWidthMm);
+    }
+
+    private int calculateColumnWidthMm(int columnsNumber, PrintAttributes.MediaSize mediaSize) {
+        return (int)(Math.floor((mediaSize.getWidthMils() * MM_IN_INCH * 0.001f )/columnsNumber));
     }
 
 }

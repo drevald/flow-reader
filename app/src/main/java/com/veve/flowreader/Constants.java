@@ -37,4 +37,5 @@ public interface Constants {
     float ZOOM_MIN = 0.25F;
     float ZOOM_MAX = 5F;
 
+    float MM_IN_INCH = 25.4f;
 }
