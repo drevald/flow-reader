@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageLayoutParser;
 import com.veve.flowreader.model.PageRenderer;
+import com.veve.flowreader.model.impl.DevicePageContextImpl;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,12 +21,21 @@ import static org.junit.Assert.assertEquals;
 
 public class PageTailorTest {
 
+
+    private DevicePageContext context;
+
+    @Before
+    public void setContext() {
+        context = new DevicePageContextImpl(50);
+        context.setScreenRatio(1);
+    }
+
     @Test
     public void testTailTinyPageIntoHugeColumn() {
         PageTailor pageTailor = new PageTailor(
                 new MockPageRenderer(10, 1),
                 PagesSet.getPagesSet("1-100"),
-                50,
+                context,
                 1000);
         int counter = 0;
         Bitmap pageBitmap;
@@ -42,12 +52,12 @@ public class PageTailorTest {
         PageTailor pageTailor = new PageTailor(
                 new MockPageRenderer(400, 1),
                 PagesSet.getPagesSet("1-10"),
-                100,
+                context,
                 200);
         int counter = 0;
         Bitmap pageBitmap;
         while ((pageBitmap = pageTailor.read()) != null) {
-            assertEquals(100, pageBitmap.getWidth());
+            assertEquals(context.getWidth(), pageBitmap.getWidth());
             assertEquals(200, pageBitmap.getHeight());
             counter++;
         }
@@ -59,12 +69,12 @@ public class PageTailorTest {
         PageTailor pageTailor = new PageTailor(
                 new MockPageRenderer(200, 1),
                 PagesSet.getPagesSet("1-10"),
-                100,
+                context,
                 400);
         int counter = 0;
         Bitmap pageBitmap;
         while ((pageBitmap = pageTailor.read()) != null) {
-            assertEquals(100, pageBitmap.getWidth());
+            assertEquals(context.getWidth(), pageBitmap.getWidth());
             assertEquals(400, pageBitmap.getHeight());
             counter++;
         }

@@ -38,4 +38,6 @@ public interface Constants {
     float ZOOM_MAX = 5F;
 
     float MM_IN_INCH = 25.4f;
+    float INCH_IN_MILS = 0.001f;
+
 }

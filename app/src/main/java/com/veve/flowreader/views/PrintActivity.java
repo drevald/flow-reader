@@ -68,6 +68,7 @@ import java.util.Stack;
 import java.util.TreeSet;
 
 import static android.graphics.Bitmap.Config.ARGB_4444;
+import static com.veve.flowreader.Constants.INCH_IN_MILS;
 import static com.veve.flowreader.Constants.MM_IN_INCH;
 
 public class PrintActivity extends AppCompatActivity {
@@ -163,11 +164,11 @@ public class PrintActivity extends AppCompatActivity {
                 int gap = (attributes.getMinMargins().getLeftMils() - attributes.getMinMargins().getRightMils()) / colNum;
                 workWidthInMils = workWidthInMils - gap * (colNum - 1);
                 int columnsWidthInMils = workWidthInMils / colNum;
-                int gapPixels = (int) (gap * 0.001f * attributes.getResolution().getHorizontalDpi());
-                int topMarginInPixel = (int) (attributes.getMinMargins().getTopMils() * 0.001f * attributes.getResolution().getVerticalDpi());
-                int leftMarginInPixel = (int) (attributes.getMinMargins().getLeftMils() * 0.001f * attributes.getResolution().getHorizontalDpi());
-                int columnsWithInPixels = (int) (columnsWidthInMils * 0.001f * attributes.getResolution().getHorizontalDpi());
-                int columnsHeightInPixels = (int) (workHeightInMils * 0.001f * attributes.getResolution().getVerticalDpi());
+                int gapPixels = (int) (gap * INCH_IN_MILS * attributes.getResolution().getHorizontalDpi());
+                int topMarginInPixel = (int) (attributes.getMinMargins().getTopMils() * INCH_IN_MILS * attributes.getResolution().getVerticalDpi());
+                int leftMarginInPixel = (int) (attributes.getMinMargins().getLeftMils() * INCH_IN_MILS * attributes.getResolution().getHorizontalDpi());
+                int columnsWithInPixels = (int) (columnsWidthInMils * INCH_IN_MILS * attributes.getResolution().getHorizontalDpi());
+                int columnsHeightInPixels = (int) (workHeightInMils * INCH_IN_MILS * attributes.getResolution().getVerticalDpi());
                 try {
                     context.setZoom(1);
                     context.setWidth(columnsWithInPixels);
@@ -187,8 +188,8 @@ public class PrintActivity extends AppCompatActivity {
 
                         int pageNum = (int) (counter / colNum);
                         PdfDocument.PageInfo.Builder pageBuilder = new PdfDocument.PageInfo.Builder(
-                                (int) (attributes.getMediaSize().getWidthMils() * attributes.getResolution().getHorizontalDpi() * 0.001f),
-                                (int) (attributes.getMediaSize().getHeightMils() * attributes.getResolution().getVerticalDpi() * 0.001f),
+                                (int) (attributes.getMediaSize().getWidthMils() * attributes.getResolution().getHorizontalDpi() * INCH_IN_MILS),
+                                (int) (attributes.getMediaSize().getHeightMils() * attributes.getResolution().getVerticalDpi() * INCH_IN_MILS),
                                 pageNum);
                         if (counter % colNum == 0) {
                             page = pdfDocument.startPage(pageBuilder.create());
@@ -299,23 +300,27 @@ public class PrintActivity extends AppCompatActivity {
         screenWidthMm =  (int) ((Math.min(widthInInches, heightInInches) * MM_IN_INCH));
         setPrintDeviceScreen(findViewById(R.id.set_column_width_as_device));
         findViewById(R.id.column_width).setOnFocusChangeListener((v, hasFocus) -> {
+            Log.v(getClass().getName(), "Column width input set to " + ((EditText)v).getText().toString());
             columnGroup.check(R.id.set_column_width);
             try {
-                int colsNum = calculateColumnWidthMm(Integer.parseInt(((EditText)findViewById(R.id.column_width)).getText().toString().trim()), DEFAULT_MEDIA_SIZE);
+                int colsNum = calculateColumnsNum(Integer.parseInt(((EditText)findViewById(R.id.column_width)).getText().toString().trim()), DEFAULT_MEDIA_SIZE);
                 ((EditText)findViewById(R.id.columns_number)).setText(String.valueOf(colsNum));
-                findViewById(R.id.columns_number).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-            } catch (Exception e) {
-                findViewById(R.id.columns_number).setBackgroundColor(getResources().getColor(R.color.colorAccent));
-            }
-        });
-        findViewById(R.id.columns_number).setOnFocusChangeListener((v, hasFocus) -> {
-            columnGroup.check(R.id.set_columns_number);
-            try {
-                int columnWidth = calculateColumnsNum(Integer.parseInt(((EditText)v).getText().toString().trim()), DEFAULT_MEDIA_SIZE);
-                ((EditText)findViewById(R.id.columns_number)).setText(String.valueOf(columnWidth));
                 findViewById(R.id.column_width).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
             } catch (Exception e) {
                 findViewById(R.id.column_width).setBackgroundColor(getResources().getColor(R.color.colorAccent));
+            }
+        });
+        findViewById(R.id.columns_number).setOnFocusChangeListener((v, hasFocus) -> {
+            Log.v(getClass().getName(), "Column number set to " + ((EditText)v).getText().toString());
+            columnGroup.check(R.id.set_columns_number);
+            try {
+                int colsNum = Integer.parseInt(((EditText)v).getText().toString());
+                if (colsNum < 1) throw new Exception("Number of columns could not be less than one");
+                int columnWidth = calculateColumnWidthMm(Integer.parseInt(((EditText)v).getText().toString().trim()), DEFAULT_MEDIA_SIZE);
+                ((EditText)findViewById(R.id.column_width)).setText(String.valueOf(columnWidth));
+                findViewById(R.id.columns_number).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            } catch (Exception e) {
+                findViewById(R.id.columns_number).setBackgroundColor(getResources().getColor(R.color.colorAccent));
             }
         });
     }
@@ -367,12 +372,18 @@ public class PrintActivity extends AppCompatActivity {
     }
 
     private int calculateColumnsNum(int columnWidthMm, PrintAttributes.MediaSize mediaSize) {
-        int mediaWidthMm = (int)((mediaSize.getWidthMils()/DEFAULT_RESOLUTION) * MM_IN_INCH * 0.001f);
-        return (int)Math.floor(mediaWidthMm / columnWidthMm);
+        int mediaWidthMm = (int)(mediaSize.getWidthMils() * MM_IN_INCH * INCH_IN_MILS);
+        int result = (int)Math.floor(mediaWidthMm / columnWidthMm);
+        Log.v(getClass().getName(), String.format("Num of columns for w:%d mm Media.w:%f is %d",
+                columnWidthMm, mediaSize.getWidthMils() * MM_IN_INCH * INCH_IN_MILS, result));
+        return result;
     }
 
     private int calculateColumnWidthMm(int columnsNumber, PrintAttributes.MediaSize mediaSize) {
-        return (int)(Math.floor((mediaSize.getWidthMils() * MM_IN_INCH * 0.001f )/columnsNumber));
+        int result = (int)(Math.floor((mediaSize.getWidthMils() * MM_IN_INCH * INCH_IN_MILS )/columnsNumber));
+        Log.v(getClass().getName(), String.format("Width of columns, mm for n:%d Media.w:%f is %d",
+                columnsNumber, mediaSize.getWidthMils() * MM_IN_INCH * INCH_IN_MILS, result));
+        return result;
     }
 
 }
