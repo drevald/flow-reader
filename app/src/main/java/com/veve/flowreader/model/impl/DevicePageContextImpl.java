@@ -2,6 +2,7 @@ package com.veve.flowreader.model.impl;
 
 import android.graphics.Canvas;
 import android.graphics.Point;
+import android.util.Log;
 
 import com.veve.flowreader.model.DevicePageContext;
 
@@ -9,6 +10,7 @@ import com.veve.flowreader.model.DevicePageContext;
  * Created by ddreval on 17.01.2018.
  */
 
+@Deprecated
 public class DevicePageContextImpl extends DevicePageContext {
 
     private static final float DEFAULT_ZOOM = 1f;
@@ -35,6 +37,8 @@ public class DevicePageContextImpl extends DevicePageContext {
 
     private float zoom;
 
+    private float zoomOriginal;
+
     private int width;
 
     private int lineHeight;
@@ -48,6 +52,16 @@ public class DevicePageContextImpl extends DevicePageContext {
     private int displayDpi;
 
     private int currentBaseLine;
+
+    private boolean newline;
+
+    private boolean preprocessing;
+
+    private boolean invalidateCache;
+
+    private boolean portrait;
+
+    private float screenRatio;
 
     public DevicePageContextImpl(int width) {
         this.zoom = DEFAULT_ZOOM;
@@ -63,33 +77,22 @@ public class DevicePageContextImpl extends DevicePageContext {
         this.currentBaseLine = 0;
     }
 
-    @Override
-    public void setCurrentBaseLine(int baseLine) {
-        this.currentBaseLine = baseLine;
+    public boolean getPortrait() {
+        return portrait;
     }
 
-    @Override
-    public int getCurrentBaseLine() {
-        return currentBaseLine;
+    public void setPortrait(boolean portrait) {
+        this.portrait = portrait;
     }
 
-    @Override
-    public int getLineHeight() {
-        return lineHeight;
+    public float getZoomOriginal() {return zoomOriginal;}
+
+    public void setZoomOriginal(float originalZoom) {this.zoomOriginal = originalZoom;}
+
+    public DevicePageContextImpl() {
+        newline = true;
     }
 
-    @Override
-    public void setLineHeight(int lineHeight) {
-        this.lineHeight = lineHeight;
-    }
-
-    @Override
-    public float getMargin() {return margin;}
-
-    @Override
-    public void setMargin(float margin) {this.margin = margin;}
-
-    @Override
     public Point getStartPoint() {
         return new Point(startPointX, startPointY);
     }
@@ -114,8 +117,16 @@ public class DevicePageContextImpl extends DevicePageContext {
         this.zoom = zoom;
     }
 
-    @Override
-    public int getWidth() {return this.width;}
+    public int getWidth() {
+        Log.v(getClass().getName(), String.format("Width for %s after update %d", hashCode(), this.width));
+        return this.width;
+    }
+
+    public void setWidth(int width) {
+        Log.v(getClass().getName(), String.format("Width for %s before update %d", hashCode(), this.width));
+        this.width = width;
+        Log.v(getClass().getName(), String.format("Width for %s after update %d", hashCode(), this.width));
+    }
 
     @Override
     public Point getRemotestPoint() {return new Point (remotestPointX, remotestPointY);}
@@ -134,6 +145,62 @@ public class DevicePageContextImpl extends DevicePageContext {
 
     public void setLeading(float leading) {
         this.leading = leading;
+    }
+
+    public float getMargin() {
+        return margin;
+    }
+
+    public void setMargin(float margin) {
+        this.margin = margin;
+    }
+
+    public int getLineHeight() {
+        return lineHeight;
+    }
+
+    public void setLineHeight(int lineHeight) {
+        this.lineHeight = lineHeight;
+    }
+
+    public int getCurrentBaseLine() {
+        return currentBaseLine;
+    }
+
+    public void setCurrentBaseLine(int currentBaseLine) {
+        this.currentBaseLine = currentBaseLine;
+    }
+
+    public boolean isNewline() {
+        return newline;
+    }
+
+    public void setNewline(boolean newline) {
+        this.newline = newline;
+    }
+
+    public boolean isPreprocessing() {
+        return preprocessing;
+    }
+
+    public void setPreprocessing(boolean preprocessing) {
+        this.preprocessing = preprocessing;
+    }
+
+    public boolean isInvalidateCache() {
+        return invalidateCache;
+    }
+
+    public void setInvalidateCache(boolean invalidateCache) {
+        this.invalidateCache = invalidateCache;
+    }
+
+    public float getScreenRatio() {
+        return screenRatio;
+    }
+
+    public void setScreenRatio(float screenRatio) {
+        this.screenRatio = screenRatio;
     }
 
     @Override

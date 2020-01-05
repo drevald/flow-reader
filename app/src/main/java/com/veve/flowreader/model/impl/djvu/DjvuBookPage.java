@@ -41,9 +41,8 @@ public class DjvuBookPage extends AbstractBookPage implements BookPage  {
     @Override
     public List<Bitmap> getAsReflownBitmap(DevicePageContext context, List<PageGlyphInfo> pageGlyphs) {
         PageSize pageSize = new PageSize();
-        byte[] bytes = getNativeReflownBytes(getBookId(), getPageNumber(), context.getZoom(), context.getPrtrait(), context.getScreenRatio(),
+        byte[] bytes = getNativeReflownBytes(getBookId(), getPageNumber(), context.getZoom(), context.getPortrait(), context.getScreenRatio(),
                 pageSize, pageGlyphs, context.isPreprocessing(), context.getMargin());
-
 
         BitmapFactory.Options opts = new BitmapFactory.Options();
         //opts.inPreferredConfig = Bitmap.Config.ARGB_8888;

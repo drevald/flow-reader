@@ -37,7 +37,6 @@ public class PrintTest extends BookTest {
                     true,     // initialTouchMode
                     false);   // launchActivity. False to customize the intent
 
-
     @Before
     public void getActivity() {
         bookRecord.setMode(Constants.VIEW_MODE_ORIGINAL);

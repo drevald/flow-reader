@@ -171,7 +171,19 @@ public class PrintActivity extends AppCompatActivity {
                 int columnsHeightInPixels = (int) (workHeightInMils * INCH_IN_MILS * attributes.getResolution().getVerticalDpi());
                 try {
                     context.setZoom(1);
+                    Log.v(getClass().getName(), String.format("Setting column width %d hash %s",
+                            columnsWithInPixels,
+                            context.hashCode()));
                     context.setWidth(columnsWithInPixels);
+                    Log.v(getClass().getName(),
+                            String.format("Drawing column width %d on page %d(%d) x %d(%d) hash %s",
+                                    context.getWidth(),
+                                    (int)(attributes.getResolution().getHorizontalDpi() * INCH_IN_MILS * widthInMils),
+                                    widthInMils,
+                                    (int)(attributes.getResolution().getVerticalDpi() * INCH_IN_MILS * heightInMils),
+                                    widthInMils,
+                            context.hashCode()));
+
                     context.setScreenRatio(columnsWithInPixels / (float) columnsHeightInPixels);
                     PageTailor pageTailor = new PageTailor(pageRenderer, pagesSets, context, columnsHeightInPixels);
                     Bitmap bitmap;
