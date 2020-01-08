@@ -101,7 +101,7 @@
                         style="@style/label"
                         app:buttonTint="#ffffff"
                         android:onClick="setColumnWidth"
-                        android:text="Columns width, mm"/>
+                        android:text="Cols width, mm"/>
                     <EditText
                         android:id="@+id/column_width"
                         android:layout_width="wrap_content"

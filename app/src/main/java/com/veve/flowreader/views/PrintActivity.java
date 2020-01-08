@@ -156,7 +156,8 @@ public class PrintActivity extends AppCompatActivity {
                 attributes = newAttributes;
                 pdfDocument = new PdfDocument();
 
-                int colNum = 3;
+                String numStr = ((EditText)findViewById(R.id.columns_number)).getText().toString();
+                int colNum = Integer.parseInt(numStr);
                 int widthInMils = attributes.getMediaSize().getWidthMils();
                 int heightInMils = attributes.getMediaSize().getHeightMils();
                 int workWidthInMils = widthInMils - attributes.getMinMargins().getLeftMils() - attributes.getMinMargins().getRightMils();
@@ -241,6 +242,7 @@ public class PrintActivity extends AppCompatActivity {
     }
 
     private void doPrint(BookRecord bookRecord) {
+
         // Get a PrintManager instance
         PrintManager printManager = (PrintManager) getActivity()
                 .getSystemService(Context.PRINT_SERVICE);
@@ -279,6 +281,12 @@ public class PrintActivity extends AppCompatActivity {
         }
 
         findViewById(R.id.print).setOnClickListener((view) -> {
+                if(findViewById(R.id.columns_number).hasFocus()) {
+                    recalculateWidth();
+                } else if (findViewById(R.id.column_width).hasFocus()) {
+                    recalculateColumnsNumber();
+                }
+                parsePagesString();
                 doPrint(bookRecord);
             }
         );
@@ -289,6 +297,34 @@ public class PrintActivity extends AppCompatActivity {
             }
         );
 
+    }
+
+    private void recalculateWidth() {
+        View v = findViewById(R.id.columns_number);
+        Log.v(getClass().getName(), "Column number set to " + ((EditText)v).getText().toString());
+        columnGroup.check(R.id.set_columns_number);
+        try {
+            int colsNum = Integer.parseInt(((EditText)v).getText().toString());
+            if (colsNum < 1) throw new Exception("Number of columns could not be less than one");
+            int columnWidth = calculateColumnWidthMm(Integer.parseInt(((EditText)v).getText().toString().trim()), DEFAULT_MEDIA_SIZE);
+            ((EditText)findViewById(R.id.column_width)).setText(String.valueOf(columnWidth));
+            findViewById(R.id.columns_number).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        } catch (Exception e) {
+            findViewById(R.id.columns_number).setBackgroundColor(getResources().getColor(R.color.colorAccent));
+        }
+    }
+
+    private void recalculateColumnsNumber() {
+        Log.v(getClass().getName(), "Column width input set to " +
+                ((EditText)findViewById(R.id.column_width)).getText().toString());
+        columnGroup.check(R.id.set_column_width);
+        try {
+            int colsNum = calculateColumnsNum(Integer.parseInt(((EditText)findViewById(R.id.column_width)).getText().toString().trim()), DEFAULT_MEDIA_SIZE);
+            ((EditText)findViewById(R.id.columns_number)).setText(String.valueOf(colsNum));
+            findViewById(R.id.column_width).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        } catch (Exception e) {
+            findViewById(R.id.column_width).setBackgroundColor(getResources().getColor(R.color.colorAccent));
+        }
     }
 
     @Override
@@ -312,28 +348,10 @@ public class PrintActivity extends AppCompatActivity {
         screenWidthMm =  (int) ((Math.min(widthInInches, heightInInches) * MM_IN_INCH));
         setPrintDeviceScreen(findViewById(R.id.set_column_width_as_device));
         findViewById(R.id.column_width).setOnFocusChangeListener((v, hasFocus) -> {
-            Log.v(getClass().getName(), "Column width input set to " + ((EditText)v).getText().toString());
-            columnGroup.check(R.id.set_column_width);
-            try {
-                int colsNum = calculateColumnsNum(Integer.parseInt(((EditText)findViewById(R.id.column_width)).getText().toString().trim()), DEFAULT_MEDIA_SIZE);
-                ((EditText)findViewById(R.id.columns_number)).setText(String.valueOf(colsNum));
-                findViewById(R.id.column_width).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-            } catch (Exception e) {
-                findViewById(R.id.column_width).setBackgroundColor(getResources().getColor(R.color.colorAccent));
-            }
+            recalculateColumnsNumber();
         });
         findViewById(R.id.columns_number).setOnFocusChangeListener((v, hasFocus) -> {
-            Log.v(getClass().getName(), "Column number set to " + ((EditText)v).getText().toString());
-            columnGroup.check(R.id.set_columns_number);
-            try {
-                int colsNum = Integer.parseInt(((EditText)v).getText().toString());
-                if (colsNum < 1) throw new Exception("Number of columns could not be less than one");
-                int columnWidth = calculateColumnWidthMm(Integer.parseInt(((EditText)v).getText().toString().trim()), DEFAULT_MEDIA_SIZE);
-                ((EditText)findViewById(R.id.column_width)).setText(String.valueOf(columnWidth));
-                findViewById(R.id.columns_number).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-            } catch (Exception e) {
-                findViewById(R.id.columns_number).setBackgroundColor(getResources().getColor(R.color.colorAccent));
-            }
+            recalculateWidth();
         });
     }
 
