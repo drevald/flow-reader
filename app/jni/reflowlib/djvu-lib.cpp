@@ -220,15 +220,26 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
     int h= format.h;
 
     Mat mat(h, w, CV_8UC1, &((char *) pixels)[0]);
-    threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
-    cv::Mat rotated_with_pictures;
     cv::Mat new_image;
-
     bool do_preprocessing = (bool)preprocessing;
     if (do_preprocessing) {
-        std::vector<glyph> pic_glyphs = preprocess(mat, rotated_with_pictures);
-        reflow(mat, new_image, scale, portrait, screen_ratio, env, glyphs, list, pic_glyphs, rotated_with_pictures, true, margin);
+        std::vector<uchar> buff;//buffer for coding
+        cv::imencode(".png", mat, buff);
+        PIX* pix = pixReadMemPng((l_uint8*)&buff[0], buff.size()) ;
+        PIX* result;
+        dewarpSinglePage(pix, 127, 1, 1, 1, &result, NULL, 1);
+        PIX* r = pixDeskew(result, 0);
+        pixDestroy(&result);
+        pixDestroy(&pix);
+       
+        cv::Mat m = pix8ToMat(r);
+        threshold(m, m, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
+        cv::Mat rotated_with_pictures;
+        std::vector<glyph> pic_glyphs = preprocess(m, rotated_with_pictures);
+        reflow(m, new_image, scale, portrait, screen_ratio, env, glyphs, list, pic_glyphs, rotated_with_pictures, true, margin);
     } else {
+        threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
+        cv::Mat rotated_with_pictures;
         reflow(mat, new_image, scale, portrait, screen_ratio, env, glyphs, list, std::vector<glyph>(), mat, false, margin);
     }
 
@@ -241,22 +252,19 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
 
     cv::bitwise_not(new_image, new_image);
 
-    std::vector<uchar> buff;//buffer for coding
-    std::vector<int> param(2);
-    param[0] = cv::IMWRITE_PNG_COMPRESSION;
-    param[1] = 100;
-    cv::imencode(".png", new_image, buff);
+    std::vector<uchar> buff1;//buffer for coding
+    cv::imencode(".png", new_image, buff1);
 
 
     //size_t sizeInBytes = new_image.total() * new_image.elemSize();
-    size_t sizeInBytes = buff.size(); //new_image.total() * new_image.elemSize();
+    size_t sizeInBytes = buff1.size(); //new_image.total() * new_image.elemSize();
 
 
     //size_t sizeInBytes = new_image.total() * new_image.elemSize();
 
 
     jbyteArray array = env->NewByteArray(sizeInBytes);
-    env->SetByteArrayRegion(array, 0, sizeInBytes, (jbyte *) &buff[0]);
+    env->SetByteArrayRegion(array, 0, sizeInBytes, (jbyte *) &buff1[0]);
     free(pixels);
     return array;
 

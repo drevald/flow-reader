@@ -43,6 +43,8 @@
 #include <fpdfview.h>
 #include <fpdfdoc.h>
 
+#include <allheaders.h>
+
 
 #define APPNAME "FLOW-READER"
 
@@ -77,6 +79,9 @@ struct SortSegments {
     }
 };
 
+Pix *mat8ToPix(cv::Mat *mat8);
+
+cv::Mat pix8ToMat(Pix *pix8);
 
 std::pair<std::vector<int>,std::vector<float>> make_hist(std::vector<int>& v, int num_buckets, int min, int max);
 
