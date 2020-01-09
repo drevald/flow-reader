@@ -58,4 +58,14 @@
     <string name="cancel">Отменить</string>
     <string name="print">Печать</string>
     <string name="title_activity_print">Печать</string>
+    <string name="pages_to_print">Страницы для печати</string>
+    <string name="current_page">Текущая страница</string>
+    <string name="all_pages">Все страницы</string>
+    <string name="pages_range">Укажите страницы</string>
+    <string name="columns_layout">Формат колонок</string>
+    <string name="use_device_width">Использовать ширину экрана</string>
+    <string name="columns_width">Ширина колонки, мм</string>
+    <string name="columns_number">Число колонок</string>
+    <string name="gap">Зазор, мм</string>
+
 </resources>

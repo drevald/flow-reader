@@ -69,11 +69,15 @@ import java.util.TreeSet;
 
 import static android.graphics.Bitmap.Config.ARGB_4444;
 import static com.veve.flowreader.Constants.INCH_IN_MILS;
+import static com.veve.flowreader.Constants.MILS_IN_MM;
 import static com.veve.flowreader.Constants.MM_IN_INCH;
+import static com.veve.flowreader.Constants.MM_IN_MILS;
 
 public class PrintActivity extends AppCompatActivity {
 
     static PageRenderer pageRenderer;
+
+    static PrintAttributes DEFAULT_ATTRIBUTES;
 
     static final PrintAttributes.MediaSize DEFAULT_MEDIA_SIZE = PrintAttributes.MediaSize.ISO_A4;
 
@@ -97,6 +101,13 @@ public class PrintActivity extends AppCompatActivity {
 
     int screenWidthMm;
 
+    static {
+        PrintAttributes.Builder builder = new PrintAttributes.Builder();
+        builder.setMediaSize(PrintAttributes.MediaSize.ISO_A4);
+        builder.setMinMargins(new PrintAttributes.Margins(0, 0, 0, 0));
+        builder.setResolution(new PrintAttributes.Resolution("300dpi", "300dpi", 300, 300));
+        DEFAULT_ATTRIBUTES = builder.build();
+    }
 
 
     class PrintBookAdapter extends PrintDocumentAdapter {
@@ -392,20 +403,25 @@ public class PrintActivity extends AppCompatActivity {
     //////////////////
 
     public void setPrintDeviceScreen(View view) {
-        columnGroup.check(R.id.set_column_width_as_device);
-        ((EditText)findViewById(R.id.column_width)).setText(String.valueOf(screenWidthMm));
-        ((EditText)findViewById(R.id.columns_number)).setText(String.valueOf(calculateColumnsNum(screenWidthMm, DEFAULT_MEDIA_SIZE)));
+        try {
+            columnGroup.check(R.id.set_column_width_as_device);
+            ((EditText) findViewById(R.id.column_width)).setText(String.valueOf(screenWidthMm));
+            ((EditText) findViewById(R.id.columns_number)).setText(String.valueOf(calculateColsNum(screenWidthMm, DEFAULT_ATTRIBUTES)));
+            ((EditText) findViewById(R.id.gap)).setText(String.valueOf(calculateGapMm(screenWidthMm, DEFAULT_ATTRIBUTES)));
+        } catch (Exception e) {
+            Log.e(getClass().getName(), e.getMessage());
+        }
     }
 
     public void setColumnWidth(View view) {
         columnGroup.check(R.id.set_column_width);
     }
 
-
     public void setColumnsNumber(View view) {
         columnGroup.check(R.id.set_columns_number);
     }
 
+    @Deprecated
     private int calculateColumnsNum(int columnWidthMm, PrintAttributes.MediaSize mediaSize) {
         int mediaWidthMm = (int)(mediaSize.getWidthMils() * MM_IN_INCH * INCH_IN_MILS);
         int result = (int)Math.floor((mediaWidthMm + GAP_MM)/ (columnWidthMm + GAP_MM));
@@ -414,12 +430,89 @@ public class PrintActivity extends AppCompatActivity {
         return result;
     }
 
+    @Deprecated
     private int calculateColumnWidthMm(int columnsNumber, PrintAttributes.MediaSize mediaSize) {
         int result = (int)(Math.floor(((mediaSize.getWidthMils() * MM_IN_INCH * INCH_IN_MILS)
                 - ((columnsNumber - 1) * GAP_MM) )/columnsNumber));
         Log.v(getClass().getName(), String.format("Width of columns, mm for n:%d Media.w:%f is %d",
                 columnsNumber, mediaSize.getWidthMils() * MM_IN_INCH * INCH_IN_MILS, result));
         return result;
+    }
+
+    /**
+     * Calculates printable column width for given media, cols number and gap
+     * @param columnsNumber number of columns to print
+     * @param gap - gap between columns in millimeters
+     * @param attributes - print attributes including media size and resolution
+     * @return - column width in millimeters
+     */
+    public int calculateColumnWidthMm(int columnsNumber, int gap, PrintAttributes attributes) throws Exception {
+
+        if (attributes.getMediaSize() == null || attributes.getMinMargins() == null)
+            throw new Exception("wrong print attributes");
+
+        int workingWidthMils =
+                attributes.getMediaSize().getWidthMils()
+                - attributes.getMinMargins().getLeftMils()
+                - attributes.getMinMargins().getRightMils()
+                - (int) (gap * (columnsNumber - 1) * MILS_IN_MM);
+
+        if (workingWidthMils <= 0)
+            throw new Exception ("Not enough width");
+
+        int result = (int) (workingWidthMils  * MM_IN_INCH * INCH_IN_MILS / (float)columnsNumber);
+
+        Log.v(getClass().getName(), String.format("Width of columns, mm for n:%d and gap %dmm for page.w:%f is %d",
+                columnsNumber, gap, attributes.getMediaSize().getWidthMils() * MM_IN_MILS, result));
+        return result;
+    }
+
+    /**
+     * Calculates gap in mm for given media and column width
+     * @param columnWidthMm - column width in mm
+     * @param attributes - print attributes
+     * @return - gap width in mm
+     */
+    public int calculateGapMm(int columnWidthMm, PrintAttributes attributes) throws Exception {
+
+        if (attributes.getMediaSize() == null || attributes.getMinMargins() == null)
+            throw new Exception("wrong print attributes");
+
+        int workingWidthMils =
+                attributes.getMediaSize().getWidthMils()
+                        - attributes.getMinMargins().getLeftMils()
+                        - attributes.getMinMargins().getRightMils();
+
+        if (workingWidthMils < columnWidthMm * MILS_IN_MM)
+            throw new Exception ("Not enought width");
+
+        int colsNum = (int)(workingWidthMils * MM_IN_MILS / (float) columnWidthMm);
+
+        return (int)((workingWidthMils * MM_IN_MILS - columnWidthMm * colsNum) / (colsNum - 1));
+
+    }
+
+    /**
+     * Calculates gap in mm for given media and column width
+     * @param columnWidthMm - column width in mm
+     * @param attributes - print attributes
+     * @return - number of columns
+     */
+    public int calculateColsNum(int columnWidthMm, PrintAttributes attributes) throws Exception {
+
+        if (attributes.getMediaSize() == null || attributes.getMinMargins() == null)
+            throw new Exception("wrong print attributes");
+
+        int workingWidthMils =
+                attributes.getMediaSize().getWidthMils()
+                        - attributes.getMinMargins().getLeftMils()
+                        - attributes.getMinMargins().getRightMils();
+
+        if (workingWidthMils < columnWidthMm * MILS_IN_MM)
+            throw new Exception ("Not enought width");
+
+        return (int)(workingWidthMils * MM_IN_MILS / (float) columnWidthMm);
+
     }
 
 }

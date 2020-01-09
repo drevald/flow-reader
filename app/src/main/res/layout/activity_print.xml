@@ -23,37 +23,40 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorPrimary">
-
+        android:background="@color/colorPrimary"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/pages_to_print"
+                style="@style/label"/>
             <RadioGroup
                 android:id="@+id/page_range"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="50dp"
+                android:padding="10dp"
                 android:paddingTop="10dp"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
                 <RadioButton
                     android:id="@+id/current_page"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/label"
+                    style="@style/form_label"
                     app:buttonTint="#ffffff"
                     android:onClick="setPrintCurrentPage"
-                    android:text="Current page"/>
+                    android:text="@string/current_page"/>
                 <RadioButton
                     android:id="@+id/all_pages"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/label"
+                    style="@style/form_label"
                     app:buttonTint="#ffffff"
                     android:onClick="setPrintAllPages"
-                    android:text="All Pages"/>
+                    android:text="@string/all_pages"/>
                 <LinearLayout
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
@@ -63,33 +66,36 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:buttonTint="#ffffff"
-                        style="@style/label"
+                        style="@style/form_label"
                         android:onClick="setPrintCustomRange"
-                        android:text="Pages Range"/>
+                        android:text="@string/pages_range"/>
                     <EditText
                         android:id="@+id/pages"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:inputType="none"
-                        android:text="1 - 10"
-                        style="@style/label"/>
+                        style="@style/form_label"/>
                 </LinearLayout>
             </RadioGroup>
-
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/columns_layout"
+                style="@style/label"/>
             <RadioGroup
                 android:id="@+id/column"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="50dp"
+                android:padding="10dp"
                 android:paddingTop="10dp">
                 <RadioButton
                     android:id="@+id/set_column_width_as_device"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/label"
+                    style="@style/form_label"
                     app:buttonTint="#ffffff"
                     android:onClick="setPrintDeviceScreen"
-                    android:text="Use device width"/>
+                    android:text="@string/use_device_width"/>
                 <LinearLayout
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
@@ -98,17 +104,16 @@
                         android:id="@+id/set_column_width"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        style="@style/label"
+                        style="@style/form_label"
                         app:buttonTint="#ffffff"
                         android:onClick="setColumnWidth"
-                        android:text="Cols width, mm"/>
+                        android:text="@string/columns_width"/>
                     <EditText
                         android:id="@+id/column_width"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:inputType="none"
-                        android:text="100"
-                        style="@style/label"/>
+                        android:inputType="number"
+                        style="@style/form_label"/>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_height="wrap_content"
@@ -119,16 +124,25 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:buttonTint="#ffffff"
-                        style="@style/label"
+                        style="@style/form_label"
                         android:onClick="setColumnsNumber"
-                        android:text="Columns number"/>
+                        android:text="@string/columns_number"/>
                     <EditText
                         android:id="@+id/columns_number"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:inputType="number"
+                        style="@style/form_label"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/gap"/>
+                    <EditText
+                        android:id="@+id/gap"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:inputType="none"
-                        android:text="2"
-                        style="@style/label"/>
+                        style="@style/form_label"/>
                 </LinearLayout>
             </RadioGroup>
         </LinearLayout>

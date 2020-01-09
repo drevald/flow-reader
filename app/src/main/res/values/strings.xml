@@ -58,4 +58,13 @@
     <string name="cancel">Cancel</string>
     <string name="print">Print</string>
     <string name="title_activity_print">Print</string>
+    <string name="pages_to_print">Pages to print</string>
+    <string name="current_page">Current page</string>
+    <string name="all_pages">All pages</string>
+    <string name="pages_range">Pages range</string>
+    <string name="columns_layout">Columns layout</string>
+    <string name="use_device_width">Use device width, mm</string>
+    <string name="columns_width">Columns width, mm</string>
+    <string name="columns_number">Columns number</string>
+    <string name="gap">Gap, mm</string>
 </resources>
