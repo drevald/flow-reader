@@ -79,6 +79,8 @@ public class PrintActivity extends AppCompatActivity {
 
     static final int DEFAULT_RESOLUTION = 300;
 
+    static final int GAP_MM = 5;
+
     BookRecord bookRecord;
 
     List<PagesSet> pagesSets;
@@ -94,6 +96,8 @@ public class PrintActivity extends AppCompatActivity {
     RadioGroup pagesGroup;
 
     int screenWidthMm;
+
+
 
     class PrintBookAdapter extends PrintDocumentAdapter {
 
@@ -162,7 +166,8 @@ public class PrintActivity extends AppCompatActivity {
                 int heightInMils = attributes.getMediaSize().getHeightMils();
                 int workWidthInMils = widthInMils - attributes.getMinMargins().getLeftMils() - attributes.getMinMargins().getRightMils();
                 int workHeightInMils = heightInMils - attributes.getMinMargins().getTopMils() - attributes.getMinMargins().getBottomMils();
-                int gap = (attributes.getMinMargins().getLeftMils() - attributes.getMinMargins().getRightMils()) / colNum;
+                int gap = (attributes.getMinMargins().getLeftMils()
+                        - attributes.getMinMargins().getRightMils()) / colNum;
                 workWidthInMils = workWidthInMils - gap * (colNum - 1);
                 int columnsWidthInMils = workWidthInMils / colNum;
                 int gapPixels = (int) (gap * INCH_IN_MILS * attributes.getResolution().getHorizontalDpi());
@@ -403,14 +408,15 @@ public class PrintActivity extends AppCompatActivity {
 
     private int calculateColumnsNum(int columnWidthMm, PrintAttributes.MediaSize mediaSize) {
         int mediaWidthMm = (int)(mediaSize.getWidthMils() * MM_IN_INCH * INCH_IN_MILS);
-        int result = (int)Math.floor(mediaWidthMm / columnWidthMm);
+        int result = (int)Math.floor((mediaWidthMm + GAP_MM)/ (columnWidthMm + GAP_MM));
         Log.v(getClass().getName(), String.format("Num of columns for w:%d mm Media.w:%f is %d",
                 columnWidthMm, mediaSize.getWidthMils() * MM_IN_INCH * INCH_IN_MILS, result));
         return result;
     }
 
     private int calculateColumnWidthMm(int columnsNumber, PrintAttributes.MediaSize mediaSize) {
-        int result = (int)(Math.floor((mediaSize.getWidthMils() * MM_IN_INCH * INCH_IN_MILS )/columnsNumber));
+        int result = (int)(Math.floor(((mediaSize.getWidthMils() * MM_IN_INCH * INCH_IN_MILS)
+                - ((columnsNumber - 1) * GAP_MM) )/columnsNumber));
         Log.v(getClass().getName(), String.format("Width of columns, mm for n:%d Media.w:%f is %d",
                 columnsNumber, mediaSize.getWidthMils() * MM_IN_INCH * INCH_IN_MILS, result));
         return result;
