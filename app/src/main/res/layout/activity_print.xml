@@ -112,7 +112,8 @@
                         android:id="@+id/column_width"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:inputType="number"
+                        android:inputType="none"
+                        android:onClick="setColumnWidth"
                         style="@style/form_label"/>
                 </LinearLayout>
                 <LinearLayout
@@ -131,11 +132,14 @@
                         android:id="@+id/columns_number"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:inputType="number"
+                        android:inputType="none"
+                        android:onClick="setColumnsNumber"
                         style="@style/form_label"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        style="@style/form_label"
+                        android:onClick="setColumnsNumber"
                         android:text="@string/gap"/>
                     <EditText
                         android:id="@+id/gap"

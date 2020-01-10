@@ -41,5 +41,6 @@ public interface Constants {
     float MM_IN_INCH = 25.4f;
     float INCH_IN_MILS = 0.001f;
     float MILS_IN_MM = 39.3701f;
+    float INCH_IN_MM = 0.0393701f;
 
 }

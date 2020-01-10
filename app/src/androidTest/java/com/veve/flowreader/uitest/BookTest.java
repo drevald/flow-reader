@@ -22,7 +22,7 @@ import java.io.OutputStream;
 
 public class BookTest {
 
-    long testBookId;
+    protected long testBookId;
     BookRecord bookRecord;
     Context appContext;
     BooksCollection booksCollection;
