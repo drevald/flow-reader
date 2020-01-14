@@ -59,6 +59,11 @@ public class BrowseFilesActivity extends AppCompatActivity {
 
         progress = findViewById(R.id.progress);
 
+        findViewById(R.id.external_memory).setOnClickListener((view) -> {
+            fileListAdapter.setRoot(EXTERNAL_MEMORY_DIR);
+            fileListAdapter.notifyDataSetChanged();
+        });
+
         if (new File(EXTERNAL_MEMORY_DIR).exists()) {
             findViewById(R.id.internal_memory).setVisibility(View.VISIBLE);
             findViewById(R.id.external_memory).setVisibility(View.VISIBLE);
@@ -250,11 +255,6 @@ public class BrowseFilesActivity extends AppCompatActivity {
         } else {
             fileListAdapter.setRoot(Environment.getExternalStorageDirectory().getAbsolutePath());
         }
-        fileListAdapter.notifyDataSetChanged();
-    }
-
-    public void browseExternalMemory(View view) {
-        fileListAdapter.setRoot(EXTERNAL_MEMORY_DIR);
         fileListAdapter.notifyDataSetChanged();
     }
 
