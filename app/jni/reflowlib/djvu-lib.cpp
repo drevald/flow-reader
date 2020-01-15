@@ -210,7 +210,7 @@ image_format get_djvu_pixels(JNIEnv *env, jlong bookId, jint page_number, jboole
 }
 
 JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeReflownBytes
-        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jfloat scale, jboolean portrait, jfloat screen_ratio, jobject pageSize, jobject list, jboolean preprocessing, jfloat margin) {
+        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jfloat scale, jint pageWidth, jobject pageSize, jobject list, jboolean preprocessing, jfloat margin) {
 
     std::vector<glyph> glyphs = convert_java_glyphs(env, list);
 
@@ -227,9 +227,9 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
     bool do_preprocessing = (bool)preprocessing;
     if (do_preprocessing) {
         std::vector<glyph> pic_glyphs = preprocess(mat, rotated_with_pictures);
-        reflow(mat, new_image, scale, portrait, screen_ratio, env, glyphs, list, pic_glyphs, rotated_with_pictures, true, margin);
+        reflow(mat, new_image, scale, pageWidth, env, glyphs, list, pic_glyphs, rotated_with_pictures, true, margin);
     } else {
-        reflow(mat, new_image, scale, portrait, screen_ratio, env, glyphs, list, std::vector<glyph>(), mat, false, margin);
+        reflow(mat, new_image, scale, pageWidth, env, glyphs, list, std::vector<glyph>(), mat, false, margin);
     }
 
     jclass clz = env->GetObjectClass(pageSize);
@@ -240,25 +240,9 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
     env->CallVoidMethod(pageSize,setPageHeightMid, new_image.rows);
 
     cv::bitwise_not(new_image, new_image);
-
-    std::vector<uchar> buff;//buffer for coding
-    std::vector<int> param(2);
-    param[0] = cv::IMWRITE_PNG_COMPRESSION;
-    param[1] = 100;
-    cv::imencode(".png", new_image, buff);
-
-
-    //size_t sizeInBytes = new_image.total() * new_image.elemSize();
-    size_t sizeInBytes = buff.size(); //new_image.total() * new_image.elemSize();
-
-
-    //size_t sizeInBytes = new_image.total() * new_image.elemSize();
-
-
-    jbyteArray array = env->NewByteArray(sizeInBytes);
-    env->SetByteArrayRegion(array, 0, sizeInBytes, (jbyte *) &buff[0]);
+    jobject arrayList = splitMat(new_image, env);
     free(pixels);
-    return array;
+    return arrayList;
 
 }
 

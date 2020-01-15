@@ -59,7 +59,7 @@ public class PdfBookPage extends AbstractBookPage implements BookPage {
 
 
         List<byte[]> bytes = getNativeReflownBytes(getBookId(), getPageNumber(), context.getZoom(),
-                context.getPrtrait(), context.getScreenRatio(), pageSize, pageGlyphs, context.isPreprocessing(), context.getMargin());
+                (int)(context.getWidth() * 0.8), pageSize, pageGlyphs, context.isPreprocessing(), context.getMargin());
 
         List<Bitmap> retVal = new ArrayList<>();
 
@@ -103,7 +103,7 @@ public class PdfBookPage extends AbstractBookPage implements BookPage {
     }
 
 
-    private static native List<byte[]> getNativeReflownBytes(long bookId, int pageNumber, float scale,boolean portrait, float screenRatio, PageSize pageSize, List<PageGlyphInfo> pageGlyphs, boolean preprocessing, float margin);
+    private static native List<byte[]> getNativeReflownBytes(long bookId, int pageNumber, float scale, int pageWidth, PageSize pageSize, List<PageGlyphInfo> pageGlyphs, boolean preprocessing, float margin);
 
     private static native int getNativeWidth(long bookId, int pageNumber);
 
