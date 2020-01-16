@@ -67,6 +67,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
+        android:labelFor="@string/cancel"
         app:srcCompat="@drawable/ic_return" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

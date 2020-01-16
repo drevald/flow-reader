@@ -24,6 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
+                android:labelFor="@string/list_view"
                 app:srcCompat="@drawable/ic_books_list" />
 
             <androidx.appcompat.widget.AppCompatImageButton
@@ -32,6 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
+                android:labelFor="@string/grid_view"
                 app:srcCompat="@drawable/ic_books_grid" />
 
         </androidx.appcompat.widget.Toolbar>
@@ -70,6 +72,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
+        android:labelFor="@string/add_book"
         app:srcCompat="@drawable/ic_book_add" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

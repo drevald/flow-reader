@@ -56,4 +56,7 @@
     <string name="new_title">Новое название</string>
     <string name="save">Сохранить</string>
     <string name="cancel">Отменить</string>
+    <string name="grid_view">Переключится в режим таблицы</string>
+    <string name="list_view">Переключится в режим списка</string>
+    <string name="add_book">Добавить книгу</string>
 </resources>
