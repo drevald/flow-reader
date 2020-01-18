@@ -2,20 +2,16 @@ package com.veve.flowreader.model.impl.djvu;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
 import com.veve.flowreader.Utils;
 import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyphInfo;
-import com.veve.flowreader.model.PageSize;
+import com.veve.flowreader.model.PageInfo;
 import com.veve.flowreader.model.impl.AbstractBookPage;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 
 public class DjvuBookPage extends AbstractBookPage implements BookPage  {
@@ -42,10 +38,11 @@ public class DjvuBookPage extends AbstractBookPage implements BookPage  {
 
     @Override
     public List<Bitmap> getAsReflownBitmap(DevicePageContext context, List<PageGlyphInfo> pageGlyphs) {
-        PageSize pageSize = new PageSize();
+        PageInfo pageInfo = new PageInfo();
         List<byte[]> bytes = getNativeReflownBytes(getBookId(), getPageNumber(), context.getZoom(), (int)(context.getWidth() * 0.8),
-                pageSize, pageGlyphs, context.isPreprocessing(), context.getMargin());
+                context.getResolution(), pageInfo, pageGlyphs, context.isPreprocessing(), context.getMargin());
 
+        context.setResolution(pageInfo.getResolution());
         List<Bitmap> retVal = new ArrayList<>();
 
         for (int i=0;i<bytes.size(); i++) {
@@ -77,7 +74,7 @@ public class DjvuBookPage extends AbstractBookPage implements BookPage  {
         return getNativeHeight(getBookId(), getPageNumber());
     }
 
-    private static native List<byte[]> getNativeReflownBytes(long bookId, int pageNumber, float scale, int pageWidth, PageSize pageSize, List<PageGlyphInfo> pageGlyphs, boolean preprocessing, float margin);
+    private static native List<byte[]> getNativeReflownBytes(long bookId, int pageNumber, float scale, int pageWidth, int resolution, PageInfo pageInfo, List<PageGlyphInfo> pageGlyphs, boolean preprocessing, float margin);
 
     private static native byte[] getNativeBytes(long bookId, int pageNumber);
 

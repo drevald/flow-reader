@@ -25,16 +25,7 @@ public class DevicePageContext implements Serializable {
     private boolean newline;
     private boolean preprocessing;
     private boolean invalidateCache;
-    private boolean portrait;
-    private float screenRatio;
-
-    public boolean getPrtrait() {
-        return portrait;
-    }
-
-    public void setPortrait(boolean portrait) {
-        this.portrait = portrait;
-    }
+    private int resolution;
 
     public float getZoomOriginal() {return zoomOriginal;}
 
@@ -148,11 +139,11 @@ public class DevicePageContext implements Serializable {
         this.invalidateCache = invalidateCache;
     }
 
-    public float getScreenRatio() {
-        return screenRatio;
+    public int getResolution() {
+        return resolution;
     }
 
-    public void setScreenRatio(float screenRatio) {
-        this.screenRatio = screenRatio;
+    public void setResolution(int resolution) {
+        this.resolution = resolution;
     }
 }

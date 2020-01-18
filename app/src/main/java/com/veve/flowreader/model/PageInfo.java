@@ -1,16 +1,17 @@
 package com.veve.flowreader.model;
 
-public class PageSize {
+public class PageInfo {
 
     private int pageWidth;
     private int pageHeight;
+    private int resolution;
 
-    public PageSize() {
+    public PageInfo() {
         pageWidth = 0;
         pageHeight = 0;
     }
 
-    public PageSize(int width, int height) {
+    public PageInfo(int width, int height) {
         pageHeight = height;
         pageWidth = width;
     }
@@ -29,5 +30,13 @@ public class PageSize {
 
     public void setPageHeight(int pageHeight) {
         this.pageHeight = pageHeight;
+    }
+
+    public int getResolution() {
+        return resolution;
+    }
+
+    public void setResolution(int resolution) {
+        this.resolution = resolution;
     }
 }

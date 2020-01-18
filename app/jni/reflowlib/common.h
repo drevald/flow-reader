@@ -69,8 +69,9 @@ struct image_format {
     int w;
     int h;
     int size;
+    int resolution;
 public:
-    image_format(int w, int h, int size) : w(w), h(h), size(size) {}
+    image_format(int w, int h, int size, int resolution) : w(w), h(h), size(size), resolution(resolution) {}
 };
 
 struct SortSegments {

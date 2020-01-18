@@ -92,12 +92,12 @@ image_format get_pdf_pixels(JNIEnv* env, jlong bookId, jint pageNumber, char** p
     FPDF_RenderPageBitmap(bitmap, page, 0, 0, width, height, 0, 0);
     *pixels = (char*)reinterpret_cast<const char*>(FPDFBitmap_GetBuffer(bitmap));
 
-    return image_format(width, height, size);
+    return image_format(width, height, size, 300);
 
 }
 
 JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativeReflownBytes
-        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jfloat scale, jint pageWidth, jobject pageSize, jobject list, jboolean preprocessing, jfloat margin) {
+        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jfloat scale, jint pageWidth, jint resolution, jobject pageInfo, jobject list, jboolean preprocessing, jfloat margin) {
 
 
     // get glyphs from java
@@ -133,19 +133,20 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
         threshold(m, m, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
         cv::Mat rotated_with_pictures;
         std::vector<glyph> pic_glyphs = preprocess(m, rotated_with_pictures);
-        reflow(m, new_image, scale, pageWidth, env, glyphs, list, pic_glyphs, rotated_with_pictures, true, margin);
+        reflow(m, new_image, scale * resolution/300.0, pageWidth, env, glyphs, list, pic_glyphs, rotated_with_pictures, true, margin);
     } else {
         threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
-        std::vector<glyph> pic_glyphs = preprocess(mat, rotated_with_pictures);
-        reflow(mat, new_image, scale, pageWidth, env, glyphs, list, pic_glyphs, rotated_with_pictures, true, margin);
+        reflow(mat, new_image, scale * resolution/300.0, pageWidth, env, glyphs, list, std::vector<glyph>(), rotated_with_pictures, true, margin);
     }
 
-    jclass clz = env->GetObjectClass(pageSize);
+    jclass clz = env->GetObjectClass(pageInfo);
 
     jmethodID setPageWidthMid = env->GetMethodID(clz, "setPageWidth", "(I)V");
     jmethodID setPageHeightMid = env->GetMethodID(clz, "setPageHeight", "(I)V");
-    env->CallVoidMethod(pageSize,setPageWidthMid, new_image.cols);
-    env->CallVoidMethod(pageSize,setPageHeightMid, new_image.rows);
+    jmethodID setResolutionMid = env->GetMethodID(clz, "setResolution", "(I)V");
+    env->CallVoidMethod(pageInfo,setPageWidthMid, new_image.cols);
+    env->CallVoidMethod(pageInfo,setPageHeightMid, new_image.rows);
+    env->CallVoidMethod(pageInfo,setResolutionMid, 300);
 
     cv::bitwise_not(new_image, new_image);
 
