@@ -56,4 +56,7 @@
     <string name="new_title">New title</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
+    <string name="grid_view">Switch to grid view</string>
+    <string name="list_view">Switch to list view</string>
+    <string name="add_book">Add book</string>
 </resources>

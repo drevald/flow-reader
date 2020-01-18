@@ -14,10 +14,10 @@ android {
     compileSdkVersion 29
     defaultConfig {
         applicationId "com.veve.flowreader"
-        minSdkVersion 16
+        minSdkVersion 23
         targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "3"
         buildConfigField "String", "GitHash", "\"${getGitHash()}\""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = "true"

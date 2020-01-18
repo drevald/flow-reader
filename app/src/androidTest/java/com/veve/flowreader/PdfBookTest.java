@@ -24,7 +24,7 @@ public class PdfBookTest {
         PdfBookSource source = new PdfBookSource("/data/local/tmp/pdf_sample.pdf");
         List<PageGlyph> pageGlyphs = source.getPageGlyphs(0);
         System.out.println(pageGlyphs.size());
-        Assert.assertEquals(2700, pageGlyphs.size());
+        Assert.assertEquals(2628, pageGlyphs.size());
     }
 
     @Test

@@ -97,7 +97,7 @@ image_format get_pdf_pixels(JNIEnv* env, jlong bookId, jint pageNumber, char** p
 }
 
 JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativeReflownBytes
-        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jfloat scale, jboolean portrait, jfloat screen_ratio,  jobject pageSize, jobject list, jboolean preprocessing, jfloat margin) {
+        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jfloat scale, jint pageWidth, jobject pageSize, jobject list, jboolean preprocessing, jfloat margin) {
 
 
     // get glyphs from java
@@ -133,10 +133,11 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
         threshold(m, m, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
         cv::Mat rotated_with_pictures;
         std::vector<glyph> pic_glyphs = preprocess(m, rotated_with_pictures);
-        reflow(m, new_image, scale, portrait, screen_ratio, env, glyphs, list, pic_glyphs, rotated_with_pictures, true, margin);
+        reflow(m, new_image, scale, pageWidth, env, glyphs, list, pic_glyphs, rotated_with_pictures, true, margin);
     } else {
-         threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
-        reflow(mat, new_image, scale, portrait, screen_ratio, env, glyphs, list, std::vector<glyph>(), mat, false, margin);
+        threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
+        std::vector<glyph> pic_glyphs = preprocess(mat, rotated_with_pictures);
+        reflow(mat, new_image, scale, pageWidth, env, glyphs, list, pic_glyphs, rotated_with_pictures, true, margin);
     }
 
     jclass clz = env->GetObjectClass(pageSize);
@@ -148,43 +149,7 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
 
     cv::bitwise_not(new_image, new_image);
 
-    int w = new_image.size().width;
-    int h = new_image.size().height;
-    cv::Mat upper = new_image(cv::Rect(0,0,w, h/2));
-    cv::Mat lower = new_image(cv::Rect(0,h/2,w, h - h/2));
-
-
-    std::vector<uchar> buff;//buffer for coding
-    cv::imencode(".png", upper, buff);
-
-
-    std::vector<uchar> buff1;//buffer for coding
-    cv::imencode(".png", lower, buff1);
-
-
-    //size_t sizeInBytes = new_image.total() * new_image.elemSize();
-    size_t sizeInBytes = buff.size(); //new_image.total() * new_image.elemSize();
-
-    jbyteArray array = env->NewByteArray(sizeInBytes);
-    //env->SetByteArrayRegion(array, 0, sizeInBytes, (jbyte *) new_image.data);
-    env->SetByteArrayRegion(array, 0, sizeInBytes, (jbyte *) &buff[0]);
-
-    //size_t sizeInBytes = new_image.total() * new_image.elemSize();
-    size_t sizeInBytes1 = buff1.size(); //new_image.total() * new_image.elemSize();
-
-    jbyteArray array1 = env->NewByteArray(sizeInBytes1);
-    //env->SetByteArrayRegion(array, 0, sizeInBytes, (jbyte *) new_image.data);
-    env->SetByteArrayRegion(array1, 0, sizeInBytes1, (jbyte *) &buff1[0]);
-
-
-    static jclass java_util_ArrayList      = static_cast<jclass>(env->NewGlobalRef(env->FindClass("java/util/ArrayList")));
-    static jmethodID java_util_ArrayList_     = env->GetMethodID(java_util_ArrayList, "<init>", "(I)V");
-    static jmethodID java_util_ArrayList_add  = env->GetMethodID(java_util_ArrayList, "add", "(Ljava/lang/Object;)Z");
-
-    jobject arrayList = env->NewObject(java_util_ArrayList, java_util_ArrayList_, 1);
-    env->CallBooleanMethod(arrayList, java_util_ArrayList_add, array);
-    env->CallBooleanMethod(arrayList, java_util_ArrayList_add, array1);
-
+    jobject arrayList = splitMat(new_image, env);
 
     free((void*)buffer);
     mat.release();
@@ -283,7 +248,6 @@ JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBook_getNumber
     return page_count;
 
 }
-
 
 
 
