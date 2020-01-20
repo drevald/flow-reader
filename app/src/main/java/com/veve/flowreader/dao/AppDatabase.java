@@ -8,6 +8,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -47,27 +48,49 @@ public abstract class AppDatabase extends RoomDatabase {
                 public void migrate(@NonNull SupportSQLiteDatabase database) {}
             });
             appDatabase = builder.build();
-            try {
-                appDatabase.addSampleBook(context);
-            } catch (Exception e) {
-                Log.e(AppDatabase.class.getName(), "Failed to add sample book", e);
-            }
+            InitDatabaseTask initDatabaseTask = new InitDatabaseTask(appDatabase.daoAccess());
+
 
         }
         return appDatabase;
     }
 
-    private void addSampleBook(Context context) throws Exception {
-        File file = new File(context.getExternalFilesDir(null), "sample.pdf");
-        InputStream is = context.getResources().openRawResource(R.raw.pdf_sample);
-        Utils.copy(is, new FileOutputStream(file));
-        BookRecord bookRecord = BookFactory.getInstance().createBook(file);
-        this.daoAccess().addBook(bookRecord);
-    }
 
     @Override
     public void clearAllTables() {
 
     }
 
+    static class InitDatabaseTask extends AsyncTask<Context, Void, Void> {
+
+        DaoAccess daoAccess;
+
+        InitDatabaseTask(DaoAccess daoAccess) {
+            this.daoAccess = daoAccess;
+        }
+
+        @Override
+        protected Void doInBackground(Context... contexts) {
+            Context context = contexts[0];
+            try {
+                File file = new File(context.getExternalFilesDir(null), "sample.pdf");
+                InputStream is = context.getResources().openRawResource(R.raw.pdf_sample);
+                Utils.copy(is, new FileOutputStream(file));
+                BookRecord bookRecord = BookFactory.getInstance().createBook(file);
+                daoAccess.addBook(bookRecord);
+            } catch (Exception e) {
+                Log.e(AppDatabase.class.getName(), "Failed to add sample book", e);
+            }
+            return null;
+        }
+
+    }
+
 }
+
+
+
+
+
+
+
