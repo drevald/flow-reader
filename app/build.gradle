@@ -14,10 +14,10 @@ android {
     compileSdkVersion 29
     defaultConfig {
         applicationId "com.veve.flowreader"
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 29
-        versionCode 1
-        versionName "1.0"
+        versionCode 4
+        versionName "0.1"
         buildConfigField "String", "GitHash", "\"${getGitHash()}\""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = "true"
@@ -37,7 +37,6 @@ android {
     sourceSets.main {
         jniLibs.srcDir 'jni/reflowlib'
     }
-
 
     externalNativeBuild {
         ndkBuild {
