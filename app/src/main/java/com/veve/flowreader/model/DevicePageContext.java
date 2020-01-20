@@ -62,6 +62,8 @@ public class DevicePageContext implements Serializable  {
 
     private float screenRatio;
 
+    private int resolution;
+
     public DevicePageContext(int width) {
         this.zoom = DEFAULT_ZOOM;
         this.kerning = DEFAULT_KERNING;
@@ -74,6 +76,14 @@ public class DevicePageContext implements Serializable  {
         this.remotestPointY = 0;
         this.displayDpi = DEFAULT_DISPLAY_DPI;
         this.currentBaseLine = 0;
+    }
+
+    public int getResolution() {
+        return resolution;
+    }
+
+    public void setResolution(int resolution) {
+        this.resolution = resolution;
     }
 
     public boolean getPortrait() {

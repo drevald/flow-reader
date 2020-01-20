@@ -67,5 +67,8 @@
     <string name="columns_width">Ширина колонки, мм</string>
     <string name="columns_number">Число колонок</string>
     <string name="gap">Зазор, мм</string>
+    <string name="add_book">Добавить книгу</string>
+    <string name="grid_view">Показывать таблицу</string>
+    <string name="list_view">Показывать список</string>
 
 </resources>

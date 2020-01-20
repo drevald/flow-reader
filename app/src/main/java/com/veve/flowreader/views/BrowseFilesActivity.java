@@ -168,8 +168,9 @@ public class BrowseFilesActivity extends AppCompatActivity {
         public View getView(int position, View convertView, ViewGroup container) {
             if (convertView == null) {
                 convertView = getLayoutInflater().inflate(R.layout.items_list, container, false);
+                Log.v(getClass().getName(), "convertView.getClass().getName() = " + convertView.getClass().getName());
             }
-            TextView textView = (TextView) ((ConstraintLayout) convertView).getChildAt(0);
+            TextView textView = (TextView) convertView;
             File selectedFile = currentFiles.get(position);
             textView.setText(selectedFile.getName());
             if (!selectedFile.canRead()) {

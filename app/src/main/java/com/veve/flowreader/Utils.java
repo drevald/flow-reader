@@ -2,6 +2,9 @@ package com.veve.flowreader;
 
 import android.graphics.BitmapFactory;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 public class Utils {
 
     public static int calculateInSampleSize(
@@ -23,8 +26,17 @@ public class Utils {
                 inSampleSize *= 2;
             }
         }
-
         return inSampleSize;
     }
+
+    public synchronized static void copy(InputStream is, OutputStream os) throws Exception {
+        byte[] buffer = new byte[100];
+        while (is.read(buffer) != -1) {
+            os.write(buffer);
+        }
+        os.close();
+        is.close();
+    }
+
 
 }
