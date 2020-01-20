@@ -2,18 +2,16 @@ package com.veve.flowreader.model.impl.djvu;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
+import com.veve.flowreader.Utils;
 import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyphInfo;
-import com.veve.flowreader.model.PageSize;
+import com.veve.flowreader.model.PageInfo;
 import com.veve.flowreader.model.impl.AbstractBookPage;
 
-import java.nio.ByteBuffer;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 
 public class DjvuBookPage extends AbstractBookPage implements BookPage  {
@@ -40,27 +38,29 @@ public class DjvuBookPage extends AbstractBookPage implements BookPage  {
 
     @Override
     public List<Bitmap> getAsReflownBitmap(DevicePageContext context, List<PageGlyphInfo> pageGlyphs) {
-        PageSize pageSize = new PageSize();
-        byte[] bytes = getNativeReflownBytes(getBookId(), getPageNumber(), context.getZoom(), context.getPortrait(), context.getScreenRatio(),
-                pageSize, pageGlyphs, context.isPreprocessing(), context.getMargin());
+        PageInfo pageInfo = new PageInfo();
+        List<byte[]> bytes = getNativeReflownBytes(getBookId(), getPageNumber(), context.getZoom(), (int)(context.getWidth() * 0.8),
+                context.getResolution(), pageInfo, pageGlyphs, context.isPreprocessing(), context.getMargin());
 
-        BitmapFactory.Options opts = new BitmapFactory.Options();
-        //opts.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        //opts.inJustDecodeBounds= true;
+        context.setResolution(pageInfo.getResolution());
+        List<Bitmap> retVal = new ArrayList<>();
 
-        return Arrays.asList(BitmapFactory.decodeByteArray(bytes,0, bytes.length, opts));
+        for (int i=0;i<bytes.size(); i++) {
+            byte[] b = bytes.get(i);
+            BitmapFactory.Options opts = new BitmapFactory.Options();
+            //opts.inPreferredConfig = Bitmap.Config.ARGB_8887;
+            opts.inJustDecodeBounds= true;
+            BitmapFactory.decodeByteArray(b,0, b.length, opts);
+            opts.inSampleSize = Utils.calculateInSampleSize(opts, context.getWidth(), context.getWidth()*(opts.outHeight/opts.outWidth));
+            opts.inJustDecodeBounds= false;
+            Bitmap bm = BitmapFactory.decodeByteArray(b,0, b.length, opts);
 
-        /*
-        int width = pageSize.getPageWidth();
-        int height = pageSize.getPageHeight();
-        Bitmap.Config bitmapConfig = Bitmap.Config.ALPHA_8;
-        final ByteBuffer bb = ByteBuffer.wrap(bytes);
-        Log.v("BITMAP_MEMORY", "Bitmap.createBitmap(" + width + ", " + height + ", bitmapConfig);");
-        Bitmap bm = Bitmap.createBitmap(width, height, bitmapConfig);
-        bb.rewind();
-        bm.copyPixelsFromBuffer(bb);
-        return bm;
-        */
+            retVal.add(bm);
+            bytes.set(i, null);
+        }
+        bytes = null;
+
+        return retVal;
 
     }
 
@@ -74,7 +74,7 @@ public class DjvuBookPage extends AbstractBookPage implements BookPage  {
         return getNativeHeight(getBookId(), getPageNumber());
     }
 
-    private static native byte[] getNativeReflownBytes(long bookId, int pageNumber, float scale, boolean portrait, float screenRatio, PageSize pageSize, List<PageGlyphInfo> pageGlyphs, boolean preprocessing, float margin);
+    private static native List<byte[]> getNativeReflownBytes(long bookId, int pageNumber, float scale, int pageWidth, int resolution, PageInfo pageInfo, List<PageGlyphInfo> pageGlyphs, boolean preprocessing, float margin);
 
     private static native byte[] getNativeBytes(long bookId, int pageNumber);
 
@@ -86,3 +86,4 @@ public class DjvuBookPage extends AbstractBookPage implements BookPage  {
     private static native int getNativeHeight(long bookId, int pageNumber);
 
 }
+

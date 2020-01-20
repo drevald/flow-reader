@@ -92,12 +92,12 @@ image_format get_pdf_pixels(JNIEnv* env, jlong bookId, jint pageNumber, char** p
     FPDF_RenderPageBitmap(bitmap, page, 0, 0, width, height, 0, 0);
     *pixels = (char*)reinterpret_cast<const char*>(FPDFBitmap_GetBuffer(bitmap));
 
-    return image_format(width, height, size);
+    return image_format(width, height, size, 300);
 
 }
 
 JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativeReflownBytes
-        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jfloat scale, jboolean portrait, jfloat screen_ratio,  jobject pageSize, jobject list, jboolean preprocessing, jfloat margin) {
+        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jfloat scale, jint pageWidth, jint resolution, jobject pageInfo, jobject list, jboolean preprocessing, jfloat margin) {
 
 
     // get glyphs from java
@@ -115,66 +115,44 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
     Mat mat(height,width,CV_8UC4,&((char*)buffer)[0]);
 
     cv::cvtColor(mat, mat, cv::COLOR_BGR2GRAY);
-    threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
-
+   
     bool do_preprocessing = (bool)preprocessing;
 
     cv::Mat rotated_with_pictures;
     cv::Mat new_image;
 
     if (do_preprocessing) {
-        std::vector<glyph> pic_glyphs = preprocess(mat, rotated_with_pictures);
-        reflow(mat, new_image, scale, portrait, screen_ratio, env, glyphs, list, pic_glyphs, rotated_with_pictures, true, margin);
+        std::vector<uchar> buff;//buffer for coding
+        cv::imencode(".png", mat, buff);
+        PIX* pix = pixReadMemPng((l_uint8*)&buff[0], buff.size()) ;
+        PIX* result;
+        dewarpSinglePage(pix, 127, 1, 1, 1, &result, NULL, 1);
+        PIX* r = pixDeskew(result, 0);
+        pixDestroy(&result);
+        pixDestroy(&pix);
+       
+        cv::Mat m = pix8ToMat(r);
+        threshold(m, m, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
+        cv::Mat rotated_with_pictures;
+        std::vector<glyph> pic_glyphs = preprocess(m, rotated_with_pictures);
+        reflow(m, new_image, scale * resolution/300.0, pageWidth, env, glyphs, list, pic_glyphs, rotated_with_pictures, true, margin);
     } else {
-        reflow(mat, new_image, scale, portrait, screen_ratio, env, glyphs, list, std::vector<glyph>(), mat, false, margin);
+        threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
+        reflow(mat, new_image, scale * resolution/300.0, pageWidth, env, glyphs, list, std::vector<glyph>(), rotated_with_pictures, true, margin);
     }
 
-    jclass clz = env->GetObjectClass(pageSize);
+    jclass clz = env->GetObjectClass(pageInfo);
 
     jmethodID setPageWidthMid = env->GetMethodID(clz, "setPageWidth", "(I)V");
     jmethodID setPageHeightMid = env->GetMethodID(clz, "setPageHeight", "(I)V");
-    env->CallVoidMethod(pageSize,setPageWidthMid, new_image.cols);
-    env->CallVoidMethod(pageSize,setPageHeightMid, new_image.rows);
+    jmethodID setResolutionMid = env->GetMethodID(clz, "setResolution", "(I)V");
+    env->CallVoidMethod(pageInfo,setPageWidthMid, new_image.cols);
+    env->CallVoidMethod(pageInfo,setPageHeightMid, new_image.rows);
+    env->CallVoidMethod(pageInfo,setResolutionMid, 300);
 
     cv::bitwise_not(new_image, new_image);
 
-    int w = new_image.size().width;
-    int h = new_image.size().height;
-    cv::Mat upper = new_image(cv::Rect(0,0,w, h/2));
-    cv::Mat lower = new_image(cv::Rect(0,h/2,w, h - h/2));
-
-
-    std::vector<uchar> buff;//buffer for coding
-    cv::imencode(".png", upper, buff);
-
-
-    std::vector<uchar> buff1;//buffer for coding
-    cv::imencode(".png", lower, buff1);
-
-
-    //size_t sizeInBytes = new_image.total() * new_image.elemSize();
-    size_t sizeInBytes = buff.size(); //new_image.total() * new_image.elemSize();
-
-    jbyteArray array = env->NewByteArray(sizeInBytes);
-    //env->SetByteArrayRegion(array, 0, sizeInBytes, (jbyte *) new_image.data);
-    env->SetByteArrayRegion(array, 0, sizeInBytes, (jbyte *) &buff[0]);
-
-    //size_t sizeInBytes = new_image.total() * new_image.elemSize();
-    size_t sizeInBytes1 = buff1.size(); //new_image.total() * new_image.elemSize();
-
-    jbyteArray array1 = env->NewByteArray(sizeInBytes1);
-    //env->SetByteArrayRegion(array, 0, sizeInBytes, (jbyte *) new_image.data);
-    env->SetByteArrayRegion(array1, 0, sizeInBytes1, (jbyte *) &buff1[0]);
-
-
-    static jclass java_util_ArrayList      = static_cast<jclass>(env->NewGlobalRef(env->FindClass("java/util/ArrayList")));
-    static jmethodID java_util_ArrayList_     = env->GetMethodID(java_util_ArrayList, "<init>", "(I)V");
-    static jmethodID java_util_ArrayList_add  = env->GetMethodID(java_util_ArrayList, "add", "(Ljava/lang/Object;)Z");
-
-    jobject arrayList = env->NewObject(java_util_ArrayList, java_util_ArrayList_, 1);
-    env->CallBooleanMethod(arrayList, java_util_ArrayList_add, array);
-    env->CallBooleanMethod(arrayList, java_util_ArrayList_add, array1);
-
+    jobject arrayList = splitMat(new_image, env);
 
     free((void*)buffer);
     mat.release();
@@ -273,7 +251,6 @@ JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBook_getNumber
     return page_count;
 
 }
-
 
 
 

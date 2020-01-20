@@ -20,6 +20,8 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
+
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.GestureDetector;
@@ -192,6 +194,10 @@ public class PageActivity extends AppCompatActivity {
         Point point = new Point();
         display.getSize(point);
         context = new DevicePageContextImpl(point.x);
+
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        context.setResolution((int)displayMetrics.xdpi);
+
         context.setZoom(book.getZoom());
         context.setZoomOriginal(book.getZoomOriginal());
         context.setKerning(book.getKerning());
@@ -204,14 +210,6 @@ public class PageActivity extends AppCompatActivity {
             context.setPreprocessing(false);
             context.setInvalidateCache(false);
         }
-
-        int orientation = getResources().getConfiguration().orientation;
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            context.setPortrait(false);
-        } else {
-            context.setPortrait(true);
-        }
-
 
         TextView bookTitle = findViewById(R.id.book_title);
         bookTitle.setText(book.getTitle());
@@ -423,19 +421,11 @@ public class PageActivity extends AppCompatActivity {
         kickOthers(pageLoader);
         Integer invCache = context.isInvalidateCache() ? 1 : 0;
 
-
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         int width = size.x;
         int height = size.y;
-
-        int orientation = this.getResources().getConfiguration().orientation;
-        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            context.setScreenRatio(width/(float)height);
-        } else {
-            context.setScreenRatio(height/(float)width);
-        }
 
         int childCount = pageActivity.page.getChildCount();
         for (int k=0;k<childCount;k++) {

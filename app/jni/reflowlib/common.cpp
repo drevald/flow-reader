@@ -4,6 +4,30 @@
 #include "Reflow.h"
 #include "Enclosure.h"
 
+Pix *mat8ToPix(cv::Mat *mat8)
+{
+    Pix *pixd = pixCreate(mat8->size().width, mat8->size().height, 8);
+    for(int y=0; y<mat8->rows; y++) {
+        for(int x=0; x<mat8->cols; x++) {
+            pixSetPixel(pixd, x, y, (l_uint32) mat8->at<uchar>(y,x));
+        }
+    }
+    return pixd;
+}
+
+cv::Mat pix8ToMat(Pix *pix8)
+{
+    cv::Mat mat(cv::Size(pix8->w, pix8->h), CV_8UC1);
+    uint32_t *line = pix8->data;
+    for (uint32_t y = 0; y < pix8->h; ++y) {
+        for (uint32_t x = 0; x < pix8->w; ++x) {
+            mat.at<uchar>(y, x) = GET_DATA_BYTE(line, x);
+        }
+        line += pix8->wpl;
+    }
+    return mat;
+}
+
 
 std::pair<std::vector<int>,std::vector<float>> make_hist(std::vector<int>& v, int num_buckets, int min, int max) {
    
@@ -39,6 +63,38 @@ std::pair<std::vector<int>,std::vector<float>> make_hist(std::vector<int>& v, in
     return std::make_pair(histogram, steps);
 }
 
+jobject splitMat(cv::Mat& mat, JNIEnv *env) {
+    int w = mat.size().width;
+    int h = mat.size().height;
+    cv::Mat upper = mat(cv::Rect(0,0,w, h/2));
+    cv::Mat lower = mat(cv::Rect(0,h/2,w, h - h/2));
+
+    std::vector<uchar> buff_upper;//buffer for coding
+    cv::imencode(".png", upper, buff_upper);
+
+    std::vector<uchar> buff_lower;//buffer for coding
+    cv::imencode(".png", lower, buff_lower);
+
+    size_t sizeInBytesUpper = buff_upper.size();
+    jbyteArray array_upper = env->NewByteArray(sizeInBytesUpper);
+    env->SetByteArrayRegion(array_upper, 0, sizeInBytesUpper, (jbyte *) &buff_upper[0]);
+    size_t sizeInBytesLower = buff_lower.size(); //new_image.total() * new_image.elemSize();
+    jbyteArray array_lower = env->NewByteArray(sizeInBytesLower);
+    env->SetByteArrayRegion(array_lower, 0, sizeInBytesLower, (jbyte *) &buff_lower[0]);
+
+
+    static jclass java_util_ArrayList      = static_cast<jclass>(env->NewGlobalRef(env->FindClass("java/util/ArrayList")));
+    static jmethodID java_util_ArrayList_     = env->GetMethodID(java_util_ArrayList, "<init>", "(I)V");
+    static jmethodID java_util_ArrayList_add  = env->GetMethodID(java_util_ArrayList, "add", "(Ljava/lang/Object;)Z");
+
+    jobject arrayList = env->NewObject(java_util_ArrayList, java_util_ArrayList_, 1);
+    env->CallBooleanMethod(arrayList, java_util_ArrayList_add, array_upper);
+    env->CallBooleanMethod(arrayList, java_util_ArrayList_add, array_lower);
+
+    return arrayList;
+
+}
+
 double deviation(vector<int> v, double ave) {
     double E=0;
     double inverse = 1.0 / static_cast<double>(v.size());
@@ -60,7 +116,7 @@ std::vector<glyph> preprocess(cv::Mat& image, cv::Mat& rotated_with_pictures) {
     int height = image.size().height;
     
     // detect skew angle
-    
+    /*
     cv::Mat mat;
     cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(80,1));
     cv::dilate(clone, mat, kernel, cv::Point(-1, -1), 1);
@@ -132,11 +188,16 @@ std::vector<glyph> preprocess(cv::Mat& image, cv::Mat& rotated_with_pictures) {
     // end detect
     
     // remove big components - defects of scanning
+    //
+    */
+
+    cv::Mat labels = cv::Mat(image.size(), image.type());
+    cv::Mat rectComponents = Mat::zeros(Size(0, 0), 0);
+    cv::Mat centComponents = Mat::zeros(Size(0, 0), 0);
+
     
     connectedComponentsWithStats(image, labels, rectComponents, centComponents);
     std::vector<cv::Rect> rects;
-    
-    
     
     for (int i = 1; i < rectComponents.rows; i++) {
         
@@ -201,7 +262,7 @@ std::vector<glyph> preprocess(cv::Mat& image, cv::Mat& rotated_with_pictures) {
     
     // detect pictures after rotation
     
-    kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(9,2));
+    cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(9,2));
     cv::dilate(image, clone, kernel, cv::Point(-1, -1), 2);
     
     connectedComponentsWithStats(clone, labels, rectComponents, centComponents);
@@ -450,13 +511,10 @@ void put_glyphs(JNIEnv *env, vector<glyph>& glyphs, jobject& list) {
 
     }
 
-    char msg[30];
-    sprintf(msg, "glyphs count %d\n", glyphs.size());
 
-    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "%s\n", msg);
 }
 
-void reflow(cv::Mat& cvMat, cv::Mat& new_image, float scale, bool portrait, float screen_ratio,  JNIEnv* env, std::vector<glyph> savedGlyphs, jobject list, std::vector<glyph> pic_glyphs, cv::Mat rotated_with_pictures, bool preprocessing, float margin) {
+void reflow(cv::Mat& cvMat, cv::Mat& new_image, float scale, int page_width,  JNIEnv* env, std::vector<glyph> savedGlyphs, jobject list, std::vector<glyph> pic_glyphs, cv::Mat rotated_with_pictures, bool preprocessing, float margin) {
     //const cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(2, 2));
     //cv::dilate(cvMat, cvMat, kernel, cv::Point(-1, -1), 1);
 
@@ -464,8 +522,6 @@ void reflow(cv::Mat& cvMat, cv::Mat& new_image, float scale, bool portrait, floa
 
     if (savedGlyphs.empty()){
         glyphs = get_glyphs(cvMat);
-
-        __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "get glyphs = %d\n", glyphs.size());
 
         for (glyph g : pic_glyphs) {
             int y = g.y - g.height;
@@ -478,21 +534,11 @@ void reflow(cv::Mat& cvMat, cv::Mat& new_image, float scale, bool portrait, floa
     }
 
 
-    /*
-    for (int i=0;i<glyphs.size(); i++){
-        glyph g = glyphs.at(i);
-        cv::rectangle(cvMat,cv::Rect(g.x, g.y, g.width, g.height), cv::Scalar(255), 3);
-    }
-    */
-
-    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "after put glyphs = %d\n", glyphs.size());
-
-
     if (glyphs.size() > 0) {
 
         try {
             Reflow reflower(cvMat, rotated_with_pictures, glyphs);
-            new_image = reflower.reflow(scale, portrait, screen_ratio, margin);
+            new_image = reflower.reflow(scale, page_width, margin);
         } catch (...) {
             __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "%s\n", "exception occurred");
             //cv::bitwise_not(rotated_with_pictures, rotated_with_pictures);

@@ -32,7 +32,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:onClick="browseExternalMemory"
                 android:visibility="invisible"
                 style="?android:attr/borderlessButtonStyle"
                 app:srcCompat="@drawable/ic_external_memory" />
@@ -68,6 +67,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
+        android:labelFor="@string/cancel"
         app:srcCompat="@drawable/ic_return" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
