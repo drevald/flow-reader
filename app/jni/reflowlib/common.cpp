@@ -4,6 +4,30 @@
 #include "Reflow.h"
 #include "Enclosure.h"
 
+Pix *mat8ToPix(cv::Mat *mat8)
+{
+    Pix *pixd = pixCreate(mat8->size().width, mat8->size().height, 8);
+    for(int y=0; y<mat8->rows; y++) {
+        for(int x=0; x<mat8->cols; x++) {
+            pixSetPixel(pixd, x, y, (l_uint32) mat8->at<uchar>(y,x));
+        }
+    }
+    return pixd;
+}
+
+cv::Mat pix8ToMat(Pix *pix8)
+{
+    cv::Mat mat(cv::Size(pix8->w, pix8->h), CV_8UC1);
+    uint32_t *line = pix8->data;
+    for (uint32_t y = 0; y < pix8->h; ++y) {
+        for (uint32_t x = 0; x < pix8->w; ++x) {
+            mat.at<uchar>(y, x) = GET_DATA_BYTE(line, x);
+        }
+        line += pix8->wpl;
+    }
+    return mat;
+}
+
 
 std::pair<std::vector<int>,std::vector<float>> make_hist(std::vector<int>& v, int num_buckets, int min, int max) {
    
@@ -92,7 +116,7 @@ std::vector<glyph> preprocess(cv::Mat& image, cv::Mat& rotated_with_pictures) {
     int height = image.size().height;
     
     // detect skew angle
-    
+    /*
     cv::Mat mat;
     cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(80,1));
     cv::dilate(clone, mat, kernel, cv::Point(-1, -1), 1);
@@ -164,11 +188,16 @@ std::vector<glyph> preprocess(cv::Mat& image, cv::Mat& rotated_with_pictures) {
     // end detect
     
     // remove big components - defects of scanning
+    //
+    */
+
+    cv::Mat labels = cv::Mat(image.size(), image.type());
+    cv::Mat rectComponents = Mat::zeros(Size(0, 0), 0);
+    cv::Mat centComponents = Mat::zeros(Size(0, 0), 0);
+
     
     connectedComponentsWithStats(image, labels, rectComponents, centComponents);
     std::vector<cv::Rect> rects;
-    
-    
     
     for (int i = 1; i < rectComponents.rows; i++) {
         
@@ -233,7 +262,7 @@ std::vector<glyph> preprocess(cv::Mat& image, cv::Mat& rotated_with_pictures) {
     
     // detect pictures after rotation
     
-    kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(9,2));
+    cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(9,2));
     cv::dilate(image, clone, kernel, cv::Point(-1, -1), 2);
     
     connectedComponentsWithStats(clone, labels, rectComponents, centComponents);

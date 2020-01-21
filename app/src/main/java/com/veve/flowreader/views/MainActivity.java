@@ -9,6 +9,9 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Bundle;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -54,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
     int columnsNumber;
 
     SharedPreferences preferences;
+
+    Paint borderPaint;
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -112,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
             //EditText titleEditView = (EditText)getLayoutInflater().inflate(R.layout.book_edit, null);
             titleEditView.setText(bookRecord.getTitle());
             titleEditView.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-            titleEditView.setPadding(20, 5, 20, 5 );
+            //titleEditView.setPadding(20, 5, 20, 5 );
             builder.setTitle(getResources().getString(R.string.rename_this_book))
                     .setMessage(R.string.new_title)
                     .setCancelable(false)
@@ -243,6 +248,11 @@ public class MainActivity extends AppCompatActivity {
                 editor.apply();
             }
         });
+
+        borderPaint = new Paint();
+        borderPaint.setStyle(Paint.Style.STROKE);
+        borderPaint.setColor(Color.BLACK);
+        borderPaint.setStrokeWidth(1f);
     }
 
     @Override
@@ -257,11 +267,13 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.about) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            TextView copyrightView = (TextView)getLayoutInflater().inflate(R.layout.copyright_text, null);
             builder.setTitle(R.string.app_name)
                     .setCancelable(false)
-                    .setIcon(R.drawable.ic_icon)
+                    .setIcon(R.drawable.ic_icon_flowbook_pink)
                     .setMessage(String.format(getResources().getString(R.string.program_info),
                             BuildConfig.GitHash, sdf.format(new Date())))
+                    .setView(copyrightView)
                     .setNeutralButton(R.string.close, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -331,7 +343,15 @@ public class MainActivity extends AppCompatActivity {
             if (convertView == null) {
                 convertView = getLayoutInflater().inflate(R.layout.items_list, container, false);
             }
-            TextView textView = (TextView)((ConstraintLayout)convertView).getChildAt(0);
+            ImageView imageView = convertView.findViewById(R.id.thumbnail);
+            byte[] bytes = booksList.get(position).getPreview();
+            Bitmap thumbnailBitmap = Bitmap
+                    .createScaledBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length), 60, 90, false);
+//            Canvas canvas = new Canvas(thumbnailBitmap);
+//            canvas.drawRect(0, 0, thumbnailBitmap.getWidth(), thumbnailBitmap.getHeight(),
+//                    borderPaint);
+            imageView.setImageBitmap(thumbnailBitmap);
+            TextView textView = convertView.findViewById(R.id.text);
                 textView.setText(booksList.get(position).getTitle());
             return convertView;
         }
@@ -407,6 +427,9 @@ public class MainActivity extends AppCompatActivity {
             ImageView imageView = convertView.findViewById(R.id.thumbnail);
             byte[] bytes = booksList.get(position).getPreview();
             Bitmap thumbnailBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+//            Canvas canvas = new Canvas(thumbnailBitmap);
+//            canvas.drawRect(0, 0, thumbnailBitmap.getWidth(), thumbnailBitmap.getHeight(),
+//                    borderPaint);
             imageView.setImageBitmap(thumbnailBitmap);
             textView.setText(booksList.get(position).getTitle());
             Log.v(getClass().getName(), convertView.toString());

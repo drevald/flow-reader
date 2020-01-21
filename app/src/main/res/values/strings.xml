@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FlowBook</string>
+    <string name="app_name">FlowReader</string>
     <string name="action_settings">More Settings</string>
     <string name="title_activity_browse_files">Choose book file</string>
     <string name="title_activity_page">Page</string>
@@ -56,7 +56,25 @@
     <string name="new_title">New title</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
-    <string name="grid_view">Switch to grid view</string>
-    <string name="list_view">Switch to list view</string>
-    <string name="add_book">Add book</string>
+    <string name="print">Print</string>
+    <string name="title_activity_print">Print</string>
+    <string name="pages_to_print">Pages to print</string>
+    <string name="current_page">Current page</string>
+    <string name="all_pages">All pages</string>
+    <string name="pages_range">Pages range</string>
+    <string name="columns_layout">Columns layout</string>
+    <string name="use_device_width">Use device width, mm</string>
+    <string name="columns_width">Columns width, mm</string>
+    <string name="columns_number">Columns number</string>
+    <string name="gap">Gap, mm</string>
+    <string name="add_book">Add Book</string>
+    <string name="grid_view">Grid View</string>
+    <string name="list_view">List View</string>
+    <string name="copyright_text">Copyright &#169; 2000-2019, Intel Corporation, all rights reserved.
+Copyright &#169; 2009-2011, Willow Garage Inc., all rights reserved.
+Copyright &#169; 2009-2016, NVIDIA Corporation, all rights reserved.
+Copyright &#169; 2010-2013, Advanced Micro Devices, Inc., all rights reserved.
+Copyright &#169; 2015-2016, OpenCV Foundation, all rights reserved.
+Copyright &#169; 2015-2016, Itseez Inc., all rights reserved.
+Third party copyrights are property of their respective owners.</string>
 </resources>

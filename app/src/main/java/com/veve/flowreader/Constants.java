@@ -23,6 +23,7 @@ public interface Constants {
     int MAX_BITMAP_SIZE = 100 * 1024 * 1024; // 100 MB
     int IMAGE_VIEW_HEIGHT_LIMIT = 4000;
 
+    String BOOK_CONTEXT = "BOOK_CONTEXT";
     String BOOK_ID = "BOOK_ID";
     String POSITION = "position";
     String FILE_NAME = "FILENAME";
@@ -35,5 +36,11 @@ public interface Constants {
     float ZOOM_STEP = 0.25F;
     float ZOOM_MIN = 0.25F;
     float ZOOM_MAX = 5F;
+
+    float MM_IN_MILS = 0.0254f;
+    float MM_IN_INCH = 25.4f;
+    float INCH_IN_MILS = 0.001f;
+    float MILS_IN_MM = 39.3701f;
+    float INCH_IN_MM = 0.0393701f;
 
 }

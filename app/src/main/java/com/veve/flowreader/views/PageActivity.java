@@ -20,6 +20,8 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
+
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.GestureDetector;
@@ -63,6 +65,7 @@ import java.util.Set;
 import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
+import static com.veve.flowreader.Constants.BOOK_CONTEXT;
 import static com.veve.flowreader.Constants.BOOK_ID;
 import static com.veve.flowreader.Constants.MAX_BITMAP_SIZE;
 import static com.veve.flowreader.Constants.VIEW_MODE_ORIGINAL;
@@ -191,6 +194,10 @@ public class PageActivity extends AppCompatActivity {
         Point point = new Point();
         display.getSize(point);
         context = new DevicePageContextImpl(point.x);
+
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        context.setResolution((int)displayMetrics.xdpi);
+
         context.setZoom(book.getZoom());
         context.setZoomOriginal(book.getZoomOriginal());
         context.setKerning(book.getKerning());
@@ -203,14 +210,6 @@ public class PageActivity extends AppCompatActivity {
             context.setPreprocessing(false);
             context.setInvalidateCache(false);
         }
-
-        int orientation = getResources().getConfiguration().orientation;
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            context.setPortrait(false);
-        } else {
-            context.setPortrait(true);
-        }
-
 
         TextView bookTitle = findViewById(R.id.book_title);
         bookTitle.setText(book.getTitle());
@@ -363,6 +362,14 @@ public class PageActivity extends AppCompatActivity {
                 reportCollectorTask.execute(reportRecord);
                 break;
             }
+            case R.id.print: {
+                Intent printIntent = new Intent(PageActivity.this, PrintActivity.class);
+                printIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                printIntent.putExtra(BOOK_ID, book.getId());
+                printIntent.putExtra(BOOK_CONTEXT, context);
+                startActivity(printIntent);
+                break;
+            }
             case R.id.delete_book: {
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(PageActivity.this);
@@ -404,7 +411,7 @@ public class PageActivity extends AppCompatActivity {
 
     }
 
-    private void setPageNumber(int pageNumber) {
+    public void setPageNumber(int pageNumber) {
         pager.setText(getString(R.string.ui_page_count, pageNumber + 1, book.getPagesCount()));
         seekBar.setProgress(pageNumber + 1);
         currentPage = pageNumber;
@@ -414,19 +421,11 @@ public class PageActivity extends AppCompatActivity {
         kickOthers(pageLoader);
         Integer invCache = context.isInvalidateCache() ? 1 : 0;
 
-
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         int width = size.x;
         int height = size.y;
-
-        int orientation = this.getResources().getConfiguration().orientation;
-        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            context.setScreenRatio(width/(float)height);
-        } else {
-            context.setScreenRatio(height/(float)width);
-        }
 
         int childCount = pageActivity.page.getChildCount();
         for (int k=0;k<childCount;k++) {
@@ -643,9 +642,6 @@ public class PageActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
                 Log.d(getClass().getName(), String.format("Setting page #%d for original page", currentPage));
             }
-
-
-
             pageActivity.setPageNumber(currentPage);
         }
     }
@@ -742,6 +738,7 @@ public class PageActivity extends AppCompatActivity {
                 bitmaps = Arrays.asList(pageActivity.pageRenderer.renderOriginalPage(pageActivity.context, pageNumber));
             }
 
+            //int bitmapHeight = bitmap.getHeight();
 
             runOnUiThread(() -> {
 
@@ -810,9 +807,6 @@ public class PageActivity extends AppCompatActivity {
                         }
                     }
                 }
-
-
-
                 pageActivity.scroll.setVisibility(VISIBLE);
                 pageActivity.progressBar.setVisibility(INVISIBLE);
                 pageActivity.scroll.scrollTo(0, 0);

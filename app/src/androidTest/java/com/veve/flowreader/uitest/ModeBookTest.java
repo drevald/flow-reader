@@ -96,6 +96,13 @@ public class ModeBookTest extends BookTest {
         ImageButton zoomOutButton = pageActivity.findViewById(R.id.smaller_text);
         zoomOutButton.callOnClick();
         assertEquals(pageActivity.getBook().getZoomOriginal(), 1.0F);
+
+        for (int i = 0; i < 36; i++)
+            zoomOutButton.callOnClick();
+
+        for (int i = 0; i < 36; i++)
+            zoomInButton.callOnClick();
+
     }
 
 //    @Test
