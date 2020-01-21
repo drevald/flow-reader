@@ -49,8 +49,7 @@ public abstract class AppDatabase extends RoomDatabase {
             });
             appDatabase = builder.build();
             InitDatabaseTask initDatabaseTask = new InitDatabaseTask(appDatabase.daoAccess());
-
-
+            initDatabaseTask.execute(context);
         }
         return appDatabase;
     }
@@ -74,10 +73,11 @@ public abstract class AppDatabase extends RoomDatabase {
             Context context = contexts[0];
             try {
                 File file = new File(context.getExternalFilesDir(null), "sample.pdf");
-                InputStream is = context.getResources().openRawResource(R.raw.pdf_sample);
+                InputStream is = context.getResources().openRawResource(R.raw.sample);
                 Utils.copy(is, new FileOutputStream(file));
                 BookRecord bookRecord = BookFactory.getInstance().createBook(file);
-                daoAccess.addBook(bookRecord);
+                if(daoAccess.fetchBookByChecksum(bookRecord.getMd5()) == null)
+                    daoAccess.addBook(bookRecord);
             } catch (Exception e) {
                 Log.e(AppDatabase.class.getName(), "Failed to add sample book", e);
             }

@@ -70,5 +70,11 @@
     <string name="add_book">Добавить книгу</string>
     <string name="grid_view">Показывать таблицу</string>
     <string name="list_view">Показывать список</string>
-
+    <string name="copyright_text">Copyright &#169; 2000-2019, Intel Corporation, все права защищены.
+Copyright &#169; 2009-2011, Willow Garage Inc., все права защищены.
+Copyright &#169; 2009-2016, NVIDIA Corporation, все права защищены.
+Copyright &#169; 2010-2013, Advanced Micro Devices, Inc., все права защищены.
+Copyright &#169; 2015-2016, OpenCV Foundation, все права защищены.
+Copyright &#169; 2015-2016, Itseez Inc., все права защищены.
+Авторские права третьих лиц являются собственностью соответствующих владельцев.</string>
 </resources>

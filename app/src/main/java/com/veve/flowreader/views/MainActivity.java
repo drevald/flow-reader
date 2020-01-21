@@ -267,11 +267,13 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.about) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            TextView copyrightView = (TextView)getLayoutInflater().inflate(R.layout.copyright_text, null);
             builder.setTitle(R.string.app_name)
                     .setCancelable(false)
                     .setIcon(R.drawable.ic_icon_flowbook_pink)
                     .setMessage(String.format(getResources().getString(R.string.program_info),
                             BuildConfig.GitHash, sdf.format(new Date())))
+                    .setView(copyrightView)
                     .setNeutralButton(R.string.close, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {

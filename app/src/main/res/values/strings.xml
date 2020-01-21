@@ -70,4 +70,11 @@
     <string name="add_book">Add Book</string>
     <string name="grid_view">Grid View</string>
     <string name="list_view">List View</string>
+    <string name="copyright_text">Copyright &#169; 2000-2019, Intel Corporation, all rights reserved.
+Copyright &#169; 2009-2011, Willow Garage Inc., all rights reserved.
+Copyright &#169; 2009-2016, NVIDIA Corporation, all rights reserved.
+Copyright &#169; 2010-2013, Advanced Micro Devices, Inc., all rights reserved.
+Copyright &#169; 2015-2016, OpenCV Foundation, all rights reserved.
+Copyright &#169; 2015-2016, Itseez Inc., all rights reserved.
+Third party copyrights are property of their respective owners.</string>
 </resources>
