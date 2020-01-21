@@ -205,7 +205,7 @@ image_format get_djvu_pixels(JNIEnv *env, jlong bookId, jint page_number, jboole
                                       *pixels);
 
     ddjvu_format_release(pixelFormat);
-    return image_format(w,h,size);
+    return image_format(w,h,size, info.dpi);
 
 }
 

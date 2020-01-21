@@ -92,7 +92,7 @@ image_format get_pdf_pixels(JNIEnv* env, jlong bookId, jint pageNumber, char** p
     FPDF_RenderPageBitmap(bitmap, page, 0, 0, width, height, 0, 0);
     *pixels = (char*)reinterpret_cast<const char*>(FPDFBitmap_GetBuffer(bitmap));
 
-    return image_format(width, height, size);
+    return image_format(width, height, size, 300);
 
 }
 

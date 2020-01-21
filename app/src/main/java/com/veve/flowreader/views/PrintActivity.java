@@ -274,9 +274,8 @@ public class PrintActivity extends AppCompatActivity {
         super.onPostCreate(savedInstanceState);
 
         pagesGroup = findViewById(R.id.page_range);
-        pagesGroup.check(R.id.custom_page_range);
+        pagesGroup.check(R.id.current_page);
         pages = ((EditText) findViewById(R.id.pages));
-        pages.setText("1-10");
         parsePagesString();
         pages.setOnFocusChangeListener((v, hasFocus) -> {
                 parsePagesString();
