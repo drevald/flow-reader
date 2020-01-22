@@ -40,8 +40,10 @@ public class PagesSet {
     }
 
     public static List<PagesSet> getPagesSet(String str) {
-        String[] parts = str.split("[\\s\\,\\;\\:]+");
         List<PagesSet> sets = new ArrayList<PagesSet>();
+        if (str.isEmpty())
+            return sets;
+        String[] parts = str.split("[\\s\\,\\;\\:]+");
         for (String part : parts) {
             if (part.trim() != "") {
                 sets.add(new PagesSet(part.trim()));
