@@ -16,7 +16,7 @@ android {
         applicationId "com.veve.flowreader"
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 5
+        versionCode 6
         versionName "0.2"
         buildConfigField "String", "GitHash", "\"${getGitHash()}\""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -28,12 +28,14 @@ android {
             //abiFilters 'armeabi-v7a'
         }
     }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
     sourceSets.main {
         jniLibs.srcDir 'jni/reflowlib'
     }
@@ -43,7 +45,6 @@ android {
         ndkBuild {
             path 'jni/Android.mk'
         }
-
     }
 
     preBuild {
