@@ -9,7 +9,6 @@ include $(CLEAR_VARS)
 #OPENCV_LIB_TYPE:=STATIC
 #include $(CVROOT)/OpenCV.mk
 
-
 LOCAL_MODULE := native-lib
 
 
@@ -44,9 +43,9 @@ endif
 
 LOCAL_ALLOW_UNDEFINED_SYMBOLS=true
 
-LOCAL_CFLAGS += -DHAVE_CONFIG_H -frtti -fexceptions -fopenmp=libomp -w -Ofast -DNDEBUG
+LOCAL_CFLAGS += -DHAVE_CONFIG_H -frtti -fexceptions -fopenmp -w -Ofast -DNDEBUG
 LOCAL_LDLIBS += -llog -lz -lm -L$(SYSROOT)/usr/lib
-LOCAL_LDFLAGS += -ldl -landroid -static-openmp
+LOCAL_LDFLAGS += -ldl -landroid -fopenmp
 
 LOCAL_C_INCLUDES += common.h mylib.h LineSpacing.h Reflow.cpp PageSegmenter.h Enclosure.h pdf-lib.h  ImageNode.h Xycut.h
 
