@@ -341,7 +341,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup container) {
             if (convertView == null) {
-                convertView = getLayoutInflater().inflate(R.layout.items_list, container, false);
+                convertView = getLayoutInflater().inflate(R.layout.book_items_list, container, false);
             }
             ImageView imageView = convertView.findViewById(R.id.thumbnail);
             byte[] bytes = booksList.get(position).getPreview();
