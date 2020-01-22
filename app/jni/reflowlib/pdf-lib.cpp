@@ -190,12 +190,17 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
     char* buffer;
 
     image_format format = get_pdf_pixels(env, bookId, pageNumber, &buffer);
-    int size = format.size;
     int w = format.w;
     int h = format.h;
 
+    Mat mat(h,w,CV_8UC4,&((char*)buffer)[0]);
+    std::vector<uchar> buff;//buffer for coding
+    cv::imencode(".png", mat, buff);
+    int size = buff.size();
+
+
     jbyteArray array = env->NewByteArray(size);
-    env->SetByteArrayRegion(array, 0, size, (jbyte *) buffer);
+    env->SetByteArrayRegion(array, 0, size, (jbyte *) &buff[0]);
 
     free((void*)buffer);
     return array;
