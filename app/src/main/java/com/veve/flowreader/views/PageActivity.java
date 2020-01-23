@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Point;
@@ -31,6 +32,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -67,6 +69,7 @@ import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 import static com.veve.flowreader.Constants.BOOK_CONTEXT;
 import static com.veve.flowreader.Constants.BOOK_ID;
+import static com.veve.flowreader.Constants.FLOW_BOOK_PREFERENCES;
 import static com.veve.flowreader.Constants.MAX_BITMAP_SIZE;
 import static com.veve.flowreader.Constants.VIEW_MODE_ORIGINAL;
 import static com.veve.flowreader.Constants.VIEW_MODE_PHONE;
@@ -793,6 +796,7 @@ public class PageActivity extends AppCompatActivity {
                             pageActivity.scroll.addView(pageActivity.page);
                             Log.v(getClass().getName(), "End setting bitmap");
                         } else {
+                            inviteToTryReflow(bitmap);
                             pageActivity.page.removeAllViewsInLayout();
                             HorizontalScrollView horizontalScrollView = new HorizontalScrollView(getApplicationContext());
                             ImageView imageView = new ImageView(getApplicationContext());
@@ -813,6 +817,29 @@ public class PageActivity extends AppCompatActivity {
             });
             return null;
         }
+
+        private void inviteToTryReflow(Bitmap bitmap) {
+            if (bitmap.getWidth() <= context.getWidth()) {
+                return;
+            }
+            SharedPreferences pref = getApplicationContext().getSharedPreferences(FLOW_BOOK_PREFERENCES, MODE_PRIVATE);
+            if(pref.contains(Constants.SHOW_TRY_REFLOW) && !pref.getBoolean(Constants.SHOW_TRY_REFLOW, false)) {
+                return;
+            }
+            AlertDialog.Builder builder = new AlertDialog.Builder(PageActivity.this);
+            builder.setTitle(getResources().getString(R.string.try_reflow))
+                    .setMessage(R.string.try_reflow_explained)
+                    .setCancelable(true)
+                    .setIcon(R.drawable.ic_to_phone_large)
+                    .setPositiveButton(R.string.ok, (dialog, which) -> {dialog.cancel();})
+                    .setNegativeButton(R.string.ok_not_anymore, (dialog, which) -> {
+                        pref.edit().putBoolean(Constants.SHOW_TRY_REFLOW, false).apply();
+                        dialog.cancel();
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+        }
+
     }
 
     class ReportCollectorTask extends AsyncTask<ReportRecord, Void, Void> {

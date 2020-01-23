@@ -56,6 +56,10 @@
     <string name="new_title">New title</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
+    <string name="try_reflow">Try Reflow?</string>
+    <string name="try_reflow_explained">Zoomed page is wider than the screen width. To avoid scrolling you could click on "Fit to Phone" button to recompose the text for the screen width</string>
+    <string name="ok">OK</string>
+    <string name="ok_not_anymore">OK and do not notify</string>
     <string name="print">Print</string>
     <string name="title_activity_print">Print</string>
     <string name="pages_to_print">Pages to print</string>

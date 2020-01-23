@@ -43,4 +43,8 @@ public interface Constants {
     float MILS_IN_MM = 39.3701f;
     float INCH_IN_MM = 0.0393701f;
 
+    String FLOW_BOOK_PREFERENCES = "FLOW_BOOK_PREFERENCES";
+    String SHOW_TRY_REFLOW = "SHOW_TRY_REFLOW";
+
+
 }
