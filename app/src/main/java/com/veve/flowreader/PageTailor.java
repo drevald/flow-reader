@@ -10,6 +10,7 @@ import com.veve.flowreader.model.PageRenderer;
 import com.veve.flowreader.model.impl.DevicePageContextImpl;
 
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.Stack;
@@ -29,7 +30,8 @@ public class PageTailor {
     Bitmap bitmapSuffix;
     Bitmap tailoredBitmap;
     Bitmap cutBitmap;
-    Stack<Bitmap> bitmapBuffer;
+    //Stack<Bitmap> bitmapBuffer;
+    LinkedList<Bitmap> bitmapBuffer;
     Canvas canvas;
 
     static final Bitmap.Config BITMAP_CONFIG = Bitmap.Config.ARGB_8888;
@@ -39,7 +41,7 @@ public class PageTailor {
         this.context = context;
         this.height = height;
         this.pageRenderer = pageRenderer;
-        bitmapBuffer = new Stack<Bitmap>();
+        bitmapBuffer = new LinkedList<Bitmap>();
         initPages();
     }
 
@@ -117,9 +119,15 @@ public class PageTailor {
         protected List<Bitmap> doInBackground(Object... objects) {
             DevicePageContext context = (DevicePageContext) objects[0];
             int pageNum = (Integer)objects[1];
-            Log.v(getClass().getName(), "Getting new portion of bitmaps for page " + pageNum);
+            Log.v(getClass().getName(), String.format(
+                    "Getting new portion of bitmaps for page %d width %d ratio %f zoom %f",
+                    pageNum, context.getWidth(), context.getScreenRatio(), context.getZoom()));
             List<Bitmap> bitmaps = pageRenderer.renderPage(context, pageNum);
             Log.v(getClass().getName(), bitmaps.size() + " bitmaps retrieved for page " + pageNum);
+            for (Bitmap bitmap : bitmaps) {
+                Log.v(getClass().getName(), String.format("Bitmaps size is %d x %d",
+                        bitmap.getWidth(), bitmap.getHeight()));
+            }
             return bitmaps;
         }
 
