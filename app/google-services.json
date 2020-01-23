@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "363983121711",
+    "firebase_url": "https://flow-book.firebaseio.com",
+    "project_id": "flow-book",
+    "storage_bucket": "flow-book.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:363983121711:android:20260f711340fd1cca45da",
+        "android_client_info": {
+          "package_name": "com.veve.flowreader"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "363983121711-1sn83shn22fda0m6vk3erh0sb5r3aj85.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAO_LdnbnH_U5gElFLhRVTLizLKJzBoZSw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "363983121711-1sn83shn22fda0m6vk3erh0sb5r3aj85.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

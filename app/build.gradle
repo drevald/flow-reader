@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'cpp'
+apply plugin: 'com.google.gms.google-services'
 
 def getGitHash = { ->
     def stdout = new ByteArrayOutputStream()
@@ -95,5 +96,9 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-v4'
         exclude module: 'recyclerview-v7'
     }
+    // add the Firebase SDK for Google Analytics
+    implementation 'com.google.firebase:firebase-analytics:17.2.0'
+    // add SDKs for any other desired Firebase products
+    // https://firebase.google.com/docs/android/setup#available-libraries
 }
 
