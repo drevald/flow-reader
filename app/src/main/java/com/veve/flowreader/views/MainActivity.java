@@ -267,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.about) {
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            TextView copyrightView = (TextView)getLayoutInflater().inflate(R.layout.copyright_text, null);
+            View copyrightView = getLayoutInflater().inflate(R.layout.copyright_text, null);
             builder.setTitle(R.string.app_name)
                     .setCancelable(false)
                     .setIcon(R.drawable.ic_icon_flowbook_pink)
@@ -281,6 +281,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
             AlertDialog alert = builder.create();
+            alert.setCanceledOnTouchOutside(true);
             alert.show();
 
         }
