@@ -24,6 +24,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
+                android:contentDescription="@string/list_view"
                 android:labelFor="@string/list_view"
                 app:srcCompat="@drawable/ic_books_list" />
 
@@ -33,6 +34,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
+                android:contentDescription="@string/grid_view"
                 android:labelFor="@string/grid_view"
                 app:srcCompat="@drawable/ic_books_grid" />
 
@@ -72,6 +74,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
+        android:contentDescription="@string/add_book"
         android:labelFor="@string/add_book"
         app:srcCompat="@drawable/ic_book_add" />
 
