@@ -56,6 +56,10 @@
     <string name="new_title">Новое название</string>
     <string name="save">Сохранить</string>
     <string name="cancel">Отменить</string>
+    <string name="ok">Хорошо</string>
+    <string name="ok_not_anymore">Хорошо и больше не напоминайте</string>
+    <string name="try_reflow">Переверстать?</string>
+    <string name="try_reflow_explained">Масштабированая страница шире экрана устройства. Кликните кнопку "Переверстать для телефона" чтобы скомпоновать страницу под ширину устройства.</string>
     <string name="print">Печать</string>
     <string name="title_activity_print">Печать</string>
     <string name="pages_to_print">Страницы для печати</string>
