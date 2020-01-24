@@ -13,7 +13,7 @@ public interface Constants {
     String VIEW_MODE_PARAM = "viewMode";
 
     int LIGHT_PINK = Color.rgb(255, 64, 129);
-    int GREEN = Color.rgb(0, 129, 0);
+    int GREEN = Color.rgb(0, 64, 0);
     int BOOK_THUMB_WIDTH = 100;
     int BOOK_THUMB_HOR_PADDING = 20;
     String VIEW_TYPE = "VIEW_TYPE";

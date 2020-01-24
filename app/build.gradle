@@ -14,9 +14,9 @@ android {
     compileSdkVersion 29
     defaultConfig {
         applicationId "com.veve.flowreader"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 29
-        versionCode 9
+        versionCode 11
         versionName "0.2"
         buildConfigField "String", "GitHash", "\"${getGitHash()}\""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
