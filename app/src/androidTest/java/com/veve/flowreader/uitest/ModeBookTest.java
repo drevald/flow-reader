@@ -5,6 +5,7 @@ import android.graphics.drawable.VectorDrawable;
 
 import androidx.test.rule.ActivityTestRule;
 
+import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
@@ -88,7 +89,7 @@ public class ModeBookTest extends BookTest {
 
 
     @Test
-    public void testZoom() {
+    public void testZoom() throws InterruptedException {
         assertEquals(pageActivity.getBook().getZoomOriginal(), 1.0F);
         ImageButton zoomInButton = pageActivity.findViewById(R.id.larger_text);
         zoomInButton.callOnClick();
@@ -97,11 +98,20 @@ public class ModeBookTest extends BookTest {
         zoomOutButton.callOnClick();
         assertEquals(pageActivity.getBook().getZoomOriginal(), 1.0F);
 
-        for (int i = 0; i < 36; i++)
+        for (int i = 0; i < 16; i++) {
             zoomOutButton.callOnClick();
+            Thread.currentThread().sleep(1000);
+            Log.v(getClass().getName(),
+                    "Zooming out with ratio " + pageActivity.getBook().getZoomOriginal());
+        }
 
-        for (int i = 0; i < 36; i++)
+        for (int i = 0; i < 16; i++) {
             zoomInButton.callOnClick();
+            Thread.currentThread().sleep(1000);
+            Log.v(getClass().getName(),
+                    "Zooming in with ratio " + pageActivity.getBook().getZoomOriginal());
+        }
+
 
     }
 
