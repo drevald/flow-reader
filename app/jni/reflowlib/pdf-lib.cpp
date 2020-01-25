@@ -96,7 +96,7 @@ image_format get_pdf_pixels(JNIEnv* env, jlong bookId, jint pageNumber, char** p
 
 }
 
-JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativeReflownBytes
+JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativeReflowedBytes
         (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jfloat scale, jint pageWidth, jobject pageSize, jobject list, jboolean preprocessing, jfloat margin) {
 
 

@@ -17,6 +17,8 @@ public abstract class AbstractBookPage implements BookPage {
     private int pageNumber;
     private long bookId;
 
+    protected double magicMultiplier = 0.8;
+
     public AbstractBookPage(long  bookId, int pageNumber) {
         this.bookId = bookId;
         this.pageNumber = pageNumber;

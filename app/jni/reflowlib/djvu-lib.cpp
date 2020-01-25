@@ -209,7 +209,7 @@ image_format get_djvu_pixels(JNIEnv *env, jlong bookId, jint page_number, jboole
 
 }
 
-JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeReflownBytes
+JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeReflowedBytes
         (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jfloat scale, jint pageWidth, jobject pageSize, jobject list, jboolean preprocessing, jfloat margin) {
 
     std::vector<glyph> glyphs = convert_java_glyphs(env, list);

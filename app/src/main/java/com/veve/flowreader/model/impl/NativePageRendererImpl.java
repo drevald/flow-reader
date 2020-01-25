@@ -141,7 +141,10 @@ public class NativePageRendererImpl implements PageRenderer {
             bm = Bitmap.createScaledBitmap(b, (context.getWidth()),
                     ((context.getWidth() * b.getHeight())/b.getWidth()),
                     false);
-            b.recycle();
+            if (!b.isRecycled()) {
+                b.recycle();
+            }
+
             retVal.add(bm);
         }
         return  retVal;
