@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 
@@ -30,6 +31,10 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Locale;
+
+import static com.veve.flowreader.Constants.BOOK_ID;
+import static com.veve.flowreader.Constants.POSITION;
+import static com.veve.flowreader.Constants.REPORT_ID;
 
 public class ReportActivity extends AppCompatActivity {
 
@@ -60,17 +65,19 @@ public class ReportActivity extends AppCompatActivity {
         progressBar.setMax(100);
         progressLabel = findViewById(R.id.progress_label);
 
+        reportId = getIntent().getLongExtra(REPORT_ID, -1);
+        bookId = getIntent().getLongExtra(BOOK_ID, -1);
+        position = getIntent().getIntExtra(POSITION, -1);
+
         backToPageIntent = new Intent(ReportActivity.this, PageActivity.class);
         backToPageIntent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
-        backToPageIntent.putExtra(Constants.BOOK_ID, bookId);
-        backToPageIntent.putExtra(Constants.POSITION, position);
-
-        long bookId = getIntent().getLongExtra("reportId", -1);
+        backToPageIntent.putExtra(BOOK_ID, bookId);
+        backToPageIntent.putExtra(POSITION, position);
 
         ReportGetterTask reportGetterTask = new ReportGetterTask();
 
         try {
-            reportGetterTask.execute(bookId);
+            reportGetterTask.execute(reportId);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -104,9 +111,6 @@ public class ReportActivity extends AppCompatActivity {
         protected void onPostExecute(Cursor cursor) {
             super.onPostExecute(cursor);
             cursor.moveToFirst();
-            bookId = cursor.getLong(cursor.getColumnIndex("bookId"));
-            position = cursor.getInt(cursor.getColumnIndex("position"));
-            reportId = cursor.getLong(cursor.getColumnIndex("id"));
             try {
                 ByteArrayOutputStream originalImageOs = new ByteArrayOutputStream();
                 FileInputStream originalImageInputStream =
@@ -165,22 +169,30 @@ public class ReportActivity extends AppCompatActivity {
                 conn.setDoOutput(true);
                 conn.connect();
                 OutputStream os = conn.getOutputStream();
+
                 handler.post(() -> {progressLabel.setText(R.string.sending_original);});
                 os.write(getFileData(originalImage, "image/jpeg", "originalImage", "originalImage.jpeg", false));
                 publishProgress(((float)originalImage.length/(float)totalSize));
                 Thread.sleep(1000);
+
                 handler.post(() -> {progressLabel.setText(R.string.sending_reflowed);});
                 os.write(getFileData(reflowedImage, "image/jpeg", "overturnedImage", "overturnedImage.jpeg", false));
                 publishProgress(((float)(originalImage.length+reflowedImage.length)/(float)totalSize));
                 Thread.sleep(1000);
+
                 handler.post(() -> {progressLabel.setText(R.string.sending_glyphs);});
                 os.write(getFileData(glyphs, "application/json", "glyphs", "glyphs.json", false));
                 publishProgress(((float)(originalImage.length+reflowedImage.length + glyphs.length)/(float)totalSize));
                 Thread.sleep(1000);
+
+                os.write(getTextData(getDeviceModel(), "deviceModel", false));
+                os.write(getTextData(String.valueOf(Build.VERSION.SDK_INT), "sdk", false));
                 os.write(getTextData(BuildConfig.GitHash, "version", true));
                 os.flush();
+
                 handler.post(() -> {progressLabel.setText(R.string.report_response);});
                 Log.v(getClass().getName(), "HIROKU_RESPONSE response code" + conn.getResponseCode());
+
                 InputStream is = conn.getInputStream();
                 byte[] buffer = new byte[100];
                 int available = is.available();
@@ -276,9 +288,10 @@ public class ReportActivity extends AppCompatActivity {
         }
     }
 
+    private String getDeviceModel() {
+        String manufacturer = Build.MANUFACTURER;
+        String model = Build.MODEL;
+        return String.format("%s_%s", manufacturer, model);
+    }
 
 }
-
-
-
-
