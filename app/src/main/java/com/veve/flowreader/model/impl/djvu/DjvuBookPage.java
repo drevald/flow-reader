@@ -2,7 +2,6 @@ package com.veve.flowreader.model.impl.djvu;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
 import com.veve.flowreader.Utils;
 import com.veve.flowreader.model.BookPage;
@@ -11,11 +10,8 @@ import com.veve.flowreader.model.PageGlyphInfo;
 import com.veve.flowreader.model.PageSize;
 import com.veve.flowreader.model.impl.AbstractBookPage;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 
 public class DjvuBookPage extends AbstractBookPage implements BookPage  {
@@ -41,9 +37,11 @@ public class DjvuBookPage extends AbstractBookPage implements BookPage  {
 
 
     @Override
-    public List<Bitmap> getAsReflownBitmap(DevicePageContext context, List<PageGlyphInfo> pageGlyphs) {
+    public List<Bitmap> getAsReflowedBitmap(DevicePageContext context, List<PageGlyphInfo> pageGlyphs) {
         PageSize pageSize = new PageSize();
-        List<byte[]> bytes = getNativeReflownBytes(getBookId(), getPageNumber(), context.getZoom(), (int)(context.getWidth() * 0.8),
+
+
+        List<byte[]> bytes = getNativeReflowedBytes(getBookId(), getPageNumber(), context.getZoom(), (int)(context.getWidth() * magicMultiplier),
                 pageSize, pageGlyphs, context.isPreprocessing(), context.getMargin());
 
         List<Bitmap> retVal = new ArrayList<>();
@@ -77,7 +75,7 @@ public class DjvuBookPage extends AbstractBookPage implements BookPage  {
         return getNativeHeight(getBookId(), getPageNumber());
     }
 
-    private static native List<byte[]> getNativeReflownBytes(long bookId, int pageNumber, float scale, int pageWidth, PageSize pageSize, List<PageGlyphInfo> pageGlyphs, boolean preprocessing, float margin);
+    private static native List<byte[]> getNativeReflowedBytes(long bookId, int pageNumber, float scale, int pageWidth, PageSize pageSize, List<PageGlyphInfo> pageGlyphs, boolean preprocessing, float margin);
 
     private static native byte[] getNativeBytes(long bookId, int pageNumber);
 

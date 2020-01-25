@@ -63,6 +63,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
@@ -146,7 +148,7 @@ public class PageActivity extends AppCompatActivity {
 
         Log.v(getClass().getName(), getClass().getName() + "onCreate# " + this.hashCode());
 
-        runningTasks = new HashSet<>();
+        runningTasks = new CopyOnWriteArraySet<>();
 
         setContentView(R.layout.activity_page);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -435,7 +437,13 @@ public class PageActivity extends AppCompatActivity {
             View v = pageActivity.page.getChildAt(k);
             if (v instanceof ImageView) {
                 ImageView iv = (ImageView)v;
-                ((BitmapDrawable)iv.getDrawable()).getBitmap().recycle();
+                if (iv.getDrawable() != null) {
+                    Bitmap bitmap = ((BitmapDrawable) iv.getDrawable()).getBitmap();
+                    if (bitmap != null && !bitmap.isRecycled() && book.getMode() != VIEW_MODE_ORIGINAL) {
+                        bitmap.recycle();
+                    }
+                }
+
             }
         }
 
@@ -736,7 +744,7 @@ public class PageActivity extends AppCompatActivity {
             boolean invalidateCache = integers[1] == 1;
 
             if (pageActivity.viewMode == Constants.VIEW_MODE_PHONE) {
-                bitmaps = pageActivity.pageRenderer.renderPage(context, pageNumber);
+                bitmaps = new CopyOnWriteArrayList<>(pageActivity.pageRenderer.renderPage(context, pageNumber));
             } else {
                 bitmaps = Arrays.asList(pageActivity.pageRenderer.renderOriginalPage(pageActivity.context, pageNumber));
             }
@@ -804,7 +812,10 @@ public class PageActivity extends AppCompatActivity {
                             ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(bitmap.getWidth(), bitmap.getHeight());
                             imageView.setLayoutParams(layoutParams);
                             imageView.setScaleType(ImageView.ScaleType.FIT_START);
-                            imageView.setImageBitmap(bitmap);
+                            //if (!bitmap.isRecycled()) {
+                                imageView.setImageBitmap(bitmap);
+                            //}
+
                             pageActivity.page.addView(imageView);
                             horizontalScrollView.addView(pageActivity.page);
                             pageActivity.scroll.addView(horizontalScrollView);

@@ -10,7 +10,6 @@ import com.veve.flowreader.model.PageGlyphInfo;
 import com.veve.flowreader.model.PageSize;
 import com.veve.flowreader.model.impl.AbstractBookPage;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,12 +62,12 @@ public class PdfBookPage extends AbstractBookPage implements BookPage {
     }
 
     @Override
-    public List<Bitmap> getAsReflownBitmap(DevicePageContext context, List<PageGlyphInfo> pageGlyphs) {
+    public List<Bitmap> getAsReflowedBitmap(DevicePageContext context, List<PageGlyphInfo> pageGlyphs) {
         PageSize pageSize = new PageSize();
 
 
-        List<byte[]> bytes = getNativeReflownBytes(getBookId(), getPageNumber(), context.getZoom(),
-                (int)(context.getWidth() * 0.8), pageSize, pageGlyphs, context.isPreprocessing(), context.getMargin());
+        List<byte[]> bytes = getNativeReflowedBytes(getBookId(), getPageNumber(), context.getZoom(),
+                (int)(context.getWidth() * magicMultiplier), pageSize, pageGlyphs, context.isPreprocessing(), context.getMargin());
 
         List<Bitmap> retVal = new ArrayList<>();
 
@@ -112,7 +111,7 @@ public class PdfBookPage extends AbstractBookPage implements BookPage {
     }
 
 
-    private static native List<byte[]> getNativeReflownBytes(long bookId, int pageNumber, float scale, int pageWidth, PageSize pageSize, List<PageGlyphInfo> pageGlyphs, boolean preprocessing, float margin);
+    private static native List<byte[]> getNativeReflowedBytes(long bookId, int pageNumber, float scale, int pageWidth, PageSize pageSize, List<PageGlyphInfo> pageGlyphs, boolean preprocessing, float margin);
 
     private static native int getNativeWidth(long bookId, int pageNumber);
 

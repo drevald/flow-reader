@@ -31,6 +31,7 @@ import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.model.BooksCollection;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -48,6 +49,8 @@ public class BrowseFilesActivity extends AppCompatActivity {
         super.onResume();
         progress.setVisibility(View.INVISIBLE);
     }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +101,16 @@ public class BrowseFilesActivity extends AppCompatActivity {
             setRoot(Environment.getExternalStorageDirectory().getAbsolutePath());
         }
 
+        private void sortFiles(){
+            Collections.sort(currentFiles, (File fileOne, File fileTwo) -> {
+                if (fileOne.isDirectory() && fileTwo.isFile()) {
+                    return -1;
+                } else if (fileOne.isFile() && fileTwo.isDirectory()) {
+                    return 1;
+                } else return fileOne.getName().toLowerCase().compareTo(fileTwo.getName().toLowerCase());
+            });
+        }
+
         protected void setRoot(String path) {
             try {
                 rootDir = new File(path);
@@ -109,17 +122,20 @@ public class BrowseFilesActivity extends AppCompatActivity {
                 Log.d(getClass().getName(), String.format("currentDirectory.listFiles() = ",
                         currentDirectory.listFiles() == null ? "null" :
                                 currentDirectory.listFiles().length + " files"));
-                for (File file : currentDirectory.listFiles()) {
-                    if (file.canRead())
+                for (File file : currentDirectory.listFiles(new FileFilter() {
+                    @Override
+                    public boolean accept(File pathname) {
+                        return (pathname.isFile() && (pathname.toString().toLowerCase().endsWith("pdf") ||
+                                pathname.toString().toLowerCase().endsWith("djvu"))) || pathname.isDirectory();
+                    }
+                })) {
+                    if (file.canRead() && !file.isHidden())
                         currentFiles.add(file);
                 }
-                Collections.sort(currentFiles, (File fileOne, File fileTwo) -> {
-                    if (fileOne.isDirectory() && fileTwo.isFile()) {
-                        return -1;
-                    } else if (fileOne.isFile() && fileTwo.isDirectory()) {
-                        return 1;
-                    } else return fileOne.getName().compareTo(fileTwo.getName());
-                });
+                sortFiles();
+
+                Log.d("FLOW-READER", "" + currentFiles);
+
             } catch (Exception e) {
 //                Log.e(this.getClass().getTitle(), e.getMessage());
                 e.printStackTrace();
@@ -132,12 +148,21 @@ public class BrowseFilesActivity extends AppCompatActivity {
             if (newRoot.isDirectory()) {
                 if (newRoot.canRead()) {
                     currentFiles.clear();
-                    for (File file : newRoot.listFiles()) {
-                        if (file.canRead())
+                    for (File file : newRoot.listFiles(new FileFilter() {
+                        @Override
+                        public boolean accept(File pathname) {
+                            return (pathname.isFile() && (pathname.toString().toLowerCase().endsWith("pdf") ||
+                                    pathname.toString().toLowerCase().endsWith("djvu"))) || pathname.isDirectory();
+                        }
+                    })) {
+                        if (file.canRead() && !file.isHidden())
                             currentFiles.add(file);
                     }
-                    if (!rootDir.equals(newRoot))
+                    if (!rootDir.equals(newRoot)) {
                         currentFiles.add(0, newRoot.getParentFile());
+                    }
+
+                    sortFiles();
                     currentDirectory = newRoot;
                     notifyDataSetChanged();
                     Log.i(this.getClass().getName(), "Changing root to " + newRoot.getAbsolutePath());
