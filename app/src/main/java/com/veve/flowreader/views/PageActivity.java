@@ -71,6 +71,8 @@ import static com.veve.flowreader.Constants.BOOK_CONTEXT;
 import static com.veve.flowreader.Constants.BOOK_ID;
 import static com.veve.flowreader.Constants.FLOW_BOOK_PREFERENCES;
 import static com.veve.flowreader.Constants.MAX_BITMAP_SIZE;
+import static com.veve.flowreader.Constants.POSITION;
+import static com.veve.flowreader.Constants.REPORT_ID;
 import static com.veve.flowreader.Constants.VIEW_MODE_ORIGINAL;
 import static com.veve.flowreader.Constants.VIEW_MODE_PHONE;
 
@@ -851,7 +853,9 @@ public class PageActivity extends AppCompatActivity {
             Long reportId = daoAccess.insertReport(reportRecords[0]);
             Intent reportIntent = new Intent(PageActivity.this, ReportActivity.class);
             reportIntent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
-            reportIntent.putExtra("reportId", reportId);
+            reportIntent.putExtra(REPORT_ID, reportId);
+            reportIntent.putExtra(BOOK_ID, getBook().getId());
+            reportIntent.putExtra(POSITION, getBook().getCurrentPage());
             startActivity(reportIntent);
             return null;
         }

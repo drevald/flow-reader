@@ -25,7 +25,8 @@ public interface Constants {
 
     String BOOK_CONTEXT = "BOOK_CONTEXT";
     String BOOK_ID = "BOOK_ID";
-    String POSITION = "position";
+    String REPORT_ID = "REPORT_ID";
+    String POSITION = "POSITION";
     String FILE_NAME = "FILENAME";
 
     int MARGIN_STEP = 50;
