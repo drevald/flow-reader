@@ -215,8 +215,11 @@ public class ReportActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Long aLong) {
             super.onPostExecute(aLong);
-            AppDatabase appDatabase = AppDatabase.getInstance(getApplicationContext());
-            appDatabase.daoAccess().deleteReport(reportId);
+            handler.post(()->{
+                Log.v(getClass().getName(), "Removing report #" + aLong);
+                AppDatabase appDatabase = AppDatabase.getInstance(getApplicationContext());
+                appDatabase.daoAccess().deleteReport(reportId);
+            });
             startActivity(backToPageIntent);
         }
 
