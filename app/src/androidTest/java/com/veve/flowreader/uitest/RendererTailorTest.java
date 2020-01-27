@@ -38,13 +38,14 @@ public class RendererTailorTest extends BookTest {
     public void testTailoringNativeRenderer() {
         BookSource bookSource = new PdfBookSource(bookRecord.getUrl());
         PageRenderer pageRenderer = new NativePageRendererImpl(booksCollection, bookRecord, bookSource);
-        List<PagesSet> pagesSet = PagesSet.getPagesSet("1-2");
+        List<PagesSet> pagesSet = PagesSet.getPagesSet("1-3");
         PageTailor pageTailor = new PageTailor(pageRenderer, pagesSet, context, 1000);
         Bitmap pageBitmap;
-        while ((pageBitmap = pageTailor.read()) != null) {
+        //while ((pageBitmap = pageTailor.read()) != null) {
+            pageBitmap = pageTailor.read();
             assertEquals(500, pageBitmap.getWidth());
             assertEquals(1000, pageBitmap.getHeight());
-        }
+        //}
     }
 
     @Test

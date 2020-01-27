@@ -118,14 +118,14 @@ public class DevicePageContextImpl extends DevicePageContext {
     }
 
     public int getWidth() {
-        Log.v(getClass().getName(), String.format("Width for %s after update %d", hashCode(), this.width));
+        //Log.v(getClass().getName(), String.format("Width for %s after update %d", hashCode(), this.width));
         return this.width;
     }
 
     public void setWidth(int width) {
-        Log.v(getClass().getName(), String.format("Width for %s before update %d", hashCode(), this.width));
+        //Log.v(getClass().getName(), String.format("Width for %s before update %d", hashCode(), this.width));
         this.width = width;
-        Log.v(getClass().getName(), String.format("Width for %s after update %d", hashCode(), this.width));
+        //Log.v(getClass().getName(), String.format("Width for %s after update %d", hashCode(), this.width));
     }
 
     @Override
