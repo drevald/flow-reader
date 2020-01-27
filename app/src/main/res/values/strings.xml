@@ -81,4 +81,6 @@ Copyright &#169; 2010-2013, Advanced Micro Devices, Inc., all rights reserved.
 Copyright &#169; 2015-2016, OpenCV Foundation, all rights reserved.
 Copyright &#169; 2015-2016, Itseez Inc., all rights reserved.
 Third party copyrights are property of their respective owners.</string>
+    <string name="preprocess_explained">Removes page edges. Unwraps and straighten text lines.</string>
+    <string name="report_explained">Sends the image of badly rendered page for the technical analysis</string>
 </resources>

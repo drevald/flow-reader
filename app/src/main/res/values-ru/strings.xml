@@ -81,4 +81,6 @@ Copyright &#169; 2010-2013, Advanced Micro Devices, Inc., все права за
 Copyright &#169; 2015-2016, OpenCV Foundation, все права защищены.
 Copyright &#169; 2015-2016, Itseez Inc., все права защищены.
 Авторские права третьих лиц являются собственностью соответствующих владельцев.</string>
+    <string name="preprocess_explained">Удаляет изображение краев страниц. Выпрямляет согнутые и разворачивает наклонные строки.</string>
+    <string name="report_explained">Отсылает изображение неудачно переверстанной страницы для анализа.</string>
 </resources>
