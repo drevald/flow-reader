@@ -243,13 +243,7 @@ public class PageActivity extends AppCompatActivity {
         setPageNumber(currentPage);
 
         book.setZoom(context.getZoom());
-
-        //runOnUiThread(()-> {
-            show.setImageResource(viewMode ==
-                    Constants.VIEW_MODE_PHONE ? R.drawable.ic_to_book : R.drawable.ic_to_phone);
-        //});
-
-        //book.getPreprocessing() ?
+        show.setImageResource(viewMode == Constants.VIEW_MODE_PHONE ? R.drawable.ic_to_book : R.drawable.ic_to_phone);
 
     }
 
@@ -263,6 +257,40 @@ public class PageActivity extends AppCompatActivity {
         MenuItem item = menu.findItem(R.id.preprocess);
         item.setIcon(book.getPreprocessing() ? R.drawable.ic_unenhance : R.drawable.ic_enhance);
         item.setTitle(book.getPreprocessing() ? R.string.unenhance : R.string.enhance );
+//        if (viewMode == VIEW_MODE_PHONE) {
+//            menu.findItem(R.id.no_margins).setVisible(true);
+//            menu.findItem(R.id.normal_margins).setVisible(true);
+//            menu.findItem(R.id.wide_margins).setVisible(true);
+//            menu.findItem(R.id.preprocess).setVisible(true);
+//            menu.findItem(R.id.page_unreadable).setVisible(true);
+//            menu.findItem(R.id.print).setVisible(true);
+//        }
+//        if (viewMode == VIEW_MODE_ORIGINAL) {
+//            menu.findItem(R.id.no_margins).setVisible(false);
+//            menu.findItem(R.id.normal_margins).setVisible(false);
+//            menu.findItem(R.id.wide_margins).setVisible(false);
+//            menu.findItem(R.id.preprocess).setVisible(false);
+//            menu.findItem(R.id.page_unreadable).setVisible(false);
+//            menu.findItem(R.id.print).setVisible(false);
+//        }
+
+        if (viewMode == VIEW_MODE_PHONE) {
+            menu.findItem(R.id.no_margins).setEnabled(true);
+            menu.findItem(R.id.normal_margins).setEnabled(true);
+            menu.findItem(R.id.wide_margins).setEnabled(true);
+            menu.findItem(R.id.preprocess).setEnabled(true);
+            menu.findItem(R.id.page_unreadable).setEnabled(true);
+            menu.findItem(R.id.print).setEnabled(true);
+        }
+        if (viewMode == VIEW_MODE_ORIGINAL) {
+            menu.findItem(R.id.no_margins).setEnabled(false);
+            menu.findItem(R.id.normal_margins).setEnabled(false);
+            menu.findItem(R.id.wide_margins).setEnabled(false);
+            menu.findItem(R.id.preprocess).setEnabled(false);
+            menu.findItem(R.id.page_unreadable).setEnabled(false);
+            menu.findItem(R.id.print).setEnabled(false);
+        }
+
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -624,19 +652,15 @@ public class PageActivity extends AppCompatActivity {
                 book.setMode(VIEW_MODE_PHONE);
                 Drawable res = getApplicationContext().getResources().getDrawable(R.drawable.ic_to_book);
                 Log.d(getClass().getName(), "resource state is " + res.getConstantState().hashCode());
-                //show.setImageResource(R.drawable.ic_to_book);
                 show.setImageDrawable(res);
-                Log.d(getClass().getName(),
-                        "button resource state is now " + show.getDrawable().getConstantState().hashCode());
-                Snackbar.make(view, getString(R.string.ui_reflow_page), Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Log.d(getClass().getName(),"button resource state is now " + show.getDrawable().getConstantState().hashCode());
+                Snackbar.make(view, getString(R.string.ui_reflow_page), Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 Log.d(getClass().getName(), String.format("Setting page #%d for modified page", currentPage));
             } else if (viewMode == VIEW_MODE_PHONE) {
                 viewMode = VIEW_MODE_ORIGINAL;
                 book.setMode(VIEW_MODE_ORIGINAL);
                 show.setImageResource(R.drawable.ic_to_phone);
-                Snackbar.make(view, getString(R.string.ui_original_page), Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Snackbar.make(view, getString(R.string.ui_original_page), Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 Log.d(getClass().getName(), String.format("Setting page #%d for original page", currentPage));
             }
             pageActivity.setPageNumber(currentPage);
