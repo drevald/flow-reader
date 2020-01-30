@@ -58,6 +58,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.lang.ref.WeakReference;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -75,6 +77,7 @@ import static com.veve.flowreader.Constants.FLOW_BOOK_PREFERENCES;
 import static com.veve.flowreader.Constants.MAX_BITMAP_SIZE;
 import static com.veve.flowreader.Constants.POSITION;
 import static com.veve.flowreader.Constants.REPORT_ID;
+import static com.veve.flowreader.Constants.REPORT_URL;
 import static com.veve.flowreader.Constants.VIEW_MODE_ORIGINAL;
 import static com.veve.flowreader.Constants.VIEW_MODE_PHONE;
 
@@ -268,43 +271,6 @@ public class PageActivity extends AppCompatActivity {
 
         context.setInvalidateCache(false);
         switch (item.getItemId()) {
-//            case R.id.margins_minus: {
-//                int margin = context.getMargin();
-//                context.setMargin(margin > MARGIN_STEP ? margin - MARGIN_STEP : margin);
-//                book.setMargin(margin);
-//                break;
-//            }
-//            case R.id.margins_plus: {
-//                int margin = context.getMargin();
-//                context.setMargin(margin < MARGIN_MAX ? margin + MARGIN_STEP : margin);
-//                book.setMargin(margin);
-//                break;
-//            }
-//
-//            case R.id.kerning_minus: {
-//                context.setKerning(0.8f * context.getKerning());
-//                Log.v(getClass().getTitle(), "Kerning set to " + context.getKerning());
-//                book.setKerning(context.getKerning());
-//                break;
-//            }
-//            case R.id.kerning_plus: {
-//                context.setKerning(1.25f * context.getKerning());
-//                Log.v(getClass().getTitle(), "Kerning set to " + context.getKerning());
-//                book.setKerning(context.getKerning());
-//                break;
-//            }
-//            case R.id.leading_minus: {
-//                context.setLeading(0.8f * context.getLeading());
-//                Log.v(getClass().getTitle(), "Leading set to " + context.getLeading());
-//                book.setLeading(context.getLeading());
-//                break;
-//            }
-//            case R.id.leading_plus: {
-//                context.setLeading(1.25f * context.getLeading());
-//                Log.v(getClass().getTitle(), "Leading set to " + context.getLeading());
-//                book.setLeading(context.getLeading());
-//                break;
-//            }
             case R.id.no_margins: {
                 context.setMargin(0.2f);
                 Log.v(getClass().getName(), "Margin set to " + context.getMargin());
@@ -324,6 +290,24 @@ public class PageActivity extends AppCompatActivity {
                 break;
             }
             case R.id.page_unreadable: {
+
+                ConnectionCheckerTask connectionCheckerTask = new ConnectionCheckerTask();
+                connectionCheckerTask.execute();
+                try {
+                    if (!connectionCheckerTask.get()) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(PageActivity.this);
+                        builder.setTitle(R.string.no_connection);
+                        builder.setMessage(R.string.no_connection_explained);
+                        builder.setNeutralButton(R.string.ok, (dialog, which)->{
+                            dialog.dismiss();
+                        });
+                        builder.create().show();
+                        break;
+                    }
+                } catch (Exception e)  {
+                    e.printStackTrace();
+                }
+
                 Bitmap originalBitmap = pageRenderer.renderOriginalPage(currentPage);
                 List<Bitmap> reflowedBitmaps = pageLoader.bitmaps;
                 ByteArrayOutputStream osOriginal = new ByteArrayOutputStream();
@@ -706,6 +690,30 @@ public class PageActivity extends AppCompatActivity {
     }
 
 //////////////////////////   ASYNC TASKS   /////////////////////////////////////////////////
+
+    class ConnectionCheckerTask extends AsyncTask<Void, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            HttpURLConnection connection = null;
+            boolean result;
+            try {
+                URL url = new URL(REPORT_URL);
+                connection = (HttpURLConnection)url.openConnection();
+                connection.connect();
+                result = true;
+            } catch (Exception e) {
+                Log.e(getClass().getName(), "Failed to connect to server at " + REPORT_URL, e);
+                result = false;
+            } finally {
+                if (connection != null)
+                    connection.disconnect();
+            }
+            return result;
+        }
+
+    }
+
 
     class PageLoader extends AsyncTask<Integer, Void, Void> {
 
