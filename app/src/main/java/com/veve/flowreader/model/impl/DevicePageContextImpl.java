@@ -55,9 +55,17 @@ public class DevicePageContextImpl extends DevicePageContext {
 
     private float screenRatio;
 
-    private Point remotestPoint;
+//    private Point remotestPoint;
+//
+//    private Point startPoint;
 
-    private Point startPoint;
+    private int remotestPointX;
+
+    private int remotestPointY;
+
+    private int startPointX;
+
+    private int startPointY;
 
     public DevicePageContextImpl(int width) {
         this.zoom = DEFAULT_ZOOM;
@@ -67,8 +75,12 @@ public class DevicePageContextImpl extends DevicePageContext {
         this.margin = 1.0f;
         this.displayDpi = DEFAULT_DISPLAY_DPI;
         this.currentBaseLine = 0;
-        this.remotestPoint = new Point((int)margin*DEFAULT_MARGIN, 0);
-        this.startPoint = new Point((int)margin*DEFAULT_MARGIN, 0);
+//        this.remotestPoint = new Point((int)margin*DEFAULT_MARGIN, 0);
+//        this.startPoint = new Point((int)margin*DEFAULT_MARGIN, 0);
+        this.remotestPointX = (int)margin*DEFAULT_MARGIN;
+        this.startPointX = (int)margin*DEFAULT_MARGIN;
+        this.remotestPointY = 0;
+        this.startPointY = 0;
 
     }
 
@@ -89,7 +101,7 @@ public class DevicePageContextImpl extends DevicePageContext {
     }
 
     public Point getStartPoint() {
-        return startPoint;
+        return new Point(startPointX, startPointY);
     }
 
     @Override
@@ -124,7 +136,7 @@ public class DevicePageContextImpl extends DevicePageContext {
     }
 
     @Override
-    public Point getRemotestPoint() {return remotestPoint;}
+    public Point getRemotestPoint() {return new Point (remotestPointX, remotestPointY);}
 
     public float getKerning() {
         return kerning;
@@ -200,8 +212,12 @@ public class DevicePageContextImpl extends DevicePageContext {
 
     @Override
     public void resetPosition() {
-        this.startPoint = new Point((int)margin*DEFAULT_MARGIN, 0);
-        this.remotestPoint = new Point((int)margin*DEFAULT_MARGIN, 0);
+//        this.startPoint = new Point((int)margin*DEFAULT_MARGIN, 0);
+//        this.remotestPoint = new Point((int)margin*DEFAULT_MARGIN, 0);
+        this.remotestPointX = (int)margin*DEFAULT_MARGIN;
+        this.startPointX = (int)margin*DEFAULT_MARGIN;
+        this.remotestPointY = 0;
+        this.startPointY = 0;
     }
 
 }

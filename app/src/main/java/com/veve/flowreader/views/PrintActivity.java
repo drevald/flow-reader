@@ -255,7 +255,7 @@ public class PrintActivity extends AppCompatActivity {
             Log.e(getClass().getName(), e.getLocalizedMessage());
         }
 
-        findViewById(R.id.print).setOnClickListener((view) -> {
+        findViewById(R.id.do_print).setOnClickListener((view) -> {
                 parsePagesString();
                 doPrint(bookRecord);
             }
