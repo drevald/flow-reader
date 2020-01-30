@@ -83,4 +83,6 @@ Copyright &#169; 2015-2016, Itseez Inc., все права защищены.
 Авторские права третьих лиц являются собственностью соответствующих владельцев.</string>
     <string name="preprocess_explained">Удаляет изображение краев страниц. Выпрямляет согнутые и разворачивает наклонные строки.</string>
     <string name="report_explained">Отсылает изображение неудачно переверстанной страницы для анализа.</string>
+    <string name="no_connection">Отсутствует соединение</string>
+    <string name="no_connection_explained">Сервер не отвечает. Проверьте наличие интернет соединения.</string>
 </resources>
