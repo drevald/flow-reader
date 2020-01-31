@@ -55,10 +55,9 @@ public class RendererTailorTest extends BookTest {
         List<PagesSet> pagesSet = PagesSet.getPagesSet("1-3");
         PageTailor pageTailor = new PageTailor(pageRenderer, pagesSet, context, 1000);
         Bitmap pageBitmap;
-        while ((pageBitmap = pageTailor.read()) != null) {
-            assertEquals(500, pageBitmap.getWidth());
-            assertEquals(1000, pageBitmap.getHeight());
-        }
+        pageBitmap = pageTailor.read();
+        assertEquals(500, pageBitmap.getWidth());
+        assertEquals(1000, pageBitmap.getHeight());
     }
 
     @Test
