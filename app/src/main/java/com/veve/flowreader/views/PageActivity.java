@@ -203,7 +203,7 @@ public class PageActivity extends AppCompatActivity {
         Display display = getWindowManager().getDefaultDisplay();
         Point point = new Point();
         display.getSize(point);
-        context = new DevicePageContextImpl(point.x);
+        context = new DevicePageContext(point.x);
 
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         context.setResolution((int)displayMetrics.xdpi);

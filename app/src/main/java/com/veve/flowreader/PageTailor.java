@@ -7,7 +7,6 @@ import android.util.Log;
 
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageRenderer;
-import com.veve.flowreader.model.impl.DevicePageContextImpl;
 
 import java.util.Comparator;
 import java.util.LinkedList;
