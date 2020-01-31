@@ -69,6 +69,7 @@ public class DevicePageContextImpl extends DevicePageContext {
 
     public DevicePageContextImpl(int width) {
         this.zoom = DEFAULT_ZOOM;
+        this.zoomOriginal = DEFAULT_ZOOM;
         this.kerning = DEFAULT_KERNING;
         this.leading = DEFAULT_LEADING;
         this.width = width;

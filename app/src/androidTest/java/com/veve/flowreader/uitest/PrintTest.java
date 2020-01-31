@@ -50,7 +50,7 @@ public class PrintTest extends BookTest {
 
     @Test
     public void testPrintButton() {
-        ImageButton printButton = printActivity.findViewById(R.id.print);
+        ImageButton printButton = printActivity.findViewById(R.id.do_print);
         printButton.callOnClick();
    }
 
