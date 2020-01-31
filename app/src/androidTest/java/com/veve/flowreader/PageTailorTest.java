@@ -26,7 +26,7 @@ public class PageTailorTest {
 
     @Before
     public void setContext() {
-        context = new DevicePageContextImpl(50);
+        context = new DevicePageContext(50);
         context.setScreenRatio(1);
     }
 

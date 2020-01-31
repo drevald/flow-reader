@@ -83,7 +83,7 @@ public class PerformanceTest {
 
         //PageRenderer pageRenderer = new CachedPageRendererImpl(booksCollection, bookRecord, djvuBookSource);
         PageRenderer pageRenderer = new NativePageRendererImpl(booksCollection, bookRecord, djvuBookSource);
-        DevicePageContext context = new DevicePageContextImpl(800);
+        DevicePageContext context = new DevicePageContext(800);
 
         start = System.currentTimeMillis();
         pageRenderer.renderOriginalPage(context, 0);

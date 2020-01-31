@@ -3,6 +3,7 @@ package com.veve.flowreader.uitest;
 import android.graphics.Bitmap;
 
 import com.veve.flowreader.model.BookSource;
+import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageRenderer;
 import com.veve.flowreader.model.impl.CachedPageRendererImpl;
 import com.veve.flowreader.model.impl.DevicePageContextImpl;
@@ -22,7 +23,7 @@ public class RendererTest extends BookTest {
     public void testCachedRenderer() {
         BookSource bookSource = new PdfBookSource(bookRecord.getUrl());
         PageRenderer pageRenderer = new CachedPageRendererImpl(booksCollection, bookRecord, bookSource);
-        List<Bitmap> bitmaps = pageRenderer.renderPage(new DevicePageContextImpl(50), 1);
+        List<Bitmap> bitmaps = pageRenderer.renderPage(new DevicePageContext(50), 1);
         assertNotNull(bitmaps);
     }
 
@@ -30,7 +31,7 @@ public class RendererTest extends BookTest {
     public void testNativeRenderer() {
         BookSource bookSource = new PdfBookSource(bookRecord.getUrl());
         PageRenderer pageRenderer = new NativePageRendererImpl(booksCollection, bookRecord, bookSource);
-        List<Bitmap> bitmaps = pageRenderer.renderPage(new DevicePageContextImpl(50), 1);
+        List<Bitmap> bitmaps = pageRenderer.renderPage(new DevicePageContext(50), 1);
         assertNotNull(bitmaps);
     }
 

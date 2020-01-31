@@ -6,11 +6,12 @@ import android.util.Log;
 
 import java.io.Serializable;
 
+
 /**
- * Created by ddreval on 16.01.2018.
+ * Created by ddreval on 17.01.2018.
  */
 
-public class DevicePageContext implements Serializable  {
+public class DevicePageContext implements Serializable {
 
     private static final float DEFAULT_ZOOM = 1f;
 
@@ -23,14 +24,6 @@ public class DevicePageContext implements Serializable  {
     private static final int DEFAULT_MARGIN = 25;
 
     private static final int DEFAULT_DISPLAY_DPI = 72;
-
-    private int startPointX;
-
-    private int startPointY;
-
-    private int remotestPointX;
-
-    private int remotestPointY;
 
     private Canvas canvas;
 
@@ -62,6 +55,10 @@ public class DevicePageContext implements Serializable  {
 
     private float screenRatio;
 
+    private Point remotestPoint;
+
+    private Point startPoint;
+
     private int resolution;
 
     public DevicePageContext(int width) {
@@ -71,12 +68,10 @@ public class DevicePageContext implements Serializable  {
         this.leading = DEFAULT_LEADING;
         this.width = width;
         this.margin = 1.0f;
-        this.startPointX = (int)margin*DEFAULT_MARGIN;
-        this.startPointY = 0;
-        this.remotestPointX = (int)margin*DEFAULT_MARGIN;
-        this.remotestPointY = 0;
         this.displayDpi = DEFAULT_DISPLAY_DPI;
         this.currentBaseLine = 0;
+        this.remotestPoint = new Point((int) margin * DEFAULT_MARGIN, 0);
+        this.startPoint = new Point((int) margin * DEFAULT_MARGIN, 0);
     }
 
     public int getResolution() {
@@ -104,7 +99,7 @@ public class DevicePageContext implements Serializable  {
     }
 
     public Point getStartPoint() {
-        return new Point(startPointX, startPointY);
+        return startPoint;
     }
 
     public Canvas getCanvas() {
@@ -134,9 +129,7 @@ public class DevicePageContext implements Serializable  {
         Log.v(getClass().getName(), String.format("Width for %s after update %d", hashCode(), this.width));
     }
 
-    public Point getRemotestPoint() {
-        return new Point (remotestPointX, remotestPointY);
-    }
+    public Point getRemotestPoint() {return remotestPoint;}
 
     public float getKerning() {
         return kerning;
@@ -211,10 +204,8 @@ public class DevicePageContext implements Serializable  {
     }
 
     public void resetPosition() {
-        this.startPointX = (int)margin*DEFAULT_MARGIN;
-        this.startPointY = 0;
-        this.remotestPointX = (int)margin*DEFAULT_MARGIN;
-        this.remotestPointY = 0;
+        this.startPoint = new Point((int)margin*DEFAULT_MARGIN, 0);
+        this.remotestPoint = new Point((int)margin*DEFAULT_MARGIN, 0);
     }
 
 }
