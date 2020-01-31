@@ -113,7 +113,6 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
     Mat mat(height,width,CV_8UC4,&((char*)buffer)[0]);
 
     cv::cvtColor(mat, mat, cv::COLOR_BGR2GRAY);
-    threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
 
     bool do_preprocessing = (bool)preprocessing;
 
@@ -121,9 +120,23 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
     cv::Mat new_image;
 
     if (do_preprocessing) {
-        std::vector<glyph> pic_glyphs = preprocess(mat, rotated_with_pictures);
-        reflow(mat, new_image, scale, pageWidth, env, glyphs, list, pic_glyphs, rotated_with_pictures, true, margin);
+        std::vector<uchar> buff;//buffer for coding
+        cv::imencode(".png", mat, buff);
+        PIX* pix = pixReadMemPng((l_uint8*)&buff[0], buff.size()) ;
+        PIX* result;
+        dewarpSinglePage(pix, 127, 1, 1, 1, &result, NULL, 1);
+        PIX* r = pixDeskew(result, 0);
+        pixDestroy(&result);
+        pixDestroy(&pix);
+
+        cv::Mat m = pix8ToMat(r);
+        threshold(m, m, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
+        cv::Mat rotated_with_pictures;
+        std::vector<glyph> pic_glyphs = preprocess(m, rotated_with_pictures);
+        reflow(m, new_image, scale, pageWidth, env, glyphs, list, pic_glyphs, rotated_with_pictures, true, margin);
+        pixDestroy(&r);
     } else {
+        threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
         reflow(mat, new_image, scale, pageWidth, env, glyphs, list, std::vector<glyph>(), mat, false, margin);
     }
 
