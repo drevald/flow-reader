@@ -564,7 +564,7 @@ std::vector<glyph> PageSegmenter::get_glyphs() {
             if (k == oneRuns.size()-1) {
                 g.is_last = 1;
             }
-            if (g.width > 0 & (float)g.height / g.width < 10) {
+            if (g.width > 0) {
                 return_value.push_back(g);
             } else {
                 continue;
