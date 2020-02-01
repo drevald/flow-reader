@@ -55,9 +55,9 @@ public class DevicePageContext implements Serializable {
 
     private float screenRatio;
 
-    private Point remotestPoint;
+    private transient Point remotestPoint;
 
-    private Point startPoint;
+    private transient Point startPoint;
 
     private int resolution;
 
