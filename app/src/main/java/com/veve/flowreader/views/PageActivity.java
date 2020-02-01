@@ -52,7 +52,6 @@ import com.veve.flowreader.model.BooksCollection;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageRenderer;
 import com.veve.flowreader.model.PageRendererFactory;
-import com.veve.flowreader.model.impl.DevicePageContextImpl;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

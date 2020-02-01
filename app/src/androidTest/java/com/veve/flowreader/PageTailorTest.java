@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageLayoutParser;
 import com.veve.flowreader.model.PageRenderer;
-import com.veve.flowreader.model.impl.DevicePageContextImpl;
 
 import org.junit.Before;
 import org.junit.Test;

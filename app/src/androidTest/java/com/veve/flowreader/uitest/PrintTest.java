@@ -61,8 +61,11 @@ public class PrintTest extends BookTest {
             ((EditText)printActivity.findViewById(R.id.column_width)).setText("100");
             printActivity.findViewById(R.id.columns_number).performAccessibilityAction(AccessibilityNodeInfo.ACTION_FOCUS, null);
         });
+
         currentThread().sleep(100);
-        printActivity.findViewById(R.id.columns_number).callOnClick();
+        printActivity.runOnUiThread(() -> {
+            printActivity.findViewById(R.id.columns_number).callOnClick();
+        });
         int colsNum = Integer.parseInt(((EditText)printActivity.findViewById(R.id.columns_number)).getText().toString());
         assertEquals(2, colsNum);
     }
