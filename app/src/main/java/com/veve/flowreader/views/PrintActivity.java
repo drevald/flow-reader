@@ -51,6 +51,16 @@ public class PrintActivity extends AppCompatActivity {
 
     static PageRenderer pageRenderer;
 
+    static PrintAttributes DEFAULT_ATTRIBUTES;
+
+    static {
+        PrintAttributes.Builder builder = new PrintAttributes.Builder();
+        builder.setMediaSize(PrintAttributes.MediaSize.ISO_A4);
+        builder.setMinMargins(new PrintAttributes.Margins(0, 0, 0, 0));
+        builder.setResolution(new PrintAttributes.Resolution("300dpi", "300dpi", 300, 300));
+        DEFAULT_ATTRIBUTES = builder.build();
+    }
+
     BookRecord bookRecord;
     List<PagesSet> pagesSets;
     EditText pages;
@@ -60,8 +70,9 @@ public class PrintActivity extends AppCompatActivity {
     RadioGroup pagesGroup;
     int screenWidthMm;
     int colNum;
-    int columnsWithInPixels;
+    int columnsWidthInPixels;
     int gapWidthPx;
+    PrintAttributes printAttributes;
 
     class PrintBookAdapter extends PrintDocumentAdapter {
 
@@ -131,9 +142,9 @@ public class PrintActivity extends AppCompatActivity {
                 try {
                     context.setZoom(1);
                     Log.v(getClass().getName(), String.format("Setting column width %d hash %s",
-                            columnsWithInPixels,
+                            columnsWidthInPixels,
                             context.hashCode()));
-                    context.setWidth(columnsWithInPixels);
+                    context.setWidth(columnsWidthInPixels);
                     Log.v(getClass().getName(),
                             String.format("Drawing column width %d on page %d(%d) x %d(%d) hash %s",
                                     context.getWidth(),
@@ -143,7 +154,7 @@ public class PrintActivity extends AppCompatActivity {
                                     widthInMils,
                             context.hashCode()));
 
-                    context.setScreenRatio(columnsWithInPixels / (float) columnsHeightInPixels);
+                    context.setScreenRatio(columnsWidthInPixels / (float) columnsHeightInPixels);
                     PageTailor pageTailor = new PageTailor(pageRenderer, pagesSets, context, columnsHeightInPixels);
                     Bitmap bitmap;
                     int counter = 0;
@@ -166,14 +177,14 @@ public class PrintActivity extends AppCompatActivity {
                             page = pdfDocument.startPage(pageBuilder.create());
                         }
                         Log.v(getClass().getName(), String.format("Drawing column from x:%d y:%d w:%d h:%d on page %d",
-                                leftMarginInPixel + ((counter % colNum) * (leftMarginInPixel + columnsWithInPixels)),
+                                leftMarginInPixel + ((counter % colNum) * (leftMarginInPixel + columnsWidthInPixels)),
                                 topMarginInPixel,
                                 bitmap.getWidth(),
                                 bitmap.getHeight(),
                                 pageNum));
-                        page.getCanvas().drawBitmap(bitmap, leftMarginInPixel + ((counter % colNum) * (gapWidthPx + columnsWithInPixels)), topMarginInPixel, null);
+                        page.getCanvas().drawBitmap(bitmap, leftMarginInPixel + ((counter % colNum) * (gapWidthPx + columnsWidthInPixels)), topMarginInPixel, null);
                         if (Constants.DEBUG) {
-                            page.getCanvas().drawRect(leftMarginInPixel + ((counter % colNum) * (gapWidthPx + columnsWithInPixels)), topMarginInPixel, bitmap.getWidth(), bitmap.getHeight(), new Paint());
+                            page.getCanvas().drawRect(leftMarginInPixel + ((counter % colNum) * (gapWidthPx + columnsWidthInPixels)), topMarginInPixel, bitmap.getWidth(), bitmap.getHeight(), new Paint());
                         }
 
                         if ((counter + 1) % colNum == 0) {
@@ -202,17 +213,13 @@ public class PrintActivity extends AppCompatActivity {
     private void setColumnLayout(PrintAttributes attributes) {
         int selectedId = columnGroup.getCheckedRadioButtonId();
         if (selectedId == R.id.set_column_width_as_device || selectedId == R.id.set_column_width)  {
-            String widthString = ((EditText)findViewById(R.id.column_width)).getText().toString();
-            int columnsWithInMm = Integer.parseInt(widthString);
-            colNum = calculateColsNum(Integer.parseInt(widthString), attributes);
-            gapWidthPx = calculateGapPix(Integer.parseInt(widthString), attributes);
-            columnsWithInPixels = (int)(columnsWithInMm * INCH_IN_MM * attributes.getResolution().getHorizontalDpi());
+            colNum = calculateColsNum(getInt(R.id.column_width), attributes);
+            gapWidthPx = calculateGapPix(getInt(R.id.column_width), attributes);
+            columnsWidthInPixels = (int)(getInt(R.id.column_width) * INCH_IN_MM
+                    * attributes.getResolution().getHorizontalDpi());
         } else if (selectedId == R.id.set_columns_number) {
-            String gaphString = ((EditText)findViewById(R.id.gap)).getText().toString();
-            String colNumString = ((EditText)findViewById(R.id.columns_number)).getText().toString();
-            int gapWidthMm = Integer.parseInt(gaphString);
-            int columnsNumber = Integer.parseInt(colNumString);
-            columnsWithInPixels = calculateColumnWidthPix(columnsNumber, gapWidthMm, attributes);
+            columnsWidthInPixels = calculateColumnWidthPix(
+                    getInt(R.id.columns_number), getInt(R.id.gap), attributes);
         }
     }
 
@@ -241,6 +248,7 @@ public class PrintActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        printAttributes = DEFAULT_ATTRIBUTES;
         setContentView(R.layout.activity_print);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -289,7 +297,6 @@ public class PrintActivity extends AppCompatActivity {
         float heightInInches = displayMetrics.heightPixels / (float) displayMetrics.ydpi;
         screenWidthMm =  (int) ((Math.min(widthInInches, heightInInches) * MM_IN_INCH));
         setPrintDeviceScreen(findViewById(R.id.set_column_width_as_device));
-
     }
 
     private void parsePagesString() {
@@ -326,14 +333,25 @@ public class PrintActivity extends AppCompatActivity {
     public void setPrintDeviceScreen(View view) {
         columnGroup.check(R.id.set_column_width_as_device);
         ((EditText) findViewById(R.id.column_width)).setText(String.valueOf(screenWidthMm));
-        ((EditText) findViewById(R.id.columns_number)).setText("");
-        ((EditText) findViewById(R.id.gap)).setText("");
+        ((EditText) findViewById(R.id.columns_number)).setText(
+                String.valueOf(calculateColsNum(screenWidthMm, printAttributes))
+        );
+        ((EditText) findViewById(R.id.gap)).setText(
+                String.valueOf(calculateGapMm(screenWidthMm, printAttributes))
+        );
         ((EditText) findViewById(R.id.columns_number)).setInputType(EditorInfo.TYPE_NULL);
         ((EditText) findViewById(R.id.gap)).setInputType(EditorInfo.TYPE_NULL);
     }
 
     public void setColumnWidth(View view) {
         columnGroup.check(R.id.set_column_width);
+        if (getInt(R.id.gap) < 0 || getInt(R.id.columns_number) < 0 ) return;
+        ((EditText) findViewById(R.id.column_width)).setText(
+                String.valueOf(calculateColumnWidthMm(
+                        getInt(R.id.columns_number),
+                        getInt(R.id.gap),
+                        printAttributes))
+        );
         ((EditText) findViewById(R.id.columns_number)).setText("");
         ((EditText) findViewById(R.id.gap)).setText("");
         ((EditText) findViewById(R.id.columns_number)).setInputType(EditorInfo.TYPE_NULL);
@@ -343,12 +361,30 @@ public class PrintActivity extends AppCompatActivity {
 
     public void setColumnsNumber(View view) {
         columnGroup.check(R.id.set_columns_number);
-        ((EditText) findViewById(R.id.column_width)).setText("");
+        if (getInt(R.id.column_width) < 0) return;
         ((EditText) findViewById(R.id.columns_number)).setInputType(EditorInfo.TYPE_CLASS_NUMBER);
         ((EditText) findViewById(R.id.gap)).setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+        ((EditText) findViewById(R.id.columns_number)).setText(
+                String.valueOf(calculateColsNum(getInt(R.id.column_width), printAttributes))
+        );
+        ((EditText) findViewById(R.id.gap)).setText(
+                String.valueOf(calculateGapMm(getInt(R.id.column_width), printAttributes))
+        );
+        ((EditText) findViewById(R.id.column_width)).setText("");
         ((EditText) findViewById(R.id.column_width)).setInputType(EditorInfo.TYPE_NULL);
-        ((EditText) findViewById(R.id.columns_number)).setText("3");
-        ((EditText) findViewById(R.id.gap)).setText("6");
+    }
+
+    private int getInt(int id) {
+        int result;
+        EditText v = (EditText)findViewById(id);
+        try {
+            result = Integer.parseInt(v.getText().toString());
+            v.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        } catch (Exception e) {
+            v.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+            result = -1;
+        }
+        return result;
     }
 
     /**
@@ -359,15 +395,21 @@ public class PrintActivity extends AppCompatActivity {
      * @return - column width in millimeters
      */
     public int calculateColumnWidthPix(int columnsNumber, int gap, PrintAttributes attributes) {
+        int result = calculateColumnWidthMm(columnsNumber, gap, attributes);
+        result *= INCH_IN_MM * attributes.getResolution().getHorizontalDpi();
+        return result;
+    }
+
+    private int calculateColumnWidthMm(int columnsNumber, int gap, PrintAttributes attributes) {
         int workingWidthMils =
                 attributes.getMediaSize().getWidthMils()
-                - attributes.getMinMargins().getLeftMils()
-                - attributes.getMinMargins().getRightMils()
-                - (int) (gap * (columnsNumber - 1) * MILS_IN_MM);
-        int result = (int) (workingWidthMils  * INCH_IN_MILS / (float)columnsNumber);
+                        - attributes.getMinMargins().getLeftMils()
+                        - attributes.getMinMargins().getRightMils()
+                        - (int) (gap * (columnsNumber - 1) * MILS_IN_MM);
+        int result = (int) (workingWidthMils  * MM_IN_MILS / (float)columnsNumber);
 //        Log.v(getClass().getName(), String.format("Width of columns, mm for n:%d and gap %dmm for page.w:%f is %d",
 //                columnsNumber, gap, attributes.getMediaSize().getWidthMils() * MM_IN_MILS, MM_IN_INCH * result));
-        return result * attributes.getResolution().getHorizontalDpi();
+        return result;
     }
 
     /**
@@ -377,15 +419,21 @@ public class PrintActivity extends AppCompatActivity {
      * @return - gap width in mm
      */
     public int calculateGapPix(int columnWidthMm, PrintAttributes attributes) {
+        int result = calculateGapMm(columnWidthMm, attributes);
+        result *= INCH_IN_MM * attributes.getResolution().getVerticalDpi();
+        return (int)result;
+    }
+
+    private int calculateGapMm(int columnWidthMm, PrintAttributes attributes) {
         int workingWidthMils =
                 attributes.getMediaSize().getWidthMils()
                         - attributes.getMinMargins().getLeftMils()
                         - attributes.getMinMargins().getRightMils();
         int colsNum = (int)(workingWidthMils * MM_IN_MILS / (float) columnWidthMm);
         int result = (int)((workingWidthMils * MM_IN_MILS - columnWidthMm * colsNum) / (colsNum - 1));
-        result *= INCH_IN_MM * attributes.getResolution().getVerticalDpi();
-        return (int)result;
+        return result;
     }
+
 
     /**
      * Calculates gap in mm for given media and column width

@@ -57,29 +57,59 @@ public class PrintTest extends BookTest {
     @Test
     public void testSetColumnWidth() throws Exception {
         printActivity.runOnUiThread(() -> {
-            printActivity.findViewById(R.id.column_width).performAccessibilityAction(AccessibilityNodeInfo.ACTION_FOCUS, null);
-            ((EditText)printActivity.findViewById(R.id.column_width)).setText("100");
-            printActivity.findViewById(R.id.columns_number).performAccessibilityAction(AccessibilityNodeInfo.ACTION_FOCUS, null);
+            //focus(R.id.column_width);
+            click(R.id.set_column_width);
+            setText(R.id.column_width, "100");
+            //focus(R.id.columns_number);
+            click(R.id.set_columns_number);
         });
-
         currentThread().sleep(100);
         printActivity.runOnUiThread(() -> {
-            printActivity.findViewById(R.id.columns_number).callOnClick();
+            click(R.id.set_columns_number);
         });
-        int colsNum = Integer.parseInt(((EditText)printActivity.findViewById(R.id.columns_number)).getText().toString());
-        assertEquals(2, colsNum);
+        int colsNum = getInt(R.id.columns_number);
+        assertEquals(String.format("Expected %d result %d", 2, colsNum), 2, colsNum);
     }
 
     @Test
     public void testSetColumnsNumber() throws Exception {
         printActivity.runOnUiThread(() -> {
-            printActivity.findViewById(R.id.columns_number).performAccessibilityAction(AccessibilityNodeInfo.ACTION_FOCUS, null);
-            ((EditText)printActivity.findViewById(R.id.columns_number)).setText("2");
-            printActivity.findViewById(R.id.column_width).performAccessibilityAction(AccessibilityNodeInfo.ACTION_FOCUS, null);
+            click(R.id.set_columns_number);
+            setText(R.id.columns_number, "2");
+            setText(R.id.gap, "0");
+            click(R.id.set_column_width);
         });
         currentThread().sleep(100);
-        int colWidth = Integer.parseInt(((EditText)printActivity.findViewById(R.id.column_width)).getText().toString());
-        assertEquals(105, colWidth);
+        int colWidth = getInt(R.id.column_width);
+        assertEquals(String.format("Expected %d result %d", 105, colWidth), 105, colWidth);
     }
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private int getInt(int id) {
+        int result;
+        EditText v = (EditText)printActivity.findViewById(id);
+        try {
+            result = Integer.parseInt(v.getText().toString());
+            v.setBackgroundColor(printActivity.getResources().getColor(R.color.colorPrimary));
+        } catch (Exception e) {
+            v.setBackgroundColor(printActivity.getResources().getColor(R.color.colorAccent));
+            result = -1;
+        }
+        return result;
+    }
+
+    private void click(int id) {
+        printActivity.findViewById(id).callOnClick();
+    }
+
+    private void setText(int id, String s) {
+        ((EditText)printActivity.findViewById(id)).setText(s);
+    }
+
+    private void focus(int id) {
+        printActivity.findViewById(id).performAccessibilityAction(AccessibilityNodeInfo.ACTION_FOCUS, null);
+    }
+
 
 }

@@ -114,7 +114,9 @@
                         android:layout_height="wrap_content"
                         android:inputType="none"
                         android:onClick="setColumnWidth"
-                        style="@style/form_label"/>
+                        style="@style/form_label"
+                        android:imeOptions="actionDone"
+                        android:singleLine="true"/>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_height="wrap_content"
@@ -134,7 +136,9 @@
                         android:layout_height="wrap_content"
                         android:inputType="none"
                         android:onClick="setColumnsNumber"
-                        style="@style/form_label"/>
+                        style="@style/form_label"
+                        android:imeOptions="actionDone"
+                        android:singleLine="true"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -146,7 +150,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:inputType="none"
-                        style="@style/form_label"/>
+                        style="@style/form_label"
+                        android:imeOptions="actionDone"
+                        android:singleLine="true"/>
                 </LinearLayout>
             </RadioGroup>
         </LinearLayout>
