@@ -23,9 +23,9 @@ import java.io.OutputStream;
 public class BookTest {
 
     protected long testBookId;
-    BookRecord bookRecord;
-    Context appContext;
-    BooksCollection booksCollection;
+    public BookRecord bookRecord;
+    public Context appContext;
+    public BooksCollection booksCollection;
 
     @Before
     public void prepareCollection() throws Exception {
