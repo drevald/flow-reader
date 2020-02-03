@@ -85,7 +85,7 @@ public class ReportActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        findViewById(R.id.fab).setOnClickListener((view) -> {
+        findViewById(R.id.send).setOnClickListener((view) -> {
                 requestPermissions();
                 ReportSenderTask reportSenderTask = new ReportSenderTask();
                 reportSenderTask.execute();

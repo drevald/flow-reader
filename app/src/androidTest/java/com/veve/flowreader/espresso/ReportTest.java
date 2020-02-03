@@ -20,10 +20,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+import static androidx.test.espresso.Espresso.onIdle;
+import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 
 @RunWith(AndroidJUnit4.class)
@@ -49,8 +52,11 @@ public class ReportTest  extends BookTest {
     public void testSendReport() {
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
         //Espresso.onView(ViewMatchers.withId(R.id.page_unreadable)).perform(click());
-        Espresso.onView(ViewMatchers.withText("Page unreadable")).perform(click());
-
+        onView(ViewMatchers.withText("Page unreadable")).perform(click());
+        onIdle();
+        onView(withId(R.id.send)).perform(click());
+        onIdle();
+        assert(true);
     }
 
 
