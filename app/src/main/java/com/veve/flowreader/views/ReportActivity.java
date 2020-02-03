@@ -51,12 +51,15 @@ public class ReportActivity extends AppCompatActivity {
 
     Intent backToPageIntent;
     TextView progressLabel;
-    Handler handler;
+    Handler senderHandler;
+    Handler databaseHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        handler = new Handler();
+        Log.v(getClass().getName(), "Main thread");
+        senderHandler = new Handler();
+        databaseHandler = new Handler();
         setContentView(R.layout.activity_report);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -148,7 +151,7 @@ public class ReportActivity extends AppCompatActivity {
         @Override
         protected void onProgressUpdate(Void... values) {
             super.onProgressUpdate(values);
-            handler.post(() -> {
+            senderHandler.post(() -> {
                 Log.v(getClass().getName(), "Progress " + values);
             });
         }
@@ -170,17 +173,17 @@ public class ReportActivity extends AppCompatActivity {
                 conn.connect();
                 OutputStream os = conn.getOutputStream();
 
-                handler.post(() -> {progressLabel.setText(R.string.sending_original);});
+                senderHandler.post(() -> {progressLabel.setText(R.string.sending_original);});
                 os.write(getFileData(originalImage, "image/jpeg", "originalImage", "originalImage.jpeg", false));
                 publishProgress(((float)originalImage.length/(float)totalSize));
                 Thread.sleep(1000);
 
-                handler.post(() -> {progressLabel.setText(R.string.sending_reflowed);});
+                senderHandler.post(() -> {progressLabel.setText(R.string.sending_reflowed);});
                 os.write(getFileData(reflowedImage, "image/jpeg", "overturnedImage", "overturnedImage.jpeg", false));
                 publishProgress(((float)(originalImage.length+reflowedImage.length)/(float)totalSize));
                 Thread.sleep(1000);
 
-                handler.post(() -> {progressLabel.setText(R.string.sending_glyphs);});
+                senderHandler.post(() -> {progressLabel.setText(R.string.sending_glyphs);});
                 os.write(getFileData(glyphs, "application/json", "glyphs", "glyphs.json", false));
                 publishProgress(((float)(originalImage.length+reflowedImage.length + glyphs.length)/(float)totalSize));
                 Thread.sleep(1000);
@@ -190,7 +193,7 @@ public class ReportActivity extends AppCompatActivity {
                 os.write(getTextData(BuildConfig.GitHash, "version", true));
                 os.flush();
 
-                handler.post(() -> {progressLabel.setText(R.string.report_response);});
+                senderHandler.post(() -> {progressLabel.setText(R.string.report_response);});
                 Log.v(getClass().getName(), "HIROKU_RESPONSE response code" + conn.getResponseCode());
 
                 InputStream is = conn.getInputStream();
@@ -204,7 +207,7 @@ public class ReportActivity extends AppCompatActivity {
                     Log.v(getClass().getName(), "HIROKU_RESPONSE available again" + is.available());
                     Log.v(getClass().getName(), "HIROKU_RESPONSE" + new String(buffer));
                 }
-                handler.post(() -> {progressLabel.setText(R.string.report_sent);});
+                senderHandler.post(() -> {progressLabel.setText(R.string.report_sent);});
                 is.close();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -215,18 +218,18 @@ public class ReportActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Long aLong) {
             super.onPostExecute(aLong);
-            handler.post(()->{
+            new Thread(()->{
                 Log.v(getClass().getName(), "Removing report #" + aLong);
                 AppDatabase appDatabase = AppDatabase.getInstance(getApplicationContext());
                 appDatabase.daoAccess().deleteReport(reportId);
-            });
+            }).start();
             startActivity(backToPageIntent);
         }
 
         @Override
         protected void onProgressUpdate(Float... values) {
             super.onProgressUpdate(values);
-            handler.post(() -> {
+            senderHandler.post(() -> {
                 Log.v(getClass().getName(), "Progress send" + values[0]);
                 if (values != null && values.length > 0) {
                     progressBar.setVisibility(View.VISIBLE);
