@@ -94,7 +94,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="top">
-
         </LinearLayout>
 
     </ScrollView>
