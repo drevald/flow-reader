@@ -25,6 +25,7 @@ import com.veve.flowreader.dao.AppDatabase;
 import com.veve.flowreader.dao.DaoAccess;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -159,10 +160,10 @@ public class ReportActivity extends AppCompatActivity {
 
     class ReportSenderTask extends AsyncTask<Void, Float, Long> {
 
-        Long reportIncomingId;
 
         @Override
         protected Long doInBackground(Void... voids) {
+            Long reportIncomingId = null;
             publishProgress(0F);
             try {
                 URL url = new URL(Constants.REPORT_URL);
@@ -197,22 +198,17 @@ public class ReportActivity extends AppCompatActivity {
                 Log.v(getClass().getName(), "HIROKU_RESPONSE response code" + conn.getResponseCode());
 
                 InputStream is = conn.getInputStream();
-                byte[] buffer = new byte[100];
-                int available = is.available();
-                Log.v(getClass().getName(), "HIROKU_RESPONSE available" + available);
-                int counter = 0;
+                DataInputStream dis = new DataInputStream(is);
+                byte[] buffer = new byte[32];
                 publishProgress(0F);
-                while (is.read(buffer) != -1) {
-//                    publishProgress((float)((counter + 100)/available));
-                    Log.v(getClass().getName(), "HIROKU_RESPONSE available again" + is.available());
-                    Log.v(getClass().getName(), "HIROKU_RESPONSE" + new String(buffer));
-                }
+                reportIncomingId = dis.readLong();
+                Log.v(getClass().getName(), "HIROKU_RESPONSE " + String.valueOf(reportIncomingId));
                 senderHandler.post(() -> {progressLabel.setText(R.string.report_sent);});
                 is.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return null;
+            return reportIncomingId;
         }
 
         @Override
@@ -221,7 +217,7 @@ public class ReportActivity extends AppCompatActivity {
             new Thread(()->{
                 Log.v(getClass().getName(), "Removing report #" + aLong);
                 AppDatabase appDatabase = AppDatabase.getInstance(getApplicationContext());
-                appDatabase.daoAccess().deleteReport(reportId);
+                appDatabase.daoAccess().setIncomingReportId(reportId, aLong);
             }).start();
             startActivity(backToPageIntent);
         }

@@ -9,23 +9,6 @@ public class ReportRecord {
     @PrimaryKey
     private Long id;
     private Long incomingId = -1L;
-
-    public Long getBookId() {
-        return bookId;
-    }
-
-    public void setBookId(Long bookId) {
-        this.bookId = bookId;
-    }
-
-    public Integer getPosition() {
-        return position;
-    }
-
-    public void setPosition(Integer position) {
-        this.position = position;
-    }
-
     private Long bookId;
     private Integer position;
     private Integer state = 0;
@@ -85,6 +68,22 @@ public class ReportRecord {
 
     public void setOverturnedPage(byte[] overturnedPage) {
         this.overturnedPage = overturnedPage;
+    }
+
+    public Long getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(Long bookId) {
+        this.bookId = bookId;
+    }
+
+    public Integer getPosition() {
+        return position;
+    }
+
+    public void setPosition(Integer position) {
+        this.position = position;
     }
 
 }

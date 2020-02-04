@@ -62,5 +62,7 @@ public interface DaoAccess {
     @Query("DELETE FROM ReportRecord WHERE id = :reportId")
     void deleteReport(long reportId);
 
+    @Query("UPDATE ReportRecord SET incomingId = :incomingId WHERE id = :id")
+    void setIncomingReportId(long id, Long incomingId);
 
 }
