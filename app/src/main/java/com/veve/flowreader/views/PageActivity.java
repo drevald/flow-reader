@@ -107,6 +107,13 @@ public class PageActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        if (book == null) {
+            Log.i(getClass().getName(), String.format("The book is missing"));
+            Intent i = new Intent(PageActivity.this, MainActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(i);
+            return;
+        }
         book.setScrollOffset(scroll.getScrollY());
         booksCollection.updateBook(book);
     }
@@ -163,11 +170,20 @@ public class PageActivity extends AppCompatActivity {
         booksCollection = BooksCollection.getInstance(getApplicationContext());
         book = booksCollection.getBook(bookId);
 
+        if (book == null) {
+            Log.i(getClass().getName(), String.format("The book with id %d is missing", bookId));
+            Intent i = new Intent(PageActivity.this, MainActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(i);
+            return;
+        }
+
         try {
             pageRenderer = PageRendererFactory.getRenderer(booksCollection, book);
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         currentPage = book.getCurrentPage();
 
         viewMode = book.getMode();
