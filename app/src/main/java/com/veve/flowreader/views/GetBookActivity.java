@@ -35,6 +35,8 @@ public class GetBookActivity extends AppCompatActivity {
                 Intent ii = new Intent(GetBookActivity.this, PageActivity.class);
                 ii.putExtra(Constants.BOOK_ID, bookRecord.getId());
                 ii.putExtra(Constants.FILE_NAME, bookRecord.getUrl());
+                Log.v(getClass().getName(), String.format("INDENT NEW BOOK_ID:%d URL:%s",
+                        bookRecord.getId(), bookRecord.getUrl()));
                 startActivity(ii);
             } else {
                 new BookCreatorTask().execute(file);

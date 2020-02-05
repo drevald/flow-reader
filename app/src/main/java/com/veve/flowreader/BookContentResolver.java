@@ -34,21 +34,18 @@ public interface BookContentResolver {
                 String inputStr = uri.toString();
                 path = (String)fileInputFormat.parse(inputStr)[0];
             }
+            path = URLDecoder.decode(path, "UTF-8");
         } catch (Exception e) {
             Log.v(BookContentResolver.class.getName(), "Opening " + uri.toString());
             InputStream is = context.getContentResolver().openInputStream(uri);
-            String fileName = uri.toString().substring(1 + uri.toString().lastIndexOf('/'));
-            File file = new File(context.getFilesDir(), fileName);
+//            String fileName = uri.toString().substring(1 + uri.toString().lastIndexOf('/'));
+            File file = File.createTempFile("flow.", null, context.getExternalFilesDir(null));
+            //File file = new File(context.getExternalFilesDir(null), fileName);
             OutputStream os = new FileOutputStream(file);
-            byte[] buffer = new byte[100];
-            while(is.read(buffer) != -1) {
-                os.write(buffer);
-            }
-            os.close();
-            is.close();
+            Utils.copy(is, os);
             path = file.getPath();
         }
-        return URLDecoder.decode(path, "UTF-8");
+        return path;
     }
 
 }

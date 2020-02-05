@@ -193,6 +193,8 @@ public class MainActivity extends AppCompatActivity {
             ii.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             ii.putExtra(Constants.FILE_NAME, selectedBook.getUrl());
             ii.putExtra(Constants.BOOK_ID, selectedBook.getId());
+            Log.v(getClass().getName(), String.format("INDENT BOOK_ID:%d URL:%s",
+                    selectedBook.getId(), selectedBook.getUrl()));
             startActivity(ii);
         });
 
@@ -384,6 +386,9 @@ public class MainActivity extends AppCompatActivity {
         private BookGridAdapter() {
             Log.i(this.getClass().getName(), "Constructing BookListAdapter");
             booksList = BooksCollection.getInstance(getApplicationContext()).getBooks();
+            for (BookRecord record : booksList)
+                Log.v(getClass().getName(), String.format("BOOK ID:%d PATH:%s MD5:%s",
+                        record.getId(), record.getUrl(), record.getMd5()));
             notifyDataSetChanged();
         }
 

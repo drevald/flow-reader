@@ -138,7 +138,7 @@ public class PageActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         Log.v(getClass().getName(), getClass().getName() + "onNewIntent# " + this.hashCode());
-        Log.d("INTENT_ONNEWINTENT",  getIntent().getIntExtra(BOOK_ID, 0)  + " = getIntent().getLongExtra(Constants.BOOK_ID, 0); hash = " + intent.hashCode());;
+        Log.d("INTENT_ONNEWINTENT",  getIntent().getLongExtra(BOOK_ID, 0)  + " = getIntent().getLongExtra(Constants.BOOK_ID, 0); hash = " + intent.hashCode());;
         int position = getIntent().getIntExtra("position", 0);
         booksCollection = BooksCollection.getInstance(getApplicationContext());
         book = booksCollection.getBook(position);
@@ -148,7 +148,6 @@ public class PageActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         booksCollection.updateBook(book);
-
     }
 
     @SuppressLint("ClickableViewAccessibility")

@@ -30,9 +30,10 @@ public class Utils {
     }
 
     public synchronized static void copy(InputStream is, OutputStream os) throws Exception {
-        byte[] buffer = new byte[100];
-        while (is.read(buffer) != -1) {
-            os.write(buffer);
+        byte[] buffer = new byte[1000];
+        int len;
+        while ((len = is.read(buffer)) != -1) {
+            os.write(buffer, 0, len);
         }
         os.close();
         is.close();

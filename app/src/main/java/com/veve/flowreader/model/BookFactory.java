@@ -40,12 +40,12 @@ public class BookFactory {
         } else if (file.getName().toLowerCase().endsWith("pdf")) {
             book = new PdfBook(file.getPath());
         } else {
-            String header = getHeader(file);
-            if (header.startsWith("%PDF")) {
+//            String header = getHeader(file);
+//            if (header.startsWith("%PDF")) {
                 book = new PdfBook(file.getPath());
-            } else if (header.startsWith("AT&T")) {
-                book = new DjvuBook(file.getPath());
-            }
+//            } else if (header.startsWith("AT&T")) {
+//                book = new DjvuBook(file.getPath());
+//            }
         }
 
         //Filling native book data
