@@ -8,6 +8,7 @@ import com.veve.flowreader.model.impl.pdf.PdfBook;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 
 import static com.veve.flowreader.MD5.fileToMD5;
 
@@ -32,10 +33,19 @@ public class BookFactory {
 
         BookRecord bookRecord = new BookRecord();
         Book book = null;
+
+
         if (file.getName().toLowerCase().endsWith("djvu")) {
             book = new DjvuBook(file.getPath());
         } else if (file.getName().toLowerCase().endsWith("pdf")) {
             book = new PdfBook(file.getPath());
+        } else {
+            String header = getHeader(file);
+            if (header.startsWith("%PDF")) {
+                book = new PdfBook(file.getPath());
+            } else if (header.startsWith("AT&T")) {
+                book = new DjvuBook(file.getPath());
+            }
         }
 
         //Filling native book data
@@ -70,5 +80,26 @@ public class BookFactory {
         return bookRecord;
 
     }
+
+    private String getHeader(File file) {
+        FileInputStream fis = null;
+        String result = null;
+        try {
+            fis = new FileInputStream(file);
+            byte[] buffer = new byte[16];
+            fis.read(buffer);
+            result = new String(buffer);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                fis.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return result;
+        }
+    }
+
 
 }
