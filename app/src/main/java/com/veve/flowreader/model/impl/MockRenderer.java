@@ -1,6 +1,7 @@
 package com.veve.flowreader.model.impl;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.model.Book;
@@ -34,6 +35,7 @@ public class MockRenderer implements PageRenderer {
 
     @Override
     public Bitmap renderOriginalPage(int position) {
+        Log.v("NULLBOOK", "Getting MockRenderer the original page " + position);
         return null;
     }
 

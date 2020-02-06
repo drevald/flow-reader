@@ -22,31 +22,20 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 
 @androidx.room.Database(entities =
-        {BookRecord.class, PageGlyphRecord.class, ReportRecord.class}, version = 2, exportSchema = false)
+        {BookRecord.class, PageGlyphRecord.class, ReportRecord.class}, version = 1, exportSchema = false)
 
 public abstract class AppDatabase extends RoomDatabase {
 
-    private static final String DATABASE_NAME = "database149";
+    private static final String DATABASE_NAME = "db";
 
     public abstract DaoAccess daoAccess();
 
     private static AppDatabase appDatabase;
 
-    static final Migration MIGRATION_1_2= new Migration(1, 2) {
-        @Override
-        public void migrate(@NonNull SupportSQLiteDatabase database) {
-
-        }
-    };
-
     public static AppDatabase getInstance(Context context) {
         if (appDatabase == null) {
             RoomDatabase.Builder<AppDatabase> builder =
                     Room.databaseBuilder(context, AppDatabase.class, DATABASE_NAME);
-            builder.addMigrations(new Migration(1, 2) {
-                @Override
-                public void migrate(@NonNull SupportSQLiteDatabase database) {}
-            });
             appDatabase = builder.build();
             InitDatabaseTask initDatabaseTask = new InitDatabaseTask(appDatabase.daoAccess());
             initDatabaseTask.execute(context);

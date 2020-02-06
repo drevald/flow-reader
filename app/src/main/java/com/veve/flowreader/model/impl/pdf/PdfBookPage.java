@@ -21,11 +21,15 @@ public class PdfBookPage extends AbstractBookPage implements BookPage {
     }
 
     public Bitmap getAsBitmap() {
+        Log.v("NULLBOOK", "Getting page as bitmap");
         byte[] imageBytes= getBytes(getBookId(), getPageNumber());
+        Log.v("NULLBOOK", "page bytes " + imageBytes);
         BitmapFactory.Options opts = new BitmapFactory.Options();
         opts.inPreferredConfig = Bitmap.Config.ARGB_8888;
         opts.inJustDecodeBounds= false;
+        Log.v("NULLBOOK", "Decoding " + imageBytes.length + " bytes");
         Bitmap bm = BitmapFactory.decodeByteArray(imageBytes,0, imageBytes.length, opts);
+        Log.v("NULLBOOK", "Bitmap ready");
         return bm;
     }
 

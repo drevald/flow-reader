@@ -350,8 +350,11 @@ public class PageActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
+                Log.v("NULLBOOK", "Getting original page " + currentPage);
                 Bitmap originalBitmap = pageRenderer.renderOriginalPage(currentPage);
+                Log.v("NULLBOOK", "Original page " + currentPage + " is " + originalBitmap);
                 List<Bitmap> reflowedBitmaps = pageLoader.bitmaps;
+                Log.v("NULLBOOK", "Reflowed pages are " + reflowedBitmaps);
                 ByteArrayOutputStream osOriginal = new ByteArrayOutputStream();
                 ByteArrayOutputStream osReflowed = new ByteArrayOutputStream();
                 originalBitmap.compress(Bitmap.CompressFormat.JPEG, 75, osOriginal);

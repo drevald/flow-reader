@@ -37,15 +37,19 @@ public class BookFactory {
 
         if (file.getName().toLowerCase().endsWith("djvu")) {
             book = new DjvuBook(file.getPath());
+            bookRecord.setFormat(BookRecord.DJVU_FORMAT);
         } else if (file.getName().toLowerCase().endsWith("pdf")) {
             book = new PdfBook(file.getPath());
+            bookRecord.setFormat(BookRecord.PDF_FORMAT);
         } else {
-//            String header = getHeader(file);
-//            if (header.startsWith("%PDF")) {
+            String header = getHeader(file);
+            if (header.startsWith("%PDF")) {
                 book = new PdfBook(file.getPath());
-//            } else if (header.startsWith("AT&T")) {
-//                book = new DjvuBook(file.getPath());
-//            }
+                bookRecord.setFormat(BookRecord.PDF_FORMAT);
+            } else if (header.startsWith("AT&T")) {
+                book = new DjvuBook(file.getPath());
+                bookRecord.setFormat(BookRecord.DJVU_FORMAT);
+            }
         }
 
         //Filling native book data

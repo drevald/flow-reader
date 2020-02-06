@@ -50,15 +50,16 @@ public class NativePageRendererImpl implements PageRenderer {
     }
 
     private Bitmap getOriginalPageBitmap(int position) {
+        Log.v("NULLBOOK", "Getting natively the original page " + position);
         if (position != currentOriginalPage || originalBitmap == null) {
-            Log.d(getClass().getName(), "Page not cached current = " + currentOriginalPage + " requested = " + position);
+            Log.d("NULLBOOK", "Page not cached current = " + currentOriginalPage + " requested = " + position);
             currentOriginalPage = position;
             long start = System.currentTimeMillis();
             originalBitmap = bookSource.getPageBytes(position);
-            Log.d(getClass().getName(), String.format("Getting page #%d took #%d milliseconds",
+            Log.d(getClass().getName(), String.format("NULLBOOK Getting page #%d took #%d milliseconds",
                     position, System.currentTimeMillis() - start));
         } else {
-            Log.d(getClass().getName(), "Page cached current = " + currentOriginalPage + " requested = " + position);
+            Log.d(getClass().getName(), "NULLBOOK Page cached current = " + currentOriginalPage + " requested = " + position);
         }
         return originalBitmap;
     }

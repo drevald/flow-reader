@@ -12,6 +12,9 @@ import androidx.room.PrimaryKey;
 @Entity
 public class BookRecord {
 
+    public static final int PDF_FORMAT = 1;
+    public static final int DJVU_FORMAT = 2;
+
     @PrimaryKey
     private Long id;
     private Integer currentPage;
@@ -30,6 +33,8 @@ public class BookRecord {
     private byte[] preview;
     private String md5;
     private boolean preprocessing = false;
+
+    private int format;
 
     public String getMd5() {
         return md5;
@@ -178,5 +183,9 @@ public class BookRecord {
     public void setAuthor(String author) {
         this.author = author;
     }
+
+    public int getFormat() { return format; }
+
+    public void setFormat(int format) { this.format = format; }
 
 }

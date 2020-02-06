@@ -76,6 +76,7 @@ public class PageRendererImpl implements PageRenderer {
 
     @Override
     public Bitmap renderOriginalPage(int position) {
+        Log.v("NULLBOOK", "Getting PageRendererImpl the original page " + position);
         return bookSource.getPageBytes(position);
     }
 
