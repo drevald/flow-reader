@@ -23,7 +23,7 @@ public interface BookContentResolver {
 
     static final MessageFormat outputFormat = new MessageFormat("/storage/emulated/0{0}");
 
-    public static String contentToFile(Context context, Uri uri) throws Exception {
+    public static File contentToFile(Context context, Uri uri) throws Exception {
         String path = null;
         try {
             if (uri.getScheme().equals(SCHEME_CONTENT)) {
@@ -37,8 +37,10 @@ public interface BookContentResolver {
         } catch (Exception e) {
             Log.v(BookContentResolver.class.getName(), "Opening " + uri.toString());
             InputStream is = context.getContentResolver().openInputStream(uri);
-            String fileName = uri.toString().substring(1 + uri.toString().lastIndexOf('/'));
-            File file = new File(context.getFilesDir(), fileName);
+
+            String fileName = URLDecoder.decode(uri.toString(), "UTF-8");
+            fileName = fileName.substring(1 + fileName.lastIndexOf('/'));
+            File file = new File(context.getExternalFilesDir(null), fileName);
             OutputStream os = new FileOutputStream(file);
             byte[] buffer = new byte[100];
             while(is.read(buffer) != -1) {
@@ -46,9 +48,19 @@ public interface BookContentResolver {
             }
             os.close();
             is.close();
-            path = file.getPath();
+            //path = file.getPath();
+            //String p = URLDecoder.decode(path, "UTF-8");
+            //File f = new File(p);
+
+            //boolean renamed = file.renameTo(f);
+            //if (renamed) {
+            //    return f;
+            //}
+            return file;
+
         }
-        return URLDecoder.decode(path, "UTF-8");
+
+        return new File(URLDecoder.decode(path, "UTF-8"));
     }
 
 }

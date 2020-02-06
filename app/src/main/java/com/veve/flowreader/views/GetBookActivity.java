@@ -27,8 +27,8 @@ public class GetBookActivity extends AppCompatActivity {
         Uri uri = getIntent().getData();
         try {
             BooksCollection booksCollection = BooksCollection.getInstance(getApplicationContext());
-            File file = new File(contentToFile(getApplicationContext(), uri));
-            String checksum = MD5.fileToMD5(file.getPath());
+            File file = contentToFile(getApplicationContext(), uri);
+            String checksum = MD5.fileToMD5(this, file.getPath());
             BookRecord bookRecord = booksCollection.getBookByChecksum(checksum);
             Log.d(getClass().getName(), "Getting doc " + uri.toString());
             if (bookRecord!=null) {
