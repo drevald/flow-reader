@@ -57,10 +57,8 @@ public class PrintTest extends BookTest {
     @Test
     public void testSetColumnWidth() throws Exception {
         printActivity.runOnUiThread(() -> {
-            //focus(R.id.column_width);
             click(R.id.set_column_width);
             setText(R.id.column_width, "100");
-            //focus(R.id.columns_number);
             click(R.id.set_columns_number);
         });
         currentThread().sleep(100);

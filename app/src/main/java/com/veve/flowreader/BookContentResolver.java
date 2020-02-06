@@ -38,9 +38,15 @@ public interface BookContentResolver {
         } catch (Exception e) {
             Log.v(BookContentResolver.class.getName(), "Opening " + uri.toString());
             InputStream is = context.getContentResolver().openInputStream(uri);
-//            String fileName = uri.toString().substring(1 + uri.toString().lastIndexOf('/'));
-            File file = File.createTempFile("flow.", null, context.getExternalFilesDir(null));
-            //File file = new File(context.getExternalFilesDir(null), fileName);
+            File file;
+            if (uri.toString().toLowerCase().endsWith(".pdf")
+                    ||uri.toString().toLowerCase().endsWith(".djvu")) {
+                String fileName = uri.toString().substring(1 + uri.toString().lastIndexOf('/'));
+                file = new File(context.getExternalFilesDir(null), fileName);
+            } else {
+                file = File.createTempFile(
+                        "flow.", null, context.getExternalFilesDir(null));
+            }
             OutputStream os = new FileOutputStream(file);
             Utils.copy(is, os);
             path = file.getPath();

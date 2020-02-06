@@ -406,34 +406,33 @@ public class PageActivity extends AppCompatActivity {
                 startActivity(printIntent);
                 break;
             }
-            case R.id.delete_book: {
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(PageActivity.this);
-                builder.setTitle(R.string.book_deletion)
-                        .setMessage(String.format(
-                                getResources().getString(R.string.confirm_delete), book.getTitle()))
-                        .setCancelable(false)
-                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                long bookId = book.getId();
-                                BooksCollection.getInstance(getApplicationContext()).deleteBook(bookId);
-                                Intent i = new Intent(PageActivity.this, MainActivity.class);
-                                i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                                i.putExtra(BOOK_ID, bookId);
-                                startActivity(i);
-                            }
-                        })
-                        .setNegativeButton(R.string.no,
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.cancel();
-                                    }
-                                });
-                AlertDialog alert = builder.create();
-                alert.show();
-                break;
-            }
+//            case R.id.delete_book: {
+//                AlertDialog.Builder builder = new AlertDialog.Builder(PageActivity.this);
+//                builder.setTitle(R.string.book_deletion)
+//                        .setMessage(String.format(
+//                                getResources().getString(R.string.confirm_delete), book.getTitle()))
+//                        .setCancelable(false)
+//                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                long bookId = book.getId();
+//                                BooksCollection.getInstance(getApplicationContext()).deleteBook(bookId);
+//                                Intent i = new Intent(PageActivity.this, MainActivity.class);
+//                                i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+//                                i.putExtra(BOOK_ID, bookId);
+//                                startActivity(i);
+//                            }
+//                        })
+//                        .setNegativeButton(R.string.no,
+//                                new DialogInterface.OnClickListener() {
+//                                    public void onClick(DialogInterface dialog, int id) {
+//                                        dialog.cancel();
+//                                    }
+//                                });
+//                AlertDialog alert = builder.create();
+//                alert.show();
+//                break;
+//            }
             case R.id.preprocess: {
                 context.setPreprocessing(!context.isPreprocessing());
                 book.setPreprocessing(!book.getPreprocessing());
