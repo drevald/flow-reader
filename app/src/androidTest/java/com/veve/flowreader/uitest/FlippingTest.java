@@ -12,6 +12,7 @@ import androidx.test.rule.ActivityTestRule;
 
 import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
+import com.veve.flowreader.Utils;
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.model.BookFactory;
 import com.veve.flowreader.model.BooksCollection;
@@ -58,12 +59,7 @@ public class FlippingTest {
         bookFile.createNewFile();
         InputStream is = appContext.getResources().openRawResource(R.raw.cyberiada);
         OutputStream os = new FileOutputStream(bookFile);
-        byte[] buffer = new byte[100];
-        while(is.read(buffer) != -1) {
-            os.write(buffer);
-        }
-        os.close();
-        is.close();
+        Utils.copy(is, os);
         bookRecord = BookFactory.getInstance().createBook(bookFile);
         bookRecordId = booksCollection.addBook(bookRecord);
     }

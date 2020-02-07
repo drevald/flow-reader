@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.veve.flowreader.BuildConfig;
 import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
+import com.veve.flowreader.Utils;
 import com.veve.flowreader.dao.AppDatabase;
 import com.veve.flowreader.dao.DaoAccess;
 
@@ -119,23 +120,14 @@ public class ReportActivity extends AppCompatActivity {
                 ByteArrayOutputStream originalImageOs = new ByteArrayOutputStream();
                 FileInputStream originalImageInputStream =
                         new FileInputStream(new String(cursor.getBlob(cursor.getColumnIndex("originalPage"))));
-                byte[] buffer = new byte[100];
-                while (originalImageInputStream.read(buffer) != -1) {
-                    originalImageOs.write(buffer);
-                }
-                originalImageOs.close();
+                Utils.copy(originalImageInputStream, originalImageOs);
                 originalImage = originalImageOs.toByteArray();
-                originalImageInputStream.close();
 
                 ByteArrayOutputStream reflowedImageOs = new ByteArrayOutputStream();
                 FileInputStream reflowedImageInputStream =
                         new FileInputStream(new String(cursor.getBlob(cursor.getColumnIndex("overturnedPage"))));
-                while (reflowedImageInputStream.read(buffer) != -1) {
-                    reflowedImageOs.write(buffer);
-                }
-                reflowedImageOs.close();
+                Utils.copy(reflowedImageInputStream, reflowedImageOs);
                 reflowedImage = reflowedImageOs.toByteArray();
-                reflowedImageInputStream.close();
 
             } catch (Exception e) {
                 Log.e(getClass().getName(), e.getMessage(), e);

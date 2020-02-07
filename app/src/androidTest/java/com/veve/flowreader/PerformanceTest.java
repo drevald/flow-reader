@@ -45,12 +45,7 @@ public class PerformanceTest {
         djvuFile = File.createTempFile("djvu", null);
         djvuFile.deleteOnExit();
         FileOutputStream fos = new FileOutputStream(djvuFile);
-        byte[] buffer = new byte[100];
-        while (is.read(buffer) != -1) {
-            fos.write(buffer);
-            fos.flush();
-        }
-        fos.close();
+        Utils.copy(is, fos);
     }
 
     @Test()

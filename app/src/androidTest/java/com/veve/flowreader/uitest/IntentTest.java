@@ -8,6 +8,7 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import android.util.Log;
 
 import com.veve.flowreader.R;
+import com.veve.flowreader.Utils;
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.model.BooksCollection;
 
@@ -46,12 +47,7 @@ public class IntentTest {
         }
         InputStream is = appContext.getResources().openRawResource(R.raw.pdf_sample);
         OutputStream os = new FileOutputStream(pdfBookFile);
-        byte[] buffer = new byte[100];
-        while(is.read(buffer) != -1) {
-            os.write(buffer);
-        }
-        os.close();
-        is.close();
+        Utils.copy(is, os);
     }
 
     @Before
@@ -66,12 +62,7 @@ public class IntentTest {
         }
         InputStream is = appContext.getResources().openRawResource(R.raw.djvu_sample);
         OutputStream os = new FileOutputStream(djvuBookFile);
-        byte[] buffer = new byte[100];
-        while(is.read(buffer) != -1) {
-            os.write(buffer);
-        }
-        os.close();
-        is.close();
+        Utils.copy(is, os);
     }
 
     @Test

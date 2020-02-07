@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import com.veve.flowreader.R;
+import com.veve.flowreader.Utils;
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.model.BookFactory;
 import com.veve.flowreader.model.BooksCollection;
@@ -32,7 +33,6 @@ public class BookTest {
         appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         booksCollection = BooksCollection.getInstance(appContext);
         File file = new File(appContext.getExternalFilesDir(null), "pdf_sample.pdf");
-//        File file = new File(appContext.getExternalFilesDir(null), "djvu_sample.djvu");
         file.createNewFile();
         BookRecord oldBookRecord = booksCollection.getBook(file.getPath());
         if (oldBookRecord != null) {
@@ -40,12 +40,7 @@ public class BookTest {
         }
         InputStream is = appContext.getResources().openRawResource(R.raw.pdf_sample);
         OutputStream os = new FileOutputStream(file);
-        byte[] buffer = new byte[100];
-        while(is.read(buffer) != -1) {
-            os.write(buffer);
-        }
-        os.close();
-        is.close();
+        Utils.copy(is,os);
         bookRecord = BookFactory.getInstance().createBook(file);
         testBookId = booksCollection.addBook(bookRecord);
         bookRecord = booksCollection.getBook(testBookId);

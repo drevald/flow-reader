@@ -47,12 +47,7 @@ public class CreateBookTest {
         }
         InputStream is = appContext.getResources().openRawResource(R.raw.pdf_sample);
         OutputStream os = new FileOutputStream(pdfBookFile);
-        byte[] buffer = new byte[1];
-        while(is.read(buffer) != -1) {
-            os.write(buffer);
-        }
-        os.close();
-        is.close();
+        Utils.copy(is, os);
     }
 
     @Test
