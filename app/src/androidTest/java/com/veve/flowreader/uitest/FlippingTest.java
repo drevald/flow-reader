@@ -56,7 +56,7 @@ public class FlippingTest {
         booksCollection = BooksCollection.getInstance(appContext);
         bookFile = new File(appContext.getExternalFilesDir(null), "cyberiada.pdf");
         bookFile.createNewFile();
-        InputStream is = appContext.getResources().openRawResource(R.raw.cyberiada);
+        InputStream is = appContext.getResources().openRawResource(R.raw.sample);
         OutputStream os = new FileOutputStream(bookFile);
         byte[] buffer = new byte[100];
         while(is.read(buffer) != -1) {
