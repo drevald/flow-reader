@@ -51,6 +51,7 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.CHOOSER" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data
                     android:host="*"
@@ -61,16 +62,36 @@
                     android:host="*"
                     android:mimeType="image/vnd.djvu"
                     android:pathPattern="/.*"
-                    android:scheme="content" />
+                    android:scheme="file" />
                 <data
                     android:host="*"
-                    android:mimeType="application/pdf"
-                    android:pathPattern="/.*"
+                    android:mimeType="*/*"
+                    android:pathPattern="/.*\\.DJVU"
+                    android:scheme="file" />
+                <data
+                    android:host="*"
+                    android:mimeType="*/*"
+                    android:pathPattern="/.*\\.djvu"
                     android:scheme="file" />
                 <data
                     android:host="*"
                     android:mimeType="application/pdf"
                     android:pathPattern="/.*"
+                    android:scheme="content" />
+                <data
+                    android:host="*"
+                    android:mimeType="*/*"
+                    android:pathPattern="/.*\\.PDF"
+                    android:scheme="content" />
+                <data
+                    android:host="*"
+                    android:mimeType="application/pdf"
+                    android:pathPattern="/.*"
+                    android:scheme="content" />
+                <data
+                    android:host="*"
+                    android:mimeType="*/*"
+                    android:pathPattern="/.*\\.pdf"
                     android:scheme="content" />
             </intent-filter>
         </activity>
