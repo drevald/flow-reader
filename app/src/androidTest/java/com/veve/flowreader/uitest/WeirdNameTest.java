@@ -27,10 +27,10 @@ import static org.junit.Assert.assertNotNull;
 
 public class WeirdNameTest {
 
-    //String djvuFileName = "* )(!\"№;%.djvu";
+    String djvuFileName = "* )(!\"№;%.djvu";
     //String djvuFileName = "S P\tACE(1).djvu";
-    String djvuFileName = "а ывралоыврадл оырвлдорыфвлдоар ыфлворалоыфралдоывфралорывалдорыфвд.djvu";
-    String sampleDirectory = "/1/2/3/4/5/6/7/8/9/10/";
+    //String djvuFileName = "а ывралоыврадл оырвлдорыфвлдоар ыфлворалоыфралдоывфралорывалдорыфвд";
+    String sampleDirName = "/1/2/3/4/5/6/7/8/9/10/";
     int djvuFileRes = R.raw.noname;
 
     private File djvuBookFile;
@@ -42,7 +42,9 @@ public class WeirdNameTest {
     public void prepareDjvuSample() throws Exception {
         appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         booksCollection = BooksCollection.getInstance(appContext);
-        djvuBookFile = new File(appContext.getExternalFilesDir(null), djvuFileName);
+        File parentDirectory = new File(appContext.getExternalFilesDir(null), sampleDirName);
+        parentDirectory.mkdirs();
+        djvuBookFile = new File(parentDirectory, djvuFileName);
         if (djvuBookFile.createNewFile());
         InputStream is = appContext.getResources().openRawResource(djvuFileRes);
         OutputStream os = new FileOutputStream(djvuBookFile);
@@ -64,7 +66,8 @@ public class WeirdNameTest {
         BookRecord bookRecord = booksCollection.getBook(djvuBookFile.getPath());
         djvuBookFileId = bookRecord.getId();
         assertNotNull(bookRecord);
-        assertEquals(bookRecord.getTitle(), djvuFileName.substring(0, djvuFileName.indexOf(".")));
+        assertEquals(bookRecord.getTitle(), djvuFileName.substring(0, djvuFileName.lastIndexOf(".")));
+//        assertEquals(bookRecord.getTitle(), djvuFileName);
     }
 
     @Test
@@ -81,6 +84,7 @@ public class WeirdNameTest {
         djvuBookFileId = bookRecord.getId();
         assertNotNull(bookRecord);
         assertEquals(bookRecord.getTitle(), djvuFileName.substring(0, djvuFileName.indexOf(".")));
+//        assertEquals(bookRecord.getTitle(), djvuFileName);
     }
 
     @After
@@ -90,3 +94,4 @@ public class WeirdNameTest {
     }
 
 }
+

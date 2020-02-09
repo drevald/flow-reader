@@ -78,7 +78,9 @@ public class BookFactory {
             }
         } else {
             bookName = file.getName().replaceAll("_", " ");
-            bookName = bookName.substring(0, bookName.lastIndexOf("."));
+            int index = bookName.lastIndexOf(".");
+            if (index > 0)
+                bookName = bookName.substring(0, index);
         }
 
         bookRecord.setMd5(fileToMD5(file.getPath()));
