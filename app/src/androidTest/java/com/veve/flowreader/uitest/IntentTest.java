@@ -7,6 +7,7 @@ import android.net.Uri;
 import androidx.test.platform.app.InstrumentationRegistry;
 import android.util.Log;
 
+import com.veve.flowreader.MD5;
 import com.veve.flowreader.R;
 import com.veve.flowreader.Utils;
 import com.veve.flowreader.dao.BookRecord;
@@ -25,6 +26,12 @@ import static org.junit.Assert.assertNotNull;
 
 public class IntentTest {
 
+    String pdfFileName = "pdf_sample.pdf";
+    String djvuFileName = "djvu_sample.djvu";
+    String sampleDirectory = ".";
+    int djvuFileRes = R.raw.djvu_sample;
+    int pdfFileRes = R.raw.pdf_sample;
+
     private File pdfBookFile;
     private File djvuBookFile;
     private long pdfBookFileId = -1L;
@@ -36,25 +43,22 @@ public class IntentTest {
     public void preparePdfSample() throws Exception {
         appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         booksCollection = BooksCollection.getInstance(appContext);
-        pdfBookFile = new File(appContext.getExternalFilesDir(null), "pdf_sample.pdf");
+        File parentDirectory = new File(appContext.getExternalFilesDir(null), sampleDirectory);
+        pdfBookFile = new File(parentDirectory, pdfFileName);
         pdfBookFile.createNewFile();
-        BookRecord oldBookRecord = booksCollection.getBook(pdfBookFile.getPath());
-        if (oldBookRecord != null) {
-            booksCollection.deleteBook(oldBookRecord.getId());
-            Log.v("BOOK", "Deleting " + oldBookRecord.getUrl() + " with id " + oldBookRecord.getId());
-        } else {
-            Log.v("BOOK", "Book with id " + pdfBookFile.getPath() + " is missing");
-        }
         InputStream is = appContext.getResources().openRawResource(R.raw.pdf_sample);
         OutputStream os = new FileOutputStream(pdfBookFile);
         Utils.copy(is, os);
+        BookRecord oldBookRecord = booksCollection.getBookByChecksum(MD5.fileToMD5(pdfBookFile.getPath()));
+        if (oldBookRecord != null)
+            booksCollection.deleteBook(oldBookRecord.getId());
     }
 
     @Before
     public void prepareDjvuSample() throws Exception {
         appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         booksCollection = BooksCollection.getInstance(appContext);
-        djvuBookFile = new File(appContext.getExternalFilesDir(null), "djvu_sample.djvu");
+        djvuBookFile = new File(appContext.getExternalFilesDir(null), djvuFileName);
         if (djvuBookFile.createNewFile());
         BookRecord oldBookRecord = booksCollection.getBook(djvuBookFile.getPath());
         if (oldBookRecord != null) {
@@ -62,7 +66,12 @@ public class IntentTest {
         }
         InputStream is = appContext.getResources().openRawResource(R.raw.djvu_sample);
         OutputStream os = new FileOutputStream(djvuBookFile);
-        Utils.copy(is, os);
+        byte[] buffer = new byte[100];
+        while(is.read(buffer) != -1) {
+            os.write(buffer);
+        }
+        os.close();
+        is.close();
     }
 
     @Test
@@ -89,6 +98,7 @@ public class IntentTest {
         BookRecord bookRecord = booksCollection.getBook(djvuBookFile.getPath());
         djvuBookFileId = bookRecord.getId();
         assertNotNull(bookRecord);
+//        assertEquals(bookRecord.getTitle(), djvuFileName);
     }
 
     @Test
@@ -104,13 +114,14 @@ public class IntentTest {
         BookRecord bookRecord = booksCollection.getBook(djvuBookFile.getPath());
         djvuBookFileId = bookRecord.getId();
         assertNotNull(bookRecord);
+//        assertEquals(bookRecord.getTitle(), djvuFileName);
     }
 
     @Test
     public void testPdfContentOpen() throws Exception {
         Intent intent = new Intent("android.intent.action.VIEW",
                 Uri.parse("content://com.mi.android.globalFileexplorer.myprovider/external_files" +
-                        "/Android/data/com.veve.flowreader/files/pdf_sample.pdf"));
+                        pdfBookFile.getPath().substring("/storage/emulated/0".length())));
         intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setComponent(ComponentName.unflattenFromString("com.veve.flowreader/.views.GetBookActivity"));

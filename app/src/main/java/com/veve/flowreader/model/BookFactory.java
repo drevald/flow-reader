@@ -1,6 +1,7 @@
 package com.veve.flowreader.model;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.model.impl.djvu.DjvuBook;
@@ -30,6 +31,9 @@ public class BookFactory {
     }
 
     public BookRecord createBook(File file) {
+
+        Log.v("TEST", String.format("Making book from file %s",
+                file.getAbsolutePath()));
 
         BookRecord bookRecord = new BookRecord();
         Book book = null;
@@ -74,13 +78,17 @@ public class BookFactory {
             }
         } else {
             bookName = file.getName().replaceAll("_", " ");
-            bookName = bookName.substring(0, bookName.lastIndexOf("."));
+            int index = bookName.lastIndexOf(".");
+            if (index > 0)
+                bookName = bookName.substring(0, index);
         }
 
         bookRecord.setMd5(fileToMD5(file.getPath()));
         bookRecord.setSize(file.length());
         bookRecord.setTitle(bookName);
         bookRecord.setUrl(file.getPath());
+        Log.v("TEST", String.format("New book stored id:%d, url:%s, md5:%s, title:%s",
+                bookRecord.getId(), bookRecord.getUrl(), bookRecord.getMd5(), bookRecord.getTitle()));
         return bookRecord;
 
     }

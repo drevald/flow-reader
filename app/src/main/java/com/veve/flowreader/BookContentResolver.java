@@ -1,8 +1,10 @@
 package com.veve.flowreader;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
+import android.webkit.MimeTypeMap;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -38,14 +40,24 @@ public interface BookContentResolver {
         } catch (Exception e) {
             Log.v(BookContentResolver.class.getName(), "Opening " + uri.toString());
             InputStream is = context.getContentResolver().openInputStream(uri);
+            String uriString = URLDecoder.decode(uri.toString(), "UTF-8");
             File file;
-            if (uri.toString().toLowerCase().endsWith(".pdf")
-                    ||uri.toString().toLowerCase().endsWith(".djvu")) {
-                String fileName = uri.toString().substring(1 + uri.toString().lastIndexOf('/'));
+            String fileName = uriString.substring(1 + uri.toString().lastIndexOf('/'));
+            if (uriString.toLowerCase().endsWith(".pdf")
+                    ||uriString.toLowerCase().endsWith(".djvu")) {
                 file = new File(context.getExternalFilesDir(null), fileName);
             } else {
-                file = File.createTempFile(
-                        "flow.", null, context.getExternalFilesDir(null));
+                ContentResolver cR =  context.getContentResolver();
+                MimeTypeMap mime = MimeTypeMap.getSingleton();
+                String type = mime.getExtensionFromMimeType(cR.getType(uri));
+                if ("djvu".equals(type)) {
+                    file = new File(context.getExternalFilesDir(null), fileName + ".djvu");
+                } else if ("pdf".equals(type)) {
+                    file = new File(context.getExternalFilesDir(null), fileName + ".pdf");
+                } else {
+                    file = File.createTempFile(
+                            "flow.", null, context.getExternalFilesDir(null));
+                }
             }
             OutputStream os = new FileOutputStream(file);
             Utils.copy(is, os);
@@ -53,7 +65,6 @@ public interface BookContentResolver {
         }
         return path;
     }
-
 }
 
 //content://ru.yandex.disk.filescache/d0/BOOKS/KVANT/04_Opyty_Domashney_Laboratorii.djvu
