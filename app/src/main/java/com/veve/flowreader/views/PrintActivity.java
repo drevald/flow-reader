@@ -41,6 +41,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+import static com.veve.flowreader.Constants.DEFAULT_MEDIA_SIZE;
 import static com.veve.flowreader.Constants.INCH_IN_MILS;
 import static com.veve.flowreader.Constants.INCH_IN_MM;
 import static com.veve.flowreader.Constants.MILS_IN_MM;
@@ -55,7 +56,7 @@ public class PrintActivity extends AppCompatActivity {
 
     static {
         PrintAttributes.Builder builder = new PrintAttributes.Builder();
-        builder.setMediaSize(PrintAttributes.MediaSize.ISO_A4);
+        builder.setMediaSize(Constants.DEFAULT_MEDIA_SIZE);
         builder.setMinMargins(new PrintAttributes.Margins(0, 0, 0, 0));
         builder.setResolution(new PrintAttributes.Resolution("300dpi", "300dpi", 300, 300));
         DEFAULT_ATTRIBUTES = builder.build();
@@ -95,7 +96,7 @@ public class PrintActivity extends AppCompatActivity {
 
         @Override
         public void onWrite(PageRange[] pages, ParcelFileDescriptor destination, CancellationSignal cancellationSignal, WriteResultCallback callback) {
-
+            Log.v("PRINT", "4");
             Log.v(getClass().getName(), "onWrite");
 
             // Write PDF document to file
@@ -120,6 +121,8 @@ public class PrintActivity extends AppCompatActivity {
                              CancellationSignal cancellationSignal,
                              LayoutResultCallback callback,
                              Bundle extras) {
+
+            Log.v("PRINT", "3");
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
 
                 Log.v(getClass().getName(), "onLayout");
@@ -130,14 +133,21 @@ public class PrintActivity extends AppCompatActivity {
                 attributes = newAttributes;
                 pdfDocument = new PdfDocument();
 
+                setColumnLayout(attributes);
+
                 int widthInMils = attributes.getMediaSize().getWidthMils();
                 int heightInMils = attributes.getMediaSize().getHeightMils();
+                int workWidthInMils = widthInMils - attributes.getMinMargins().getLeftMils() - attributes.getMinMargins().getRightMils();
                 int workHeightInMils = heightInMils - attributes.getMinMargins().getTopMils() - attributes.getMinMargins().getBottomMils();
+                int gap = (attributes.getMinMargins().getLeftMils()
+                        - attributes.getMinMargins().getRightMils()) / colNum;
+                workWidthInMils = workWidthInMils - gap * (colNum - 1);
+                int columnsWidthInMils = workWidthInMils / colNum;
+                gapWidthPx = (int) (gap * INCH_IN_MILS * attributes.getResolution().getHorizontalDpi());
                 int topMarginInPixel = (int) (attributes.getMinMargins().getTopMils() * INCH_IN_MILS * attributes.getResolution().getVerticalDpi());
                 int leftMarginInPixel = (int) (attributes.getMinMargins().getLeftMils() * INCH_IN_MILS * attributes.getResolution().getHorizontalDpi());
+                columnsWidthInPixels = (int) (columnsWidthInMils * INCH_IN_MILS * attributes.getResolution().getHorizontalDpi());
                 int columnsHeightInPixels = (int) (workHeightInMils * INCH_IN_MILS * attributes.getResolution().getVerticalDpi());
-
-                setColumnLayout(attributes);
 
                 try {
                     context.setZoom(1);
@@ -151,7 +161,7 @@ public class PrintActivity extends AppCompatActivity {
                                     (int)(attributes.getResolution().getHorizontalDpi() * INCH_IN_MILS * widthInMils),
                                     widthInMils,
                                     (int)(attributes.getResolution().getVerticalDpi() * INCH_IN_MILS * heightInMils),
-                                    widthInMils,
+                                    heightInMils,
                             context.hashCode()));
 
                     context.setScreenRatio(columnsWidthInPixels / (float) columnsHeightInPixels);
@@ -235,9 +245,11 @@ public class PrintActivity extends AppCompatActivity {
         // Start a print job, passing in a PrintDocumentAdapter implementation
         // to handle the generation of a print document
         PrintAttributes.Builder builder = new PrintAttributes.Builder();
-        builder.setMediaSize(PrintAttributes.MediaSize.ISO_A4);
+        builder.setMediaSize(DEFAULT_MEDIA_SIZE);
         PrintAttributes printAttributes = builder.build();
+        Log.v("PRINT", "1");
         printJob = printManager.print(jobName, new PrintBookAdapter(bookRecord), printAttributes); //
+        Log.v("PRINT", "2");
 
     }
 

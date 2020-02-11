@@ -60,7 +60,22 @@ public class NameTest {
         BookRecord bookRecord = booksCollection.getBook(bookFile.getPath());
         bookFileId = bookRecord.getId();
         assertNotNull(bookRecord);
-        assertEquals(bookRecord.getTitle(), "Book");
+        assertEquals("Book", bookRecord.getTitle());
+    }
+
+    @Test
+    public void testNoExtFileOpen() throws Exception {
+        prepareSample(R.raw.noname, "Book", ".");
+        Intent intent = new Intent("android.intent.action.VIEW", Uri.fromFile(bookFile));
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setComponent(ComponentName.unflattenFromString("com.veve.flowreader/.views.GetBookActivity"));
+        appContext.startActivity(intent);
+        Thread.sleep(5000);
+        BookRecord bookRecord = booksCollection.getBook(bookFile.getPath());
+        bookFileId = bookRecord.getId();
+        assertNotNull(bookRecord);
+        assertEquals("Book", bookRecord.getTitle());
     }
 
 //    @Test

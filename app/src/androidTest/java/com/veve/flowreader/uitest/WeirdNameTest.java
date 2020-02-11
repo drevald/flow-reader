@@ -27,9 +27,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class WeirdNameTest {
 
-    String djvuFileName = "* )(!\"№;%.djvu";
-    //String djvuFileName = "S P\tACE(1).djvu";
-    //String djvuFileName = "а ывралоыврадл оырвлдорыфвлдоар ыфлворалоыфралдоывфралорывалдорыфвд";
+    String djvuFileName = "S P\tACE(1).djvu";
     String sampleDirName = "/1/2/3/4/5/6/7/8/9/10/";
     int djvuFileRes = R.raw.noname;
 
