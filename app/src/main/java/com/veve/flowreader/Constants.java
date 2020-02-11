@@ -48,7 +48,7 @@ public interface Constants {
     String FLOW_BOOK_PREFERENCES = "FLOW_BOOK_PREFERENCES";
     String SHOW_TRY_REFLOW = "SHOW_TRY_REFLOW";
 
-    PrintAttributes.MediaSize DEFAULT_MEDIA_SIZE = PrintAttributes.MediaSize.ISO_A1;
+    PrintAttributes.MediaSize DEFAULT_MEDIA_SIZE = PrintAttributes.MediaSize.ISO_A4;
     //PrintAttributes.MediaSize DEFAULT_MEDIA_SIZE = PrintAttributes.MediaSize.ISO_A6;
 
 

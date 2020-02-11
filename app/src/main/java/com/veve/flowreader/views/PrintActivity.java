@@ -362,7 +362,7 @@ public class PrintActivity extends AppCompatActivity {
                         getInt(R.id.gap),
                         printAttributes))
         );
-        ((EditText) findViewById(R.id.columns_number)).setText("");
+//        ((EditText) findViewById(R.id.columns_number)).setText("");
         ((EditText) findViewById(R.id.gap)).setText("");
         ((EditText) findViewById(R.id.columns_number)).setInputType(EditorInfo.TYPE_NULL);
         ((EditText) findViewById(R.id.gap)).setInputType(EditorInfo.TYPE_NULL);
@@ -380,7 +380,7 @@ public class PrintActivity extends AppCompatActivity {
         ((EditText) findViewById(R.id.gap)).setText(
                 String.valueOf(calculateGapMm(getInt(R.id.column_width), printAttributes))
         );
-        ((EditText) findViewById(R.id.column_width)).setText("");
+//        ((EditText) findViewById(R.id.column_width)).setText("");
         ((EditText) findViewById(R.id.column_width)).setInputType(EditorInfo.TYPE_NULL);
     }
 
