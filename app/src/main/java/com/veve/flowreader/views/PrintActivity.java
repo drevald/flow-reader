@@ -110,9 +110,7 @@ public class PrintActivity extends AppCompatActivity {
                 pdfDocument.close();
                 pdfDocument = null;
             }
-
             callback.onWriteFinished(new PageRange[]{PageRange.ALL_PAGES});
-
         }
 
         @Override
@@ -211,7 +209,7 @@ public class PrintActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         Log.e(getClass().getName(), e.getLocalizedMessage());
                     }
-                    callback.onLayoutFinished(info, false);
+                    callback.onLayoutFinished(info, true);
                     Log.v(getClass().getName(), "onLayout 1");
                 } catch (Exception e) {
                     e.printStackTrace();
