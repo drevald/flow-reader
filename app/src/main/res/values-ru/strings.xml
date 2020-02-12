@@ -86,7 +86,7 @@ Copyright &#169; 2015-2016, Itseez Inc., все права защищены.
     <string name="no_connection">Отсутствует соединение</string>
     <string name="no_connection_explained">Сервер не отвечает. Проверьте наличие интернет соединения.</string>
     <string name="font_size">Размер шрифта</string>
-    <string name="font_size_original">оригинальный</string>
+    <string name="font_size_original">Оригинальный</string>
     <string name="font_size_three_quarters">¾</string>
     <string name="font_size_half">½</string>
     <string name="font_size_quarter">¼</string>
