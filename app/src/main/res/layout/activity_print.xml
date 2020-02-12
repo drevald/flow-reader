@@ -113,7 +113,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:inputType="none"
-                        android:onClick="setColumnWidth"
                         style="@style/form_label"
                         android:imeOptions="actionDone"
                         android:singleLine="true"/>
@@ -135,7 +134,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:inputType="none"
-                        android:onClick="setColumnsNumber"
                         style="@style/form_label"
                         android:imeOptions="actionDone"
                         android:singleLine="true"/>
@@ -143,7 +141,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         style="@style/form_label"
-                        android:onClick="setColumnsNumber"
                         android:text="@string/gap"/>
                     <EditText
                         android:id="@+id/gap"
@@ -155,8 +152,59 @@
                         android:singleLine="true"/>
                 </LinearLayout>
             </RadioGroup>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/font_size"
+                style="@style/label"/>
+            <RadioGroup
+                android:id="@+id/font_size"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:paddingTop="10dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <RadioButton
+                        android:id="@+id/font_size_full"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/form_label"
+                        app:buttonTint="#ffffff"
+                        android:onClick="setOriginal"
+                        android:text="@string/font_size_original"/>
+                    <RadioButton
+                        android:id="@+id/font_size_three_quarters"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/form_label"
+                        app:buttonTint="#ffffff"
+                        android:onClick="setThreeQuaters"
+                        android:text="@string/font_size_three_quarters"/>
+                    <RadioButton
+                        android:id="@+id/font_size_half"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/form_label"
+                        app:buttonTint="#ffffff"
+                        android:onClick="setHalf"
+                        android:text="@string/font_size_half"/>
+                    <RadioButton
+                        android:id="@+id/font_size_quarter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/form_label"
+                        app:buttonTint="#ffffff"
+                        android:onClick="setQuater"
+                        android:text="@string/font_size_quarter"/>
+                </LinearLayout>
+            </RadioGroup>
+            <TextView
+                android:layout_height="100sp"
+                android:layout_width="match_parent"/>
         </LinearLayout>
-
     </ScrollView>
 
     <!--    </LinearLayout>-->

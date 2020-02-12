@@ -73,6 +73,7 @@ public class PrintActivity extends AppCompatActivity {
     int columnsWidthInPixels;
     int gapWidthPx;
     PrintAttributes printAttributes;
+    float zoom = 1f;
 
     class PrintBookAdapter extends PrintDocumentAdapter {
 
@@ -140,7 +141,7 @@ public class PrintActivity extends AppCompatActivity {
                 setColumnLayout(attributes);
 
                 try {
-                    context.setZoom(1);
+                    context.setZoom(zoom);
                     Log.v(getClass().getName(), String.format("Setting column width %d hash %s",
                             columnsWidthInPixels,
                             context.hashCode()));
@@ -174,6 +175,7 @@ public class PrintActivity extends AppCompatActivity {
                                 (int) (attributes.getMediaSize().getHeightMils() * attributes.getResolution().getVerticalDpi() * INCH_IN_MILS),
                                 pageNum);
                         if (counter % colNum == 0) {
+                            Log.v(getClass().getName(), "Drawing " + counter + " % " + colNum + " == " + (counter % colNum));
                             page = pdfDocument.startPage(pageBuilder.create());
                         }
                         Log.v(getClass().getName(), String.format("Drawing column from x:%d y:%d w:%d h:%d on page %d",
@@ -220,6 +222,9 @@ public class PrintActivity extends AppCompatActivity {
         } else if (selectedId == R.id.set_columns_number) {
             columnsWidthInPixels = calculateColumnWidthPix(
                     getInt(R.id.columns_number), getInt(R.id.gap), attributes);
+            colNum = getInt(R.id.columns_number);
+            gapWidthPx = (int)(getInt(R.id.gap) * INCH_IN_MM
+                    * attributes.getResolution().getHorizontalDpi());
         }
     }
 
@@ -297,6 +302,9 @@ public class PrintActivity extends AppCompatActivity {
         float heightInInches = displayMetrics.heightPixels / (float) displayMetrics.ydpi;
         screenWidthMm =  (int) ((Math.min(widthInInches, heightInInches) * MM_IN_INCH));
         setPrintDeviceScreen(findViewById(R.id.set_column_width_as_device));
+
+        ((RadioGroup)findViewById(R.id.font_size)).check(R.id.font_size_full);
+
     }
 
     private void parsePagesString() {
@@ -442,11 +450,40 @@ public class PrintActivity extends AppCompatActivity {
      * @return - number of columns
      */
     public int calculateColsNum(int columnWidthMm, PrintAttributes attributes) {
+        Log.v(getClass().getName(),
+                String.format("calculateColsNum( columnWidthMm = %d, attributes) widthMils: %d " +
+                                "leftMarginMils: %d rightMarginMils: %d",
+                        columnWidthMm, attributes.getMediaSize().getWidthMils(),
+                        attributes.getMinMargins().getLeftMils(),
+                        attributes.getMinMargins().getRightMils()));
         int workingWidthMils =
                 attributes.getMediaSize().getWidthMils()
                         - attributes.getMinMargins().getLeftMils()
                         - attributes.getMinMargins().getRightMils();
-        return (int)(workingWidthMils * MM_IN_MILS / (float) columnWidthMm);
+        int result = (int)(workingWidthMils * MM_IN_MILS / (float) columnWidthMm);
+        Log.v(getClass().getName(), String.format("result cols num :%d", result));
+        return result;
     }
+
+    public void setOriginal(View view) {
+        ((RadioGroup)findViewById(R.id.font_size)).check(R.id.font_size_full);
+        zoom = 1.0f;
+    }
+
+    public void setThreeQuaters(View view) {
+        ((RadioGroup)findViewById(R.id.font_size)).check(R.id.font_size_three_quarters);
+        zoom = 0.75f;
+    }
+
+    public void setHalf(View view) {
+        ((RadioGroup)findViewById(R.id.font_size)).check(R.id.font_size_half);
+        zoom = 0.5f;
+    }
+
+    public void setQuater(View view) {
+        ((RadioGroup)findViewById(R.id.font_size)).check(R.id.font_size_quarter);
+        zoom = 0.25f;
+    }
+
 
 }
