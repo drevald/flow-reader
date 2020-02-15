@@ -12,7 +12,11 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.core.app.ActivityCompat;
@@ -35,6 +39,7 @@ import android.widget.ImageView;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.veve.flowreader.BookContentResolver;
 import com.veve.flowreader.BuildConfig;
 import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
@@ -48,6 +53,7 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final int FILE_OPEN_REQUEST = 42;
     SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
 
     BookListAdapter bookListAdapter;
@@ -144,6 +150,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == FILE_OPEN_REQUEST) {
+            Uri uri = data.getData();
+
+            try {
+                Intent i = new Intent(MainActivity.this, GetBookActivity.class);
+                i.setData(uri);
+                startActivity(i);
+            } catch (Exception e) {
+
+            }
+
+
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
@@ -161,9 +185,20 @@ public class MainActivity extends AppCompatActivity {
         ////////////    ADD BOOKS BUTTON     /////////////////////////////////////////////////////
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
+            boolean condition = android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.Q;
+            if (condition) {
                 Intent intentOne = new Intent(MainActivity.this, BrowseFilesActivity.class);
                 intentOne.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intentOne);
+            } else {
+                Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                i.setType("*/*");
+                i.addCategory(Intent.CATEGORY_OPENABLE);
+                i.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION|Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION|Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                i.putExtra(Intent.EXTRA_MIME_TYPES, new String[] {"application/pdf", "image/vnd.djvu"});
+                Intent chooser = Intent.createChooser(i, "Choose the file to read..");
+                startActivityForResult(chooser, FILE_OPEN_REQUEST);
+            }
         });
 
         final GridView gridView = findViewById(R.id.grid);
