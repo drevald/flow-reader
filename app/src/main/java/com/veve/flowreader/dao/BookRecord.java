@@ -5,6 +5,8 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.veve.flowreader.model.Book;
+
 /**
  * Created by ddreval on 4/3/2018.
  */
@@ -33,6 +35,9 @@ public class BookRecord {
     private byte[] preview;
     private String md5;
     private boolean preprocessing = false;
+
+    @Ignore
+    private Book book;
 
     private int format;
 
@@ -188,4 +193,11 @@ public class BookRecord {
 
     public void setFormat(int format) { this.format = format; }
 
+    public Book getBook() {
+        return book;
+    }
+
+    public void setBook(Book book) {
+        this.book = book;
+    }
 }

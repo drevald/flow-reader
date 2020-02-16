@@ -56,6 +56,17 @@ JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_getN
     return get_annotation(env, bookId, "Title");
 }
 
+JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_close
+(JNIEnv *env, jclass cls, jlong bookId) {
+     Document *document = (Document *) bookId;
+     ddjvu_document_t *doc = document->doc;
+     ddjvu_context_t *ctx = document->ctx;
+     ddjvu_document_release(doc);
+     ddjvu_context_release(ctx);
+     return 0;
+}
+
+
 JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_getNativeAuthor
 (JNIEnv *env, jclass cls, jlong bookId) {
     return get_annotation(env, bookId, "Author");

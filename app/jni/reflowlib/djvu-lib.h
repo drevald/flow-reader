@@ -26,6 +26,9 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
     JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_getNativeTitle
         (JNIEnv *, jclass, jlong);
 
+    JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_close
+        (JNIEnv *, jclass, jlong);
+
 
     JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_getNativeAuthor
         (JNIEnv *, jclass, jlong);

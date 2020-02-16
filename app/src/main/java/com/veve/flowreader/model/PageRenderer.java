@@ -14,4 +14,6 @@ public interface PageRenderer {
 
     void setPageLayoutParser(PageLayoutParser parser);
 
+    void closeBook();
+
 }

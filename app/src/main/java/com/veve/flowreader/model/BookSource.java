@@ -34,4 +34,6 @@ public interface BookSource {
      */
     String getBookTitle();
 
+    void closeBook();
+
 }

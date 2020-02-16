@@ -21,6 +21,9 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
     JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBook_getNativeAuthor
         (JNIEnv *, jclass, jlong);
 
+    JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBook_close
+        (JNIEnv *, jclass, jlong);
+
     JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativePageGlyphs
         (JNIEnv *, jclass, jlong, jint, jobject);
 

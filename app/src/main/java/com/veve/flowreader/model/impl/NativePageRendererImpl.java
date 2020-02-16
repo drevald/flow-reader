@@ -171,4 +171,9 @@ public class NativePageRendererImpl implements PageRenderer {
       // do nothing
     }
 
+    @Override
+    public void closeBook() {
+        bookSource.closeBook();
+    }
+
 }

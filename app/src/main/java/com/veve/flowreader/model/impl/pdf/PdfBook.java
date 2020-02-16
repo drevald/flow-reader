@@ -52,6 +52,11 @@ public class PdfBook implements Book {
     }
 
     @Override
+    public void close() {
+        close(bookId);
+    }
+
+    @Override
     public long getId() {
         return bookId;
     }
@@ -75,5 +80,7 @@ public class PdfBook implements Book {
     public boolean getPreprocessing() {
         return preprocessing;
     }
+
+    private static native int close(long bookId);
 
 }

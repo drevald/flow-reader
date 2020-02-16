@@ -36,6 +36,7 @@ public class BookFactory {
                 file.getAbsolutePath()));
 
         BookRecord bookRecord = new BookRecord();
+
         Book book = null;
 
 
@@ -55,6 +56,8 @@ public class BookFactory {
                 bookRecord.setFormat(BookRecord.DJVU_FORMAT);
             }
         }
+
+        bookRecord.setBook(book);
 
         //Filling native book data
         bookRecord.setPagesCount(book.getPagesCount());
