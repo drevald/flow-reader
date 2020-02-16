@@ -118,6 +118,17 @@ public class PageActivity extends AppCompatActivity {
         booksCollection.updateBook(book);
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        book.setScrollOffset(scroll.getScrollY());
+        booksCollection.updateBook(book);
+        Intent i = new Intent(PageActivity.this, MainActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivity(i);
+        finish();
+    }
+
     @SuppressLint("RestrictedApi")
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
