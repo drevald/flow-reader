@@ -150,6 +150,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finishAffinity(); // or finish();
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == FILE_OPEN_REQUEST) {
@@ -160,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                 i.setData(uri);
                 startActivity(i);
             } catch (Exception e) {
-
+                Log.v(getClass().getName(), "Couldn''t start GetBookActivity");
             }
 
 
