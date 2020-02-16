@@ -57,8 +57,6 @@ public class BookFactory {
             }
         }
 
-        bookRecord.setBook(book);
-
         //Filling native book data
         bookRecord.setPagesCount(book.getPagesCount());
         bookRecord.setTitle(book.getName());

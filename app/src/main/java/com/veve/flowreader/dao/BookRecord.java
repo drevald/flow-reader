@@ -36,9 +36,6 @@ public class BookRecord {
     private String md5;
     private boolean preprocessing = false;
 
-    @Ignore
-    private Book book;
-
     private int format;
 
     public String getMd5() {
@@ -193,11 +190,4 @@ public class BookRecord {
 
     public void setFormat(int format) { this.format = format; }
 
-    public Book getBook() {
-        return book;
-    }
-
-    public void setBook(Book book) {
-        this.book = book;
-    }
 }
