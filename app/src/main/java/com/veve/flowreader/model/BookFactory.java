@@ -36,6 +36,7 @@ public class BookFactory {
                 file.getAbsolutePath()));
 
         BookRecord bookRecord = new BookRecord();
+
         Book book = null;
 
 
@@ -44,6 +45,8 @@ public class BookFactory {
             bookRecord.setFormat(BookRecord.DJVU_FORMAT);
         } else if (file.getName().toLowerCase().endsWith("pdf")) {
             book = new PdfBook(file.getPath());
+            Log.v(getClass().getName(), "Book.getPath = " + book.getPath());
+            Log.v(getClass().getName(), "Book.id = " + book.getId());
             bookRecord.setFormat(BookRecord.PDF_FORMAT);
         } else {
             String header = getHeader(file);

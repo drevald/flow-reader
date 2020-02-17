@@ -44,6 +44,10 @@ public class MockRenderer implements PageRenderer {
 
     }
 
+    @Override
+    public void closeBook() {
+
+    }
 
 
 }

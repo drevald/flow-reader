@@ -201,6 +201,11 @@ public class CachedPageRendererImpl implements PageRenderer {
     }
 
     @Override
+    public void closeBook() {
+        bookSource.closeBook();
+    }
+
+    @Override
     public Bitmap renderOriginalPage(int position) {
         Log.v("NULLBOOK", "Getting CachedPageRendererImpl the original page " + position);
         return getOriginalPageBitmap(position);

@@ -28,5 +28,7 @@ public interface Book {
 
     void setPreprocessing(boolean preprocessing);
 
+    void close();
+
 
 }

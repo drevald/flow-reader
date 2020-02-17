@@ -48,6 +48,11 @@ public class DjvuBookSource implements BookSource {
     }
 
     @Override
+    public void closeBook() {
+        djvuBook.close();
+    }
+
+    @Override
     public int getPagesCount() {
         return djvuBook.getPagesCount();
     }

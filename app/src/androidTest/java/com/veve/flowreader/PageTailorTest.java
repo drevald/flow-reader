@@ -124,6 +124,9 @@ public class PageTailorTest {
         @Override
         public void setPageLayoutParser(PageLayoutParser parser) {}
 
+        @Override
+        public void closeBook() {}
+
     }
 
 }
