@@ -93,4 +93,9 @@ public class PageRendererImpl implements PageRenderer {
         this.pageLayoutParser = pageLayoutParser;
     }
 
+    @Override
+    public void closeBook() {
+        bookSource.closeBook();
+    }
+
 }

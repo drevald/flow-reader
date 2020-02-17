@@ -192,6 +192,13 @@ JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBook_getNat
     return get_metadata(env, bookId, "Title");
 }
 
+JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBook_close
+        (JNIEnv *env, jclass cls, jlong bookId) {
+    FPDF_DOCUMENT doc = (FPDF_DOCUMENT)bookId;
+    FPDF_CloseDocument(doc);
+    return 0;
+}
+
 JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBook_getNativeAuthor
 (JNIEnv *env, jclass cls, jlong bookId) {
     return get_metadata(env, bookId, "Author");

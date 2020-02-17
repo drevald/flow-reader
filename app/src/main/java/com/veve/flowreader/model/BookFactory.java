@@ -36,6 +36,7 @@ public class BookFactory {
                 file.getAbsolutePath()));
 
         BookRecord bookRecord = new BookRecord();
+
         Book book = null;
 
 

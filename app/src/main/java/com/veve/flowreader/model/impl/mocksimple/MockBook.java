@@ -93,4 +93,9 @@ public class MockBook implements Book {
     public void setPreprocessing(boolean preprocessing) {
 
     }
+
+    @Override
+    public void close() {
+
+    }
 }

@@ -78,6 +78,11 @@ public class DjvuBook implements Book {
     }
 
     @Override
+    public void close() {
+        close(bookId);
+    }
+
+    @Override
     public long getId() {
         return bookId;
     }
@@ -90,6 +95,8 @@ public class DjvuBook implements Book {
     private static native String getNativeTitle(long bookId);
 
     private static native String getNativeAuthor(long bookId);
+
+    private static native int close(long bookId);
 
 
 

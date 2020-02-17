@@ -48,6 +48,7 @@ import com.veve.flowreader.dao.AppDatabase;
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.dao.DaoAccess;
 import com.veve.flowreader.dao.ReportRecord;
+import com.veve.flowreader.model.Book;
 import com.veve.flowreader.model.BooksCollection;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageRenderer;
@@ -116,6 +117,20 @@ public class PageActivity extends AppCompatActivity {
         }
         book.setScrollOffset(scroll.getScrollY());
         booksCollection.updateBook(book);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        book.setScrollOffset(scroll.getScrollY());
+        booksCollection.updateBook(book);
+
+        pageRenderer.closeBook();
+
+        Intent i = new Intent(PageActivity.this, MainActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivity(i);
+        finish();
     }
 
     @SuppressLint("RestrictedApi")

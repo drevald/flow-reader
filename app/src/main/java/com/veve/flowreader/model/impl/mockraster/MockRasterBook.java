@@ -67,4 +67,9 @@ public class MockRasterBook implements Book {
 
     }
 
+    @Override
+    public void close() {
+
+    }
+
 }

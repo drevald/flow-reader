@@ -42,7 +42,7 @@ public interface BookContentResolver {
             InputStream is = context.getContentResolver().openInputStream(uri);
             String uriString = URLDecoder.decode(uri.toString(), "UTF-8");
             File file;
-            String fileName = uriString.substring(1 + uri.toString().lastIndexOf('/'));
+            String fileName = uriString.substring(1 + uriString.lastIndexOf('/'));
             if (uriString.toLowerCase().endsWith(".pdf")
                     ||uriString.toLowerCase().endsWith(".djvu")) {
                 file = new File(context.getExternalFilesDir(null), fileName);

@@ -52,4 +52,9 @@ public class PdfBookSource implements BookSource {
         return null;
     }
 
+    @Override
+    public void closeBook() {
+        pdfBook.close();
+    }
+
 }
