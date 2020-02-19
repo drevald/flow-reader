@@ -22,7 +22,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 
 @androidx.room.Database(entities =
-        {BookRecord.class, PageGlyphRecord.class, ReportRecord.class}, version = 1, exportSchema = false)
+        {BookRecord.class, PageGlyphRecord.class, ReportRecord.class, Settings.class}, version = 1, exportSchema = false)
 
 public abstract class AppDatabase extends RoomDatabase {
 
