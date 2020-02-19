@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface PageSource {
 
-    public Bitmap getAsBitmap();
+    Bitmap getAsBitmap();
 
 }

@@ -33,7 +33,7 @@ public interface Constants {
     int MARGIN_STEP = 50;
     int MARGIN_MAX = 250;
 
-    public final String REPORT_URL = "https://glyphs.flum.app/loader";
+    String REPORT_URL = "https://glyphs.flum.app/loader";
 
     float ZOOM_STEP = 0.25F;
     float ZOOM_MIN = 0.25F;

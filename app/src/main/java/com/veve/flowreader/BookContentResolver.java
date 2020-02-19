@@ -19,13 +19,13 @@ import static android.drm.DrmStore.DrmObjectType.CONTENT;
 
 public interface BookContentResolver {
 
-    static final MessageFormat fileInputFormat = new MessageFormat("file://{0}");
+    MessageFormat fileInputFormat = new MessageFormat("file://{0}");
 
-    static final MessageFormat contentInputFormat = new MessageFormat("{0}_files{1}");
+    MessageFormat contentInputFormat = new MessageFormat("{0}_files{1}");
 
-    static final MessageFormat outputFormat = new MessageFormat("/storage/emulated/0{0}");
+    MessageFormat outputFormat = new MessageFormat("/storage/emulated/0{0}");
 
-    public static String contentToFile(Context context, Uri uri) throws Exception {
+    static String contentToFile(Context context, Uri uri) throws Exception {
         String path = null;
         try {
             if (uri.getScheme().equals(SCHEME_CONTENT)) {

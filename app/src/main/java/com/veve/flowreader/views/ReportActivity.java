@@ -194,7 +194,7 @@ public class ReportActivity extends AppCompatActivity {
                 byte[] buffer = new byte[32];
                 publishProgress(0F);
                 reportIncomingId = dis.readLong();
-                Log.v(getClass().getName(), "HIROKU_RESPONSE " + String.valueOf(reportIncomingId));
+                Log.v(getClass().getName(), "HIROKU_RESPONSE " + reportIncomingId);
                 senderHandler.post(() -> {progressLabel.setText(R.string.report_sent);});
                 is.close();
             } catch (Exception e) {

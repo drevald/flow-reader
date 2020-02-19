@@ -177,7 +177,7 @@ public class PrintActivity extends AppCompatActivity {
                             return;
                         }
 
-                        int pageNum = (int) (counter / colNum);
+                        int pageNum = counter / colNum;
                         PdfDocument.PageInfo.Builder pageBuilder = new PdfDocument.PageInfo.Builder(
                                 (int) (attributes.getMediaSize().getWidthMils() * attributes.getResolution().getHorizontalDpi() * INCH_IN_MILS),
                                 (int) (attributes.getMediaSize().getHeightMils() * attributes.getResolution().getVerticalDpi() * INCH_IN_MILS),
@@ -298,7 +298,7 @@ public class PrintActivity extends AppCompatActivity {
 
         pagesGroup = findViewById(R.id.page_range);
         pagesGroup.check(R.id.current_page);
-        pages = ((EditText) findViewById(R.id.pages));
+        pages = findViewById(R.id.pages);
         pages.setText(String.valueOf(1 + bookRecord.getCurrentPage()));
         parsePagesString();
         pages.setOnFocusChangeListener((v, hasFocus) -> {
@@ -308,8 +308,8 @@ public class PrintActivity extends AppCompatActivity {
         columnGroup = findViewById(R.id.column);
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        float widthInInches = displayMetrics.widthPixels / (float) displayMetrics.xdpi;
-        float heightInInches = displayMetrics.heightPixels / (float) displayMetrics.ydpi;
+        float widthInInches = displayMetrics.widthPixels / displayMetrics.xdpi;
+        float heightInInches = displayMetrics.heightPixels / displayMetrics.ydpi;
         screenWidthMm =  (int) ((Math.min(widthInInches, heightInInches) * MM_IN_INCH));
         setPrintDeviceScreen(findViewById(R.id.set_column_width_as_device));
 
@@ -394,7 +394,7 @@ public class PrintActivity extends AppCompatActivity {
 
     private int getInt(int id) {
         int result;
-        EditText v = (EditText)findViewById(id);
+        EditText v = findViewById(id);
         try {
             result = Integer.parseInt(v.getText().toString());
             v.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
@@ -439,7 +439,7 @@ public class PrintActivity extends AppCompatActivity {
     public int calculateGapPix(int columnWidthMm, PrintAttributes attributes) {
         int result = calculateGapMm(columnWidthMm, attributes);
         result *= INCH_IN_MM * attributes.getResolution().getVerticalDpi();
-        return (int)result;
+        return result;
     }
 
     private int calculateGapMm(int columnWidthMm, PrintAttributes attributes) {

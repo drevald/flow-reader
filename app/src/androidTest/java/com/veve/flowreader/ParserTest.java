@@ -26,10 +26,10 @@ public class ParserTest {
                 if (i > 3 && i < 6 && j > 3 && j < 6) {
                     color = (byte)0;
                 }
-                buffer.put(index + 0, (byte) color);
-                buffer.put(index + 1, (byte) color);
-                buffer.put(index + 2, (byte) color);
-                buffer.put(index + 3, (byte) opacity);
+                buffer.put(index + 0, color);
+                buffer.put(index + 1, color);
+                buffer.put(index + 2, color);
+                buffer.put(index + 3, opacity);
             }
         }
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);

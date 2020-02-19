@@ -86,7 +86,7 @@ public class PrintTest extends BookTest {
 
     private int getInt(int id) {
         int result;
-        EditText v = (EditText)printActivity.findViewById(id);
+        EditText v = printActivity.findViewById(id);
         try {
             result = Integer.parseInt(v.getText().toString());
             v.setBackgroundColor(printActivity.getResources().getColor(R.color.colorPrimary));

@@ -47,7 +47,7 @@ public class PagesSet {
         for (String part : parts) {
             if (part.trim() != "") {
                 sets.add(new PagesSet(part.trim()));
-            };
+            }
         }
         return sets;
     }
