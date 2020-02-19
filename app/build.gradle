@@ -16,8 +16,8 @@ android {
         applicationId "com.veve.flowreader"
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 17
-        versionName "0.7"
+        versionCode 18
+        versionName "0.8"
         buildConfigField "String", "GitHash", "\"${getGitHash()}\""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = "true"
