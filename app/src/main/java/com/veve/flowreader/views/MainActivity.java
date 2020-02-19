@@ -159,8 +159,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == FILE_OPEN_REQUEST) {
+            if (data == null)
+                return;
             Uri uri = data.getData();
-
             try {
                 Intent i = new Intent(MainActivity.this, GetBookActivity.class);
                 i.setData(uri);
@@ -168,8 +169,6 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception e) {
                 Log.v(getClass().getName(), "Couldn''t start GetBookActivity");
             }
-
-
         }
     }
 
@@ -206,8 +205,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(chooser, FILE_OPEN_REQUEST);
 //            }
         });
-
         final GridView gridView = findViewById(R.id.grid);
+
 
         if (!preferences.contains(Constants.VIEW_TYPE)) {
             Log.d(getClass().getName(), "View type preference missing. Setting list as default");
