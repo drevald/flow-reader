@@ -5,9 +5,7 @@ import android.graphics.Bitmap;
 import com.veve.flowreader.model.BookSource;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageRenderer;
-import com.veve.flowreader.model.impl.CachedPageRendererImpl;
 import com.veve.flowreader.model.impl.NativePageRendererImpl;
-import com.veve.flowreader.model.impl.djvu.DjvuBookSource;
 import com.veve.flowreader.model.impl.pdf.PdfBookSource;
 
 import org.junit.Test;

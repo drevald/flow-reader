@@ -7,21 +7,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.menu.MenuBuilder;
-import androidx.appcompat.widget.Toolbar;
-
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -32,7 +23,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -41,14 +31,21 @@ import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
 import com.veve.flowreader.dao.AppDatabase;
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.dao.DaoAccess;
 import com.veve.flowreader.dao.ReportRecord;
-import com.veve.flowreader.model.Book;
 import com.veve.flowreader.model.BooksCollection;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageRenderer;
@@ -62,7 +59,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -286,22 +282,6 @@ public class PageActivity extends AppCompatActivity {
         MenuItem item = menu.findItem(R.id.preprocess);
         item.setIcon(book.getPreprocessing() ? R.drawable.ic_unenhance : R.drawable.ic_enhance);
         item.setTitle(book.getPreprocessing() ? R.string.unenhance : R.string.enhance );
-//        if (viewMode == VIEW_MODE_PHONE) {
-//            menu.findItem(R.id.no_margins).setVisible(true);
-//            menu.findItem(R.id.normal_margins).setVisible(true);
-//            menu.findItem(R.id.wide_margins).setVisible(true);
-//            menu.findItem(R.id.preprocess).setVisible(true);
-//            menu.findItem(R.id.page_unreadable).setVisible(true);
-//            menu.findItem(R.id.print).setVisible(true);
-//        }
-//        if (viewMode == VIEW_MODE_ORIGINAL) {
-//            menu.findItem(R.id.no_margins).setVisible(false);
-//            menu.findItem(R.id.normal_margins).setVisible(false);
-//            menu.findItem(R.id.wide_margins).setVisible(false);
-//            menu.findItem(R.id.preprocess).setVisible(false);
-//            menu.findItem(R.id.page_unreadable).setVisible(false);
-//            menu.findItem(R.id.print).setVisible(false);
-//        }
 
         if (viewMode == VIEW_MODE_PHONE) {
             menu.findItem(R.id.no_margins).setEnabled(true);
@@ -421,33 +401,7 @@ public class PageActivity extends AppCompatActivity {
                 startActivity(printIntent);
                 break;
             }
-//            case R.id.delete_book: {
-//                AlertDialog.Builder builder = new AlertDialog.Builder(PageActivity.this);
-//                builder.setTitle(R.string.book_deletion)
-//                        .setMessage(String.format(
-//                                getResources().getString(R.string.confirm_delete), book.getTitle()))
-//                        .setCancelable(false)
-//                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                long bookId = book.getId();
-//                                BooksCollection.getInstance(getApplicationContext()).deleteBook(bookId);
-//                                Intent i = new Intent(PageActivity.this, MainActivity.class);
-//                                i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-//                                i.putExtra(BOOK_ID, bookId);
-//                                startActivity(i);
-//                            }
-//                        })
-//                        .setNegativeButton(R.string.no,
-//                                new DialogInterface.OnClickListener() {
-//                                    public void onClick(DialogInterface dialog, int id) {
-//                                        dialog.cancel();
-//                                    }
-//                                });
-//                AlertDialog alert = builder.create();
-//                alert.show();
-//                break;
-//            }
+
             case R.id.preprocess: {
                 context.setPreprocessing(!context.isPreprocessing());
                 book.setPreprocessing(!book.getPreprocessing());

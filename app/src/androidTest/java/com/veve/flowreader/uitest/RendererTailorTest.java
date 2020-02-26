@@ -5,19 +5,14 @@ import android.graphics.Bitmap;
 import com.veve.flowreader.PageTailor;
 import com.veve.flowreader.PagesSet;
 import com.veve.flowreader.model.BookSource;
-import com.veve.flowreader.model.BooksCollection;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageRenderer;
-import com.veve.flowreader.model.impl.CachedPageRendererImpl;
 import com.veve.flowreader.model.impl.NativePageRendererImpl;
-import com.veve.flowreader.model.impl.djvu.DjvuBookSource;
 import com.veve.flowreader.model.impl.pdf.PdfBookSource;
-import com.veve.flowreader.uitest.BookTest;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import java.lang.annotation.Native;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
