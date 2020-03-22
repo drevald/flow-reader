@@ -45,6 +45,8 @@ public class DjvuBookPage extends AbstractBookPage implements BookPage  {
                 pageSize, pageGlyphs, context.isPreprocessing(), context.getMargin());
 
         List<Bitmap> retVal = new ArrayList<>();
+        int bitmapWidth = 0;
+        int totalHeight = 0;
 
         for (int i=0;i<bytes.size(); i++) {
             byte[] b = bytes.get(i);
@@ -57,9 +59,17 @@ public class DjvuBookPage extends AbstractBookPage implements BookPage  {
             Bitmap bm = BitmapFactory.decodeByteArray(b,0, b.length, opts);
 
             retVal.add(bm);
+            totalHeight += bm.getHeight();
+            bitmapWidth = bm.getWidth();
             bytes.set(i, null);
         }
         bytes = null;
+
+        if (context.isWillusSegmentation()) {
+             return getWillusBitmap(retVal, context.getWidth(), bitmapWidth, totalHeight);
+        }
+
+
 
         return retVal;
 

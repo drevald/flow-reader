@@ -15,11 +15,47 @@ public class ReportRecord {
     private byte[] glyphs;
     private byte[] originalPage;
     private byte[] overturnedPage;
+    private long uploadDate;
+    private long fixDate;
+    private String fixVersion;
+    private String response;
 
     public ReportRecord( byte[] glyphs, byte[] originalPage, byte[] overturnedPage) {
         this.glyphs = glyphs;
         this.originalPage = originalPage;
         this.overturnedPage = overturnedPage;
+    }
+
+    public long getUploadDate() {
+        return uploadDate;
+    }
+
+    public void setUploadDate(long uploadDate) {
+        this.uploadDate = uploadDate;
+    }
+
+    public long getFixDate() {
+        return fixDate;
+    }
+
+    public void setFixDate(long fixDate) {
+        this.fixDate = fixDate;
+    }
+
+    public String getFixVersion() {
+        return fixVersion;
+    }
+
+    public void setFixVersion(String fixVersion) {
+        this.fixVersion = fixVersion;
+    }
+
+    public String getResponse() {
+        return response;
+    }
+
+    public void setResponse(String response) {
+        this.response = response;
     }
 
     public Long getId() {

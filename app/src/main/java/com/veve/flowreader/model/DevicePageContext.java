@@ -61,6 +61,8 @@ public class DevicePageContext implements Serializable {
 
     private int resolution;
 
+    private boolean willusSegmentation;
+
     public DevicePageContext(int width) {
         this.zoom = DEFAULT_ZOOM;
         this.zoomOriginal = DEFAULT_ZOOM;
@@ -208,4 +210,11 @@ public class DevicePageContext implements Serializable {
         this.remotestPoint = new Point((int)margin*DEFAULT_MARGIN, 0);
     }
 
+    public boolean isWillusSegmentation() {
+        return willusSegmentation;
+    }
+
+    public void setWillusSegmentation(boolean willusSegmentation) {
+        this.willusSegmentation = willusSegmentation;
+    }
 }

@@ -346,6 +346,10 @@ public class PageActivity extends AppCompatActivity {
                 book.setMargin(context.getMargin());
                 break;
             }
+            case R.id.willus_segmentation: {
+                context.setWillusSegmentation(!context.isWillusSegmentation());
+                break;
+            }
             case R.id.page_unreadable: {
 
                 ConnectionCheckerTask connectionCheckerTask = new ConnectionCheckerTask();
