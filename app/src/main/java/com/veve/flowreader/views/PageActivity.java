@@ -109,7 +109,7 @@ public class PageActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         if (book == null) {
-            Log.i(getClass().getName(), String.format("The book is missing"));
+            Log.i(getClass().getName(), "The book is missing");
             Intent i = new Intent(PageActivity.this, MainActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(i);

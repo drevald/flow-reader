@@ -22,7 +22,7 @@ public class BitmapMemoryTest {
         Bitmap.Config bitmapConfig = Bitmap.Config.ARGB_8888;
         int width = 1000;
         Bitmap bm;
-        for (int height = 1000; height < 33000; height += 1000) {
+        for (int height = 1000; height < 25000; height += 1000) {
             Log.d(getClass().getName(), String.format("Building bitimap %d x %d", width, height));
             bm = Bitmap.createBitmap(width, height, bitmapConfig);
             bm = null;

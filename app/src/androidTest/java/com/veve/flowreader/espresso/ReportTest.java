@@ -37,7 +37,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.isEnabled;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
 
-@RunWith(AndroidJUnit4.class)
 @LargeTest
 public class ReportTest  extends BookTest {
 
