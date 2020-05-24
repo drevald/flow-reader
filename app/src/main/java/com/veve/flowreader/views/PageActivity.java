@@ -348,6 +348,7 @@ public class PageActivity extends AppCompatActivity {
             }
             case R.id.willus_segmentation: {
                 context.setWillusSegmentation(!context.isWillusSegmentation());
+                item.setIcon(context.isWillusSegmentation() ? R.drawable.ic_unenhance : R.drawable.ic_enhance);
                 break;
             }
             case R.id.page_unreadable: {

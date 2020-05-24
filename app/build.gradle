@@ -21,10 +21,7 @@ android {
         buildConfigField "String", "GitHash", "\"${getGitHash()}\""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = "true"
-        ndk {
-            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
-        }
-        ndkVersion "21.0.6011959"
+
     }
 
     buildTypes {
@@ -34,45 +31,26 @@ android {
         }
     }
 
-    sourceSets.main {
-        jniLibs.srcDir 'jni/reflowlib'
-    }
-
-
-    externalNativeBuild {
-        ndkBuild {
-            path 'jni/Android.mk'
-        }
-    }
-
     preBuild {
         doFirst {
             JavaCompile jc = android.applicationVariants.find {
                 it.name == 'debug' || it.name == 'release'
-            }.javaCompileProvider.get() 
+            }.javaCompileProvider.get()
             jc.options.compilerArgs = ["-Xlint:unchecked"]
         }
     }
 
-    adbOptions {
-        timeOutInMs 60 * 1000 * 10 
-    }
-
-    lintOptions {
-        abortOnError false        // true by default
-        checkAllWarnings false
-        checkReleaseBuilds false
-        ignoreWarnings true       // false by default
-        quiet true
-    }
     compileOptions {
         sourceCompatibility '1.8'
         targetCompatibility '1.8'
     }
-    buildToolsVersion '28.0.3'
+
+    ndkVersion "21.1.6363665rc3"
+
 }
 
 dependencies {
+    implementation project(":flowlib")
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'

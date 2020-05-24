@@ -1,7 +1,27 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/oudun/flow-reader")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+            }
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
+        }
+    }
+}
+
 
 buildscript {
-
     repositories {
         google()
         jcenter()
@@ -22,7 +42,6 @@ allprojects {
     }
 }
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
-}
-
+//task clean(type: Delete) {
+//    delete rootProject.buildDir
+//}
