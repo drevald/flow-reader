@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 apply plugin: 'cpp'
+apply plugin: 'maven-publish'
+
+def githubProperties = new Properties()
+githubProperties.load(new FileInputStream(rootProject.file("github.properties"))) //Set env variable GPR_USER & GPR_API_KEY if not adding a properties file
 
 def getGitHash = { ->
     def stdout = new ByteArrayOutputStream()
@@ -8,6 +12,18 @@ def getGitHash = { ->
         standardOutput = stdout
     }
     return stdout.toString().trim()
+}
+
+repositories {
+    jcenter()
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/oudun/flow-reader")
+        credentials {
+            username = githubProperties['gpr.usr'] ?: System.getenv("USERNAME")
+            password = githubProperties['gpr.key'] ?: System.getenv("TOKEN")
+        }
+    }
 }
 
 android {
@@ -50,7 +66,7 @@ android {
 }
 
 dependencies {
-    implementation project(":flowlib")
+    implementation 'com.flumine.libs:flow-lib:1.0'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
