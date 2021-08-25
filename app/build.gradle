@@ -24,7 +24,8 @@ android {
         ndk {
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
         }
-        ndkVersion "21.0.6011959"
+        //ndkVersion "21.0.6011959"
+        ndkVersion "21.4.7075529"
     }
 
     buildTypes {
