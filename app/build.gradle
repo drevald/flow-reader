@@ -83,7 +83,7 @@ dependencies {
     testImplementation 'org.hamcrest:hamcrest-library:1.3'
     implementation 'org.apache.commons:commons-lang3:3.7'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     implementation group: 'androidx.test', name: 'rules', version: '1.2.0'
     implementation 'androidx.room:room-runtime:2.2.5'
     annotationProcessor 'androidx.room:room-compiler:2.2.5'

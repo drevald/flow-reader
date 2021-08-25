@@ -10,7 +10,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.0-alpha09'
+        classpath 'com.android.tools.build:gradle:4.2.0'
     }
 }
 
@@ -18,7 +18,10 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven { url 'http://maven.ghostscript.com' }
+//        maven { url 'http://maven.ghostscript.com' }
+        maven {
+            url "https://repo1.maven.org/maven2"
+        }
     }
 }
 
