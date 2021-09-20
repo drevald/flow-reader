@@ -21,6 +21,7 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GestureDetectorCompat;
 
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -29,6 +30,7 @@ import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -104,6 +106,8 @@ public class PageActivity extends AppCompatActivity {
     boolean barsVisible;
     String commitId = "$Id$";
     PageLoader pageLoader;
+    ScaleGestureDetector scaleGestureDetector;
+    GestureDetectorCompat gestureDetectorCompat;
 
     @Override
     protected void onPause() {
@@ -212,6 +216,8 @@ public class PageActivity extends AppCompatActivity {
         show = findViewById(R.id.show);
         scroll = findViewById(R.id.scroll);
         bottomBar = findViewById(R.id.bottomBar);
+        scaleGestureDetector = new ScaleGestureDetector(this, new MyOnScaleGestureListener());
+        gestureDetectorCompat = new GestureDetectorCompat(this, new MyGestureListener());
 
         findViewById(R.id.help).setOnClickListener((view)->{
             Intent intent = new Intent(PageActivity.this, HelpActivity.class);
@@ -222,12 +228,11 @@ public class PageActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         seekBar.setMax(book.getPagesCount());
-        pager.setOnTouchListener(new PagerTouchListener());
-        seekBar.setOnSeekBarChangeListener(new PagerListener());
-        home.setOnClickListener(new HomeButtonListener());
-        show.setOnClickListener(new ShowListener());
-        page.setOnTouchListener(new OnDoubleTapListener(this, page));
-        topLayout.addOnLayoutChangeListener(new LayoutListener());
+//        pager.setOnTouchListener(new PagerTouchListener());
+//        seekBar.setOnSeekBarChangeListener(new PagerListener());
+//        home.setOnClickListener(new HomeButtonListener());
+//        show.setOnClickListener(new ShowListener());
+//        topLayout.addOnLayoutChangeListener(new LayoutListener());
 
         Display display = getWindowManager().getDefaultDisplay();
         Point point = new Point();
@@ -252,21 +257,19 @@ public class PageActivity extends AppCompatActivity {
 
         TextView bookTitle = findViewById(R.id.book_title);
         bookTitle.setText(book.getTitle());
-        bookTitle.setOnClickListener((view)->{
-            AlertDialog.Builder builder = new AlertDialog.Builder(PageActivity.this);
-            builder.setCancelable(false)
-                    .setMessage(book.getTitle())
-                    .setNeutralButton(R.string.close, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
-            AlertDialog alert = builder.create();
-            alert.show();
-        });
-
-
+//        bookTitle.setOnClickListener((view)->{
+//            AlertDialog.Builder builder = new AlertDialog.Builder(PageActivity.this);
+//            builder.setCancelable(false)
+//                    .setMessage(book.getTitle())
+//                    .setNeutralButton(R.string.close, new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            dialog.cancel();
+//                        }
+//                    });
+//            AlertDialog alert = builder.create();
+//            alert.show();
+//        });
 
         pageActivity = this;
         setPageNumber(currentPage);
@@ -276,32 +279,25 @@ public class PageActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        boolean isCommon = gestureDetectorCompat.onTouchEvent(event);
+        Log.d(getClass().getName(), String.format("Common gesture detected = %b", isCommon));
+        boolean isScale = scaleGestureDetector.onTouchEvent(event);
+        Log.d(getClass().getName(), String.format("Scale gesture detected = %b", isScale));
+        return true;
+    }
+
+
     public BookRecord getBook() {
         return book;
     }
-
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem item = menu.findItem(R.id.preprocess);
         item.setIcon(book.getPreprocessing() ? R.drawable.ic_unenhance : R.drawable.ic_enhance);
         item.setTitle(book.getPreprocessing() ? R.string.unenhance : R.string.enhance );
-//        if (viewMode == VIEW_MODE_PHONE) {
-//            menu.findItem(R.id.no_margins).setVisible(true);
-//            menu.findItem(R.id.normal_margins).setVisible(true);
-//            menu.findItem(R.id.wide_margins).setVisible(true);
-//            menu.findItem(R.id.preprocess).setVisible(true);
-//            menu.findItem(R.id.page_unreadable).setVisible(true);
-//            menu.findItem(R.id.print).setVisible(true);
-//        }
-//        if (viewMode == VIEW_MODE_ORIGINAL) {
-//            menu.findItem(R.id.no_margins).setVisible(false);
-//            menu.findItem(R.id.normal_margins).setVisible(false);
-//            menu.findItem(R.id.wide_margins).setVisible(false);
-//            menu.findItem(R.id.preprocess).setVisible(false);
-//            menu.findItem(R.id.page_unreadable).setVisible(false);
-//            menu.findItem(R.id.print).setVisible(false);
-//        }
 
         if (viewMode == VIEW_MODE_PHONE) {
             menu.findItem(R.id.no_margins).setEnabled(true);
@@ -421,33 +417,6 @@ public class PageActivity extends AppCompatActivity {
                 startActivity(printIntent);
                 break;
             }
-//            case R.id.delete_book: {
-//                AlertDialog.Builder builder = new AlertDialog.Builder(PageActivity.this);
-//                builder.setTitle(R.string.book_deletion)
-//                        .setMessage(String.format(
-//                                getResources().getString(R.string.confirm_delete), book.getTitle()))
-//                        .setCancelable(false)
-//                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                long bookId = book.getId();
-//                                BooksCollection.getInstance(getApplicationContext()).deleteBook(bookId);
-//                                Intent i = new Intent(PageActivity.this, MainActivity.class);
-//                                i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-//                                i.putExtra(BOOK_ID, bookId);
-//                                startActivity(i);
-//                            }
-//                        })
-//                        .setNegativeButton(R.string.no,
-//                                new DialogInterface.OnClickListener() {
-//                                    public void onClick(DialogInterface dialog, int id) {
-//                                        dialog.cancel();
-//                                    }
-//                                });
-//                AlertDialog alert = builder.create();
-//                alert.show();
-//                break;
-//            }
             case R.id.preprocess: {
                 context.setPreprocessing(!context.isPreprocessing());
                 book.setPreprocessing(!book.getPreprocessing());
@@ -474,8 +443,6 @@ public class PageActivity extends AppCompatActivity {
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        int width = size.x;
-        int height = size.y;
 
         int childCount = pageActivity.page.getChildCount();
         for (int k=0;k<childCount;k++) {
@@ -491,8 +458,6 @@ public class PageActivity extends AppCompatActivity {
 
             }
         }
-
-
         pageLoader.execute(pageNumber, invCache);
     }
 
@@ -509,33 +474,32 @@ public class PageActivity extends AppCompatActivity {
 
 ////////////////////////////   LISTENERS  ////////////////////////////////////////////////////
 
-    class SwapListener implements View.OnTouchListener {
-        @Override
-        public boolean onTouch(View view, MotionEvent event) {
-            float x1, x2;
-            float MIN_DISTANCE = 150;
-            x1 = 0;
-            switch(event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    x1 = event.getX();
-                    break;
-                case MotionEvent.ACTION_UP:
-                    x2 = event.getX();
-                    float deltaX = x2 - x1;
-                    if (Math.abs(deltaX) > MIN_DISTANCE) {
-                        if (x2 > x1) {
-                            Log.d(getClass().getName(),"Left to Right swipe [Next]");
-                        } else {
-                            Log.d(getClass().getName(),"Right to Left swipe [Next]");
-                        }
-                    }
-                    break;
-            }
-            view.onTouchEvent(event);
-            return true;
-//                return true;
-        }
-    }
+//    class SwapListener implements View.OnTouchListener {
+//        @Override
+//        public boolean onTouch(View view, MotionEvent event) {
+//            float x1, x2;
+//            float MIN_DISTANCE = 150;
+//            x1 = 0;
+//            switch(event.getAction()) {
+//                case MotionEvent.ACTION_DOWN:
+//                    x1 = event.getX();
+//                    break;
+//                case MotionEvent.ACTION_UP:
+//                    x2 = event.getX();
+//                    float deltaX = x2 - x1;
+//                    if (Math.abs(deltaX) > MIN_DISTANCE) {
+//                        if (x2 > x1) {
+//                            Log.d(getClass().getName(),"Left to Right swipe [Next]");
+//                        } else {
+//                            Log.d(getClass().getName(),"Right to Left swipe [Next]");
+//                        }
+//                    }
+//                    break;
+//            }
+//            view.onTouchEvent(event);
+//            return true;
+//        }
+//    }
 
     class PagerTouchListener implements View.OnTouchListener {
         @Override
@@ -547,83 +511,83 @@ public class PageActivity extends AppCompatActivity {
         }
     }
 
-    class OnDoubleTapListener implements View.OnTouchListener {
-
-        private GestureDetector gestureDetector;
-
-        OnDoubleTapListener(Context c, LinearLayout p) {
-            gestureDetector = new GestureDetector(c, new GestureDetector.SimpleOnGestureListener() {
-
-                @Override
-                public boolean onScroll(MotionEvent e1, MotionEvent e2,float distanceX, float distanceY) {
-                    Log.v(getClass().getName(), "onScroll");
-                    if (Math.abs(distanceX) > 2 * Math.abs(distanceY) && Math.abs(distanceX) > 50) {
-                        if (distanceX > 0) {
-                            if (book.getCurrentPage() < book.getPagesCount()-1) {
-                                setPageNumber(book.getCurrentPage()+1);
-                                scroll.scrollTo(0, 0);
-                            }
-                        } else {
-                            if (book.getCurrentPage() > 0) {
-                                setPageNumber(book.getCurrentPage()-1);
-                                scroll.scrollTo(0, 0);
-                            }
-                        }
-                    }
-                    try {
-                        Thread.currentThread().sleep(100);
-                    } catch (Exception e) {
-
-                    }
-                    return true;
-                }
-
-                @Override
-                public boolean onDoubleTap(MotionEvent e) {
-                    float x = e.getX();
-
-                    if (x > p.getWidth() / 2) {
-                        if (book.getCurrentPage() < book.getPagesCount()-1) {
-                            setPageNumber(book.getCurrentPage()+1);
-                            scroll.scrollTo(0, 0);
-                        }
-                    } else {
-                        if (book.getCurrentPage() > 0) {
-                            setPageNumber(book.getCurrentPage()-1);
-                            scroll.scrollTo(0, 0);
-                        }
-                    }
-                    return true;
-                }
-
-                @Override
-                public boolean onSingleTapConfirmed(MotionEvent e) {
-                    if (barsVisible) {
-                        bottomBar.setVisibility(INVISIBLE);
-                        bar.setVisibility(GONE);
-                        barsVisible = false;
-                    } else {
-                        bottomBar.setVisibility(VISIBLE);
-                        bar.setVisibility(VISIBLE);
-                        barsVisible = true;
-                    }
-                    return super.onSingleTapConfirmed(e);
-                }
-
-                @Override
-                public boolean onDown(MotionEvent e) {
-                    return true;
-                }
-
-            });
-        }
-
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            view.performClick();
-            return gestureDetector.onTouchEvent(motionEvent);
-        }
-    }
+//    class OnDoubleTapListener implements View.OnTouchListener {
+//
+//        private GestureDetector gestureDetector;
+//
+//        OnDoubleTapListener(Context c, LinearLayout p) {
+//            gestureDetector = new GestureDetector(c, new GestureDetector.SimpleOnGestureListener() {
+//
+//                @Override
+//                public boolean onScroll(MotionEvent e1, MotionEvent e2,float distanceX, float distanceY) {
+//                    Log.v(getClass().getName(), "onScroll");
+//                    if (Math.abs(distanceX) > 2 * Math.abs(distanceY) && Math.abs(distanceX) > 50) {
+//                        if (distanceX > 0) {
+//                            if (book.getCurrentPage() < book.getPagesCount()-1) {
+//                                setPageNumber(book.getCurrentPage()+1);
+//                                scroll.scrollTo(0, 0);
+//                            }
+//                        } else {
+//                            if (book.getCurrentPage() > 0) {
+//                                setPageNumber(book.getCurrentPage()-1);
+//                                scroll.scrollTo(0, 0);
+//                            }
+//                        }
+//                    }
+//                    try {
+//                        Thread.currentThread().sleep(100);
+//                    } catch (Exception e) {
+//
+//                    }
+//                    return true;
+//                }
+//
+//                @Override
+//                public boolean onDoubleTap(MotionEvent e) {
+//                    float x = e.getX();
+//
+//                    if (x > p.getWidth() / 2) {
+//                        if (book.getCurrentPage() < book.getPagesCount()-1) {
+//                            setPageNumber(book.getCurrentPage()+1);
+//                            scroll.scrollTo(0, 0);
+//                        }
+//                    } else {
+//                        if (book.getCurrentPage() > 0) {
+//                            setPageNumber(book.getCurrentPage()-1);
+//                            scroll.scrollTo(0, 0);
+//                        }
+//                    }
+//                    return true;
+//                }
+//
+//                @Override
+//                public boolean onSingleTapConfirmed(MotionEvent e) {
+//                    if (barsVisible) {
+//                        bottomBar.setVisibility(INVISIBLE);
+//                        bar.setVisibility(GONE);
+//                        barsVisible = false;
+//                    } else {
+//                        bottomBar.setVisibility(VISIBLE);
+//                        bar.setVisibility(VISIBLE);
+//                        barsVisible = true;
+//                    }
+//                    return super.onSingleTapConfirmed(e);
+//                }
+//
+//                @Override
+//                public boolean onDown(MotionEvent e) {
+//                    return true;
+//                }
+//
+//            });
+//        }
+//
+//        @Override
+//        public boolean onTouch(View view, MotionEvent motionEvent) {
+//            view.performClick();
+//            return gestureDetector.onTouchEvent(motionEvent);
+//        }
+//    }
 
     class PagerListener implements SeekBar.OnSeekBarChangeListener {
     @Override
@@ -674,6 +638,7 @@ public class PageActivity extends AppCompatActivity {
 
     }
 
+    //Switches between original and adapted book views
     class ShowListener implements OnClickListener {
         @Override
         public void onClick(View view) {
@@ -934,6 +899,54 @@ public class PageActivity extends AppCompatActivity {
             return null;
         }
 
+    }
+
+    public class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            Log.d(getClass().getName(), "On Fling");
+            setPageNumber(velocityX > 0 ? currentPage + 1 : currentPage - 1);
+            book.setCurrentPage(currentPage);
+            booksCollection.updateBook(book);
+            return super.onFling(e1, e2, velocityX, velocityY);
+        }
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            if (barsVisible) {
+                bottomBar.setVisibility(INVISIBLE);
+                bar.setVisibility(GONE);
+                barsVisible = false;
+            } else {
+                bottomBar.setVisibility(VISIBLE);
+                bar.setVisibility(VISIBLE);
+                barsVisible = true;
+            }
+            return super.onSingleTapConfirmed(e);
+        }
+
+    }
+
+    public class MyOnScaleGestureListener extends
+            ScaleGestureDetector.SimpleOnScaleGestureListener {
+
+        @SuppressLint("SetTextI18n")
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            Log.v(getClass().getName(), "onScale");
+            context.setZoom(context.getZoom() * detector.getScaleFactor());
+            Log.d(getClass().getName(),
+                String.format("Scaling %f zoom %f\n", detector.getScaleFactor(), context.getZoom()));
+            return true;
+        }
+
+        @Override
+        public void onScaleEnd(ScaleGestureDetector detector) {
+            super.onScaleEnd(detector);
+            book.setZoom(context.getZoom());
+            Log.d(getClass().getName(), "Scale ended");
+        }
     }
 
 }
