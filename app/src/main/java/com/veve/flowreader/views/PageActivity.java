@@ -261,9 +261,9 @@ public class PageActivity extends AppCompatActivity {
         seekBar = findViewById(R.id.slider);
         home = findViewById(R.id.home);
         progressBar = findViewById(R.id.progress);
-//        page = findViewById(R.id.page);
+        page = findViewById(R.id.page);
         show = findViewById(R.id.show);
-//        scroll = findViewById(R.id.scroll);
+        scroll = findViewById(R.id.scroll);
         bottomBar = findViewById(R.id.bottomBar);
 
         findViewById(R.id.help).setOnClickListener((view)->{
@@ -330,7 +330,7 @@ public class PageActivity extends AppCompatActivity {
 
 
         pageActivity = this;
-//        setPageNumber(currentPage);
+        setPageNumber(currentPage);
 
         book.setZoom(context.getZoom());
         show.setImageResource(viewMode == VIEW_MODE_PHONE ? R.drawable.ic_to_book : R.drawable.ic_to_phone);
@@ -549,23 +549,23 @@ public class PageActivity extends AppCompatActivity {
         int width = size.x;
         int height = size.y;
 
-        int childCount = pageActivity.page.getChildCount();
-        for (int k=0;k<childCount;k++) {
-            View v = pageActivity.page.getChildAt(k);
-            if (v instanceof ImageView) {
-                ImageView iv = (ImageView)v;
-                if (iv.getDrawable() != null) {
-                    Bitmap bitmap = ((BitmapDrawable) iv.getDrawable()).getBitmap();
-                    if (bitmap != null && !bitmap.isRecycled() && book.getMode() != VIEW_MODE_ORIGINAL) {
-                        bitmap.recycle();
-                    }
-                }
-
-            }
-        }
-
-
+//        int childCount = pageActivity.page.getChildCount();
+//        for (int k=0;k<childCount;k++) {
+//            View v = pageActivity.page.getChildAt(k);
+//            if (v instanceof ImageView) {
+//                ImageView iv = (ImageView)v;
+//                if (iv.getDrawable() != null) {
+//                    Bitmap bitmap = ((BitmapDrawable) iv.getDrawable()).getBitmap();
+//                    if (bitmap != null && !bitmap.isRecycled() && book.getMode() != VIEW_MODE_ORIGINAL) {
+//                        bitmap.recycle();
+//                    }
+//                }
+//
+//            }
+//        }
+//
         pageLoader.execute(pageNumber, invCache);
+
     }
 
     private void kickOthers(PageLoader pageLoader) {
@@ -842,29 +842,28 @@ public class PageActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Integer... integers) {
 
-            runOnUiThread(()-> {
-                    pageActivity.scroll.setVisibility(INVISIBLE);
-                    pageActivity.progressBar.setVisibility(View.VISIBLE);
-                }
-            );
-
+//            runOnUiThread(()-> {
+//                    pageActivity.scroll.setVisibility(INVISIBLE);
+//                    pageActivity.progressBar.setVisibility(View.VISIBLE);
+//                }
+//            );
+//
             int pageNumber = integers[0];
-
-            boolean invalidateCache = integers[1] == 1;
-
+//
+//            boolean invalidateCache = integers[1] == 1;
+//
             if (pageActivity.viewMode == Constants.VIEW_MODE_PHONE) {
                 bitmaps = new CopyOnWriteArrayList<>(pageActivity.pageRenderer.renderPage(context, pageNumber));
             } else {
                 bitmaps = Arrays.asList(pageActivity.pageRenderer.renderOriginalPage(pageActivity.context, pageNumber));
             }
-
-            //int bitmapHeight = bitmap.getHeight();
-
+//
+//            int bitmapHeight = bitmap.getHeight();
+//
             runOnUiThread(() -> {
-
-
+//
                 List<View> pageViews = new ArrayList<>();// UI code goes here
-                for (Bitmap bitmap : bitmaps){
+                for (Bitmap bitmap : bitmaps) {
                     Log.d("FLOW-READER", "bitmaps " + bitmaps.size());
                     int bitmapHeight = bitmap.getHeight();
                     if (bitmap.getByteCount() > MAX_BITMAP_SIZE) {
@@ -887,14 +886,6 @@ public class PageActivity extends AppCompatActivity {
                                 Log.v(getClass().getName(),
                                         String.format("bitmap size is width : %d height :%d",
                                                 bitmap.getWidth(), bitmap.getHeight()));
-
-                                ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
-                                ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-                                activityManager.getMemoryInfo(mi);
-                                Log.v("BITMAP_MEMORY", "mi.availMem " + mi.availMem);
-                                Log.v("BITMAP_MEMORY", "mi.totalMem " + mi.totalMem);
-                                Log.v("BITMAP_MEMORY", "mi.lowMemory " + mi.lowMemory);
-//                            Log.v("BITMAP_MEMORY", "mi.visibleAppThreshold " + mi.hiddenAppThreshold);
 
                                 Bitmap limitedBitmap = Bitmap.createBitmap(bitmap, 0, offset, context.getWidth(),
                                         height - offset);
@@ -928,14 +919,23 @@ public class PageActivity extends AppCompatActivity {
                             pageActivity.page.addView(imageView);
                             horizontalScrollView.addView(pageActivity.page);
                             pageActivity.scroll.addView(horizontalScrollView);
+                            horizontalScrollView.setOnTouchListener(new View.OnTouchListener() {
+                                @Override
+                                public boolean onTouch(View v, MotionEvent event) {
+                                    return PageActivity.this.onTouchEvent(event);
+                                }
+                            });
                         }
                     }
                 }
                 pageActivity.scroll.setVisibility(VISIBLE);
                 pageActivity.progressBar.setVisibility(INVISIBLE);
                 pageActivity.scroll.scrollTo(0, 0);
+
             });
+
             return null;
+
         }
 
         private void inviteToTryReflow(Bitmap bitmap) {
