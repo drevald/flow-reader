@@ -178,11 +178,27 @@ public class PageActivity extends AppCompatActivity {
     }
 
     public class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
+
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             Log.d(getClass().getName(), "On Fling");
             return true;
         }
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            if (barsVisible) {
+                bottomBar.setVisibility(INVISIBLE);
+                bar.setVisibility(GONE);
+                barsVisible = false;
+            } else {
+                bottomBar.setVisibility(VISIBLE);
+                bar.setVisibility(VISIBLE);
+                barsVisible = true;
+            }
+            return super.onSingleTapConfirmed(e);
+        }
+
     }
 
     public class MyOnScaleGestureListener extends
@@ -271,7 +287,6 @@ public class PageActivity extends AppCompatActivity {
             intent.putExtra(BOOK_ID, book.getId());
             startActivity(intent);
         });
-//
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
@@ -282,7 +297,6 @@ public class PageActivity extends AppCompatActivity {
             }
         });
 
-//        page.setOnGenericMotionListener(new OnDoubleTapListener(this, page));
         seekBar.setMax(book.getPagesCount());
         pager.setOnTouchListener(new PagerTouchListener());
         seekBar.setOnSeekBarChangeListener(new PagerListener());
@@ -549,21 +563,21 @@ public class PageActivity extends AppCompatActivity {
         int width = size.x;
         int height = size.y;
 
-//        int childCount = pageActivity.page.getChildCount();
-//        for (int k=0;k<childCount;k++) {
-//            View v = pageActivity.page.getChildAt(k);
-//            if (v instanceof ImageView) {
-//                ImageView iv = (ImageView)v;
-//                if (iv.getDrawable() != null) {
-//                    Bitmap bitmap = ((BitmapDrawable) iv.getDrawable()).getBitmap();
-//                    if (bitmap != null && !bitmap.isRecycled() && book.getMode() != VIEW_MODE_ORIGINAL) {
-//                        bitmap.recycle();
-//                    }
-//                }
-//
-//            }
-//        }
-//
+        int childCount = pageActivity.page.getChildCount();
+        for (int k=0;k<childCount;k++) {
+            View v = pageActivity.page.getChildAt(k);
+            if (v instanceof ImageView) {
+                ImageView iv = (ImageView)v;
+                if (iv.getDrawable() != null) {
+                    Bitmap bitmap = ((BitmapDrawable) iv.getDrawable()).getBitmap();
+                    if (bitmap != null && !bitmap.isRecycled() && book.getMode() != VIEW_MODE_ORIGINAL) {
+                        bitmap.recycle();
+                    }
+                }
+
+            }
+        }
+
         pageLoader.execute(pageNumber, invCache);
 
     }
@@ -581,34 +595,6 @@ public class PageActivity extends AppCompatActivity {
 
 ////////////////////////////   LISTENERS  ////////////////////////////////////////////////////
 
-    class SwapListener implements View.OnTouchListener {
-        @Override
-        public boolean onTouch(View view, MotionEvent event) {
-            float x1, x2;
-            float MIN_DISTANCE = 150;
-            x1 = 0;
-            switch(event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    x1 = event.getX();
-                    break;
-                case MotionEvent.ACTION_UP:
-                    x2 = event.getX();
-                    float deltaX = x2 - x1;
-                    if (Math.abs(deltaX) > MIN_DISTANCE) {
-                        if (x2 > x1) {
-                            Log.d(getClass().getName(),"Left to Right swipe [Next]");
-                        } else {
-                            Log.d(getClass().getName(),"Right to Left swipe [Next]");
-                        }
-                    }
-                    break;
-            }
-            view.onTouchEvent(event);
-            return true;
-//                return true;
-        }
-    }
-
     class PagerTouchListener implements View.OnTouchListener {
         @Override
         public boolean onTouch(View view, MotionEvent event) {
@@ -617,56 +603,6 @@ public class PageActivity extends AppCompatActivity {
             seekBar.setVisibility(VISIBLE);
             return true;
         }
-    }
-
-    class OnDoubleTapListener implements View.OnGenericMotionListener {
-
-        private GestureDetector gestureDetector;
-
-        OnDoubleTapListener(Context c, LinearLayout p) {
-
-            gestureDetector = new GestureDetector(c, new GestureDetector.OnGestureListener() {
-                @Override
-                public boolean onDown(MotionEvent e) {
-                    return false;
-                }
-
-                @Override
-                public void onShowPress(MotionEvent e) {
-
-                }
-
-                @Override
-                public boolean onSingleTapUp(MotionEvent e) {
-                    return false;
-                }
-
-                @Override
-                public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-                    return false;
-                }
-
-                @Override
-                public void onLongPress(MotionEvent e) {
-
-                }
-
-                @Override
-                public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                    return false;
-                }
-            });
-
-        }
-
-        @RequiresApi(api = Build.VERSION_CODES.M)
-        @Override
-        public boolean onGenericMotion(View view, MotionEvent motionEvent) {
-            Log.v("EVENT", getActionName(motionEvent.getAction()));
-            view.performClick();
-            return gestureDetector.onGenericMotionEvent(motionEvent);
-        }
-
     }
 
     class PagerListener implements SeekBar.OnSeekBarChangeListener {
@@ -842,11 +778,11 @@ public class PageActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Integer... integers) {
 
-//            runOnUiThread(()-> {
-//                    pageActivity.scroll.setVisibility(INVISIBLE);
-//                    pageActivity.progressBar.setVisibility(View.VISIBLE);
-//                }
-//            );
+            runOnUiThread(()-> {
+                    pageActivity.scroll.setVisibility(INVISIBLE);
+                    pageActivity.progressBar.setVisibility(View.VISIBLE);
+                }
+            );
 //
             int pageNumber = integers[0];
 //
