@@ -180,8 +180,29 @@ public class PageActivity extends AppCompatActivity {
     public class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
 
         @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            scroll.smoothScrollBy((int)distanceX, (int)distanceY);
+            return true;
+        }
+
+        @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             Log.d(getClass().getName(), "On Fling");
+            float distanceX = e2.getRawX() - e1.getRawX();
+            float distanceY = e2.getRawY() - e1.getRawY();
+            if (Math.abs(distanceX) > 2 * Math.abs(distanceY) && Math.abs(distanceX) > 50) {
+                if (distanceX > 0) {
+                    if (book.getCurrentPage() < book.getPagesCount()-1) {
+                        setPageNumber(book.getCurrentPage()+1);
+                        scroll.scrollTo(0, 0);
+                    }
+                } else {
+                    if (book.getCurrentPage() > 0) {
+                        setPageNumber(book.getCurrentPage()-1);
+                        scroll.scrollTo(0, 0);
+                    }
+                }
+            }
             return true;
         }
 
