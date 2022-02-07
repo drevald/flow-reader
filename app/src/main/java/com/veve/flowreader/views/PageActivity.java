@@ -191,7 +191,7 @@ public class PageActivity extends AppCompatActivity {
             float distanceX = e2.getRawX() - e1.getRawX();
             float distanceY = e2.getRawY() - e1.getRawY();
             if (Math.abs(distanceX) > 2 * Math.abs(distanceY) && Math.abs(distanceX) > 50) {
-                if (distanceX > 0) {
+                if (distanceX < 0) {
                     if (book.getCurrentPage() < book.getPagesCount()-1) {
                         setPageNumber(book.getCurrentPage()+1);
                         scroll.scrollTo(0, 0);
@@ -229,9 +229,14 @@ public class PageActivity extends AppCompatActivity {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             Log.v(getClass().getName(), "onScale");
-            zoomFactor *= detector.getScaleFactor();
+            zoomFactor = detector.getScaleFactor();
             Log.d(getClass().getName(),
                     String.format("Scaling %f zoom %f\n", detector.getScaleFactor(), zoomFactor));
+            context.setZoom(zoomFactor * context.getZoom());
+            book.setZoom(context.getZoom());
+            Log.d(getClass().getName(),
+                    String.format("Scaling factor is %f original is %f", book.getZoom(), book.getZoomOriginal()));
+            setPageNumber(book.getCurrentPage());
             return true;
         }
 
