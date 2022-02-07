@@ -89,7 +89,6 @@ import static com.veve.flowreader.Constants.VIEW_MODE_PHONE;
 
 public class PageActivity extends AppCompatActivity {
 
-
     GestureDetectorCompat gestureDetectorCompat;
     ScaleGestureDetector scaleGestureDetector;
 
@@ -366,8 +365,6 @@ public class PageActivity extends AppCompatActivity {
             AlertDialog alert = builder.create();
             alert.show();
         });
-
-
 
         pageActivity = this;
         setPageNumber(currentPage);
@@ -774,7 +771,6 @@ public class PageActivity extends AppCompatActivity {
         }
 
     }
-
 
     class PageLoader extends AsyncTask<Integer, Void, Void> {
 
