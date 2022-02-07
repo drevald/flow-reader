@@ -93,6 +93,8 @@ public class PageActivity extends AppCompatActivity {
     ScaleGestureDetector scaleGestureDetector;
 
     float zoomFactor = 1;
+    private static float MAX_ZOOM = 3f;
+    private static float MIN_ZOOM = 0.3f;
 
     Set<AsyncTask> runningTasks;
     TextView pager;
@@ -228,11 +230,11 @@ public class PageActivity extends AppCompatActivity {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             Log.v(getClass().getName(), "onScale");
-            zoomFactor = detector.getScaleFactor();
+            zoomFactor = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, detector.getScaleFactor() * context.getZoom()));
             Log.d(getClass().getName(),
                     String.format("Scaling %f zoom %f\n", detector.getScaleFactor(), zoomFactor));
-            context.setZoom(zoomFactor * context.getZoom());
-            book.setZoom(context.getZoom());
+            context.setZoom(zoomFactor);
+            book.setZoom(zoomFactor);
             Log.d(getClass().getName(),
                     String.format("Scaling factor is %f original is %f", book.getZoom(), book.getZoomOriginal()));
             setPageNumber(book.getCurrentPage());
@@ -391,23 +393,6 @@ public class PageActivity extends AppCompatActivity {
         MenuItem item = menu.findItem(R.id.preprocess);
         item.setIcon(book.getPreprocessing() ? R.drawable.ic_unenhance : R.drawable.ic_enhance);
         item.setTitle(book.getPreprocessing() ? R.string.unenhance : R.string.enhance );
-//        if (viewMode == VIEW_MODE_PHONE) {
-//            menu.findItem(R.id.no_margins).setVisible(true);
-//            menu.findItem(R.id.normal_margins).setVisible(true);
-//            menu.findItem(R.id.wide_margins).setVisible(true);
-//            menu.findItem(R.id.preprocess).setVisible(true);
-//            menu.findItem(R.id.page_unreadable).setVisible(true);
-//            menu.findItem(R.id.print).setVisible(true);
-//        }
-//        if (viewMode == VIEW_MODE_ORIGINAL) {
-//            menu.findItem(R.id.no_margins).setVisible(false);
-//            menu.findItem(R.id.normal_margins).setVisible(false);
-//            menu.findItem(R.id.wide_margins).setVisible(false);
-//            menu.findItem(R.id.preprocess).setVisible(false);
-//            menu.findItem(R.id.page_unreadable).setVisible(false);
-//            menu.findItem(R.id.print).setVisible(false);
-//        }
-
         if (viewMode == VIEW_MODE_PHONE) {
             menu.findItem(R.id.no_margins).setEnabled(true);
             menu.findItem(R.id.normal_margins).setEnabled(true);
@@ -424,7 +409,6 @@ public class PageActivity extends AppCompatActivity {
             menu.findItem(R.id.page_unreadable).setEnabled(false);
             menu.findItem(R.id.print).setEnabled(false);
         }
-
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -506,12 +490,10 @@ public class PageActivity extends AppCompatActivity {
                     reflowedBmpFileOut.close();
                     reflowedBmpFile.deleteOnExit();
                     Log.v(getClass().getName(), "Original bitmap stored in tmp file " + origBmpFile.getPath());
-
                     mapper.writeValue(baos, booksCollection.getPageGlyphs(book.getId(), currentPage, true));
                 } catch (Exception e) {
                     Log.e(getClass().getName(), "Failed to convert Glyphs to JSON", e);
                 }
-
                 ReportRecord reportRecord = new ReportRecord(
                         baos.toByteArray(),
                         origBmpFile.getPath().getBytes(),
@@ -530,33 +512,6 @@ public class PageActivity extends AppCompatActivity {
                 startActivity(printIntent);
                 break;
             }
-//            case R.id.delete_book: {
-//                AlertDialog.Builder builder = new AlertDialog.Builder(PageActivity.this);
-//                builder.setTitle(R.string.book_deletion)
-//                        .setMessage(String.format(
-//                                getResources().getString(R.string.confirm_delete), book.getTitle()))
-//                        .setCancelable(false)
-//                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                long bookId = book.getId();
-//                                BooksCollection.getInstance(getApplicationContext()).deleteBook(bookId);
-//                                Intent i = new Intent(PageActivity.this, MainActivity.class);
-//                                i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-//                                i.putExtra(BOOK_ID, bookId);
-//                                startActivity(i);
-//                            }
-//                        })
-//                        .setNegativeButton(R.string.no,
-//                                new DialogInterface.OnClickListener() {
-//                                    public void onClick(DialogInterface dialog, int id) {
-//                                        dialog.cancel();
-//                                    }
-//                                });
-//                AlertDialog alert = builder.create();
-//                alert.show();
-//                break;
-//            }
             case R.id.preprocess: {
                 context.setPreprocessing(!context.isPreprocessing());
                 book.setPreprocessing(!book.getPreprocessing());
@@ -812,6 +767,7 @@ public class PageActivity extends AppCompatActivity {
 //
             if (pageActivity.viewMode == Constants.VIEW_MODE_PHONE) {
                 bitmaps = new CopyOnWriteArrayList<>(pageActivity.pageRenderer.renderPage(context, pageNumber));
+                Log.v(getClass().getName(), String.format("Get %d bitmaps for page %d", bitmaps.size(), pageNumber));
             } else {
                 bitmaps = Arrays.asList(pageActivity.pageRenderer.renderOriginalPage(pageActivity.context, pageNumber));
             }

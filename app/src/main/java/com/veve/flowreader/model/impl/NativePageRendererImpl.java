@@ -84,6 +84,7 @@ public class NativePageRendererImpl implements PageRenderer {
             memGlyphs = storedGlyphs;
             currentOriginalPage = position;
         }
+
         Log.v("PERF", String.format("\tbooksCollection.getPageGlyphs(%d, %d, false) took %d ms", bookRecord.getId(), position, System.currentTimeMillis() - start));
 
         start = System.currentTimeMillis();
@@ -108,6 +109,7 @@ public class NativePageRendererImpl implements PageRenderer {
             }
             booksCollection.addGlyphs(glyphsToStore, false);
             Log.v("PERF", String.format("\tbookSource.getReflownPageBytes(%d, ...) took %d ms", position, System.currentTimeMillis() - start));
+            Log.v(getClass().getName(), String.format("new reflownPageBytes.size()=%d for page %d", reflownPageBytes.size(), position));
             return reflownPageBytes;
         } else {
            List<PageGlyphInfo> glyphs = new ArrayList<>();
@@ -126,6 +128,7 @@ public class NativePageRendererImpl implements PageRenderer {
            }
            List<Bitmap> reflownPageBytes = bookSource.getReflownPageBytes(position, context, glyphs);
            Log.v("PERF", String.format("\tbookSource.getReflownPageBytes(%d, ...) took %d ms", position, System.currentTimeMillis() - start));
+           Log.v(getClass().getName(), String.format("reflownPageBytes.size()=%d for page %d", reflownPageBytes.size(), position));
            return reflownPageBytes;
         }
 
