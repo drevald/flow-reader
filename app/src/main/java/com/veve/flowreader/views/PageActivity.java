@@ -92,7 +92,8 @@ public class PageActivity extends AppCompatActivity {
     GestureDetectorCompat gestureDetectorCompat;
     ScaleGestureDetector scaleGestureDetector;
 
-    float zoomFactor = 1;
+    public int currentPage;
+    public float zoomFactor = 1;
     private static float MAX_ZOOM = 3f;
     private static float MIN_ZOOM = 0.3f;
 
@@ -110,7 +111,6 @@ public class PageActivity extends AppCompatActivity {
     DevicePageContext context;
     PageActivity pageActivity;
     ScrollView scroll;
-    int currentPage;
     int viewMode;
     BooksCollection booksCollection;
     LinearLayout bottomBar;

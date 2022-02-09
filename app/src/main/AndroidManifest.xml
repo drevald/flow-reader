@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name="com.veve.flowreader.Utils"
         android:allowBackup="true"
         android:icon="@drawable/ic_icon_flowbook_pink"
         android:largeHeap="true"

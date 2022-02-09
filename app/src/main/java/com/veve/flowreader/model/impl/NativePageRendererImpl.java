@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
 
+import com.veve.flowreader.Utils;
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.dao.PageGlyphRecord;
 import com.veve.flowreader.model.BookSource;
@@ -164,6 +165,8 @@ public class NativePageRendererImpl implements PageRenderer {
             bm = Bitmap.createScaledBitmap(b, (context.getWidth()),
                     ((context.getWidth() * b.getHeight())/b.getWidth()),
                     false);
+            Utils.storeBitmap(b, "before_at_" + System.currentTimeMillis());
+            Utils.storeBitmap(bm, "after_at_" + System.currentTimeMillis());
             if (!b.isRecycled()) {
                 b.recycle();
             }
@@ -182,7 +185,6 @@ public class NativePageRendererImpl implements PageRenderer {
                         * bitmap.getHeight())/bitmap.getWidth()),
                 false);
     }
-
 
     @Override
     public Bitmap renderOriginalPage(int position) {

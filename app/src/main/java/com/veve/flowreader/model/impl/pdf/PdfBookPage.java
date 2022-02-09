@@ -73,7 +73,6 @@ public class PdfBookPage extends AbstractBookPage implements BookPage {
     public List<Bitmap> getAsReflowedBitmap(DevicePageContext context, List<PageGlyphInfo> pageGlyphs) {
         PageSize pageSize = new PageSize();
 
-
         List<byte[]> bytes = getNativeReflowedBytes(getBookId(), getPageNumber(), context.getZoom(),
                 (int)(context.getWidth() * magicMultiplier), pageSize, pageGlyphs, context.isPreprocessing(), context.getMargin());
 

@@ -69,8 +69,6 @@ public class DjvuBookPage extends AbstractBookPage implements BookPage  {
              return getWillusBitmap(retVal, context.getWidth(), bitmapWidth, totalHeight);
         }
 
-
-
         return retVal;
 
     }

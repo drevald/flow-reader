@@ -1,11 +1,35 @@
 package com.veve.flowreader;
 
+import android.app.Application;
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
+import androidx.test.platform.app.InstrumentationRegistry;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class Utils {
+public class Utils extends Application {
+
+    public static void storeBitmap(Bitmap bitmap, String name) {
+        try {
+            Context context = getContext();
+            File bitmapFile = new File(context.getExternalFilesDir(null), name);
+            FileOutputStream fileOutputStream = new FileOutputStream(bitmapFile);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 75, out);
+            fileOutputStream.write(out.toByteArray());
+            fileOutputStream.close();
+            Log.v("UTILS", "Original bitmap stored in tmp file " + bitmapFile.getPath());
+        } catch (Exception e) {
+            Log.v("UTILS", "Failed to store bitmap");
+        }
+    }
 
     public static int calculateInSampleSize(
             BitmapFactory.Options options, int reqWidth, int reqHeight) {
@@ -39,5 +63,20 @@ public class Utils {
         is.close();
     }
 
+    private static Application sApplication;
+
+    public static Application getApplication() {
+        return sApplication;
+    }
+
+    public static Context getContext() {
+        return getApplication().getApplicationContext();
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        sApplication = this;
+    }
 
 }
