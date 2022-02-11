@@ -1,31 +1,29 @@
 package com.veve.flowreader.views;
 
+import static android.view.View.GONE;
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
+import static com.veve.flowreader.Constants.BOOK_CONTEXT;
+import static com.veve.flowreader.Constants.BOOK_ID;
+import static com.veve.flowreader.Constants.FLOW_BOOK_PREFERENCES;
+import static com.veve.flowreader.Constants.MAX_BITMAP_SIZE;
+import static com.veve.flowreader.Constants.POSITION;
+import static com.veve.flowreader.Constants.REPORT_ID;
+import static com.veve.flowreader.Constants.REPORT_URL;
+import static com.veve.flowreader.Constants.VIEW_MODE_ORIGINAL;
+import static com.veve.flowreader.Constants.VIEW_MODE_PHONE;
+
 import android.annotation.SuppressLint;
-import android.app.ActivityManager;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import com.google.android.material.appbar.AppBarLayout;
-
-import androidx.annotation.RequiresApi;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.menu.MenuBuilder;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GestureDetectorCompat;
-
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -37,7 +35,6 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -45,20 +42,25 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.appcompat.widget.Toolbar;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.view.GestureDetectorCompat;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
 import com.veve.flowreader.dao.AppDatabase;
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.dao.DaoAccess;
 import com.veve.flowreader.dao.ReportRecord;
-import com.veve.flowreader.model.Book;
 import com.veve.flowreader.model.BooksCollection;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageRenderer;
 import com.veve.flowreader.model.PageRendererFactory;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -67,26 +69,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import static android.view.View.GONE;
-import static android.view.View.INVISIBLE;
-import static android.view.View.VISIBLE;
-import static android.webkit.ConsoleMessage.MessageLevel.LOG;
-import static com.veve.flowreader.Constants.BOOK_CONTEXT;
-import static com.veve.flowreader.Constants.BOOK_ID;
-import static com.veve.flowreader.Constants.FLOW_BOOK_PREFERENCES;
-import static com.veve.flowreader.Constants.MAX_BITMAP_SIZE;
-import static com.veve.flowreader.Constants.POSITION;
-import static com.veve.flowreader.Constants.REPORT_ID;
-import static com.veve.flowreader.Constants.REPORT_URL;
-import static com.veve.flowreader.Constants.VIEW_MODE_ORIGINAL;
-import static com.veve.flowreader.Constants.VIEW_MODE_PHONE;
-
+/**
+ * Designed to show a book page with page controls
+ */
 public class PageActivity extends AppCompatActivity {
 
     GestureDetectorCompat gestureDetectorCompat;
@@ -151,7 +141,7 @@ public class PageActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d(getClass().getName(), "onCreateOptionsMenu");
         getMenuInflater().inflate(R.menu.page_menu, menu);
-        if(menu instanceof MenuBuilder){
+        if (menu instanceof MenuBuilder) {
             MenuBuilder m = (MenuBuilder) menu;
             m.setOptionalIconsVisible(true);
             m.getItem(4).setIcon(book.getPreprocessing()
