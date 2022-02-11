@@ -16,21 +16,6 @@ import java.io.OutputStream;
 
 public class Utils extends Application {
 
-    public static void storeBitmap(Bitmap bitmap, String name) {
-        try {
-            Context context = getContext();
-            File bitmapFile = new File(context.getExternalFilesDir(null), name);
-            FileOutputStream fileOutputStream = new FileOutputStream(bitmapFile);
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 75, out);
-            fileOutputStream.write(out.toByteArray());
-            fileOutputStream.close();
-            Log.v("UTILS", "Original bitmap stored in tmp file " + bitmapFile.getPath());
-        } catch (Exception e) {
-            Log.v("UTILS", "Failed to store bitmap");
-        }
-    }
-
     public static int calculateInSampleSize(
             BitmapFactory.Options options, int reqWidth, int reqHeight) {
         // Raw height and width of image
@@ -61,22 +46,6 @@ public class Utils extends Application {
         }
         os.close();
         is.close();
-    }
-
-    private static Application sApplication;
-
-    public static Application getApplication() {
-        return sApplication;
-    }
-
-    public static Context getContext() {
-        return getApplication().getApplicationContext();
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        sApplication = this;
     }
 
 }
