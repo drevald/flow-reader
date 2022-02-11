@@ -15,6 +15,7 @@ import static com.veve.flowreader.Constants.VIEW_MODE_PHONE;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -79,6 +80,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 public class PageActivity extends AppCompatActivity {
 
+    GestureDetectorCompat kindleGestureDetector;
     GestureDetectorCompat gestureDetectorCompat;
     ScaleGestureDetector scaleGestureDetector;
 
@@ -127,9 +129,7 @@ public class PageActivity extends AppCompatActivity {
         super.onBackPressed();
         book.setScrollOffset(scroll.getScrollY());
         booksCollection.updateBook(book);
-
         pageRenderer.closeBook();
-
         Intent i = new Intent(PageActivity.this, MainActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(i);
@@ -213,6 +213,46 @@ public class PageActivity extends AppCompatActivity {
 
     }
 
+    public class KindleGestureListener extends  GestureDetector.SimpleOnGestureListener {
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2,float distanceX, float distanceY) {
+            scroll.smoothScrollBy((int)distanceX, (int)distanceY);
+            return true;
+        }
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            float x = e.getX();
+            float y = e.getY();
+            if (y < getWindow().getDecorView().getHeight()/6) {
+                if (barsVisible) {
+                    bottomBar.setVisibility(INVISIBLE);
+                    bar.setVisibility(GONE);
+                    barsVisible = false;
+                } else {
+                    bottomBar.setVisibility(VISIBLE);
+                    bar.setVisibility(VISIBLE);
+                    barsVisible = true;
+                }
+            } else {
+                if (x > getWindow().getDecorView().getWidth() / 3) {
+                    if (book.getCurrentPage() < book.getPagesCount() - 1) {
+                        setPageNumber(book.getCurrentPage() + 1);
+                        scroll.scrollTo(0, 0);
+                    }
+                } else {
+                    if (book.getCurrentPage() > 0) {
+                        setPageNumber(book.getCurrentPage() - 1);
+                        scroll.scrollTo(0, 0);
+                    }
+                }
+            }
+            return true;
+        }
+
+    }
+
     public class MyOnScaleGestureListener extends
             ScaleGestureDetector.SimpleOnScaleGestureListener {
 
@@ -241,9 +281,11 @@ public class PageActivity extends AppCompatActivity {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        boolean flingProcessed = gestureDetectorCompat.onTouchEvent(event);
-        boolean pinchProcessed = scaleGestureDetector.onTouchEvent(event);
-        return flingProcessed || pinchProcessed;
+        kindleGestureDetector.onTouchEvent(event);
+        return true;
+//        boolean flingProcessed = gestureDetectorCompat.onTouchEvent(event);
+//        boolean pinchProcessed = scaleGestureDetector.onTouchEvent(event);
+//        return flingProcessed || pinchProcessed;
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -260,7 +302,7 @@ public class PageActivity extends AppCompatActivity {
 
         gestureDetectorCompat = new GestureDetectorCompat(this, new MyGestureListener());
         scaleGestureDetector = new ScaleGestureDetector(this, new MyOnScaleGestureListener());
-
+        kindleGestureDetector = new GestureDetectorCompat(this, new KindleGestureListener());
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -562,6 +604,84 @@ public class PageActivity extends AppCompatActivity {
     }
 
 ////////////////////////////   LISTENERS  ////////////////////////////////////////////////////
+
+    class KindleListener implements View.OnTouchListener {
+
+        private GestureDetector gestureDetector;
+
+        KindleListener(Context c, LinearLayout p) {
+            gestureDetector = new GestureDetector(c, new GestureDetector.SimpleOnGestureListener() {
+
+                @Override
+                public boolean onScroll(MotionEvent e1, MotionEvent e2,float distanceX, float distanceY) {
+                    Log.v(getClass().getName(), "onScroll");
+                    if (Math.abs(distanceX) > 2 * Math.abs(distanceY) && Math.abs(distanceX) > 50) {
+                        if (distanceX > 0) {
+                            if (book.getCurrentPage() < book.getPagesCount()-1) {
+                                setPageNumber(book.getCurrentPage()+1);
+                                scroll.scrollTo(0, 0);
+                            }
+                        } else {
+                            if (book.getCurrentPage() > 0) {
+                                setPageNumber(book.getCurrentPage()-1);
+                                scroll.scrollTo(0, 0);
+                            }
+                        }
+                    }
+                    try {
+                        Thread.currentThread().sleep(100);
+                    } catch (Exception e) {
+
+                    }
+                    return true;
+                }
+
+                @Override
+                public boolean onDoubleTap(MotionEvent e) {
+                    float x = e.getX();
+
+                    if (x > p.getWidth() / 2) {
+                        if (book.getCurrentPage() < book.getPagesCount()-1) {
+                            setPageNumber(book.getCurrentPage()+1);
+                            scroll.scrollTo(0, 0);
+                        }
+                    } else {
+                        if (book.getCurrentPage() > 0) {
+                            setPageNumber(book.getCurrentPage()-1);
+                            scroll.scrollTo(0, 0);
+                        }
+                    }
+                    return true;
+                }
+
+                @Override
+                public boolean onSingleTapConfirmed(MotionEvent e) {
+                    if (barsVisible) {
+                        bottomBar.setVisibility(INVISIBLE);
+                        bar.setVisibility(GONE);
+                        barsVisible = false;
+                    } else {
+                        bottomBar.setVisibility(VISIBLE);
+                        bar.setVisibility(VISIBLE);
+                        barsVisible = true;
+                    }
+                    return super.onSingleTapConfirmed(e);
+                }
+
+//                @Override
+//                public boolean onDown(MotionEvent e) {
+//                    return true;
+//                }
+
+            });
+        }
+
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            //view.performClick();
+            return gestureDetector.onTouchEvent(motionEvent);
+        }
+    }
 
     class PagerTouchListener implements View.OnTouchListener {
         @Override
