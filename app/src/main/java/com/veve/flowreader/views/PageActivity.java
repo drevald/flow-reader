@@ -5,12 +5,13 @@ import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 import static com.veve.flowreader.Constants.BOOK_CONTEXT;
 import static com.veve.flowreader.Constants.BOOK_ID;
-import static com.veve.flowreader.Constants.FLOW_BOOK_PREFERENCES;
+import static com.veve.flowreader.Constants.KINDLE_NAVIGATION;
 import static com.veve.flowreader.Constants.MAX_BITMAP_SIZE;
 import static com.veve.flowreader.Constants.POSITION;
 import static com.veve.flowreader.Constants.PREFERENCES;
 import static com.veve.flowreader.Constants.REPORT_ID;
 import static com.veve.flowreader.Constants.REPORT_URL;
+import static com.veve.flowreader.Constants.SHOW_SCROLLBARS;
 import static com.veve.flowreader.Constants.VIEW_MODE_ORIGINAL;
 import static com.veve.flowreader.Constants.VIEW_MODE_PHONE;
 
@@ -159,7 +160,8 @@ public class PageActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         Log.v(getClass().getName(), getClass().getName() + "onNewIntent# " + this.hashCode());
-        Log.d("INTENT_ONNEWINTENT",  getIntent().getLongExtra(BOOK_ID, 0)  + " = getIntent().getLongExtra(Constants.BOOK_ID, 0); hash = " + intent.hashCode());;
+        Log.d("INTENT_ONNEWINTENT",  getIntent().getLongExtra(BOOK_ID, 0)
+                + " = getIntent().getLongExtra(Constants.BOOK_ID, 0); hash = " + intent.hashCode());
         int position = getIntent().getIntExtra("position", 0);
         booksCollection = BooksCollection.getInstance(getApplicationContext());
         book = booksCollection.getBook(position);
@@ -418,13 +420,17 @@ public class PageActivity extends AppCompatActivity {
     public BookRecord getBook() {
         return book;
     }
-//
-//
+
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem item = menu.findItem(R.id.preprocess);
         item.setIcon(book.getPreprocessing() ? R.drawable.ic_unenhance : R.drawable.ic_enhance);
         item.setTitle(book.getPreprocessing() ? R.string.unenhance : R.string.enhance );
+        item = menu.findItem(R.id.navigation);
+        item.setTitle(pref.getBoolean(KINDLE_NAVIGATION, false) ? R.string.ipad_navigation : R.string.kindle_navigation);
+        item = menu.findItem(R.id.scrollbars);
+        item.setIcon(pref.getBoolean(SHOW_SCROLLBARS, false) ? R.drawable.ic_noscrollbars : R.drawable.ic_scrollbars);
+        item.setTitle(pref.getBoolean(SHOW_SCROLLBARS, false) ? R.string.hide_scrollbars : R.string.show_scrollbars );
         if (viewMode == VIEW_MODE_PHONE) {
             menu.findItem(R.id.no_margins).setEnabled(true);
             menu.findItem(R.id.normal_margins).setEnabled(true);
@@ -467,12 +473,7 @@ public class PageActivity extends AppCompatActivity {
                 book.setMargin(context.getMargin());
                 break;
             }
-            case R.id.willus_segmentation: {
-                context.setWillusSegmentation(!context.isWillusSegmentation());
-                break;
-            }
             case R.id.page_unreadable: {
-
                 ConnectionCheckerTask connectionCheckerTask = new ConnectionCheckerTask();
                 connectionCheckerTask.execute();
                 try {
@@ -554,10 +555,21 @@ public class PageActivity extends AppCompatActivity {
             case R.id.navigation: {
                 if (pref.getBoolean(Constants.KINDLE_NAVIGATION, false)) {
                     pref.edit().putBoolean(Constants.KINDLE_NAVIGATION, false).apply();
-                    item.setTitle("Use Kindle navigation");
+                    item.setTitle(R.string.kindle_navigation);
                 } else {
                     pref.edit().putBoolean(Constants.KINDLE_NAVIGATION, true).apply();
-                    item.setTitle("Use standard navigation");
+                    item.setTitle(R.string.ipad_navigation);
+                }
+            }
+            case R.id.scrollbars: {
+                if (pref.getBoolean(Constants.SHOW_SCROLLBARS, false)) {
+                    pref.edit().putBoolean(Constants.SHOW_SCROLLBARS, false).apply();
+                    scroll.setScrollBarSize(0);
+                    item.setTitle(R.string.show_scrollbars);
+                } else {
+                    pref.edit().putBoolean(Constants.SHOW_SCROLLBARS, true).apply();
+                    scroll.setScrollBarSize(50);
+                    item.setTitle(R.string.hide_scrollbars);
                 }
             }
         }
@@ -613,84 +625,6 @@ public class PageActivity extends AppCompatActivity {
     }
 
 ////////////////////////////   LISTENERS  ////////////////////////////////////////////////////
-
-    class KindleListener implements View.OnTouchListener {
-
-        private GestureDetector gestureDetector;
-
-        KindleListener(Context c, LinearLayout p) {
-            gestureDetector = new GestureDetector(c, new GestureDetector.SimpleOnGestureListener() {
-
-                @Override
-                public boolean onScroll(MotionEvent e1, MotionEvent e2,float distanceX, float distanceY) {
-                    Log.v(getClass().getName(), "onScroll");
-                    if (Math.abs(distanceX) > 2 * Math.abs(distanceY) && Math.abs(distanceX) > 50) {
-                        if (distanceX > 0) {
-                            if (book.getCurrentPage() < book.getPagesCount()-1) {
-                                setPageNumber(book.getCurrentPage()+1);
-                                scroll.scrollTo(0, 0);
-                            }
-                        } else {
-                            if (book.getCurrentPage() > 0) {
-                                setPageNumber(book.getCurrentPage()-1);
-                                scroll.scrollTo(0, 0);
-                            }
-                        }
-                    }
-                    try {
-                        Thread.currentThread().sleep(100);
-                    } catch (Exception e) {
-
-                    }
-                    return true;
-                }
-
-                @Override
-                public boolean onDoubleTap(MotionEvent e) {
-                    float x = e.getX();
-
-                    if (x > p.getWidth() / 2) {
-                        if (book.getCurrentPage() < book.getPagesCount()-1) {
-                            setPageNumber(book.getCurrentPage()+1);
-                            scroll.scrollTo(0, 0);
-                        }
-                    } else {
-                        if (book.getCurrentPage() > 0) {
-                            setPageNumber(book.getCurrentPage()-1);
-                            scroll.scrollTo(0, 0);
-                        }
-                    }
-                    return true;
-                }
-
-                @Override
-                public boolean onSingleTapConfirmed(MotionEvent e) {
-                    if (barsVisible) {
-                        bottomBar.setVisibility(INVISIBLE);
-                        bar.setVisibility(GONE);
-                        barsVisible = false;
-                    } else {
-                        bottomBar.setVisibility(VISIBLE);
-                        bar.setVisibility(VISIBLE);
-                        barsVisible = true;
-                    }
-                    return super.onSingleTapConfirmed(e);
-                }
-
-//                @Override
-//                public boolean onDown(MotionEvent e) {
-//                    return true;
-//                }
-
-            });
-        }
-
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            //view.performClick();
-            return gestureDetector.onTouchEvent(motionEvent);
-        }
-    }
 
     class PagerTouchListener implements View.OnTouchListener {
         @Override

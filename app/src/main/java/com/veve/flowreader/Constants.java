@@ -53,6 +53,7 @@ public interface Constants {
     //PrintAttributes.MediaSize DEFAULT_MEDIA_SIZE = PrintAttributes.MediaSize.ISO_A6;
 
     String KINDLE_NAVIGATION = "KINDLE_NAVIGATION";
+    String SHOW_SCROLLBARS = "SHOW_SCROLLBARS";
 
 
 }
