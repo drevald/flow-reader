@@ -1,11 +1,20 @@
 package com.veve.flowreader;
 
+import android.app.Application;
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
 
+import androidx.test.platform.app.InstrumentationRegistry;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class Utils {
+public class Utils extends Application {
 
     public static int calculateInSampleSize(
             BitmapFactory.Options options, int reqWidth, int reqHeight) {
@@ -38,6 +47,5 @@ public class Utils {
         os.close();
         is.close();
     }
-
 
 }

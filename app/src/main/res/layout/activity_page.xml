@@ -94,12 +94,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="top">
-
-            <ImageView
-                android:layout_width="400sp"
-                android:layout_height="600sp"
-                app:srcCompat="@drawable/page"/>
-
         </LinearLayout>
 
     </ScrollView>

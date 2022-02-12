@@ -91,4 +91,8 @@ Third party copyrights are property of their respective owners.</string>
     <string name="font_size_half">½</string>
     <string name="font_size_quarter">¼</string>
     <string name="willus_segmentation">Advanced Segmentation</string>
+    <string name="kindle_navigation">Switch to Kindle navigation</string>
+    <string name="ipad_navigation">Switch to iPad navigation</string>
+    <string name="show_scrollbars">Show scrollbars</string>
+    <string name="hide_scrollbars">Hide scrollbars</string>
 </resources>

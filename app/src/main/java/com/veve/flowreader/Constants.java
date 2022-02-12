@@ -45,11 +45,15 @@ public interface Constants {
     float MILS_IN_MM = 39.3701f;
     float INCH_IN_MM = 0.0393701f;
 
+    String PREFERENCES = "PREFERENCES";
     String FLOW_BOOK_PREFERENCES = "FLOW_BOOK_PREFERENCES";
     String SHOW_TRY_REFLOW = "SHOW_TRY_REFLOW";
 
     PrintAttributes.MediaSize DEFAULT_MEDIA_SIZE = PrintAttributes.MediaSize.ISO_A4;
     //PrintAttributes.MediaSize DEFAULT_MEDIA_SIZE = PrintAttributes.MediaSize.ISO_A6;
+
+    String KINDLE_NAVIGATION = "KINDLE_NAVIGATION";
+    String SHOW_SCROLLBARS = "SHOW_SCROLLBARS";
 
 
 }
