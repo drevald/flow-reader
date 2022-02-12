@@ -166,7 +166,10 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
     delete [] dists.ptr();
     
     std::vector<int> c(num_vertices(g));
-    
+
+    // g here is graph. connected components from boost library. in this case connected components
+    // are graph terms, not OpenCV.
+
     connected_components(g, make_iterator_property_map(c.begin(), get(vertex_index, g), c[0]));
     
     for (int i = 0; i < c.size(); i++) {
@@ -177,22 +180,10 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
         return_value.at(cn).push_back(g[i]);
         
     }
-    
-    
-    
+
     return return_value;
 }
 
-/**
- * Main class in algorithm
- * Identifies line's top and bottom borders 4 total 2 below (y and i bottoms)
- * and 2 on top (t and i tops).
- * Sequence is folloing:
- * - Open CV identifies all connected components (CV terminology) or spots
- * - Using flan the nearest component is found, building components sequence
- * -
- * @return
- */
 vector<line_limit> PageSegmenter::get_line_limits() {
     
     const cc_result cc_results = get_cc_results();

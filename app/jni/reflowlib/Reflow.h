@@ -13,6 +13,9 @@
 
 #include "common.h"
 
+/**
+ * Here we build new page image from glyphs.
+ */
 class Reflow {
     
 public:
