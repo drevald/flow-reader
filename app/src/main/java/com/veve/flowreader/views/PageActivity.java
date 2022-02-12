@@ -8,6 +8,7 @@ import static com.veve.flowreader.Constants.BOOK_ID;
 import static com.veve.flowreader.Constants.FLOW_BOOK_PREFERENCES;
 import static com.veve.flowreader.Constants.MAX_BITMAP_SIZE;
 import static com.veve.flowreader.Constants.POSITION;
+import static com.veve.flowreader.Constants.PREFERENCES;
 import static com.veve.flowreader.Constants.REPORT_ID;
 import static com.veve.flowreader.Constants.REPORT_URL;
 import static com.veve.flowreader.Constants.VIEW_MODE_ORIGINAL;
@@ -83,6 +84,8 @@ public class PageActivity extends AppCompatActivity {
     GestureDetectorCompat kindleGestureDetector;
     GestureDetectorCompat gestureDetectorCompat;
     ScaleGestureDetector scaleGestureDetector;
+
+    SharedPreferences pref;
 
     public int currentPage;
     public float zoomFactor = 1;
@@ -281,32 +284,29 @@ public class PageActivity extends AppCompatActivity {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        kindleGestureDetector.onTouchEvent(event);
-        return true;
-//        boolean flingProcessed = gestureDetectorCompat.onTouchEvent(event);
-//        boolean pinchProcessed = scaleGestureDetector.onTouchEvent(event);
-//        return flingProcessed || pinchProcessed;
+        if (pref.getBoolean(Constants.KINDLE_NAVIGATION, false)) {
+            kindleGestureDetector.onTouchEvent(event);
+            return true;
+        } else {
+            boolean flingProcessed = gestureDetectorCompat.onTouchEvent(event);
+            boolean pinchProcessed = scaleGestureDetector.onTouchEvent(event);
+            return flingProcessed || pinchProcessed;
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-//
+        pref = getApplicationContext().getSharedPreferences(PREFERENCES, MODE_PRIVATE);
         Log.v(getClass().getName(), getClass().getName() + "onCreate# " + this.hashCode());
-
         runningTasks = new CopyOnWriteArraySet<>();
-//
         setContentView(R.layout.activity_page);
-
         gestureDetectorCompat = new GestureDetectorCompat(this, new MyGestureListener());
         scaleGestureDetector = new ScaleGestureDetector(this, new MyOnScaleGestureListener());
         kindleGestureDetector = new GestureDetectorCompat(this, new KindleGestureListener());
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         long bookId = getIntent().getLongExtra(BOOK_ID, 0);
         Log.d("INTENT_ONCREATE", bookId + " = getIntent().getLongExtra(Constants.BOOK_ID, 0); hash = " + getIntent().hashCode());
         booksCollection = BooksCollection.getInstance(getApplicationContext());
@@ -550,6 +550,15 @@ public class PageActivity extends AppCompatActivity {
                 context.setInvalidateCache(true);
                 item.setIcon(book.getPreprocessing() ? R.drawable.ic_unenhance : R.drawable.ic_enhance);
                 item.setTitle(book.getPreprocessing() ? R.string.unenhance : R.string.enhance );
+            }
+            case R.id.navigation: {
+                if (pref.getBoolean(Constants.KINDLE_NAVIGATION, false)) {
+                    pref.edit().putBoolean(Constants.KINDLE_NAVIGATION, false).apply();
+                    item.setTitle("Use Kindle navigation");
+                } else {
+                    pref.edit().putBoolean(Constants.KINDLE_NAVIGATION, true).apply();
+                    item.setTitle("Use standard navigation");
+                }
             }
         }
         setPageNumber(currentPage);
@@ -966,7 +975,6 @@ public class PageActivity extends AppCompatActivity {
             if (bitmap.getWidth() <= context.getWidth()) {
                 return;
             }
-            SharedPreferences pref = getApplicationContext().getSharedPreferences(FLOW_BOOK_PREFERENCES, MODE_PRIVATE);
             if(pref.contains(Constants.SHOW_TRY_REFLOW) && !pref.getBoolean(Constants.SHOW_TRY_REFLOW, false)) {
                 return;
             }
