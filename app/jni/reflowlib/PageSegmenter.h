@@ -45,7 +45,9 @@ struct SortLineLimits {
 
 };
 
-
+/**
+ * Disassembles page part into separate glyphs
+ */
 
 class PageSegmenter {
 
@@ -72,7 +74,6 @@ class PageSegmenter {
         std::vector<line_limit> join_lines(std::vector<line_limit> line_limits);
         std::map<int,std::vector<double_pair>> get_connected_components(std::vector<double_pair>& center_list, double averahe_hight);
         line_limit find_baselines(std::vector<double_pair>& cc);
-        
         
 };
 
