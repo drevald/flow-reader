@@ -1,10 +1,10 @@
 package com.veve.flowreader.dao;
 
-
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.veve.flowreader.Constants;
 import com.veve.flowreader.model.Book;
 
 /**
@@ -30,7 +30,7 @@ public class BookRecord {
     private float kerning = 0.5f;
     private float leading = 12f;
     private float margin = 1.0f;
-    private int mode = 2;
+    private int mode = Constants.VIEW_MODE_PHONE;
     private int scrollOffset = 0;
     private byte[] preview;
     private String md5;

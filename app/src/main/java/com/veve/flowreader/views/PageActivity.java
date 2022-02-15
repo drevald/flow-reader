@@ -90,8 +90,6 @@ public class PageActivity extends AppCompatActivity {
 
     public int currentPage;
     public float zoomFactor = 1;
-    private static float MAX_ZOOM = 3f;
-    private static float MIN_ZOOM = 0.3f;
 
     Set<AsyncTask> runningTasks;
     TextView pager;
@@ -265,13 +263,15 @@ public class PageActivity extends AppCompatActivity {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             Log.v(getClass().getName(), "onScale");
-            zoomFactor = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, detector.getScaleFactor() * context.getZoom()));
+            zoomFactor = Math.min(Constants.ZOOM_MIN, Math.max(Constants.ZOOM_MAX,
+                    detector.getScaleFactor() * context.getZoom()));
             Log.d(getClass().getName(),
                     String.format("Scaling %f zoom %f\n", detector.getScaleFactor(), zoomFactor));
             context.setZoom(zoomFactor);
             book.setZoom(zoomFactor);
             Log.d(getClass().getName(),
-                    String.format("Scaling factor is %f original is %f", book.getZoom(), book.getZoomOriginal()));
+                    String.format("Scaling factor is %f original is %f",
+                            book.getZoom(), book.getZoomOriginal()));
             setPageNumber(book.getCurrentPage());
             return true;
         }

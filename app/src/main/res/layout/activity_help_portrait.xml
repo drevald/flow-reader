@@ -17,41 +17,41 @@
         android:padding="50sp"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <ImageView
-                android:layout_width="200dp"
-                android:layout_height="100dp"
-                app:srcCompat="@drawable/ic_tap_left"
-                android:contentDescription="@string/double_tap_left"
-                android:background="@color/colorPrimary"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/double_tap_left"
-                style="@style/caption"
-                android:background="@color/colorPrimary"/>
-        </LinearLayout>
+<!--        <LinearLayout-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="vertical">-->
+<!--            <ImageView-->
+<!--                android:layout_width="200dp"-->
+<!--                android:layout_height="100dp"-->
+<!--                app:srcCompat="@drawable/ic_tap_left"-->
+<!--                android:contentDescription="@string/double_tap_left"-->
+<!--                android:background="@color/colorPrimary"/>-->
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="@string/double_tap_left"-->
+<!--                style="@style/caption"-->
+<!--                android:background="@color/colorPrimary"/>-->
+<!--        </LinearLayout>-->
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <ImageView
-                android:layout_width="200dp"
-                android:layout_height="100dp"
-                app:srcCompat="@drawable/ic_tap_right"
-                android:contentDescription="@string/double_tap_right"
-                android:background="@color/colorPrimary"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/double_tap_right"
-                style="@style/caption"
-                android:background="@color/colorPrimary"/>
-        </LinearLayout>
+<!--        <LinearLayout-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="vertical">-->
+<!--            <ImageView-->
+<!--                android:layout_width="200dp"-->
+<!--                android:layout_height="100dp"-->
+<!--                app:srcCompat="@drawable/ic_tap_right"-->
+<!--                android:contentDescription="@string/double_tap_right"-->
+<!--                android:background="@color/colorPrimary"/>-->
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="@string/double_tap_right"-->
+<!--                style="@style/caption"-->
+<!--                android:background="@color/colorPrimary"/>-->
+<!--        </LinearLayout>-->
 
         <LinearLayout
             android:layout_width="wrap_content"
