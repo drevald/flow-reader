@@ -615,7 +615,7 @@ public class PageActivity extends AppCompatActivity {
                 if (iv.getDrawable() != null) {
                     Bitmap bitmap = ((BitmapDrawable) iv.getDrawable()).getBitmap();
                     if (bitmap != null && !bitmap.isRecycled() && book.getMode() != VIEW_MODE_ORIGINAL) {
-                        //bitmap.recycle();
+//                        bitmap.recycle();
                     }
                 }
 
