@@ -48,6 +48,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.view.GestureDetectorCompat;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -259,26 +260,38 @@ public class PageActivity extends AppCompatActivity {
     public class MyOnScaleGestureListener extends
             ScaleGestureDetector.SimpleOnScaleGestureListener {
 
+        float factor = 1.0f;
+
         @SuppressLint("SetTextI18n")
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             Log.v(getClass().getName(), "onScale");
-            zoomFactor = Math.min(Constants.ZOOM_MIN, Math.max(Constants.ZOOM_MAX,
-                    detector.getScaleFactor() * context.getZoom()));
+            factor *= detector.getScaleFactor();
+            return true;
+        }
+
+        @Override
+        public boolean onScaleBegin(ScaleGestureDetector detector) {
+            factor = 1.0f;
+            return true;
+        }
+
+        @Override
+        public void onScaleEnd(ScaleGestureDetector detector) {
+//            super.onScaleEnd(detector);
+
+            zoomFactor = Math.abs(factor * context.getZoom());
+            zoomFactor = Math.min(zoomFactor, Constants.ZOOM_MAX);
+            zoomFactor = Math.max(zoomFactor, Constants.ZOOM_MIN);
             Log.d(getClass().getName(),
-                    String.format("Scaling %f zoom %f\n", detector.getScaleFactor(), zoomFactor));
+                    String.format("Scaling %f zoom %f\n", factor, zoomFactor));
             context.setZoom(zoomFactor);
             book.setZoom(zoomFactor);
             Log.d(getClass().getName(),
                     String.format("Scaling factor is %f original is %f",
                             book.getZoom(), book.getZoomOriginal()));
             setPageNumber(book.getCurrentPage());
-            return true;
-        }
 
-        @Override
-        public void onScaleEnd(ScaleGestureDetector detector) {
-            super.onScaleEnd(detector);
             Log.d(getClass().getName(), "Scale ended");
         }
 
@@ -602,7 +615,7 @@ public class PageActivity extends AppCompatActivity {
                 if (iv.getDrawable() != null) {
                     Bitmap bitmap = ((BitmapDrawable) iv.getDrawable()).getBitmap();
                     if (bitmap != null && !bitmap.isRecycled() && book.getMode() != VIEW_MODE_ORIGINAL) {
-                        bitmap.recycle();
+                        //bitmap.recycle();
                     }
                 }
 
