@@ -32,6 +32,7 @@ import static android.view.MotionEvent.ACTION_POINTER_DOWN;
 import static android.view.MotionEvent.ACTION_POINTER_UP;
 import static android.view.MotionEvent.ACTION_UP;
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.swipeLeft;
 import static androidx.test.espresso.action.ViewActions.swipeRight;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -56,34 +57,38 @@ public class PinchFlingTest extends BookTest {
         activityRule.launchActivity(intent);
     }
 
-//    @Test
-//    public void testPinchOut() {
-//        onView(withId(R.id.scroll))
-//                .perform(doPinchOut())
-//                .check(matches(isDisplayed()));
-//        Log.d(getClass().getName(),
-//                String.format("Final zoom %f", Math.abs(activityRule.getActivity().zoomFactor)));
-//        Assert.assertEquals(1, activityRule.getActivity().currentPage, 0.0);
-//        Assert.assertEquals(activityRule.getActivity().zoomFactor, 3, 1.0);
-//    }
-//
-//    @Test
-//    public void testPinchIn() {
-//        onView(withId(R.id.scroll))
-//                .perform(doPinchIn())
-//                .check(matches(isDisplayed()));
-//        Log.d(getClass().getName(),
-//                String.format("Final zoom %f", Math.abs(activityRule.getActivity().zoomFactor)));
-//        Assert.assertEquals(1, activityRule.getActivity().currentPage, 0.0);
-//        Assert.assertEquals(1/activityRule.getActivity().zoomFactor, 3, 1.0);
-//    }
+    @Test
+    public void testPinchOut() {
+        onView(withId(R.id.scroll))
+                .perform(doPinchOut())
+                .check(matches(isDisplayed()));
+        Log.d(getClass().getName(),
+                String.format("Final zoom %f", Math.abs(activityRule.getActivity().zoomFactor)));
+        Assert.assertEquals(0, activityRule.getActivity().currentPage, 0.0);
+        Assert.assertEquals(activityRule.getActivity().zoomFactor, 3, 1.0);
+    }
+
+    @Test
+    public void testPinchIn() {
+        onView(withId(R.id.scroll))
+                .perform(doPinchIn())
+                .check(matches(isDisplayed()));
+        Log.d(getClass().getName(),
+                String.format("Final zoom %f", Math.abs(activityRule.getActivity().zoomFactor)));
+        Assert.assertEquals(0, activityRule.getActivity().currentPage, 0.0);
+        Assert.assertEquals(1/activityRule.getActivity().zoomFactor, 3, 1.0);
+    }
 
     @Test
     public void testFling() {
         onView(withId(android.R.id.content))
+                .perform(swipeLeft())
+                .check(matches(isDisplayed()));
+        Assert.assertEquals(1, activityRule.getActivity().currentPage, 0.0);
+        onView(withId(android.R.id.content))
                 .perform(swipeRight())
                 .check(matches(isDisplayed()));
-        Assert.assertEquals(2, activityRule.getActivity().currentPage, 0.0);
+        Assert.assertEquals(0, activityRule.getActivity().currentPage, 0.0);
         Assert.assertEquals(1, activityRule.getActivity().zoomFactor, 0.0);
     }
 

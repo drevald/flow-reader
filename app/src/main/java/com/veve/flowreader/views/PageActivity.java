@@ -323,9 +323,10 @@ public class PageActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         long bookId = getIntent().getLongExtra(BOOK_ID, 0);
-        Log.d("INTENT_ONCREATE", bookId + " = getIntent().getLongExtra(Constants.BOOK_ID, 0); hash = " + getIntent().hashCode());
+        Log.d("INTENT_ONCREATE", bookId + " = getIntent().getLongExtra(" + Constants.BOOK_ID + ", 0); hash = " + getIntent().hashCode());
         booksCollection = BooksCollection.getInstance(getApplicationContext());
         book = booksCollection.getBook(bookId);
+        Log.d("INTENT_ONCREATE", book + " = booksCollection.getBook(" + bookId + ");");
 
         if (book == null) {
             Log.i(getClass().getName(), String.format("The book with id %d is missing", bookId));
