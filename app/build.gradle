@@ -11,20 +11,19 @@ def getGitHash = { ->
 }
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     defaultConfig {
         applicationId "com.veve.flowreader"
         minSdkVersion 22
-        targetSdkVersion 29
-        versionCode 20
-        versionName "1.0"
+        targetSdkVersion 30
+        versionCode 21
+        versionName "1.1"
         buildConfigField "String", "GitHash", "\"${getGitHash()}\""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = "true"
         ndk {
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
         }
-        //ndkVersion "21.0.6011959"
         ndkVersion "21.4.7075529"
     }
 
@@ -38,7 +37,6 @@ android {
     sourceSets.main {
         jniLibs.srcDir 'jni/reflowlib'
     }
-
 
     externalNativeBuild {
         ndkBuild {
