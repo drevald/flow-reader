@@ -1,6 +1,7 @@
 package com.veve.flowreader.model.impl.djvu;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.veve.flowreader.model.BookSource;
 import com.veve.flowreader.model.DevicePageContext;
@@ -25,8 +26,13 @@ public class DjvuBookSource implements BookSource {
 
     @Override
     public List<Bitmap> getReflownPageBytes(int pageNumber, DevicePageContext context, List<PageGlyphInfo> pageGlyphs) {
+        long start = System.currentTimeMillis();
         DjvuBookPage djvuBookPage = (DjvuBookPage)djvuBook.getPage(pageNumber);
-        return djvuBookPage.getAsReflowedBitmap(context, pageGlyphs);
+        Log.v("PERF", String.format("\t\tdjvuBook.getPage(%d) took %d ms", pageNumber, System.currentTimeMillis() - start));
+        start = System.currentTimeMillis();
+        List<Bitmap> bitmaps = djvuBookPage.getAsReflowedBitmap(context, pageGlyphs);
+        Log.v("PERF", String.format("\t\tdjvuBookPage.getAsReflowedBitmap(%d) took %d ms", pageNumber, System.currentTimeMillis() - start));
+        return bitmaps;
     }
 
     @Override

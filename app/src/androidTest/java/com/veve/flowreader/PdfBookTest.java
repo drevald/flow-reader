@@ -8,7 +8,6 @@ import com.veve.flowreader.model.Book;
 import com.veve.flowreader.model.PageGlyph;
 import com.veve.flowreader.model.impl.pdf.PdfBook;
 import com.veve.flowreader.model.impl.pdf.PdfBookSource;
-import com.veve.flowreader.uitest.BookTest;
 
 import org.junit.Assert;
 import org.junit.Before;

@@ -1,8 +1,12 @@
 package com.veve.flowreader.model.impl;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.util.Log;
 
+import com.github.axet.k2pdfopt.K2PdfOpt;
 import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyph;
@@ -111,4 +115,44 @@ public abstract class AbstractBookPage implements BookPage {
     abstract public byte[] getGrayscaleBytes(long bookId, int pageNumber);
 
     abstract public byte[] getPageGlyphs(long bookId, int pageNumber, List<PageGlyphInfo> pageGlyphs);
+
+    public List<Bitmap> getWillusBitmap(List<Bitmap> retVal, int width, int bitmapWidth, int totalHeight) {
+
+        Bitmap wholeBitmap = Bitmap.createBitmap(bitmapWidth, totalHeight, Bitmap.Config.ARGB_8888);
+
+        Canvas canvas = new Canvas(wholeBitmap);
+
+        int drawHeight = 0;
+        for (int i=0; i<retVal.size(); i++) {
+            Bitmap b = retVal.get(i);
+            if (i==0) {
+                canvas.drawBitmap(b, new Matrix(), new Paint());
+            } else {
+                canvas.drawBitmap(b, 0, drawHeight, new Paint());
+            }
+            drawHeight += b.getHeight();
+        }
+
+        K2PdfOpt opt = new K2PdfOpt();
+        opt.create(width, totalHeight, 400);
+
+        opt.load(wholeBitmap);
+        wholeBitmap.recycle();
+
+        List<Bitmap> bitmaps = new ArrayList<>();
+
+
+        for (int i=0; i<opt.getCount(); i++) {
+            Bitmap bm = opt.renderPage(i);
+            Bitmap b = Bitmap.createScaledBitmap(bm, width, totalHeight, true);
+            bitmaps.add(b);
+            totalHeight += b.getHeight();
+            bm.recycle();
+        }
+
+        return bitmaps;
+
+        }
+
+
 }

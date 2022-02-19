@@ -90,4 +90,9 @@ Copyright &#169; 2015-2016, Itseez Inc., все права защищены.
     <string name="font_size_three_quarters">¾</string>
     <string name="font_size_half">½</string>
     <string name="font_size_quarter">¼</string>
+    <string name="willus_segmentation">Advanced Segmentation</string>
+    <string name="kindle_navigation">Kindle навигация</string>
+    <string name="ipad_navigation">iPad навигация</string>
+    <string name="show_scrollbars">Показать прокрутку</string>
+    <string name="hide_scrollbars">Убрать прокрутку</string>
 </resources>

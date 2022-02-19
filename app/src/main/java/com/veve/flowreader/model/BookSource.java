@@ -13,7 +13,6 @@ public interface BookSource {
 
     List<Bitmap> getReflownPageBytes(int pageNumber, DevicePageContext context, List<PageGlyphInfo> pageGlyphs);
 
-
     Bitmap getPageGrayscaleBytes(int pageNumber);
 
     @Deprecated

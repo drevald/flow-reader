@@ -1,27 +1,32 @@
 package com.veve.flowreader.views;
 
+import static android.view.View.GONE;
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
+import static com.veve.flowreader.Constants.BOOK_CONTEXT;
+import static com.veve.flowreader.Constants.BOOK_ID;
+import static com.veve.flowreader.Constants.KINDLE_NAVIGATION;
+import static com.veve.flowreader.Constants.MAX_BITMAP_SIZE;
+import static com.veve.flowreader.Constants.POSITION;
+import static com.veve.flowreader.Constants.PREFERENCES;
+import static com.veve.flowreader.Constants.REPORT_ID;
+import static com.veve.flowreader.Constants.REPORT_URL;
+import static com.veve.flowreader.Constants.SHOW_SCROLLBARS;
+import static com.veve.flowreader.Constants.VIEW_MODE_ORIGINAL;
+import static com.veve.flowreader.Constants.VIEW_MODE_PHONE;
+
 import android.annotation.SuppressLint;
-import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import com.google.android.material.appbar.AppBarLayout;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.menu.MenuBuilder;
-import androidx.appcompat.widget.Toolbar;
-
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -29,10 +34,10 @@ import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -40,20 +45,26 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.view.GestureDetectorCompat;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
 import com.veve.flowreader.dao.AppDatabase;
 import com.veve.flowreader.dao.BookRecord;
 import com.veve.flowreader.dao.DaoAccess;
 import com.veve.flowreader.dao.ReportRecord;
-import com.veve.flowreader.model.Book;
 import com.veve.flowreader.model.BooksCollection;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageRenderer;
 import com.veve.flowreader.model.PageRendererFactory;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -62,26 +73,24 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import static android.view.View.GONE;
-import static android.view.View.INVISIBLE;
-import static android.view.View.VISIBLE;
-import static com.veve.flowreader.Constants.BOOK_CONTEXT;
-import static com.veve.flowreader.Constants.BOOK_ID;
-import static com.veve.flowreader.Constants.FLOW_BOOK_PREFERENCES;
-import static com.veve.flowreader.Constants.MAX_BITMAP_SIZE;
-import static com.veve.flowreader.Constants.POSITION;
-import static com.veve.flowreader.Constants.REPORT_ID;
-import static com.veve.flowreader.Constants.REPORT_URL;
-import static com.veve.flowreader.Constants.VIEW_MODE_ORIGINAL;
-import static com.veve.flowreader.Constants.VIEW_MODE_PHONE;
-
+/**
+ * Designed to show a book page with page controls
+ */
 public class PageActivity extends AppCompatActivity {
+
+    GestureDetectorCompat kindleGestureDetector;
+    GestureDetectorCompat gestureDetectorCompat;
+    ScaleGestureDetector scaleGestureDetector;
+
+    SharedPreferences pref;
+
+    public int currentPage;
+    public float zoomFactor = 1;
 
     Set<AsyncTask> runningTasks;
     TextView pager;
@@ -97,7 +106,6 @@ public class PageActivity extends AppCompatActivity {
     DevicePageContext context;
     PageActivity pageActivity;
     ScrollView scroll;
-    int currentPage;
     int viewMode;
     BooksCollection booksCollection;
     LinearLayout bottomBar;
@@ -109,7 +117,7 @@ public class PageActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         if (book == null) {
-            Log.i(getClass().getName(), String.format("The book is missing"));
+            Log.i(getClass().getName(), "The book is missing");
             Intent i = new Intent(PageActivity.this, MainActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(i);
@@ -124,9 +132,7 @@ public class PageActivity extends AppCompatActivity {
         super.onBackPressed();
         book.setScrollOffset(scroll.getScrollY());
         booksCollection.updateBook(book);
-
         pageRenderer.closeBook();
-
         Intent i = new Intent(PageActivity.this, MainActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(i);
@@ -138,7 +144,7 @@ public class PageActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d(getClass().getName(), "onCreateOptionsMenu");
         getMenuInflater().inflate(R.menu.page_menu, menu);
-        if(menu instanceof MenuBuilder){
+        if (menu instanceof MenuBuilder) {
             MenuBuilder m = (MenuBuilder) menu;
             m.setOptionalIconsVisible(true);
             m.getItem(4).setIcon(book.getPreprocessing()
@@ -153,7 +159,8 @@ public class PageActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         Log.v(getClass().getName(), getClass().getName() + "onNewIntent# " + this.hashCode());
-        Log.d("INTENT_ONNEWINTENT",  getIntent().getLongExtra(BOOK_ID, 0)  + " = getIntent().getLongExtra(Constants.BOOK_ID, 0); hash = " + intent.hashCode());;
+        Log.d("INTENT_ONNEWINTENT",  getIntent().getLongExtra(BOOK_ID, 0)
+                + " = getIntent().getLongExtra(Constants.BOOK_ID, 0); hash = " + intent.hashCode());
         int position = getIntent().getIntExtra("position", 0);
         booksCollection = BooksCollection.getInstance(getApplicationContext());
         book = booksCollection.getBook(position);
@@ -165,24 +172,161 @@ public class PageActivity extends AppCompatActivity {
         booksCollection.updateBook(book);
     }
 
+    public class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            scroll.smoothScrollBy((int)distanceX, (int)distanceY);
+            return true;
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            Log.d(getClass().getName(), "On Fling");
+            float distanceX = e2.getRawX() - e1.getRawX();
+            float distanceY = e2.getRawY() - e1.getRawY();
+            if (Math.abs(distanceX) > 2 * Math.abs(distanceY) && Math.abs(distanceX) > 50) {
+                if (distanceX < 0) {
+                    if (book.getCurrentPage() < book.getPagesCount()-1) {
+                        setPageNumber(book.getCurrentPage()+1);
+                        scroll.scrollTo(0, 0);
+                    }
+                } else {
+                    if (book.getCurrentPage() > 0) {
+                        setPageNumber(book.getCurrentPage()-1);
+                        scroll.scrollTo(0, 0);
+                    }
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            if (barsVisible) {
+                bottomBar.setVisibility(INVISIBLE);
+                bar.setVisibility(GONE);
+                barsVisible = false;
+            } else {
+                bottomBar.setVisibility(VISIBLE);
+                bar.setVisibility(VISIBLE);
+                barsVisible = true;
+            }
+            return super.onSingleTapConfirmed(e);
+        }
+
+    }
+
+    public class KindleGestureListener extends  GestureDetector.SimpleOnGestureListener {
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2,float distanceX, float distanceY) {
+            scroll.smoothScrollBy((int)distanceX, (int)distanceY);
+            return true;
+        }
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            float x = e.getX();
+            float y = e.getY();
+            if (y < getWindow().getDecorView().getHeight()/6) {
+                if (barsVisible) {
+                    bottomBar.setVisibility(INVISIBLE);
+                    bar.setVisibility(GONE);
+                    barsVisible = false;
+                } else {
+                    bottomBar.setVisibility(VISIBLE);
+                    bar.setVisibility(VISIBLE);
+                    barsVisible = true;
+                }
+            } else {
+                if (x > getWindow().getDecorView().getWidth() / 3) {
+                    if (book.getCurrentPage() < book.getPagesCount() - 1) {
+                        setPageNumber(book.getCurrentPage() + 1);
+                        scroll.scrollTo(0, 0);
+                    }
+                } else {
+                    if (book.getCurrentPage() > 0) {
+                        setPageNumber(book.getCurrentPage() - 1);
+                        scroll.scrollTo(0, 0);
+                    }
+                }
+            }
+            return true;
+        }
+
+    }
+
+    public class MyOnScaleGestureListener extends
+            ScaleGestureDetector.SimpleOnScaleGestureListener {
+
+        float factor = 1.0f;
+
+        @SuppressLint("SetTextI18n")
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            Log.v(getClass().getName(), "onScale");
+            factor *= detector.getScaleFactor();
+            return true;
+        }
+
+        @Override
+        public boolean onScaleBegin(ScaleGestureDetector detector) {
+            factor = 1.0f;
+            return true;
+        }
+
+        @Override
+        public void onScaleEnd(ScaleGestureDetector detector) {
+//            super.onScaleEnd(detector);
+
+            zoomFactor = Math.abs(factor * context.getZoom());
+            zoomFactor = Math.min(zoomFactor, Constants.ZOOM_MAX);
+            zoomFactor = Math.max(zoomFactor, Constants.ZOOM_MIN);
+            Log.d(getClass().getName(),
+                    String.format("Scaling %f zoom %f\n", factor, zoomFactor));
+            context.setZoom(zoomFactor);
+            book.setZoom(zoomFactor);
+            Log.d(getClass().getName(),
+                    String.format("Scaling factor is %f original is %f",
+                            book.getZoom(), book.getZoomOriginal()));
+            setPageNumber(book.getCurrentPage());
+
+            Log.d(getClass().getName(), "Scale ended");
+        }
+
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (pref.getBoolean(Constants.KINDLE_NAVIGATION, false)) {
+            kindleGestureDetector.onTouchEvent(event);
+            return true;
+        } else {
+            boolean flingProcessed = gestureDetectorCompat.onTouchEvent(event);
+            boolean pinchProcessed = scaleGestureDetector.onTouchEvent(event);
+            return flingProcessed || pinchProcessed;
+        }
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-
+        pref = getApplicationContext().getSharedPreferences(PREFERENCES, MODE_PRIVATE);
         Log.v(getClass().getName(), getClass().getName() + "onCreate# " + this.hashCode());
-
         runningTasks = new CopyOnWriteArraySet<>();
-
         setContentView(R.layout.activity_page);
+        gestureDetectorCompat = new GestureDetectorCompat(this, new MyGestureListener());
+        scaleGestureDetector = new ScaleGestureDetector(this, new MyOnScaleGestureListener());
+        kindleGestureDetector = new GestureDetectorCompat(this, new KindleGestureListener());
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         long bookId = getIntent().getLongExtra(BOOK_ID, 0);
-        Log.d("INTENT_ONCREATE", bookId + " = getIntent().getLongExtra(Constants.BOOK_ID, 0); hash = " + getIntent().hashCode());
+        Log.d("INTENT_ONCREATE", bookId + " = getIntent().getLongExtra(" + Constants.BOOK_ID + ", 0); hash = " + getIntent().hashCode());
         booksCollection = BooksCollection.getInstance(getApplicationContext());
         book = booksCollection.getBook(bookId);
+        Log.d("INTENT_ONCREATE", book + " = booksCollection.getBook(" + bookId + ");");
 
         if (book == null) {
             Log.i(getClass().getName(), String.format("The book with id %d is missing", bookId));
@@ -221,12 +365,18 @@ public class PageActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+        findViewById(R.id.page).setOnGenericMotionListener(new View.OnGenericMotionListener() {
+            @Override
+            public boolean onGenericMotion(View v, MotionEvent event) {
+                return false;
+            }
+        });
+
         seekBar.setMax(book.getPagesCount());
         pager.setOnTouchListener(new PagerTouchListener());
         seekBar.setOnSeekBarChangeListener(new PagerListener());
         home.setOnClickListener(new HomeButtonListener());
         show.setOnClickListener(new ShowListener());
-        page.setOnTouchListener(new OnDoubleTapListener(this, page));
         topLayout.addOnLayoutChangeListener(new LayoutListener());
 
         Display display = getWindowManager().getDefaultDisplay();
@@ -266,13 +416,18 @@ public class PageActivity extends AppCompatActivity {
             alert.show();
         });
 
-
-
         pageActivity = this;
         setPageNumber(currentPage);
 
         book.setZoom(context.getZoom());
-        show.setImageResource(viewMode == Constants.VIEW_MODE_PHONE ? R.drawable.ic_to_book : R.drawable.ic_to_phone);
+        show.setImageResource(viewMode == VIEW_MODE_PHONE ? R.drawable.ic_to_book : R.drawable.ic_to_phone);
+
+        findViewById(R.id.scroll).setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return PageActivity.this.onTouchEvent(event);
+            }
+        });
 
     }
 
@@ -280,29 +435,16 @@ public class PageActivity extends AppCompatActivity {
         return book;
     }
 
-
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem item = menu.findItem(R.id.preprocess);
         item.setIcon(book.getPreprocessing() ? R.drawable.ic_unenhance : R.drawable.ic_enhance);
         item.setTitle(book.getPreprocessing() ? R.string.unenhance : R.string.enhance );
-//        if (viewMode == VIEW_MODE_PHONE) {
-//            menu.findItem(R.id.no_margins).setVisible(true);
-//            menu.findItem(R.id.normal_margins).setVisible(true);
-//            menu.findItem(R.id.wide_margins).setVisible(true);
-//            menu.findItem(R.id.preprocess).setVisible(true);
-//            menu.findItem(R.id.page_unreadable).setVisible(true);
-//            menu.findItem(R.id.print).setVisible(true);
-//        }
-//        if (viewMode == VIEW_MODE_ORIGINAL) {
-//            menu.findItem(R.id.no_margins).setVisible(false);
-//            menu.findItem(R.id.normal_margins).setVisible(false);
-//            menu.findItem(R.id.wide_margins).setVisible(false);
-//            menu.findItem(R.id.preprocess).setVisible(false);
-//            menu.findItem(R.id.page_unreadable).setVisible(false);
-//            menu.findItem(R.id.print).setVisible(false);
-//        }
-
+        item = menu.findItem(R.id.navigation);
+        item.setTitle(pref.getBoolean(KINDLE_NAVIGATION, false) ? R.string.ipad_navigation : R.string.kindle_navigation);
+        item = menu.findItem(R.id.scrollbars);
+        item.setIcon(pref.getBoolean(SHOW_SCROLLBARS, false) ? R.drawable.ic_noscrollbars : R.drawable.ic_scrollbars);
+        item.setTitle(pref.getBoolean(SHOW_SCROLLBARS, false) ? R.string.hide_scrollbars : R.string.show_scrollbars );
         if (viewMode == VIEW_MODE_PHONE) {
             menu.findItem(R.id.no_margins).setEnabled(true);
             menu.findItem(R.id.normal_margins).setEnabled(true);
@@ -319,7 +461,6 @@ public class PageActivity extends AppCompatActivity {
             menu.findItem(R.id.page_unreadable).setEnabled(false);
             menu.findItem(R.id.print).setEnabled(false);
         }
-
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -347,7 +488,6 @@ public class PageActivity extends AppCompatActivity {
                 break;
             }
             case R.id.page_unreadable: {
-
                 ConnectionCheckerTask connectionCheckerTask = new ConnectionCheckerTask();
                 connectionCheckerTask.execute();
                 try {
@@ -397,12 +537,10 @@ public class PageActivity extends AppCompatActivity {
                     reflowedBmpFileOut.close();
                     reflowedBmpFile.deleteOnExit();
                     Log.v(getClass().getName(), "Original bitmap stored in tmp file " + origBmpFile.getPath());
-
                     mapper.writeValue(baos, booksCollection.getPageGlyphs(book.getId(), currentPage, true));
                 } catch (Exception e) {
                     Log.e(getClass().getName(), "Failed to convert Glyphs to JSON", e);
                 }
-
                 ReportRecord reportRecord = new ReportRecord(
                         baos.toByteArray(),
                         origBmpFile.getPath().getBytes(),
@@ -421,39 +559,32 @@ public class PageActivity extends AppCompatActivity {
                 startActivity(printIntent);
                 break;
             }
-//            case R.id.delete_book: {
-//                AlertDialog.Builder builder = new AlertDialog.Builder(PageActivity.this);
-//                builder.setTitle(R.string.book_deletion)
-//                        .setMessage(String.format(
-//                                getResources().getString(R.string.confirm_delete), book.getTitle()))
-//                        .setCancelable(false)
-//                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                                long bookId = book.getId();
-//                                BooksCollection.getInstance(getApplicationContext()).deleteBook(bookId);
-//                                Intent i = new Intent(PageActivity.this, MainActivity.class);
-//                                i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-//                                i.putExtra(BOOK_ID, bookId);
-//                                startActivity(i);
-//                            }
-//                        })
-//                        .setNegativeButton(R.string.no,
-//                                new DialogInterface.OnClickListener() {
-//                                    public void onClick(DialogInterface dialog, int id) {
-//                                        dialog.cancel();
-//                                    }
-//                                });
-//                AlertDialog alert = builder.create();
-//                alert.show();
-//                break;
-//            }
             case R.id.preprocess: {
                 context.setPreprocessing(!context.isPreprocessing());
                 book.setPreprocessing(!book.getPreprocessing());
                 context.setInvalidateCache(true);
                 item.setIcon(book.getPreprocessing() ? R.drawable.ic_unenhance : R.drawable.ic_enhance);
                 item.setTitle(book.getPreprocessing() ? R.string.unenhance : R.string.enhance );
+            }
+            case R.id.navigation: {
+                if (pref.getBoolean(Constants.KINDLE_NAVIGATION, false)) {
+                    pref.edit().putBoolean(Constants.KINDLE_NAVIGATION, false).apply();
+                    item.setTitle(R.string.kindle_navigation);
+                } else {
+                    pref.edit().putBoolean(Constants.KINDLE_NAVIGATION, true).apply();
+                    item.setTitle(R.string.ipad_navigation);
+                }
+            }
+            case R.id.scrollbars: {
+                if (pref.getBoolean(Constants.SHOW_SCROLLBARS, false)) {
+                    pref.edit().putBoolean(Constants.SHOW_SCROLLBARS, false).apply();
+                    scroll.setScrollBarSize(0);
+                    item.setTitle(R.string.show_scrollbars);
+                } else {
+                    pref.edit().putBoolean(Constants.SHOW_SCROLLBARS, true).apply();
+                    scroll.setScrollBarSize(50);
+                    item.setTitle(R.string.hide_scrollbars);
+                }
             }
         }
         setPageNumber(currentPage);
@@ -485,15 +616,15 @@ public class PageActivity extends AppCompatActivity {
                 if (iv.getDrawable() != null) {
                     Bitmap bitmap = ((BitmapDrawable) iv.getDrawable()).getBitmap();
                     if (bitmap != null && !bitmap.isRecycled() && book.getMode() != VIEW_MODE_ORIGINAL) {
-                        bitmap.recycle();
+//                        bitmap.recycle();
                     }
                 }
 
             }
         }
 
-
         pageLoader.execute(pageNumber, invCache);
+
     }
 
     private void kickOthers(PageLoader pageLoader) {
@@ -509,34 +640,6 @@ public class PageActivity extends AppCompatActivity {
 
 ////////////////////////////   LISTENERS  ////////////////////////////////////////////////////
 
-    class SwapListener implements View.OnTouchListener {
-        @Override
-        public boolean onTouch(View view, MotionEvent event) {
-            float x1, x2;
-            float MIN_DISTANCE = 150;
-            x1 = 0;
-            switch(event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    x1 = event.getX();
-                    break;
-                case MotionEvent.ACTION_UP:
-                    x2 = event.getX();
-                    float deltaX = x2 - x1;
-                    if (Math.abs(deltaX) > MIN_DISTANCE) {
-                        if (x2 > x1) {
-                            Log.d(getClass().getName(),"Left to Right swipe [Next]");
-                        } else {
-                            Log.d(getClass().getName(),"Right to Left swipe [Next]");
-                        }
-                    }
-                    break;
-            }
-            view.onTouchEvent(event);
-            return true;
-//                return true;
-        }
-    }
-
     class PagerTouchListener implements View.OnTouchListener {
         @Override
         public boolean onTouch(View view, MotionEvent event) {
@@ -544,84 +647,6 @@ public class PageActivity extends AppCompatActivity {
             pager.setVisibility(GONE);
             seekBar.setVisibility(VISIBLE);
             return true;
-        }
-    }
-
-    class OnDoubleTapListener implements View.OnTouchListener {
-
-        private GestureDetector gestureDetector;
-
-        OnDoubleTapListener(Context c, LinearLayout p) {
-            gestureDetector = new GestureDetector(c, new GestureDetector.SimpleOnGestureListener() {
-
-                @Override
-                public boolean onScroll(MotionEvent e1, MotionEvent e2,float distanceX, float distanceY) {
-                    Log.v(getClass().getName(), "onScroll");
-                    if (Math.abs(distanceX) > 2 * Math.abs(distanceY) && Math.abs(distanceX) > 50) {
-                        if (distanceX > 0) {
-                            if (book.getCurrentPage() < book.getPagesCount()-1) {
-                                setPageNumber(book.getCurrentPage()+1);
-                                scroll.scrollTo(0, 0);
-                            }
-                        } else {
-                            if (book.getCurrentPage() > 0) {
-                                setPageNumber(book.getCurrentPage()-1);
-                                scroll.scrollTo(0, 0);
-                            }
-                        }
-                    }
-                    try {
-                        Thread.currentThread().sleep(100);
-                    } catch (Exception e) {
-
-                    }
-                    return true;
-                }
-
-                @Override
-                public boolean onDoubleTap(MotionEvent e) {
-                    float x = e.getX();
-
-                    if (x > p.getWidth() / 2) {
-                        if (book.getCurrentPage() < book.getPagesCount()-1) {
-                            setPageNumber(book.getCurrentPage()+1);
-                            scroll.scrollTo(0, 0);
-                        }
-                    } else {
-                        if (book.getCurrentPage() > 0) {
-                            setPageNumber(book.getCurrentPage()-1);
-                            scroll.scrollTo(0, 0);
-                        }
-                    }
-                    return true;
-                }
-
-                @Override
-                public boolean onSingleTapConfirmed(MotionEvent e) {
-                    if (barsVisible) {
-                        bottomBar.setVisibility(INVISIBLE);
-                        bar.setVisibility(GONE);
-                        barsVisible = false;
-                    } else {
-                        bottomBar.setVisibility(VISIBLE);
-                        bar.setVisibility(VISIBLE);
-                        barsVisible = true;
-                    }
-                    return super.onSingleTapConfirmed(e);
-                }
-
-                @Override
-                public boolean onDown(MotionEvent e) {
-                    return true;
-                }
-
-            });
-        }
-
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            view.performClick();
-            return gestureDetector.onTouchEvent(motionEvent);
         }
     }
 
@@ -769,7 +794,6 @@ public class PageActivity extends AppCompatActivity {
 
     }
 
-
     class PageLoader extends AsyncTask<Integer, Void, Void> {
 
         List<Bitmap> bitmaps;
@@ -803,24 +827,24 @@ public class PageActivity extends AppCompatActivity {
                     pageActivity.progressBar.setVisibility(View.VISIBLE);
                 }
             );
-
+//
             int pageNumber = integers[0];
-
-            boolean invalidateCache = integers[1] == 1;
-
+//
+//            boolean invalidateCache = integers[1] == 1;
+//
             if (pageActivity.viewMode == Constants.VIEW_MODE_PHONE) {
                 bitmaps = new CopyOnWriteArrayList<>(pageActivity.pageRenderer.renderPage(context, pageNumber));
+                Log.v(getClass().getName(), String.format("Get %d bitmaps for page %d", bitmaps.size(), pageNumber));
             } else {
                 bitmaps = Arrays.asList(pageActivity.pageRenderer.renderOriginalPage(pageActivity.context, pageNumber));
             }
-
-            //int bitmapHeight = bitmap.getHeight();
-
+//
+//            int bitmapHeight = bitmap.getHeight();
+//
             runOnUiThread(() -> {
-
-
+//
                 List<View> pageViews = new ArrayList<>();// UI code goes here
-                for (Bitmap bitmap : bitmaps){
+                for (Bitmap bitmap : bitmaps) {
                     Log.d("FLOW-READER", "bitmaps " + bitmaps.size());
                     int bitmapHeight = bitmap.getHeight();
                     if (bitmap.getByteCount() > MAX_BITMAP_SIZE) {
@@ -843,14 +867,6 @@ public class PageActivity extends AppCompatActivity {
                                 Log.v(getClass().getName(),
                                         String.format("bitmap size is width : %d height :%d",
                                                 bitmap.getWidth(), bitmap.getHeight()));
-
-                                ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
-                                ActivityManager activityManager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-                                activityManager.getMemoryInfo(mi);
-                                Log.v("BITMAP_MEMORY", "mi.availMem " + mi.availMem);
-                                Log.v("BITMAP_MEMORY", "mi.totalMem " + mi.totalMem);
-                                Log.v("BITMAP_MEMORY", "mi.lowMemory " + mi.lowMemory);
-//                            Log.v("BITMAP_MEMORY", "mi.visibleAppThreshold " + mi.hiddenAppThreshold);
 
                                 Bitmap limitedBitmap = Bitmap.createBitmap(bitmap, 0, offset, context.getWidth(),
                                         height - offset);
@@ -884,21 +900,29 @@ public class PageActivity extends AppCompatActivity {
                             pageActivity.page.addView(imageView);
                             horizontalScrollView.addView(pageActivity.page);
                             pageActivity.scroll.addView(horizontalScrollView);
+                            horizontalScrollView.setOnTouchListener(new View.OnTouchListener() {
+                                @Override
+                                public boolean onTouch(View v, MotionEvent event) {
+                                    return PageActivity.this.onTouchEvent(event);
+                                }
+                            });
                         }
                     }
                 }
                 pageActivity.scroll.setVisibility(VISIBLE);
                 pageActivity.progressBar.setVisibility(INVISIBLE);
                 pageActivity.scroll.scrollTo(0, 0);
+
             });
+
             return null;
+
         }
 
         private void inviteToTryReflow(Bitmap bitmap) {
             if (bitmap.getWidth() <= context.getWidth()) {
                 return;
             }
-            SharedPreferences pref = getApplicationContext().getSharedPreferences(FLOW_BOOK_PREFERENCES, MODE_PRIVATE);
             if(pref.contains(Constants.SHOW_TRY_REFLOW) && !pref.getBoolean(Constants.SHOW_TRY_REFLOW, false)) {
                 return;
             }
@@ -918,6 +942,7 @@ public class PageActivity extends AppCompatActivity {
 
     }
 
+//
     class ReportCollectorTask extends AsyncTask<ReportRecord, Void, Void> {
 
         @Override
@@ -934,6 +959,29 @@ public class PageActivity extends AppCompatActivity {
             return null;
         }
 
+    }
+
+    private String getActionName(int code) {
+        switch (code) {
+            case 0: {return "ACTION_DOWN";}
+            case 1: {return "ACTION_UP";}
+            case 2: {return "ACTION_MOVE";}
+            case 3: {return "ACTION_CANCEL";}
+            case 4: {return "ACTION_OUTSIDE";}
+            case 5: {return "ACTION_POINTER_DOWN";}
+            case 6: {return "ACTION_POINTER_UP";}
+            case 7: {return "ACTION_HOVER_MOVE";}
+            case 8: {return "ACTION_SCROLL";}
+            case 9: {return "ACTION_HOVER_ENTER";}
+            case 10: {return "ACTION_HOVER_EXIT";}
+            case 11: {return "ACTION_BUTTON_PRESS";}
+            case 12: {return "ACTION_BUTTON_RELEASE";}
+            case 261: {return "ACTION_POINTER_2_DOWN";}
+            case 517: {return "ACTION_POINTER_3_DOWN";}
+            case 262: {return "ACTION_POINTER_2_UP";}
+            case 518: {return "ACTION_POINTER_3_UP";}
+            default:{return "NO ACTION";}
+        }
     }
 
 }

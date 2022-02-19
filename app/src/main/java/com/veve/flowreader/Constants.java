@@ -33,7 +33,7 @@ public interface Constants {
     int MARGIN_STEP = 50;
     int MARGIN_MAX = 250;
 
-    public final String REPORT_URL = "https://glyphs.flum.app/loader";
+    public final String REPORT_URL = "https://glyph-report.herokuapp.com/loader";
 
     float ZOOM_STEP = 0.25F;
     float ZOOM_MIN = 0.25F;
@@ -45,11 +45,15 @@ public interface Constants {
     float MILS_IN_MM = 39.3701f;
     float INCH_IN_MM = 0.0393701f;
 
+    String PREFERENCES = "PREFERENCES";
     String FLOW_BOOK_PREFERENCES = "FLOW_BOOK_PREFERENCES";
     String SHOW_TRY_REFLOW = "SHOW_TRY_REFLOW";
 
     PrintAttributes.MediaSize DEFAULT_MEDIA_SIZE = PrintAttributes.MediaSize.ISO_A4;
     //PrintAttributes.MediaSize DEFAULT_MEDIA_SIZE = PrintAttributes.MediaSize.ISO_A6;
+
+    String KINDLE_NAVIGATION = "KINDLE_NAVIGATION";
+    String SHOW_SCROLLBARS = "SHOW_SCROLLBARS";
 
 
 }

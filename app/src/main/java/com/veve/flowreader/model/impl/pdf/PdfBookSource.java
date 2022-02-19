@@ -1,11 +1,13 @@
 package com.veve.flowreader.model.impl.pdf;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.veve.flowreader.model.BookSource;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyph;
 import com.veve.flowreader.model.PageGlyphInfo;
+import com.veve.flowreader.model.impl.djvu.DjvuBookPage;
 
 import java.util.List;
 
@@ -25,8 +27,13 @@ public class PdfBookSource implements BookSource {
 
     @Override
     public List<Bitmap> getReflownPageBytes(int pageNumber, DevicePageContext context, List<PageGlyphInfo> pageGlyphs) {
+        long start = System.currentTimeMillis();
         PdfBookPage pdfBookPage = (PdfBookPage)pdfBook.getPage(pageNumber);
-        return pdfBookPage.getAsReflowedBitmap(context, pageGlyphs);
+        Log.v("PERF", String.format("\t\tpdfBook.getPage(%d) took %d ms", pageNumber, System.currentTimeMillis() - start));
+        start = System.currentTimeMillis();
+        List<Bitmap> bitmaps = pdfBookPage.getAsReflowedBitmap(context, pageGlyphs);
+        Log.v("PERF", String.format("\t\tpdfBookPage.getAsReflowedBitmap(%d) took %d ms", pageNumber, System.currentTimeMillis() - start));
+        return bitmaps;
     }
 
     @Override

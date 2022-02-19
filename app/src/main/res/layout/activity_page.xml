@@ -79,14 +79,15 @@
         android:layout_width="match_parent"
         android:opacity="translucent"
         android:background="@color/transparent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:visibility="invisible"/>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingTop="10sp"
-        android:id="@+id/scroll"
-        android:visibility="invisible">
+        android:scrollbarSize="50sp"
+        android:id="@+id/scroll">
 
         <LinearLayout
             android:id="@+id/page"

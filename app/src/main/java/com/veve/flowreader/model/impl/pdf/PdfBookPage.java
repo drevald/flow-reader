@@ -2,8 +2,12 @@ package com.veve.flowreader.model.impl.pdf;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.util.Log;
 
+import com.github.axet.k2pdfopt.K2PdfOpt;
 import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyphInfo;
@@ -69,11 +73,13 @@ public class PdfBookPage extends AbstractBookPage implements BookPage {
     public List<Bitmap> getAsReflowedBitmap(DevicePageContext context, List<PageGlyphInfo> pageGlyphs) {
         PageSize pageSize = new PageSize();
 
-
         List<byte[]> bytes = getNativeReflowedBytes(getBookId(), getPageNumber(), context.getZoom(),
                 (int)(context.getWidth() * magicMultiplier), pageSize, pageGlyphs, context.isPreprocessing(), context.getMargin());
 
         List<Bitmap> retVal = new ArrayList<>();
+
+        int bitmapWidth = 0;
+        int totalHeight = 0;
 
         for (int i=0;i<bytes.size(); i++) {
             byte[] b = bytes.get(i);
@@ -91,9 +97,15 @@ public class PdfBookPage extends AbstractBookPage implements BookPage {
             Log.d("FLOW-READER", "bitmap height = " + bm.getHeight());
 
             retVal.add(bm);
+            totalHeight += bm.getHeight();
+            bitmapWidth = bm.getWidth();
             bytes.set(i, null);
         }
         bytes = null;
+
+        if (context.isWillusSegmentation()) {
+            return getWillusBitmap(retVal, context.getWidth(), bitmapWidth, totalHeight);
+        }
 
 
         return retVal;
