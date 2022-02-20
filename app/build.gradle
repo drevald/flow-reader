@@ -1,6 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'cpp'
 
+android.buildTypes.release.ndk.debugSymbolLevel = 'FULL'
+
 def getGitHash = { ->
     def stdout = new ByteArrayOutputStream()
     exec {
@@ -16,7 +18,7 @@ android {
         applicationId "com.veve.flowreader"
         minSdkVersion 22
         targetSdkVersion 30
-        versionCode 22
+        versionCode 23
         versionName "1.1"
         buildConfigField "String", "GitHash", "\"${getGitHash()}\""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
