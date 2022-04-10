@@ -137,7 +137,8 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
         pixDestroy(&r);
     } else {
         threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
-        reflow(mat, new_image, scale, pageWidth, env, glyphs, list, std::vector<glyph>(), mat, false, margin);
+        std::vector<glyph> pic_glyphs = detect_images(mat);
+        reflow(mat, new_image, scale, pageWidth, env, glyphs, list, pic_glyphs, mat, false, margin);
     }
 
     jclass clz = env->GetObjectClass(pageSize);
@@ -175,7 +176,7 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
     threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
 
 
-    std::vector<glyph> new_glyphs = get_glyphs(mat);
+    std::vector<glyph> new_glyphs = get_glyphs(mat, std::vector<glyph>());
     put_glyphs(env, new_glyphs, list);
     size_t sizeInBytes = mat.total() * mat.elemSize();
     jbyteArray array = env->NewByteArray(sizeInBytes);

@@ -252,7 +252,8 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
         pixDestroy(&r);
     } else {
         threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
-        reflow(mat, new_image, scale, pageWidth, env, glyphs, list, std::vector<glyph>(), mat, false, margin);
+        std::vector<glyph> pic_glyphs = detect_images(mat);
+        reflow(mat, new_image, scale, pageWidth, env, glyphs, list,pic_glyphs, mat, false, margin);
     }
 
     jclass clz = env->GetObjectClass(pageSize);
@@ -286,7 +287,7 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
 
 
     size_t sizeInBytes = mat.total() * mat.elemSize();
-    vector<glyph> new_glyphs = get_glyphs(mat);
+    vector<glyph> new_glyphs = get_glyphs(mat, pic_glyphs);
     put_glyphs(env, new_glyphs, list);
 
     jbyteArray array = env->NewByteArray(sizeInBytes);
