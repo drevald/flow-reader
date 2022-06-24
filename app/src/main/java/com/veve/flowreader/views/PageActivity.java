@@ -81,7 +81,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 /**
  * Designed to show a book page with page controls
  */
-public class PageActivity extends AppCompatActivity {
+public class PageActivity extends BaseActivity {
 
     GestureDetectorCompat kindleGestureDetector;
     GestureDetectorCompat gestureDetectorCompat;
