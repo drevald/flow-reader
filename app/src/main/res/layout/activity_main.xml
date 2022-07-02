@@ -61,7 +61,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context="com.veve.flowreader.views.MainActivity"
         tools:showIn="@layout/activity_main"
-        style="Standard">
+        style="@style/background">
 
         <android.widget.GridView xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"

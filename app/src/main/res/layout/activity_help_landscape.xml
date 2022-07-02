@@ -18,66 +18,6 @@
         android:isScrollContainer="true"
         android:orientation="horizontal">
 
-<!--        <LinearLayout-->
-<!--            android:layout_width="300dp"-->
-<!--            android:padding="20sp"-->
-<!--            android:paddingBottom="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:orientation="vertical">-->
-<!--            <ImageView-->
-<!--                android:layout_width="200dp"-->
-<!--                android:layout_height="100dp"-->
-<!--                app:srcCompat="@drawable/ic_tap_left"-->
-<!--                android:contentDescription="@string/double_tap_left"-->
-<!--                android:background="@color/colorPrimary"/>-->
-<!--            <TextView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="@string/double_tap_left"-->
-<!--                style="@style/caption"-->
-<!--                android:background="@color/colorPrimary"/>-->
-<!--        </LinearLayout>-->
-
-<!--        <LinearLayout-->
-<!--            android:layout_width="300dp"-->
-<!--            android:padding="20sp"-->
-<!--            android:paddingBottom="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:orientation="vertical">-->
-<!--            <ImageView-->
-<!--                android:layout_width="200dp"-->
-<!--                android:layout_height="100dp"-->
-<!--                app:srcCompat="@drawable/ic_tap_right"-->
-<!--                android:contentDescription="@string/double_tap_right"-->
-<!--                android:background="@color/colorPrimary"/>-->
-<!--            <TextView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="@string/double_tap_right"-->
-<!--                style="@style/caption"-->
-<!--                android:background="@color/colorPrimary"/>-->
-<!--        </LinearLayout>-->
-
-<!--        <LinearLayout-->
-<!--            android:layout_width="300dp"-->
-<!--            android:padding="20sp"-->
-<!--            android:paddingBottom="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:orientation="vertical">-->
-<!--            <ImageView-->
-<!--                android:layout_width="200dp"-->
-<!--                android:layout_height="100dp"-->
-<!--                app:srcCompat="@drawable/ic_tap_center"-->
-<!--                android:contentDescription="@string/single_tap"-->
-<!--                android:background="@color/colorPrimary"/>-->
-<!--            <TextView-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:text="@string/single_tap"-->
-<!--                style="@style/caption"-->
-<!--                android:background="@color/colorPrimary"/>-->
-<!--        </LinearLayout>-->
-
         <LinearLayout
             android:layout_width="300dp"
             android:padding="20sp"
@@ -88,8 +28,7 @@
                 android:layout_width="200dp"
                 android:layout_height="100dp"
                 app:srcCompat="@drawable/ic_tap_center"
-                android:contentDescription="@string/single_tap"
-                android:background="@color/colorPrimary"/>
+                android:contentDescription="@string/single_tap"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -108,6 +47,7 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 app:srcCompat="@drawable/ic_to_book_large"
+                android:tint="@color/colorAccent"
                 android:contentDescription="@string/show_original"
                 android:background="@color/colorPrimary"/>
             <TextView
@@ -128,6 +68,8 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 app:srcCompat="@drawable/ic_to_phone_large"
+                android:tint="@color/colorAccent"
+                android:tintMode="src_in"
                 android:contentDescription="@string/show_overturned"
                 android:background="@color/colorPrimary"/>
             <TextView
@@ -148,6 +90,7 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 app:srcCompat="@drawable/ic_enhance"
+                android:tint="@color/colorAccent"
                 android:contentDescription="@string/preprocess_explained"
                 android:background="@color/colorPrimary"/>
             <TextView
@@ -168,6 +111,7 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 app:srcCompat="@drawable/ic_page_unreadable"
+                android:tint="@color/colorAccent"
                 android:contentDescription="@string/report_explained"
                 android:background="@color/colorPrimary"/>
             <TextView

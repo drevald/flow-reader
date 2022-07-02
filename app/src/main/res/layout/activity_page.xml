@@ -12,7 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/AppTheme.AppBarOverlay"
+        style="@style/background">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -78,9 +79,9 @@
         android:id="@+id/progress"
         android:layout_width="match_parent"
         android:opacity="translucent"
-        android:background="@color/transparent"
         android:layout_height="match_parent"
-        android:visibility="invisible"/>
+        android:visibility="invisible"
+        style="@style/background"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -106,7 +107,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:orientation="horizontal"
-        android:background="#fff">
+        style="@style/background">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/show"
