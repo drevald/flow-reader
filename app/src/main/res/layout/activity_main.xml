@@ -26,6 +26,7 @@
                 android:layout_gravity="end"
                 android:contentDescription="@string/list_view"
                 android:labelFor="@string/list_view"
+                android:onClick="changeTheme"
                 app:srcCompat="@drawable/ic_baseline_brightness_3_24" />
 <!--            ic_baseline_brightness_5_24-->
             <androidx.appcompat.widget.AppCompatImageButton
@@ -75,7 +76,7 @@
             android:scrollbarThumbVertical="@null"
             android:scrollbarThumbHorizontal="@null"
             tools:context="org.studies.android.activities.GridLayoutActivity"
-            style="@style/AppTheme.Standard"/>
+            style="Standard"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

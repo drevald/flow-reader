@@ -343,6 +343,10 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+    public void changeTheme(View view) {
+        changeTheme();
+    }
+
 /////////////////////////   ADAPTERS   ///////////////////////////////////////////////////////////////
 
     public class BookListAdapter extends BaseAdapter {

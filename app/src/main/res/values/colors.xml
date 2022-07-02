@@ -10,5 +10,7 @@
     <color name="colorAccentNight">#D81B60</color>
     <color name="colorBackgroundNight">#666666</color>
 
+    <color name="yellow">#ffff99</color>
+
     <color name="transparent">#80FFFFFF</color>
 </resources>

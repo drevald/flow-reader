@@ -13,7 +13,8 @@
         android:icon="@drawable/ic_icon_flowbook_pink"
         android:largeHeap="true"
         android:roundIcon="@drawable/ic_icon_flowbook_pink"
-        android:supportsRtl="true">
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
         <activity
             android:name=".views.PrintActivity"
             android:label="@string/title_activity_print"/>
