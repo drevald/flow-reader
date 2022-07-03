@@ -28,7 +28,6 @@
                 android:labelFor="@string/list_view"
                 android:onClick="changeTheme"
                 app:srcCompat="@drawable/ic_baseline_brightness_3_24" />
-<!--            ic_baseline_brightness_5_24-->
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/books_list"
                 style="?android:attr/borderlessButtonStyle"

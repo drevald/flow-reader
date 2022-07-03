@@ -88,16 +88,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 public class PageActivity extends BaseActivity {
 
-    private static final ColorMatrix COLOR_MATRIX_INVERTED =
-            new ColorMatrix(new float[] {
-                    -1,  0,  0,  0, 255,
-                    0, -1,  0,  0, 255,
-                    0,  0, -1,  0, 255,
-                    0,  0,  0,  1,   0});
-
-    private static final ColorFilter COLOR_FILTER_SEPIA = new ColorMatrixColorFilter(
-            COLOR_MATRIX_INVERTED);
-
     GestureDetectorCompat kindleGestureDetector;
     GestureDetectorCompat gestureDetectorCompat;
     ScaleGestureDetector scaleGestureDetector;
@@ -1000,16 +990,6 @@ public class PageActivity extends BaseActivity {
             case 518: {return "ACTION_POINTER_3_UP";}
             default:{return "NO ACTION";}
         }
-    }
-
-    private Bitmap createInvertedBitmap(Bitmap src) {
-        Bitmap bitmap = Bitmap.createBitmap(src.getWidth(), src.getHeight(),
-                Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        Paint paint = new Paint();
-        paint.setColorFilter(COLOR_FILTER_SEPIA);
-        canvas.drawBitmap(src, 0, 0, paint);
-        return bitmap;
     }
 
 }

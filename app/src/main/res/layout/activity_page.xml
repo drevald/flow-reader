@@ -5,6 +5,7 @@
     android:id="@+id/topLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ff0000"
     tools:context="com.veve.flowreader.views.PageActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -12,8 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        style="@style/background">
+        android:theme="@style/AppTheme.AppBarOverlay">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -86,9 +86,10 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="10sp"
+        android:paddingTop="0sp"
         android:scrollbarSize="50sp"
-        android:id="@+id/scroll">
+        android:id="@+id/scroll"
+        style="@style/background">
 
         <LinearLayout
             android:id="@+id/page"
@@ -123,7 +124,8 @@
             android:layout_height="match_parent"
             android:layout_width="match_parent"
             android:gravity="center"
-            android:layout_weight = "1"/>
+            android:layout_weight = "1"
+            style="@style/slider_caption"/>
 
         <SeekBar
             android:id="@+id/slider"
@@ -140,8 +142,7 @@
             android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/fab_margin"
             app:srcCompat="@drawable/ic_return"
-            android:layout_weight = "0"
-            android:background="#fff"/>
+            android:layout_weight = "0"/>
 
     </LinearLayout>
 

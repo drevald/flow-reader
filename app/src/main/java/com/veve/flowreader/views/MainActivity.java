@@ -395,9 +395,9 @@ public class MainActivity extends BaseActivity {
             byte[] bytes = booksList.get(position).getPreview();
             Bitmap thumbnailBitmap = Bitmap
                     .createScaledBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length), 60, 90, false);
-//            Canvas canvas = new Canvas(thumbnailBitmap);
-//            canvas.drawRect(0, 0, thumbnailBitmap.getWidth(), thumbnailBitmap.getHeight(),
-//                    borderPaint);
+            if (darkTheme) {
+                thumbnailBitmap = createInvertedBitmap(thumbnailBitmap);
+            }
             imageView.setImageBitmap(thumbnailBitmap);
             TextView textView = convertView.findViewById(R.id.text);
                 textView.setText(booksList.get(position).getTitle());
@@ -478,9 +478,9 @@ public class MainActivity extends BaseActivity {
             ImageView imageView = convertView.findViewById(R.id.thumbnail);
             byte[] bytes = booksList.get(position).getPreview();
             Bitmap thumbnailBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-//            Canvas canvas = new Canvas(thumbnailBitmap);
-//            canvas.drawRect(0, 0, thumbnailBitmap.getWidth(), thumbnailBitmap.getHeight(),
-//                    borderPaint);
+            if(darkTheme) {
+                thumbnailBitmap = createInvertedBitmap(thumbnailBitmap);
+            }
             imageView.setImageBitmap(thumbnailBitmap);
             textView.setText(booksList.get(position).getTitle());
             Log.v(getClass().getName(), convertView.toString());
