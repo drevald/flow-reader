@@ -449,7 +449,7 @@ public class PageActivity extends BaseActivity {
         item.setTitle(pref.getBoolean(KINDLE_NAVIGATION, false) ? R.string.ipad_navigation : R.string.kindle_navigation);
         item = menu.findItem(R.id.scrollbars);
         item.setIcon(pref.getBoolean(SHOW_SCROLLBARS, false) ? R.drawable.ic_noscrollbars : R.drawable.ic_scrollbars);
-        item.setTitle(pref.getBoolean(SHOW_SCROLLBARS, false) ? R.string.hide_scrollbars : R.string.show_scrollbars );q
+        item.setTitle(pref.getBoolean(SHOW_SCROLLBARS, false) ? R.string.hide_scrollbars : R.string.show_scrollbars );
         if (viewMode == VIEW_MODE_PHONE) {
             menu.findItem(R.id.no_margins).setEnabled(true);
             menu.findItem(R.id.normal_margins).setEnabled(true);
