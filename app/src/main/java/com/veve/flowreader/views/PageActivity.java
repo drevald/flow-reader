@@ -405,27 +405,27 @@ public class PageActivity extends BaseActivity {
             context.setInvalidateCache(false);
         }
 
-        TextView bookTitle = findViewById(R.id.book_title);
-        bookTitle.setText(book.getTitle());
-        bookTitle.setOnClickListener((view)->{
-            AlertDialog.Builder builder = new AlertDialog.Builder(PageActivity.this);
-            builder.setCancelable(false)
-                    .setMessage(book.getTitle())
-                    .setNeutralButton(R.string.close, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
-            AlertDialog alert = builder.create();
-            alert.show();
-        });
+//        TextView bookTitle = findViewById(R.id.book_title);
+//        bookTitle.setText(book.getTitle());
+//        bookTitle.setOnClickListener((view)->{
+//            AlertDialog.Builder builder = new AlertDialog.Builder(PageActivity.this);
+//            builder.setCancelable(false)
+//                    .setMessage(book.getTitle())
+//                    .setNeutralButton(R.string.close, new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            dialog.cancel();
+//                        }
+//                    });
+//            AlertDialog alert = builder.create();
+//            alert.show();
+//        });
 
         pageActivity = this;
         setPageNumber(currentPage);
 
         book.setZoom(context.getZoom());
-        show.setImageResource(viewMode == VIEW_MODE_PHONE ? R.drawable.ic_to_book : R.drawable.ic_to_phone);
+        show.setImageResource(viewMode == VIEW_MODE_PHONE ? R.drawable.ic_baseline_menu_book_24 : R.drawable.ic_baseline_smartphone_24);
 
         findViewById(R.id.scroll).setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -449,7 +449,7 @@ public class PageActivity extends BaseActivity {
         item.setTitle(pref.getBoolean(KINDLE_NAVIGATION, false) ? R.string.ipad_navigation : R.string.kindle_navigation);
         item = menu.findItem(R.id.scrollbars);
         item.setIcon(pref.getBoolean(SHOW_SCROLLBARS, false) ? R.drawable.ic_noscrollbars : R.drawable.ic_scrollbars);
-        item.setTitle(pref.getBoolean(SHOW_SCROLLBARS, false) ? R.string.hide_scrollbars : R.string.show_scrollbars );
+        item.setTitle(pref.getBoolean(SHOW_SCROLLBARS, false) ? R.string.hide_scrollbars : R.string.show_scrollbars );q
         if (viewMode == VIEW_MODE_PHONE) {
             menu.findItem(R.id.no_margins).setEnabled(true);
             menu.findItem(R.id.normal_margins).setEnabled(true);
@@ -711,7 +711,7 @@ public class PageActivity extends BaseActivity {
             if (viewMode == VIEW_MODE_ORIGINAL) {
                 viewMode = VIEW_MODE_PHONE;
                 book.setMode(VIEW_MODE_PHONE);
-                Drawable res = getApplicationContext().getResources().getDrawable(R.drawable.ic_to_book);
+                Drawable res = getApplicationContext().getResources().getDrawable(R.drawable.ic_baseline_menu_book_24);
                 Log.d(getClass().getName(), "resource state is " + res.getConstantState().hashCode());
                 show.setImageDrawable(res);
                 Log.d(getClass().getName(),"button resource state is now " + show.getDrawable().getConstantState().hashCode());
@@ -720,7 +720,7 @@ public class PageActivity extends BaseActivity {
             } else if (viewMode == VIEW_MODE_PHONE) {
                 viewMode = VIEW_MODE_ORIGINAL;
                 book.setMode(VIEW_MODE_ORIGINAL);
-                show.setImageResource(R.drawable.ic_to_phone);
+                show.setImageResource(R.drawable.ic_baseline_smartphone_24);
                 Snackbar.make(view, getString(R.string.ui_original_page), Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 Log.d(getClass().getName(), String.format("Setting page #%d for original page", currentPage));
             }
@@ -938,7 +938,7 @@ public class PageActivity extends BaseActivity {
             builder.setTitle(getResources().getString(R.string.try_reflow))
                     .setMessage(R.string.try_reflow_explained)
                     .setCancelable(true)
-                    .setIcon(R.drawable.ic_to_phone_large)
+                    .setIcon(R.drawable.ic_baseline_smartphone_24)
                     .setPositiveButton(R.string.ok, (dialog, which) -> {dialog.cancel();})
                     .setNegativeButton(R.string.ok_not_anymore, (dialog, which) -> {
                         pref.edit().putBoolean(Constants.SHOW_TRY_REFLOW, false).apply();

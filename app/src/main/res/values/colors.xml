@@ -3,7 +3,7 @@
     <color name="colorPrimary">#949470</color>
     <color name="colorPrimaryDark">#336699</color>
     <color name="colorAccent">#00BCD4</color>
-    <color name="colorBackground">#FFFFFF</color>
+    <color name="colorBackground">#FFFFEE</color>
     <color name="transparent">#00FFFFFF</color>
-    <color name="itemBackground">#FFFFFF</color>
+    <color name="itemBackground">#FFFFEE</color>
 </resources>

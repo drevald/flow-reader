@@ -28,11 +28,10 @@
 
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/help"
-                android:layout_width="32dp"
+                android:layout_width="64dp"
                 android:layout_height="wrap_content"
-                android:paddingRight="32dp"
                 android:layout_gravity="start"
-                app:srcCompat="@drawable/ic_help"
+                app:srcCompat="@drawable/ic_baseline_help_24"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_weight="0" />
 
@@ -116,7 +115,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|start"
             android:layout_margin="@dimen/fab_margin"
-            app:srcCompat="@drawable/ic_to_phone"
+            app:srcCompat="@drawable/ic_baseline_smartphone_24"
             android:layout_weight = "0"/>
 
         <TextView
@@ -141,7 +140,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="@dimen/fab_margin"
-            app:srcCompat="@drawable/ic_return"
+            app:srcCompat="@drawable/ic_baseline_arrow_back_24"
             android:layout_weight = "0"/>
 
     </LinearLayout>
