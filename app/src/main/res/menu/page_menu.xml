@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android" style="@style/background">
     <item android:id="@+id/no_margins" android:title="@string/no_margins" android:icon="@drawable/ic_margins_no"/>
     <item android:id="@+id/normal_margins" android:title="@string/normal_margins"  android:icon="@drawable/ic_margins_normal"/>
     <item android:id="@+id/wide_margins" android:title="@string/wide_margins"  android:icon="@drawable/ic_margins_wide"/>

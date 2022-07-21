@@ -18,7 +18,7 @@ import com.veve.flowreader.model.BooksCollection;
 
 import java.io.File;
 
-public class GetBookActivity extends AppCompatActivity {
+public class GetBookActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

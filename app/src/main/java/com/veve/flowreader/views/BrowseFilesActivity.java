@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class BrowseFilesActivity extends AppCompatActivity {
+public class BrowseFilesActivity extends BaseActivity {
 
     FileListAdapter fileListAdapter;
 

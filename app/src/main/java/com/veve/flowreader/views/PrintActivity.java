@@ -48,7 +48,7 @@ import static com.veve.flowreader.Constants.MILS_IN_MM;
 import static com.veve.flowreader.Constants.MM_IN_INCH;
 import static com.veve.flowreader.Constants.MM_IN_MILS;
 
-public class PrintActivity extends AppCompatActivity {
+public class PrintActivity extends BaseActivity {
 
     static PageRenderer pageRenderer;
 

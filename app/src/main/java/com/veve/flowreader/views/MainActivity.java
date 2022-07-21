@@ -51,7 +51,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     public static final int FILE_OPEN_REQUEST = 42;
     SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
@@ -187,6 +187,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        ImageButton imageButton = findViewById(R.id.theme);
+        imageButton.setImageDrawable(getApplicationContext().getResources().getDrawable(
+                darkTheme?R.drawable.ic_baseline_brightness_5_24:R.drawable.ic_baseline_brightness_3_24));
 
         ////////////    ADD BOOKS BUTTON     /////////////////////////////////////////////////////
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -343,6 +347,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void changeTheme(View view) {
+        changeTheme();
+    }
+
 /////////////////////////   ADAPTERS   ///////////////////////////////////////////////////////////////
 
     public class BookListAdapter extends BaseAdapter {
@@ -391,9 +399,9 @@ public class MainActivity extends AppCompatActivity {
             byte[] bytes = booksList.get(position).getPreview();
             Bitmap thumbnailBitmap = Bitmap
                     .createScaledBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length), 60, 90, false);
-//            Canvas canvas = new Canvas(thumbnailBitmap);
-//            canvas.drawRect(0, 0, thumbnailBitmap.getWidth(), thumbnailBitmap.getHeight(),
-//                    borderPaint);
+            if (darkTheme) {
+                thumbnailBitmap = createInvertedBitmap(thumbnailBitmap);
+            }
             imageView.setImageBitmap(thumbnailBitmap);
             TextView textView = convertView.findViewById(R.id.text);
                 textView.setText(booksList.get(position).getTitle());
@@ -474,9 +482,9 @@ public class MainActivity extends AppCompatActivity {
             ImageView imageView = convertView.findViewById(R.id.thumbnail);
             byte[] bytes = booksList.get(position).getPreview();
             Bitmap thumbnailBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-//            Canvas canvas = new Canvas(thumbnailBitmap);
-//            canvas.drawRect(0, 0, thumbnailBitmap.getWidth(), thumbnailBitmap.getHeight(),
-//                    borderPaint);
+            if(darkTheme) {
+                thumbnailBitmap = createInvertedBitmap(thumbnailBitmap);
+            }
             imageView.setImageBitmap(thumbnailBitmap);
             textView.setText(booksList.get(position).getTitle());
             Log.v(getClass().getName(), convertView.toString());

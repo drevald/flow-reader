@@ -22,6 +22,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -81,7 +86,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 /**
  * Designed to show a book page with page controls
  */
-public class PageActivity extends AppCompatActivity {
+public class PageActivity extends BaseActivity {
 
     GestureDetectorCompat kindleGestureDetector;
     GestureDetectorCompat gestureDetectorCompat;
@@ -400,27 +405,27 @@ public class PageActivity extends AppCompatActivity {
             context.setInvalidateCache(false);
         }
 
-        TextView bookTitle = findViewById(R.id.book_title);
-        bookTitle.setText(book.getTitle());
-        bookTitle.setOnClickListener((view)->{
-            AlertDialog.Builder builder = new AlertDialog.Builder(PageActivity.this);
-            builder.setCancelable(false)
-                    .setMessage(book.getTitle())
-                    .setNeutralButton(R.string.close, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
-            AlertDialog alert = builder.create();
-            alert.show();
-        });
+//        TextView bookTitle = findViewById(R.id.book_title);
+//        bookTitle.setText(book.getTitle());
+//        bookTitle.setOnClickListener((view)->{
+//            AlertDialog.Builder builder = new AlertDialog.Builder(PageActivity.this);
+//            builder.setCancelable(false)
+//                    .setMessage(book.getTitle())
+//                    .setNeutralButton(R.string.close, new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            dialog.cancel();
+//                        }
+//                    });
+//            AlertDialog alert = builder.create();
+//            alert.show();
+//        });
 
         pageActivity = this;
         setPageNumber(currentPage);
 
         book.setZoom(context.getZoom());
-        show.setImageResource(viewMode == VIEW_MODE_PHONE ? R.drawable.ic_to_book : R.drawable.ic_to_phone);
+        show.setImageResource(viewMode == VIEW_MODE_PHONE ? R.drawable.ic_baseline_menu_book_24 : R.drawable.ic_baseline_smartphone_24);
 
         findViewById(R.id.scroll).setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -706,7 +711,7 @@ public class PageActivity extends AppCompatActivity {
             if (viewMode == VIEW_MODE_ORIGINAL) {
                 viewMode = VIEW_MODE_PHONE;
                 book.setMode(VIEW_MODE_PHONE);
-                Drawable res = getApplicationContext().getResources().getDrawable(R.drawable.ic_to_book);
+                Drawable res = getApplicationContext().getResources().getDrawable(R.drawable.ic_baseline_menu_book_24);
                 Log.d(getClass().getName(), "resource state is " + res.getConstantState().hashCode());
                 show.setImageDrawable(res);
                 Log.d(getClass().getName(),"button resource state is now " + show.getDrawable().getConstantState().hashCode());
@@ -715,7 +720,7 @@ public class PageActivity extends AppCompatActivity {
             } else if (viewMode == VIEW_MODE_PHONE) {
                 viewMode = VIEW_MODE_ORIGINAL;
                 book.setMode(VIEW_MODE_ORIGINAL);
-                show.setImageResource(R.drawable.ic_to_phone);
+                show.setImageResource(R.drawable.ic_baseline_smartphone_24);
                 Snackbar.make(view, getString(R.string.ui_original_page), Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 Log.d(getClass().getName(), String.format("Setting page #%d for original page", currentPage));
             }
@@ -870,6 +875,9 @@ public class PageActivity extends AppCompatActivity {
 
                                 Bitmap limitedBitmap = Bitmap.createBitmap(bitmap, 0, offset, context.getWidth(),
                                         height - offset);
+                                if(darkTheme) {
+                                    limitedBitmap = createInvertedBitmap(limitedBitmap);
+                                }
                                 ImageView imageView = new ImageView(getApplicationContext());
                                 imageView.setScaleType(ImageView.ScaleType.FIT_START);
                                 imageView.setMaxHeight(Integer.MAX_VALUE);
@@ -930,7 +938,7 @@ public class PageActivity extends AppCompatActivity {
             builder.setTitle(getResources().getString(R.string.try_reflow))
                     .setMessage(R.string.try_reflow_explained)
                     .setCancelable(true)
-                    .setIcon(R.drawable.ic_to_phone_large)
+                    .setIcon(R.drawable.ic_baseline_smartphone_24)
                     .setPositiveButton(R.string.ok, (dialog, which) -> {dialog.cancel();})
                     .setNegativeButton(R.string.ok_not_anymore, (dialog, which) -> {
                         pref.edit().putBoolean(Constants.SHOW_TRY_REFLOW, false).apply();
