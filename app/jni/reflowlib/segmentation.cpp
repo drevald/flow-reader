@@ -480,7 +480,7 @@ std::map<int, int> group_words(std::vector<cv::Rect>& glyphs) {
         cv::Rect gc = glyphs[i];
         cv::Rect gp = glyphs[i - 1];
         int gap = gc.x - (gp.x + gp.width);
-        if (gap > 0.5 * av_height) {
+        if (gap > 0.4 * av_height) {
             interword_gaps[i] = gap;
         }
     }
@@ -698,8 +698,71 @@ std::vector<std::vector<std::tuple<Word, double>>> split_paragraph(std::vector<s
             }
             new_lines.push_back(copy_line_words);
             line_words = std::vector<std::tuple<Word, double>>();
-            line_words.push_back(std::make_tuple(w, g));
-            act_width = w.bounding_rect.width + g;
+            if (w.bounding_rect.width < width) {
+                line_words.push_back(std::make_tuple(w, g));
+                act_width = w.bounding_rect.width + g;
+            } else {
+                std::set<int> splits;
+                int split_counter = 1;
+                int current_left = 0;
+               std::vector<std::tuple<Word,double>> split_words;
+               std::vector<cv::Rect> current_rects;
+               for (int v=0;v<w.glyphs.size(); v++) {
+                   if (w.glyphs[v].x + w.glyphs[v].width -current_left > width || v == w.glyphs.size()-1) {
+
+                        if (v == w.glyphs.size() - 1) {
+                            glyph_result gr = w.glyphs[v];
+                            cv::Rect cr(gr.x, gr.y, gr.width, gr.height);
+                            current_rects.push_back(cr);
+                        }
+
+                        std::set<int> inds;
+                        for (int n=0;n<current_rects.size(); n++) {
+                            inds.insert(n);
+                        }
+
+                        cv::Rect wbr = bounding_rect(inds, current_rects);
+                        std::vector<glyph_result> new_glyphs;
+                        for (cv::Rect rr : current_rects) {
+                            glyph_result gres = {rr.x, rr.y, rr.width, rr.height, 0};
+                            new_glyphs.push_back(gres);
+                        }
+                        glyph_result wgr = {wbr.x, wbr.y, wbr.width, wbr.height, 0};
+                        Word ww = {new_glyphs, wgr};
+                        split_words.push_back(std::make_tuple(ww, 0));
+
+                        if (v < w.glyphs.size()-1) {
+                            current_rects = std::vector<cv::Rect>();
+                            current_left = w.glyphs[v].x;
+                            glyph_result gr = w.glyphs[v];
+                            cv::Rect cr(gr.x, gr.y, gr.width, gr.height);
+                            current_rects.push_back(cr);
+                        }
+
+
+                   } else {
+                        glyph_result gr = w.glyphs[v];
+                        cv::Rect cr(gr.x, gr.y, gr.width, gr.height);
+                        current_rects.push_back(cr);
+                   }
+               }
+
+
+               for (int v=0;v<split_words.size()-1;v++) {
+                    std::tuple<Word,double> sw = split_words[v];
+                    line_words = std::vector<std::tuple<Word, double>>();
+                    line_words.push_back(sw);
+                    new_lines.push_back(line_words);
+
+               }
+                line_words = std::vector<std::tuple<Word, double>>();
+
+                auto last_split_word = split_words[split_words.size()-1];
+                line_words.push_back(last_split_word);
+                act_width = std::get<0>(last_split_word).bounding_rect.width + g;
+
+
+            }
         } else {
             line_words.push_back(std::make_tuple(w, g));
             act_width += g;
@@ -716,9 +779,11 @@ std::vector<std::vector<std::tuple<Word, double>>> split_paragraph(std::vector<s
 
 }
 
+
 cv::Mat find_reflowed_image(
     std::vector<cv::Rect>& joined_rects,std::vector<cv::Rect>& pictures, float factor, float zoom_factor, cv::Mat& mat) {
 
+    cv::Size sz = mat.size();
     std::vector<words_struct> lines_of_words;
     double average_height = 0.0;
     std::vector<int> line_sizes;
@@ -935,13 +1000,7 @@ cv::Mat find_reflowed_image(
             cv::Size s = new_image.size();
             int ypos = current_height + (int)(0.2 * h_) - w_.bounding_rect.height - bs;
 
-            if (left + w_.bounding_rect.width > s.width) {
-                __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "width larger");
-            }
-            if (ypos + w_.bounding_rect.height > s.height) {
-                __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "height larger");
-            }
-            if (left + w_.bounding_rect.width <= s.width) {
+            if (left + w_.bounding_rect.width <= s.width && ypos  + w_.bounding_rect.height <= s.height) {
                 cv::Mat srcRoi = img(cv::Rect(w_.bounding_rect.x, w_.bounding_rect.y, w_.bounding_rect.width, w_.bounding_rect.height));
                 cv::Mat dstRoi = new_image(cv::Rect(left, ypos, w_.bounding_rect.width, w_.bounding_rect.height));
                 srcRoi.copyTo(dstRoi);
