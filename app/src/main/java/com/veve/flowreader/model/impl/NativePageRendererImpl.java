@@ -92,7 +92,8 @@ public class NativePageRendererImpl implements PageRenderer {
                         glyph.getAverageHeight(),
                         glyph.isIndented(),
                         glyph.isSpace(),
-                        glyph.isLast()
+                        glyph.isLast(),
+                        glyph.isPicture()
                 ));
             }
             booksCollection.addGlyphs(glyphsToStore, false);
@@ -111,7 +112,8 @@ public class NativePageRendererImpl implements PageRenderer {
                         record.getAverageHeight(),
                         record.getBaselineShift(),
                         record.isSpace(),
-                        record.isLast()
+                        record.isLast(),
+                        record.isPicture()
                 ));
             }
             List<Bitmap> reflownPageBytes = bookSource.getReflownPageBytes(position, context, glyphs);

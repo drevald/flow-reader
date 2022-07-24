@@ -196,8 +196,6 @@ std::vector<glyph> detect_images(cv::Mat& image) {
         }
     }
 
-    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "pictures found %d",
-                        pictures.size());
     return pictures;
 }
 
@@ -506,6 +504,8 @@ std::vector<glyph> convert_java_glyphs(JNIEnv* env, jobject list) {
             env->GetMethodID(pageGlyphInfoCls, "isLast", "()Z");
         jmethodID getSpaceMethod =
             env->GetMethodID(pageGlyphInfoCls, "isSpace", "()Z");
+        jmethodID getPictureMethod =
+                env->GetMethodID(pageGlyphInfoCls, "isPicture", "()Z");
 
         for (int i = 0; i < listsize; i++) {
             jobject gobject = env->CallObjectMethod(list, getMethod, (jint)i);
@@ -519,6 +519,7 @@ std::vector<glyph> convert_java_glyphs(JNIEnv* env, jobject list) {
                 (bool)env->CallBooleanMethod(gobject, getIndentedMethod);
             bool last = (bool)env->CallBooleanMethod(gobject, getLastMethod);
             bool space = (bool)env->CallBooleanMethod(gobject, getSpaceMethod);
+            bool picture = (bool)env->CallBooleanMethod(gobject, getPictureMethod);
             glyph g;
             g.x = x;
             g.y = y;
@@ -540,8 +541,6 @@ std::vector<glyph> convert_java_glyphs(JNIEnv* env, jobject list) {
 std::vector<glyph> get_glyphs(cv::Mat mat, std::vector<glyph> pictures) {
     Xycut xycut(mat);
     std::vector<ImageNode> parts = xycut.xycut();
-    __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "parts count = %d\n",
-                        parts.size());
 
     cv::Mat clone;
     mat.copyTo(clone);
@@ -563,9 +562,6 @@ std::vector<glyph> get_glyphs(cv::Mat mat, std::vector<glyph> pictures) {
             cv::Mat img = clone(rect);
             PageSegmenter ps(img);
             vector<glyph> glyphs = ps.get_glyphs();
-
-            __android_log_print(ANDROID_LOG_VERBOSE, APPNAME,
-                                "glyphs count = %d\n", glyphs.size());
 
             for (int j = 0; j < glyphs.size(); j++) {
                 glyph g = glyphs.at(j);
@@ -595,7 +591,7 @@ void put_glyphs(JNIEnv* env, vector<glyph>& glyphs, jobject& list) {
     }
 
     // jclass clz = env->FindClass("com/veve/flowreader/model/PageGlyphInfo");
-    jmethodID constructor = env->GetMethodID(clz, "<init>", "(ZIIIIIIZZ)V");
+    jmethodID constructor = env->GetMethodID(clz, "<init>", "(ZIIIIIIZZZ)V");
 
     if (constructor == NULL) {
         __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "%s\n",
@@ -605,7 +601,7 @@ void put_glyphs(JNIEnv* env, vector<glyph>& glyphs, jobject& list) {
     for (glyph g : glyphs) {
         jobject object = env->NewObject(
             clz, constructor, g.indented, g.x, g.y, g.width, g.height,
-            g.line_height, g.baseline_shift, g.is_space, g.is_last);
+            g.line_height, g.baseline_shift, g.is_space, g.is_last, g.is_picture);
 
         env->CallBooleanMethod(list, addMethod, object);
 

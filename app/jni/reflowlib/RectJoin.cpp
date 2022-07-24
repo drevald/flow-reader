@@ -33,7 +33,7 @@ std::vector<std::pair<interval<int>, interval<int>>> all_pairs(
     return return_value;
 }
 
-std::vector<cv::Rect> join_rects(vector<cv::Rect> rects) {
+std::vector<cv::Rect> join_rects(vector<cv::Rect>& rects) {
     std::vector<cv::Rect> joined_rects;
     std::sort(rects.begin(), rects.end(), less_than_rect());
 
@@ -46,6 +46,7 @@ std::vector<cv::Rect> join_rects(vector<cv::Rect> rects) {
     for (const auto& value : rects) {
         std::array<int, 4> a = {value.x, value.y, value.width, value.height};
         numbered_rects[a] = i;
+        add_vertex(i, g);
         i++;
         std::pair<int, int> map_key =
             std::make_pair(value.y, value.y + value.height);

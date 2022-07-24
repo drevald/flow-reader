@@ -24,13 +24,14 @@ public class PageGlyphRecord implements Serializable {
     private boolean indented;
     private boolean isSpace;
     private boolean isLast;
+    private boolean isPicture;
 
     @Ignore
     public PageGlyphRecord() {
 
     }
 
-    public PageGlyphRecord(long bookId, int position, int x, int y, int width, int height, int baselineShift, int averageHeight, boolean indented, boolean isSpace, boolean isLast) {
+    public PageGlyphRecord(long bookId, int position, int x, int y, int width, int height, int baselineShift, int averageHeight, boolean indented, boolean isSpace, boolean isLast, boolean isPicture) {
         this.bookId = bookId;
         this.position = position;
         this.x = x;
@@ -42,6 +43,7 @@ public class PageGlyphRecord implements Serializable {
         this.indented = indented;
         this.isSpace = isSpace;
         this.isLast = isLast;
+        this.isPicture = isPicture;
     }
 
     public long getId() {
@@ -134,6 +136,10 @@ public class PageGlyphRecord implements Serializable {
 
     public boolean isLast() {
         return isLast;
+    }
+
+    public boolean isPicture() {
+        return isPicture;
     }
 
     public void setLast(boolean last) {

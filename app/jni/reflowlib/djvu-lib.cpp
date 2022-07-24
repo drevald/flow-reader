@@ -1,7 +1,7 @@
 
 #include "djvu-lib.h"
 #include "common.h"
-
+#include "segmentation.h"
 #define PIXELS 4
 
 
@@ -23,7 +23,6 @@ jstring get_annotation(JNIEnv *env, jlong bookId, const char* key) {
         if (value) {
             const char* k = miniexp_to_name(keys[i]);
             if (std::strcmp(k, key)==0) {
-                __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "value =  %s\n", value);
                 return env->NewStringUTF(value);
             }
         }
@@ -251,9 +250,42 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
         reflow(m, new_image, scale, pageWidth, env, glyphs, list, pic_glyphs, rotated_with_pictures, true, margin);
         pixDestroy(&r);
     } else {
-        threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
-        std::vector<glyph> pic_glyphs = detect_images(mat);
-        reflow(mat, new_image, scale, pageWidth, env, glyphs, list,pic_glyphs, mat, false, margin);
+        cv::Mat m = mat.clone();
+        //threshold(m, m, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
+        std::vector<cv::Rect> new_rects;
+        std::vector<int> pic_indexes;
+        std::vector<cv::Rect> rects_with_joined_captions;
+
+        new_rects = find_enclosing_rects(m);
+
+        if (new_rects.size() > 10) {
+
+            auto belongs = detect_captions(m, new_rects);
+            pic_indexes = join_with_captions(belongs, new_rects, rects_with_joined_captions);
+
+            std::vector<cv::Rect> filtered_rects;
+            std::vector<cv::Rect> pictures;
+            std::vector<glyph> new_glyphs;
+
+            for (int i=0;i<rects_with_joined_captions.size(); i++) {
+                cv::Rect r = rects_with_joined_captions[i];
+                if (std::find(pic_indexes.begin(), pic_indexes.end(), i) == pic_indexes.end()) {
+                    glyph ng = {false, r.x, r.y, r.width, r.height, 0, 0, 0, 0, 0};
+                    filtered_rects.push_back(rects_with_joined_captions[i]);
+                    new_glyphs.push_back(ng);
+                } else {
+                    glyph ng = {false, r.x, r.y, r.width, r.height, 0, 0, 0, 0, 1};
+                    pictures.push_back(rects_with_joined_captions[i]);
+                    new_glyphs.push_back(ng);
+                }
+            }
+            put_glyphs(env, new_glyphs, list);
+            double factor = 1.0;
+            new_image = find_reflowed_image(filtered_rects, pictures, factor, scale, m);
+        } else {
+            new_image = mat;
+        }
+
     }
 
     jclass clz = env->GetObjectClass(pageSize);
@@ -264,6 +296,7 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
     env->CallVoidMethod(pageSize,setPageHeightMid, new_image.rows);
 
     cv::bitwise_not(new_image, new_image);
+
     jobject arrayList = splitMat(new_image, env);
     free(pixels);
     return arrayList;

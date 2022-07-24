@@ -11,13 +11,14 @@ public class PageGlyphInfo {
     private int baselineShift;
     private boolean space;
     private boolean last;
+    private boolean picture;
 
     public boolean isSpace() {
         return space;
     }
 
     public PageGlyphInfo(boolean indented, int x, int y, int width, int height,
-                         int averageHeight, int baselineShift, boolean space, boolean last) {
+                         int averageHeight, int baselineShift, boolean space, boolean last, boolean picture) {
         this.indented = indented;
         this.x = x;
         this.y = y;
@@ -27,6 +28,7 @@ public class PageGlyphInfo {
         this.baselineShift = baselineShift;
         this.space = space;
         this.last = last;
+        this.picture = picture;
     }
 
 
@@ -59,4 +61,8 @@ public class PageGlyphInfo {
     }
 
     public boolean isLast() {return last;}
+
+    public boolean isPicture() {
+        return picture;
+    }
 }

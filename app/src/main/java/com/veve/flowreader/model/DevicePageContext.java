@@ -13,7 +13,7 @@ import java.io.Serializable;
 
 public class DevicePageContext implements Serializable {
 
-    private static final float DEFAULT_ZOOM = 1f;
+    private static final float DEFAULT_ZOOM = 5.0f;
 
     private static final float DEFAULT_FONT_SIZE = 24;
 
