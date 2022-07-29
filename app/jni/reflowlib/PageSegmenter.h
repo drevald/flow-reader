@@ -19,8 +19,6 @@ struct line_limit {
         this->upper_baseline = upper_baseline;
         this->lower_baseline = lower_baseline;
         this->lower = lower;
-
-
     }
     int upper, upper_baseline, lower, lower_baseline;
 };
@@ -45,8 +43,14 @@ struct SortLineLimits {
 
 };
 
-
-
+/**
+ * Main class in algorithm
+ * Sequence is following:
+ * - Open CV identifies all connected components (CV terminology) or spots
+ * - Using flan the nearest component is found
+ * - Chains of horizontal components are identified, stored as graph - they form lines
+ * - Histogramm is built go indentify glyphs ("reduce" function in OpenCV)
+ */
 class PageSegmenter {
 
     public:
@@ -72,7 +76,6 @@ class PageSegmenter {
         std::vector<line_limit> join_lines(std::vector<line_limit> line_limits);
         std::map<int,std::vector<double_pair>> get_connected_components(std::vector<double_pair>& center_list, double averahe_hight);
         line_limit find_baselines(std::vector<double_pair>& cc);
-        
         
 };
 

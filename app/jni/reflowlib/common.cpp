@@ -441,11 +441,14 @@ std::vector<glyph> convert_java_glyphs(JNIEnv *env, jobject list) {
     // end
 }
 
-
-
+/**
+ * Retrieves glyphs from page image
+ * @param mat
+ * @return
+ */
 
 std::vector<glyph> get_glyphs(cv::Mat mat) {
-    Xycut xycut(mat);
+    Xycut xycut(mat); //algorythm which cuts page into framgents
     std::vector<ImageNode> parts = xycut.xycut();
     __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "parts count = %d\n", parts.size());
 

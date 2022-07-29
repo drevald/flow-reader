@@ -6,8 +6,6 @@
 #include "Enclosure.h"
 #include "PageSegmenter.h"
 
-
-
 line_limit PageSegmenter::find_baselines(vector<double_pair> &cc) {
     
     sort(cc.begin(), cc.end(), PairXOrder());
@@ -95,7 +93,7 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
     }
     
     ::flann::Matrix<double> query(&q[0][0], size, 2);
-    index.knnSearch(query, indices, dists, k, ::flann::SearchParams());
+    index.knnSearch(query, indices, dists, k, ::flann::SearchParams()); // k nearest neighbours
     
     map<int,bool> verts;
     
@@ -168,7 +166,10 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
     delete [] dists.ptr();
     
     std::vector<int> c(num_vertices(g));
-    
+
+    // g here is graph. connected components from boost library. in this case connected components
+    // are graph terms, not OpenCV.
+
     connected_components(g, make_iterator_property_map(c.begin(), get(vertex_index, g), c[0]));
     
     for (int i = 0; i < c.size(); i++) {
@@ -179,12 +180,9 @@ PageSegmenter::get_connected_components(vector<double_pair> &center_list, double
         return_value.at(cn).push_back(g[i]);
         
     }
-    
-    
-    
+
     return return_value;
 }
-
 
 vector<line_limit> PageSegmenter::get_line_limits() {
     
@@ -238,12 +236,15 @@ vector<line_limit> PageSegmenter::get_line_limits() {
     
 }
 
+/**
+ * Search of all glyphs
+ * @return
+ */
 cc_result PageSegmenter::get_cc_results() {
     
     Mat image;
     const Mat kernel = getStructuringElement(MORPH_RECT, Size(1, 1));
     dilate(mat, image, kernel, Point(-1, -1), 1);
-    
     
     Mat labeled(mat.size(), mat.type());
     Mat rectComponents = Mat::zeros(Size(0, 0), 0);
@@ -253,8 +254,7 @@ cc_result PageSegmenter::get_cc_results() {
     int count = rectComponents.rows - 1;
     
     double heights[count];
-    
-    
+
     vector<double_pair> center_list;
     vector<Rect> rects;
     vector<int> v_heights;
@@ -375,11 +375,9 @@ std::map<int,int> PageSegmenter::calculate_left_indents(std::vector<int> lefts) 
         int cur_ind = current_inds.at(j);
         left_indents.insert(std::make_pair(cur_ind, (*it)));
     }
-    
-    
+
     return left_indents;
-    
-    
+
 }
 
 std::vector<line_limit> PageSegmenter::join_lines(std::vector<line_limit> line_limits) {
@@ -451,12 +449,11 @@ std::vector<line_limit> PageSegmenter::join_lines(std::vector<line_limit> line_l
 
 std::vector<glyph> PageSegmenter::get_glyphs() {
     
-    vector<glyph> return_value;
-    std::vector<cv::Rect> big_rects;
+    vector<glyph> return_value; // for glyphs
+    std::vector<cv::Rect> big_rects; // for pictures?
     vector<line_limit> line_limits = get_line_limits();
    
-    line_limits = join_lines(line_limits);
-    
+    line_limits = join_lines(line_limits); // to process overlapping lines
     
     Mat hist;
     reduce(mat, hist, 0, REDUCE_SUM, CV_32F);
@@ -476,8 +473,8 @@ std::vector<glyph> PageSegmenter::get_glyphs() {
         int u = ll.upper;
         int bu = ll.upper_baseline;
         
-        Mat lineimage(mat, Rect(0, u, w, l - u));
-        reduce(lineimage, horHist, 0, REDUCE_SUM, CV_32F);
+        Mat lineimage(mat, Rect(0, u, w, l - u)); // identifies glyphs whithin a line
+        reduce(lineimage, horHist, 0, REDUCE_SUM, CV_32F); // horHist - horizontal hystogram
         
         int w = horHist.cols;
         
@@ -489,13 +486,13 @@ std::vector<glyph> PageSegmenter::get_glyphs() {
             }
         }
         
-        const vector<std::tuple<int, int>> &oneRuns = one_runs(horHist);
+        const vector<std::tuple<int, int>> &oneRuns = one_runs(horHist); // identifies spaces
         
         int x1 = oneRuns.size() > 0 ? get<0>(oneRuns.at(0)) : 0;
         lefts.push_back(x1);
         int y1 = u;
         
-        points.push_back(cv::Point(x1,y1));
+        points.push_back(cv::Point(x1,y1)); // storing letters coordinates
         
     }
     
