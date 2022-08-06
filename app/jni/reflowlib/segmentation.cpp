@@ -703,13 +703,17 @@ std::vector<std::vector<std::tuple<Word, double>>> split_paragraph(std::vector<s
                 act_width = w.bounding_rect.width + g;
             } else {
                 std::set<int> splits;
+                int shift = INT_MAX;
                 int split_counter = 1;
                 int current_left = 0;
                std::vector<std::tuple<Word,double>> split_words;
                std::vector<cv::Rect> current_rects;
+
                for (int v=0;v<w.glyphs.size(); v++) {
                    if (w.glyphs[v].x + w.glyphs[v].width -current_left > width || v == w.glyphs.size()-1) {
-
+                        if (w.glyphs[v].shift < shift) {
+                            shift = w.glyphs[v].shift;
+                        }
                         if (v == w.glyphs.size() - 1) {
                             glyph_result gr = w.glyphs[v];
                             cv::Rect cr(gr.x, gr.y, gr.width, gr.height);
@@ -724,13 +728,14 @@ std::vector<std::vector<std::tuple<Word, double>>> split_paragraph(std::vector<s
                         cv::Rect wbr = bounding_rect(inds, current_rects);
                         std::vector<glyph_result> new_glyphs;
                         for (cv::Rect rr : current_rects) {
-                            glyph_result gres = {rr.x, rr.y, rr.width, rr.height, 0};
+                            glyph_result gres = {rr.x, rr.y, rr.width, rr.height, shift};
                             new_glyphs.push_back(gres);
                         }
-                        glyph_result wgr = {wbr.x, wbr.y, wbr.width, wbr.height, 0};
+                        glyph_result wgr = {wbr.x, wbr.y, wbr.width, wbr.height, shift};
                         Word ww = {new_glyphs, wgr};
                         split_words.push_back(std::make_tuple(ww, 0));
-
+                        shift = INT_MAX;
+                        
                         if (v < w.glyphs.size()-1) {
                             current_rects = std::vector<cv::Rect>();
                             current_left = w.glyphs[v].x;
@@ -738,7 +743,7 @@ std::vector<std::vector<std::tuple<Word, double>>> split_paragraph(std::vector<s
                             cv::Rect cr(gr.x, gr.y, gr.width, gr.height);
                             current_rects.push_back(cr);
                         }
-
+                         
 
                    } else {
                         glyph_result gr = w.glyphs[v];
@@ -747,21 +752,21 @@ std::vector<std::vector<std::tuple<Word, double>>> split_paragraph(std::vector<s
                    }
                }
 
-
+               
                for (int v=0;v<split_words.size()-1;v++) {
                     std::tuple<Word,double> sw = split_words[v];
                     line_words = std::vector<std::tuple<Word, double>>();
                     line_words.push_back(sw);
                     new_lines.push_back(line_words);
-
+                    
                }
                 line_words = std::vector<std::tuple<Word, double>>();
-
+                
                 auto last_split_word = split_words[split_words.size()-1];
                 line_words.push_back(last_split_word);
                 act_width = std::get<0>(last_split_word).bounding_rect.width + g;
-
-
+               
+               
             }
         } else {
             line_words.push_back(std::make_tuple(w, g));
@@ -778,8 +783,6 @@ std::vector<std::vector<std::tuple<Word, double>>> split_paragraph(std::vector<s
 
 
 }
-
-
 cv::Mat find_reflowed_image(
     std::vector<cv::Rect>& joined_rects,std::vector<cv::Rect>& pictures, float factor, float zoom_factor, cv::Mat& mat) {
 
