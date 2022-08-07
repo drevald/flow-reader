@@ -3,10 +3,10 @@
 //
 
 #include "pdf-lib.h"
-
+#include <sys/time.h>
 #include "common.h"
 #include "segmentation.h"
-#define RESOLUTION_MULTIPLIER  6;
+#define RESOLUTION_MULTIPLIER  5;
 
 
 
@@ -56,9 +56,6 @@ JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNa
 }
 
 
-
-
-
 JNIEXPORT jlong JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBook_openBook
 (JNIEnv* env, jobject obj, jstring path) {
 
@@ -90,7 +87,7 @@ image_format get_pdf_pixels(JNIEnv* env, jlong bookId, jint pageNumber, char** p
     FPDF_BITMAP bitmap = FPDFBitmap_Create(width, height, 0);
     FPDFBitmap_FillRect(bitmap, 0, 0, width, height, 0xFFFFFFFF);
 
-    FPDF_RenderPageBitmap(bitmap, page, 0, 0, width, height, 0, 0);
+    FPDF_RenderPageBitmap(bitmap, page, 0, 0, width, height, 0, FPDF_GRAYSCALE);
     *pixels = (char*)reinterpret_cast<const char*>(FPDFBitmap_GetBuffer(bitmap));
 
     return image_format(width, height, size, 300);
@@ -113,7 +110,7 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
 
     Mat mat(height,width,CV_8UC4,&((char*)buffer)[0]);
 
-    cv::cvtColor(mat, mat, cv::COLOR_BGR2GRAY);
+    cv::cvtColor(mat, mat, cv::COLOR_RGB2GRAY);
 
     bool do_preprocessing = (bool)preprocessing;
 
@@ -142,11 +139,8 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
             std::vector<cv::Rect> new_rects;
             std::vector<int> pic_indexes;
             std::vector<cv::Rect> rects_with_joined_captions;
-
             new_rects = find_enclosing_rects(m);
-
             if (new_rects.size() > 10) {
-
                 auto belongs = detect_captions(m, new_rects);
                 pic_indexes = join_with_captions(belongs, new_rects, rects_with_joined_captions);
 
@@ -183,7 +177,6 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
     env->CallVoidMethod(pageSize,setPageHeightMid, new_image.rows);
 
     cv::bitwise_not(new_image, new_image);
-
     jobject arrayList = splitMat(new_image, env);
 
     free((void*)buffer);

@@ -6,6 +6,14 @@
 #include "Reflow.h"
 #include "Xycut.h"
 
+long long current_timestamp() {
+    struct timeval te;
+    gettimeofday(&te, NULL); // get current time
+    long long milliseconds = te.tv_sec*1000LL + te.tv_usec/1000; // calculate milliseconds
+    // printf("milliseconds: %lld\n", milliseconds);
+    return milliseconds;
+}
+
 Pix* mat8ToPix(cv::Mat* mat8) {
     Pix* pixd = pixCreate(mat8->size().width, mat8->size().height, 8);
     for (int y = 0; y < mat8->rows; y++) {
@@ -62,17 +70,53 @@ std::pair<std::vector<int>, std::vector<float>> make_hist(std::vector<int>& v,
     return std::make_pair(histogram, steps);
 }
 
+struct args {
+    cv::Mat* mat;
+    std::vector<uchar>* buf;
+    int result;
+};
+
+void* encode(void *input)
+{
+    args* data = (args*)input;
+    cv::Mat mat =*((struct args*)input)->mat;
+    std::vector<uchar> buf;
+    cv::Size size = mat.size();
+    cv::imencode(".png", mat, buf);
+    data->result = buf.size();
+    pthread_exit(&buf[0]);
+}
+
 jobject splitMat(cv::Mat& mat, JNIEnv* env) {
     int w = mat.size().width;
     int h = mat.size().height;
     cv::Mat upper = mat(cv::Rect(0, 0, w, h / 2));
     cv::Mat lower = mat(cv::Rect(0, h / 2, w, h - h / 2));
 
-    std::vector<uchar> buff_upper;  // buffer for coding
-    cv::imencode(".png", upper, buff_upper);
+    pthread_t tid1;
+    struct args *fa1 = (struct args *)malloc(sizeof(struct args));
+    fa1->mat = &upper;
+    pthread_create(&tid1, NULL, encode, (void *)fa1);
 
-    std::vector<uchar> buff_lower;  // buffer for coding
-    cv::imencode(".png", lower, buff_lower);
+    struct args *fa2 = (struct args *)malloc(sizeof(struct args));
+    fa2->mat = &lower;
+    pthread_t tid2;
+    pthread_create(&tid2, NULL, encode, (void *)fa2);
+
+    void* ptr1 = nullptr;
+    void* ptr2 = nullptr;
+    pthread_join(tid1, &ptr1);
+    pthread_join(tid2, &ptr2);
+
+    uchar* array1 = (uchar*)ptr1;
+    uchar* array2 = (uchar*)ptr2;
+
+    int s1 = fa1->result;
+    int s2 = fa2->result;
+
+    std::vector<uchar> buff_upper(array1, array1 + s1);
+    std::vector<uchar> buff_lower(array2, array2 + s2);
+
 
     size_t sizeInBytesUpper = buff_upper.size();
     jbyteArray array_upper = env->NewByteArray(sizeInBytesUpper);
@@ -95,6 +139,9 @@ jobject splitMat(cv::Mat& mat, JNIEnv* env) {
         env->NewObject(java_util_ArrayList, java_util_ArrayList_, 1);
     env->CallBooleanMethod(arrayList, java_util_ArrayList_add, array_upper);
     env->CallBooleanMethod(arrayList, java_util_ArrayList_add, array_lower);
+
+    delete fa1;
+    delete fa2;
 
     return arrayList;
 }

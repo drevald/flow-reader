@@ -11,6 +11,8 @@
 #include <math.h>
 #include <limits>
 #include <stdlib.h>
+#include <pthread.h>
+#include <unistd.h>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -81,7 +83,7 @@ struct SortSegments {
 };
 
 
-
+long long current_timestamp();
 
 Pix *mat8ToPix(cv::Mat *mat8);
 
