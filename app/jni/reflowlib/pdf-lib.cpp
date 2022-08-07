@@ -6,7 +6,7 @@
 #include <sys/time.h>
 #include "common.h"
 #include "segmentation.h"
-#define RESOLUTION_MULTIPLIER  5;
+#define RESOLUTION_MULTIPLIER  4.1;
 
 
 
