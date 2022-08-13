@@ -3,6 +3,7 @@
 #include "IntervalJoin.h"
 #include "RectJoin.h"
 #include "Enclosure.h"
+#include "common.h"
 #include <tuple>
 
 

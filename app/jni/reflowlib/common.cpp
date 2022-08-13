@@ -90,8 +90,10 @@ void* encode(void *input)
 jobject splitMat(cv::Mat& mat, JNIEnv* env) {
     int w = mat.size().width;
     int h = mat.size().height;
-    cv::Mat upper = mat(cv::Rect(0, 0, w, h / 2));
-    cv::Mat lower = mat(cv::Rect(0, h / 2, w, h - h / 2));
+    cv::Mat upper = mat(cv::Rect(0, 0, w, h / 4));
+    cv::Mat lower = mat(cv::Rect(0, h / 4, w, h/2 - h / 4));
+    cv::Mat upper1 = mat(cv::Rect(0, h/2, w, 3*h / 4 - h/2));
+    cv::Mat lower1 = mat(cv::Rect(0, 3*h/4, w, h - 3*h / 4));
 
     pthread_t tid1;
     struct args *fa1 = (struct args *)malloc(sizeof(struct args));
@@ -103,19 +105,39 @@ jobject splitMat(cv::Mat& mat, JNIEnv* env) {
     pthread_t tid2;
     pthread_create(&tid2, NULL, encode, (void *)fa2);
 
+    struct args *fa3 = (struct args *)malloc(sizeof(struct args));
+    fa3->mat = &upper1;
+    pthread_t tid3;
+    pthread_create(&tid3, NULL, encode, (void *)fa3);
+    
+    struct args *fa4 = (struct args *)malloc(sizeof(struct args));
+    fa4->mat = &lower1;
+    pthread_t tid4;
+    pthread_create(&tid4, NULL, encode, (void *)fa4);
+
     void* ptr1 = nullptr;
     void* ptr2 = nullptr;
+    void* ptr3 = nullptr;
+    void* ptr4 = nullptr;
     pthread_join(tid1, &ptr1);
     pthread_join(tid2, &ptr2);
+    pthread_join(tid3, &ptr3);
+    pthread_join(tid4, &ptr4);
 
     uchar* array1 = (uchar*)ptr1;
     uchar* array2 = (uchar*)ptr2;
+    uchar* array3 = (uchar*)ptr3;
+    uchar* array4 = (uchar*)ptr4;
 
     int s1 = fa1->result;
     int s2 = fa2->result;
+    int s3 = fa3->result;
+    int s4 = fa4->result;
 
     std::vector<uchar> buff_upper(array1, array1 + s1);
     std::vector<uchar> buff_lower(array2, array2 + s2);
+    std::vector<uchar> buff_upper1(array3, array3 + s3);
+    std::vector<uchar> buff_lower1(array4, array4 + s4);
 
 
     size_t sizeInBytesUpper = buff_upper.size();
@@ -128,6 +150,15 @@ jobject splitMat(cv::Mat& mat, JNIEnv* env) {
     env->SetByteArrayRegion(array_lower, 0, sizeInBytesLower,
                             (jbyte*)&buff_lower[0]);
 
+    sizeInBytesUpper = buff_upper1.size();
+    jbyteArray array_upper1 = env->NewByteArray(sizeInBytesUpper);
+    env->SetByteArrayRegion(array_upper1, 0, sizeInBytesUpper,
+                            (jbyte*)&buff_upper1[0]);
+    sizeInBytesLower =
+        buff_lower1.size();  // new_image.total() * new_image.elemSize();
+    jbyteArray array_lower1 = env->NewByteArray(sizeInBytesLower);
+    env->SetByteArrayRegion(array_lower1, 0, sizeInBytesLower,
+                            (jbyte*)&buff_lower1[0]);
     static jclass java_util_ArrayList = static_cast<jclass>(
         env->NewGlobalRef(env->FindClass("java/util/ArrayList")));
     static jmethodID java_util_ArrayList_ =
@@ -139,6 +170,8 @@ jobject splitMat(cv::Mat& mat, JNIEnv* env) {
         env->NewObject(java_util_ArrayList, java_util_ArrayList_, 1);
     env->CallBooleanMethod(arrayList, java_util_ArrayList_add, array_upper);
     env->CallBooleanMethod(arrayList, java_util_ArrayList_add, array_lower);
+    env->CallBooleanMethod(arrayList, java_util_ArrayList_add, array_upper1);
+    env->CallBooleanMethod(arrayList, java_util_ArrayList_add, array_lower1);
 
     delete fa1;
     delete fa2;
