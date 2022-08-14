@@ -68,9 +68,9 @@ public class BookCollectionTest {
         assertEquals(glyphs.size(), 0);
         List<PageGlyphRecord> testGlyphs;
         testGlyphs = new ArrayList<PageGlyphRecord>();
-        testGlyphs.add(new PageGlyphRecord(1, 1, 1, 1, 1, 1, 1, 1, true, false, false, false));
-        testGlyphs.add(new PageGlyphRecord(1, 1, 1, 1, 1, 1, 1, 1, true, false, false, false));
-        testGlyphs.add(new PageGlyphRecord(1, 1, 1, 1, 1, 1, 1, 1, true, false, false, false));
+        testGlyphs.add(new PageGlyphRecord(1, 1, 1, 1, 1, 1, 1, 1, true, false, false));
+        testGlyphs.add(new PageGlyphRecord(1, 1, 1, 1, 1, 1, 1, 1, true, false, false));
+        testGlyphs.add(new PageGlyphRecord(1, 1, 1, 1, 1, 1, 1, 1, true, false, false));
         booksCollection.addGlyphs(testGlyphs, true);
 
         List<PageGlyphRecord> retrievedGlyphs = booksCollection.getPageGlyphs(1L, 1, true);

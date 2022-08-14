@@ -283,7 +283,7 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
             double factor = 1.0;
             new_image = find_reflowed_image(filtered_rects, pictures, factor, scale, m);
         } else {
-            new_image = mat;
+            new_image = m;
         }
 
     }

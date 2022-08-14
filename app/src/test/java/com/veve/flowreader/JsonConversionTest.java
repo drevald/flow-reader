@@ -10,6 +10,7 @@ import org.hamcrest.beans.*;
 
 
 import org.junit.Test;
+import org.junit.Ignore;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
@@ -22,7 +23,7 @@ public class JsonConversionTest {
 
     @Test
     public void testJsonGlyph() throws Exception {
-        PageGlyphRecord glyphRecord = new PageGlyphRecord(1, 1, 1, 1, 1, 1, 1, 1, true, false, false, false);
+        PageGlyphRecord glyphRecord = new PageGlyphRecord(1, 1, 1, 1, 1, 1, 1, 1, true, false, false);
         ObjectMapper mapper = new ObjectMapper(); // create once, reuse
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         mapper.writeValue(baos, glyphRecord);
@@ -33,9 +34,9 @@ public class JsonConversionTest {
     @Test
     public void testJsonGlyphs() throws Exception {
         List<PageGlyphRecord> glyphRecords = Arrays.asList(
-                new PageGlyphRecord(1, 1, 1, 1, 1, 1, 1, 1, true, false, false, false),
-                new PageGlyphRecord(1, 1, 1, 1, 1, 1, 1, 1, true, false, false, false),
-                new PageGlyphRecord(1, 1, 1, 1, 1, 1, 1, 1, true, false, false, false)
+                new PageGlyphRecord(1, 1, 1, 1, 1, 1, 1, 1, true, false, false),
+                new PageGlyphRecord(1, 1, 1, 1, 1, 1, 1, 1, true, false, false),
+                new PageGlyphRecord(1, 1, 1, 1, 1, 1, 1, 1, true, false, false)
         );
         ObjectMapper mapper = new ObjectMapper(); // create once, reuse
         ByteArrayOutputStream baos = new ByteArrayOutputStream();

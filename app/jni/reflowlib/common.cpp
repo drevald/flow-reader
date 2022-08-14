@@ -175,6 +175,8 @@ jobject splitMat(cv::Mat& mat, JNIEnv* env) {
 
     delete fa1;
     delete fa2;
+    delete fa3;
+    delete fa4;
 
     return arrayList;
 }
@@ -271,7 +273,6 @@ std::vector<glyph> detect_images(cv::Mat& image) {
             g.y = rect.y;
             g.width = rect.width;
             g.height = rect.height;
-            g.is_picture = true;
             pictures.push_back(g);
         }
     }
@@ -509,7 +510,6 @@ std::vector<glyph> preprocess(cv::Mat& image, cv::Mat& rotated_with_pictures) {
                 g.is_last = 1;
                 g.indented = 1;
                 g.baseline_shift = 0;
-                g.is_picture = 1;
                 g.line_height = g.height;
                 g.is_space = 0;
                 pic_glyphs.push_back(g);
@@ -584,8 +584,6 @@ std::vector<glyph> convert_java_glyphs(JNIEnv* env, jobject list) {
             env->GetMethodID(pageGlyphInfoCls, "isLast", "()Z");
         jmethodID getSpaceMethod =
             env->GetMethodID(pageGlyphInfoCls, "isSpace", "()Z");
-        jmethodID getPictureMethod =
-                env->GetMethodID(pageGlyphInfoCls, "isPicture", "()Z");
 
         for (int i = 0; i < listsize; i++) {
             jobject gobject = env->CallObjectMethod(list, getMethod, (jint)i);
@@ -599,7 +597,6 @@ std::vector<glyph> convert_java_glyphs(JNIEnv* env, jobject list) {
                 (bool)env->CallBooleanMethod(gobject, getIndentedMethod);
             bool last = (bool)env->CallBooleanMethod(gobject, getLastMethod);
             bool space = (bool)env->CallBooleanMethod(gobject, getSpaceMethod);
-            bool picture = (bool)env->CallBooleanMethod(gobject, getPictureMethod);
             glyph g;
             g.x = x;
             g.y = y;
@@ -671,7 +668,7 @@ void put_glyphs(JNIEnv* env, vector<glyph>& glyphs, jobject& list) {
     }
 
     // jclass clz = env->FindClass("com/veve/flowreader/model/PageGlyphInfo");
-    jmethodID constructor = env->GetMethodID(clz, "<init>", "(ZIIIIIIZZZ)V");
+    jmethodID constructor = env->GetMethodID(clz, "<init>", "(ZIIIIIIZZ)V");
 
     if (constructor == NULL) {
         __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "%s\n",
@@ -681,7 +678,7 @@ void put_glyphs(JNIEnv* env, vector<glyph>& glyphs, jobject& list) {
     for (glyph g : glyphs) {
         jobject object = env->NewObject(
             clz, constructor, g.indented, g.x, g.y, g.width, g.height,
-            g.line_height, g.baseline_shift, g.is_space, g.is_last, g.is_picture);
+            g.line_height, g.baseline_shift, g.is_space, g.is_last);
 
         env->CallBooleanMethod(list, addMethod, object);
 

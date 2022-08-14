@@ -23,6 +23,11 @@ struct less_than_neighbor {
     }
 };
 
+struct less_than_picture {
+    inline bool operator()(const cv::Rect& r1, const cv::Rect& r2) {
+        return r1.y < r2.y;
+    }
+};
 
 std::vector<cv::Rect> find_enclosing_rects(cv::Mat& mat) {
         threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
@@ -787,6 +792,10 @@ std::vector<std::vector<std::tuple<Word, double>>> split_paragraph(std::vector<s
 cv::Mat find_reflowed_image(
     std::vector<cv::Rect>& joined_rects,std::vector<cv::Rect>& pictures, float factor, float zoom_factor, cv::Mat& mat) {
 
+    std::sort(pictures.begin(), pictures.end(),
+              less_than_picture());
+    int current_picture = pictures.size() == 0 ? -1 : 0;
+
     cv::Size sz = mat.size();
     std::vector<words_struct> lines_of_words;
     double average_height = 0.0;
@@ -987,8 +996,25 @@ cv::Mat find_reflowed_image(
         int h_ = line_heights[i];
         int left = margin;
         std::vector<std::tuple<Word, double>> p = stps[i];
-        int counter = 0;
 
+        if (current_picture >= 0 && current_picture <= pictures.size()-1) {
+            cv::Rect pic = pictures[current_picture];
+            Word w_ = get<0>(p[0]);
+            if (w_.bounding_rect.y > pic.y) {
+                std::tuple<int,int,int,int> key = std::make_tuple(pic.x,pic.y,pic.width, pic.height);
+                cv::Rect r = picture_transform[key];
+                cv::Mat srcRoi = mat(cv::Rect(pic.x, pic.y, pic.width, pic.height)).clone();
+                cv::Mat resized;
+                cv::resize(srcRoi, resized, cv::Size(r.width, r.height), cv::INTER_LINEAR);
+
+                int left_x = (int)(mat_width - r.width)/2;
+
+                cv::Mat dstRoi = new_image(cv::Rect(left_x, current_height, r.width, r.height));
+                resized.copyTo(dstRoi);
+                current_height += average_height + r.height;
+                current_picture++;
+            }
+        }
         for (auto e : p) {
 
             Word w_ = get<0>(e);
@@ -1017,22 +1043,22 @@ cv::Mat find_reflowed_image(
 
     current_height += average_height;
 
-    for (auto const& t : picture_transform) {
-        std::tuple<int,int, int, int> k = t.first;
-        int x = std::get<0>(k);
-        int y = std::get<1>(k);
-        int w = std::get<2>(k);
-        int h = std::get<3>(k);
-
-        cv::Rect r = t.second;
-        //cv::Mat srcRoi = img(cv::Rect(r.x, r.y, r.width, r.height));
-        cv::Mat srcRoi = mat(cv::Rect(x, y, w, h));
-        int left_x = (int)(mat_width - r.width)/2;
-        //cv::Mat dstRoi = new_image(cv::Rect(left_x, current_height, r.width, r.height));
-        cv::Mat dstRoi = new_image(cv::Rect(left_x, current_height, w, h));
-        srcRoi.copyTo(dstRoi);
-        current_height += average_height + r.height;
-    }
+//    for (auto const& t : picture_transform) {
+//        std::tuple<int,int, int, int> k = t.first;
+//        int x = std::get<0>(k);
+//        int y = std::get<1>(k);
+//        int w = std::get<2>(k);
+//        int h = std::get<3>(k);
+//
+//        cv::Rect r = t.second;
+//        //cv::Mat srcRoi = img(cv::Rect(r.x, r.y, r.width, r.height));
+//        cv::Mat srcRoi = mat(cv::Rect(x, y, w, h));
+//        int left_x = (int)(mat_width - r.width)/2;
+//        //cv::Mat dstRoi = new_image(cv::Rect(left_x, current_height, r.width, r.height));
+//        cv::Mat dstRoi = new_image(cv::Rect(left_x, current_height, w, h));
+//        srcRoi.copyTo(dstRoi);
+//        current_height += average_height + r.height;
+//    }
 
     //return new_image.clone();
     return new_image;
