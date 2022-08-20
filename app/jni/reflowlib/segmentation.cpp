@@ -1489,7 +1489,7 @@ std::vector<int> join_with_captions(std::map<int, std::vector<std::vector<int>>>
     std::vector<int> pic_indexes;
 
     for (int i = 0; i<new_rects.size(); i++) {
-        if (new_rects[i].height > 7 * average_height) {
+        if (new_rects[i].height > 7 * average_height && new_rects[i].width > 3 * average_height) {
             pic_indexes.push_back(i);
         }
     }
