@@ -821,8 +821,8 @@ cv::Mat find_reflowed_image(
         cv::Rect scaled_pic((int)(pic.x * zoom_factor), (int)(pic.y * zoom_factor), (int)(pic.width * zoom_factor), (int)(pic.height * zoom_factor));
         if (scaled_pic.width >= new_width) {
             double scale_factor = scaled_pic.width / (double)new_width;
-            int nx = (int)(scaled_pic.x/scale_factor);
-            int ny = (int)(scaled_pic.y/scale_factor);
+            int nx = scaled_pic.x; //(int)(scaled_pic.x/scale_factor);
+            int ny = scaled_pic.y; //(int)(scaled_pic.y/scale_factor);
             int nw = (int)(scaled_pic.width/scale_factor);
             int nh = (int)(scaled_pic.height/scale_factor);
             cv::Rect sp(nx, ny, nw, nh); 
