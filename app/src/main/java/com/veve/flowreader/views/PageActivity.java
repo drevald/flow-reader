@@ -95,7 +95,7 @@ public class PageActivity extends BaseActivity {
     SharedPreferences pref;
 
     public int currentPage;
-    public float zoomFactor = 1;
+    public float zoomFactor = 1.0f;
 
     Set<AsyncTask> runningTasks;
     TextView pager;

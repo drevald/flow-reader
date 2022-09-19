@@ -3,9 +3,10 @@
 //
 
 #include "pdf-lib.h"
-
+#include <sys/time.h>
 #include "common.h"
-#define RESOLUTION_MULTIPLIER  4;
+#include "segmentation.h"
+#define RESOLUTION_MULTIPLIER  4.1;
 
 
 
@@ -55,9 +56,6 @@ JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNa
 }
 
 
-
-
-
 JNIEXPORT jlong JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBook_openBook
 (JNIEnv* env, jobject obj, jstring path) {
 
@@ -89,7 +87,7 @@ image_format get_pdf_pixels(JNIEnv* env, jlong bookId, jint pageNumber, char** p
     FPDF_BITMAP bitmap = FPDFBitmap_Create(width, height, 0);
     FPDFBitmap_FillRect(bitmap, 0, 0, width, height, 0xFFFFFFFF);
 
-    FPDF_RenderPageBitmap(bitmap, page, 0, 0, width, height, 0, 0);
+    FPDF_RenderPageBitmap(bitmap, page, 0, 0, width, height, 0, FPDF_GRAYSCALE);
     *pixels = (char*)reinterpret_cast<const char*>(FPDFBitmap_GetBuffer(bitmap));
 
     return image_format(width, height, size, 300);
@@ -112,7 +110,7 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
 
     Mat mat(height,width,CV_8UC4,&((char*)buffer)[0]);
 
-    cv::cvtColor(mat, mat, cv::COLOR_BGR2GRAY);
+    cv::cvtColor(mat, mat, cv::COLOR_RGB2GRAY);
 
     bool do_preprocessing = (bool)preprocessing;
 
@@ -136,9 +134,40 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
         reflow(m, new_image, scale, pageWidth, env, glyphs, list, pic_glyphs, rotated_with_pictures, true, margin);
         pixDestroy(&r);
     } else {
-        threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
-        reflow(mat, new_image, scale, pageWidth, env, glyphs, list, std::vector<glyph>(), mat, false, margin);
-    }
+            cv::Mat m = mat.clone();
+            //threshold(m, m, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
+            std::vector<cv::Rect> new_rects;
+            std::vector<int> pic_indexes;
+            std::vector<cv::Rect> rects_with_joined_captions;
+            new_rects = find_enclosing_rects(m);
+            if (new_rects.size() > 10) {
+                auto belongs = detect_captions(m, new_rects);
+                pic_indexes = join_with_captions(belongs, new_rects, rects_with_joined_captions);
+
+                std::vector<cv::Rect> filtered_rects;
+                std::vector<cv::Rect> pictures;
+                std::vector<glyph> new_glyphs;
+
+                for (int i=0;i<rects_with_joined_captions.size(); i++) {
+                    cv::Rect r = rects_with_joined_captions[i];
+                    if (std::find(pic_indexes.begin(), pic_indexes.end(), i) == pic_indexes.end()) {
+                        glyph ng = {false, r.x, r.y, r.width, r.height, 0, 0, 0, 0, 0};
+                        filtered_rects.push_back(rects_with_joined_captions[i]);
+                        new_glyphs.push_back(ng);
+                    } else {
+                        glyph ng = {false, r.x, r.y, r.width, r.height, 0, 0, 0, 0, 1};
+                        pictures.push_back(rects_with_joined_captions[i]);
+                        new_glyphs.push_back(ng);
+                    }
+                }
+                put_glyphs(env, new_glyphs, list);
+                double factor = 1.0;
+                new_image = find_reflowed_image(filtered_rects, pictures, factor, scale, m);
+            } else {
+                new_image = mat;
+            }
+
+        }
 
     jclass clz = env->GetObjectClass(pageSize);
 
@@ -148,7 +177,6 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
     env->CallVoidMethod(pageSize,setPageHeightMid, new_image.rows);
 
     cv::bitwise_not(new_image, new_image);
-
     jobject arrayList = splitMat(new_image, env);
 
     free((void*)buffer);
@@ -175,7 +203,7 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
     threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
 
 
-    std::vector<glyph> new_glyphs = get_glyphs(mat);
+    std::vector<glyph> new_glyphs = get_glyphs(mat, std::vector<glyph>());
     put_glyphs(env, new_glyphs, list);
     size_t sizeInBytes = mat.total() * mat.elemSize();
     jbyteArray array = env->NewByteArray(sizeInBytes);

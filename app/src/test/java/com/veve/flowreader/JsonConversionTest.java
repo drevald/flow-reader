@@ -10,6 +10,7 @@ import org.hamcrest.beans.*;
 
 
 import org.junit.Test;
+import org.junit.Ignore;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
