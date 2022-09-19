@@ -25,7 +25,7 @@ public class BookRecord {
     private String originalTitle;
     private String author;
     private String url;
-    private float zoom = 1f;
+    private float zoom = 2.0f;
     private float zoomOriginal = 1f;
     private float kerning = 0.5f;
     private float leading = 12f;

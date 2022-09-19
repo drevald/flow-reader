@@ -22,6 +22,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -81,7 +86,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 /**
  * Designed to show a book page with page controls
  */
-public class PageActivity extends AppCompatActivity {
+public class PageActivity extends BaseActivity {
 
     GestureDetectorCompat kindleGestureDetector;
     GestureDetectorCompat gestureDetectorCompat;
@@ -90,7 +95,7 @@ public class PageActivity extends AppCompatActivity {
     SharedPreferences pref;
 
     public int currentPage;
-    public float zoomFactor = 1;
+    public float zoomFactor = 1.0f;
 
     Set<AsyncTask> runningTasks;
     TextView pager;
@@ -870,6 +875,9 @@ public class PageActivity extends AppCompatActivity {
 
                                 Bitmap limitedBitmap = Bitmap.createBitmap(bitmap, 0, offset, context.getWidth(),
                                         height - offset);
+                                if(darkTheme) {
+                                    limitedBitmap = createInvertedBitmap(limitedBitmap);
+                                }
                                 ImageView imageView = new ImageView(getApplicationContext());
                                 imageView.setScaleType(ImageView.ScaleType.FIT_START);
                                 imageView.setMaxHeight(Integer.MAX_VALUE);

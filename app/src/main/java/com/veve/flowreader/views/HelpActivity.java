@@ -13,7 +13,7 @@ import android.view.View;
 import com.veve.flowreader.Constants;
 import com.veve.flowreader.R;
 
-public class HelpActivity extends AppCompatActivity {
+public class HelpActivity extends BaseActivity {
 
     long bookId;
 

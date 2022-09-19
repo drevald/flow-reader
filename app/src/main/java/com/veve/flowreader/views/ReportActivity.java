@@ -38,7 +38,7 @@ import static com.veve.flowreader.Constants.BOOK_ID;
 import static com.veve.flowreader.Constants.POSITION;
 import static com.veve.flowreader.Constants.REPORT_ID;
 
-public class ReportActivity extends AppCompatActivity {
+public class ReportActivity extends BaseActivity {
 
     private static byte[] originalImage;
     private static byte[] reflowedImage;

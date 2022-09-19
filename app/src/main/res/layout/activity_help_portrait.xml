@@ -61,6 +61,7 @@
                 android:layout_width="200dp"
                 android:layout_height="100dp"
                 app:srcCompat="@drawable/ic_tap_center"
+                android:tint="@color/colorAccent"
                 android:contentDescription="@string/single_tap"
                 android:background="@color/colorPrimary"/>
             <TextView
@@ -79,6 +80,7 @@
                 android:layout_width="200dp"
                 android:layout_height="100dp"
                 app:srcCompat="@drawable/ic_to_book_large"
+                android:tint="@color/colorAccent"
                 android:contentDescription="@string/show_original"
                 android:background="@color/colorPrimary"/>
             <TextView
@@ -97,6 +99,7 @@
                 android:layout_width="200dp"
                 android:layout_height="100dp"
                 app:srcCompat="@drawable/ic_to_phone_large"
+                android:tint="@color/colorAccent"
                 android:contentDescription="@string/show_overturned"
                 android:background="@color/colorPrimary"/>
             <TextView
@@ -115,6 +118,7 @@
                 android:layout_width="200dp"
                 android:layout_height="100dp"
                 app:srcCompat="@drawable/ic_enhance"
+                android:tint="@color/colorAccent"
                 android:contentDescription="@string/preprocess_explained"
                 android:background="@color/colorPrimary"/>
             <TextView
@@ -133,6 +137,7 @@
                 android:layout_width="200dp"
                 android:layout_height="100dp"
                 app:srcCompat="@drawable/ic_page_unreadable"
+                android:tint="@color/colorAccent"
                 android:contentDescription="@string/report_explained"
                 android:background="@color/colorPrimary"/>
             <TextView

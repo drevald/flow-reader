@@ -19,6 +19,16 @@
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
             <androidx.appcompat.widget.AppCompatImageButton
+                android:id="@+id/theme"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:contentDescription="@string/list_view"
+                android:labelFor="@string/list_view"
+                android:onClick="changeTheme"
+                app:srcCompat="@drawable/ic_baseline_brightness_3_24" />
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/books_list"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
@@ -26,7 +36,7 @@
                 android:layout_gravity="end"
                 android:contentDescription="@string/list_view"
                 android:labelFor="@string/list_view"
-                app:srcCompat="@drawable/ic_books_list" />
+                app:srcCompat="@drawable/ic_baseline_view_list_24" />
 
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/books_grid"
@@ -36,7 +46,7 @@
                 android:layout_gravity="end"
                 android:contentDescription="@string/grid_view"
                 android:labelFor="@string/grid_view"
-                app:srcCompat="@drawable/ic_books_grid" />
+                app:srcCompat="@drawable/ic_baseline_view_module_24" />
 
         </androidx.appcompat.widget.Toolbar>
 
@@ -49,7 +59,8 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context="com.veve.flowreader.views.MainActivity"
-        tools:showIn="@layout/activity_main">
+        tools:showIn="@layout/activity_main"
+        style="@style/background">
 
         <android.widget.GridView xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -57,14 +68,14 @@
             android:id="@+id/grid"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#ffffff"
             android:padding="40dp"
             android:horizontalSpacing="20dp"
             android:verticalSpacing="20dp"
             android:scrollbars="none"
             android:scrollbarThumbVertical="@null"
             android:scrollbarThumbHorizontal="@null"
-            tools:context="org.studies.android.activities.GridLayoutActivity"/>
+            tools:context="org.studies.android.activities.GridLayoutActivity"
+            style="Standard"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
