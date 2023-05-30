@@ -46,12 +46,20 @@ android {
         }
     }
 
-    preBuild {
-        doFirst {
-            JavaCompile jc = android.applicationVariants.find {
-                it.name == 'debug' || it.name == 'release'
-            }.javaCompileProvider.get() 
-            jc.options.compilerArgs = ["-Xlint:unchecked"]
+//    preBuild {
+//        doFirst {
+//            JavaCompile jc = android.applicationVariants.find {
+//                it.name == 'debug' || it.name == 'release'
+//            }.javaCompileProvider.get()
+//            //org.gradle.api.tasks.compile
+//            //WARNING: API 'variant.getJavaCompile()' is obsolete and has been replaced with 'variant.getJavaCompileProvider()'
+//            jc.options.compilerArgs = ["-Xlint:unchecked"]
+//        }
+//    }
+
+    tasks.withType(JavaCompile) {
+        configure(options) {
+            options.compilerArgs << '-Xlint:unchecked' // examples
         }
     }
 
@@ -75,7 +83,7 @@ android {
             force 'androidx.test:monitor:1.4.0'
         }
     }
-    buildToolsVersion '28.0.3'
+    buildToolsVersion '30.0.2'
 }
 
 dependencies {
