@@ -11,20 +11,18 @@ def getGitHash = { ->
 }
 
 android {
-    compileSdkVersion 29
     defaultConfig {
         applicationId "com.veve.flowreader"
         minSdkVersion 22
-        targetSdkVersion 30
-        versionCode 24
-        versionName "0.7"
+        targetSdkVersion 33
+        versionCode 25
+        versionName "0.8"
         buildConfigField "String", "GitHash", "\"${getGitHash()}\""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = "true"
         ndk {
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
         }
-        //ndkVersion "21.0.6011959"
         ndkVersion "21.4.7075529"
     }
 
@@ -50,7 +48,7 @@ android {
         doFirst {
             JavaCompile jc = android.applicationVariants.find {
                 it.name == 'debug' || it.name == 'release'
-            }.javaCompileProvider.get() 
+            }.javaCompileProvider.get()
             jc.options.compilerArgs = ["-Xlint:unchecked"]
         }
     }

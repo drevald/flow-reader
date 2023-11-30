@@ -3,22 +3,23 @@
 buildscript {
 
     repositories {
-        google()
         jcenter()
+        google()
+        mavenCentral()
         maven {
             url "https://repo1.maven.org/maven2"
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.0'
+        classpath 'com.android.tools.build:gradle:7.4.2'
     }
 }
 
 allprojects {
     repositories {
-        google()
         jcenter()
-//        maven { url 'http://maven.ghostscript.com' }
+        google()
+        mavenCentral()
         maven {
             url "https://repo1.maven.org/maven2"
         }

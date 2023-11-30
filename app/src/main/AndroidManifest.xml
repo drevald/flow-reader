@@ -22,9 +22,10 @@
             android:name=".views.ReportActivity"
             android:label="@string/title_activity_report" />
         <activity
-            android:name=".views.HelpActivity" />
+            android:name=".views.HelpActivity"/>
         <activity
             android:name=".views.MainActivity"
+            android:exported="true"
             android:label="Library" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,9 +37,10 @@
             android:name=".views.BrowseFilesActivity"
             android:label="@string/title_activity_browse_files" />
         <activity
-            android:name=".views.PageActivity" />
+            android:name=".views.PageActivity"/>
         <activity
             android:name=".views.GetBookActivity"
+            android:exported="true"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
