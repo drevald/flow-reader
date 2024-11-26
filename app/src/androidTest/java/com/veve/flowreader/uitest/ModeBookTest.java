@@ -39,8 +39,8 @@ public class ModeBookTest extends BookTest {
 
     @Before
     public void getIcons() {
-        iconDrawableToPhone = (VectorDrawable)appContext.getResources().getDrawable(R.drawable.ic_to_phone);
-        iconDrawableToBook = (VectorDrawable)appContext.getResources().getDrawable(R.drawable.ic_to_book);
+        iconDrawableToPhone = (VectorDrawable)appContext.getResources().getDrawable(R.drawable.ic_baseline_smartphone_24);
+        iconDrawableToBook = (VectorDrawable)appContext.getResources().getDrawable(R.drawable.ic_baseline_menu_book_24);
     }
 
     @Before

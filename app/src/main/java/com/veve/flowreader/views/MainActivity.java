@@ -188,6 +188,10 @@ public class MainActivity extends BaseActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        ImageButton imageButton = findViewById(R.id.theme);
+        imageButton.setImageDrawable(getApplicationContext().getResources().getDrawable(
+                darkTheme?R.drawable.ic_baseline_brightness_5_24:R.drawable.ic_baseline_brightness_3_24));
+
         ////////////    ADD BOOKS BUTTON     /////////////////////////////////////////////////////
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
