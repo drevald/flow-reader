@@ -163,9 +163,9 @@ public class PageActivity extends BaseActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Log.v(getClass().getName(), getClass().getName() + "onNewIntent# " + this.hashCode());
-        Log.d("INTENT_ONNEWINTENT",  getIntent().getLongExtra(BOOK_ID, 0)
-                + " = getIntent().getLongExtra(Constants.BOOK_ID, 0); hash = " + intent.hashCode());
+        Log.v(getClass().getName(), String.format("%s onNewIntent# %s", getClass().getName(), this.hashCode()));
+        Log.d("INTENT_ONNEWINTENT",  String.format("%s = getIntent().getLongExtra(Constants.BOOK_ID, 0); hash = %s",
+                getIntent().getLongExtra(BOOK_ID, 0), intent.hashCode()));
         int position = getIntent().getIntExtra("position", 0);
         booksCollection = BooksCollection.getInstance(getApplicationContext());
         book = booksCollection.getBook(position);
@@ -319,7 +319,7 @@ public class PageActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         pref = getApplicationContext().getSharedPreferences(PREFERENCES, MODE_PRIVATE);
-        Log.v(getClass().getName(), getClass().getName() + "onCreate# " + this.hashCode());
+        Log.v(getClass().getName(), String.format("%s onCreate# %s", getClass().getName(), this.hashCode()));
         runningTasks = new CopyOnWriteArraySet<>();
         setContentView(R.layout.activity_page);
         gestureDetectorCompat = new GestureDetectorCompat(this, new MyGestureListener());
@@ -471,131 +471,119 @@ public class PageActivity extends BaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         context.setInvalidateCache(false);
-        switch (item.getItemId()) {
-            case R.id.no_margins: {
-                context.setMargin(0.2f);
-                Log.v(getClass().getName(), "Margin set to " + context.getMargin());
-                book.setMargin(context.getMargin());
-                break;
-            }
-            case R.id.normal_margins: {
-                context.setMargin(1.0f);
-                Log.v(getClass().getName(), "Margin set to " + context.getMargin());
-                book.setMargin(context.getMargin());
-                break;
-            }
-            case R.id.wide_margins: {
-                context.setMargin(1.5f);
-                Log.v(getClass().getName(), "Margin set to " + context.getMargin());
-                book.setMargin(context.getMargin());
-                break;
-            }
-            case R.id.page_unreadable: {
-                ConnectionCheckerTask connectionCheckerTask = new ConnectionCheckerTask();
-                connectionCheckerTask.execute();
-                try {
-                    if (!connectionCheckerTask.get()) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(PageActivity.this);
-                        builder.setTitle(R.string.no_connection);
-                        builder.setMessage(R.string.no_connection_explained);
-                        builder.setNeutralButton(R.string.ok, (dialog, which)->{
-                            dialog.dismiss();
-                        });
-                        builder.create().show();
-                        break;
-                    }
-                } catch (Exception e)  {
-                    e.printStackTrace();
+        int id = item.getItemId();
+
+        if (id == R.id.no_margins) {
+            context.setMargin(0.2f);
+            Log.v(getClass().getName(), "Margin set to " + context.getMargin());
+            book.setMargin(context.getMargin());
+
+        } else if (id == R.id.normal_margins) {
+            context.setMargin(1.0f);
+            Log.v(getClass().getName(), "Margin set to " + context.getMargin());
+            book.setMargin(context.getMargin());
+
+        } else if (id == R.id.wide_margins) {
+            context.setMargin(1.5f);
+            Log.v(getClass().getName(), "Margin set to " + context.getMargin());
+            book.setMargin(context.getMargin());
+
+        } else if (id == R.id.page_unreadable) {
+            ConnectionCheckerTask connectionCheckerTask = new ConnectionCheckerTask();
+            connectionCheckerTask.execute();
+            try {
+                if (!connectionCheckerTask.get()) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PageActivity.this);
+                    builder.setTitle(R.string.no_connection);
+                    builder.setMessage(R.string.no_connection_explained);
+                    builder.setNeutralButton(R.string.ok, (dialog, which) -> dialog.dismiss());
+                    builder.create().show();
+                    setPageNumber(currentPage);
+                    return true;
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-                Log.v("NULLBOOK", "Getting original page " + currentPage);
-                Bitmap originalBitmap = pageRenderer.renderOriginalPage(currentPage);
-                Log.v("NULLBOOK", "Original page " + currentPage + " is " + originalBitmap);
-                List<Bitmap> reflowedBitmaps = pageLoader.bitmaps;
-                Log.v("NULLBOOK", "Reflowed pages are " + reflowedBitmaps);
-                ByteArrayOutputStream osOriginal = new ByteArrayOutputStream();
-                ByteArrayOutputStream osReflowed = new ByteArrayOutputStream();
-                originalBitmap.compress(Bitmap.CompressFormat.JPEG, 75, osOriginal);
+            Log.v("NULLBOOK", "Getting original page " + currentPage);
+            Bitmap originalBitmap = pageRenderer.renderOriginalPage(currentPage);
+            Log.v("NULLBOOK", "Original page " + currentPage + " is " + originalBitmap);
+            List<Bitmap> reflowedBitmaps = pageLoader.bitmaps;
+            Log.v("NULLBOOK", "Reflowed pages are " + reflowedBitmaps);
 
-                // only send the first bitmap, otherwise need to join bitmaps, risking OutOfMemory
-                Bitmap reflowedBitmap = reflowedBitmaps.get(0);
-                reflowedBitmap.compress(Bitmap.CompressFormat.JPEG, 25, osReflowed);
+            ByteArrayOutputStream osOriginal = new ByteArrayOutputStream();
+            ByteArrayOutputStream osReflowed = new ByteArrayOutputStream();
+            originalBitmap.compress(Bitmap.CompressFormat.JPEG, 75, osOriginal);
 
-                ObjectMapper mapper = new ObjectMapper(); // create once, reuse
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            Bitmap reflowedBitmap = reflowedBitmaps.get(0); // only first to avoid OOM
+            reflowedBitmap.compress(Bitmap.CompressFormat.JPEG, 25, osReflowed);
 
-                File origBmpFile = null;
-                File reflowedBmpFile = null;
-                try {
-                    origBmpFile = File.createTempFile(book.getId() + "_orig", null);
-                    FileOutputStream origBmpFileOut = new FileOutputStream(origBmpFile);
-                    origBmpFileOut.write(osOriginal.toByteArray());
-                    origBmpFileOut.close();
-                    origBmpFile.deleteOnExit();
-                    Log.v(getClass().getName(), "Original bitmap stored in tmp file " + origBmpFile.getPath());
+            ObjectMapper mapper = new ObjectMapper();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-                    reflowedBmpFile = File.createTempFile(book.getId() + "_reflow", null);
-                    FileOutputStream reflowedBmpFileOut = new FileOutputStream(reflowedBmpFile);
-                    reflowedBmpFileOut.write(osReflowed.toByteArray());
-                    reflowedBmpFileOut.close();
-                    reflowedBmpFile.deleteOnExit();
-                    Log.v(getClass().getName(), "Original bitmap stored in tmp file " + origBmpFile.getPath());
-                    mapper.writeValue(baos, booksCollection.getPageGlyphs(book.getId(), currentPage, true));
-                } catch (Exception e) {
-                    Log.e(getClass().getName(), "Failed to convert Glyphs to JSON", e);
+            File origBmpFile = null;
+            File reflowedBmpFile = null;
+            try {
+                origBmpFile = File.createTempFile(book.getId() + "_orig", null);
+                try (FileOutputStream origOut = new FileOutputStream(origBmpFile)) {
+                    origOut.write(osOriginal.toByteArray());
                 }
-                ReportRecord reportRecord = new ReportRecord(
-                        baos.toByteArray(),
-                        origBmpFile.getPath().getBytes(),
-                        reflowedBmpFile.getPath().getBytes());
-                reportRecord.setBookId(book.getId());
-                reportRecord.setPosition(currentPage);
-                ReportCollectorTask reportCollectorTask = new ReportCollectorTask();
-                reportCollectorTask.execute(reportRecord);
-                break;
-            }
-            case R.id.print: {
-                Intent printIntent = new Intent(PageActivity.this, PrintActivity.class);
-                printIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                printIntent.putExtra(BOOK_ID, book.getId());
-                printIntent.putExtra(BOOK_CONTEXT, context);
-                startActivity(printIntent);
-                break;
-            }
-            case R.id.preprocess: {
-                context.setPreprocessing(!context.isPreprocessing());
-                book.setPreprocessing(!book.getPreprocessing());
-                context.setInvalidateCache(true);
-                item.setIcon(book.getPreprocessing() ? R.drawable.ic_unenhance : R.drawable.ic_enhance);
-                item.setTitle(book.getPreprocessing() ? R.string.unenhance : R.string.enhance );
-            }
-            case R.id.navigation: {
-                if (pref.getBoolean(Constants.KINDLE_NAVIGATION, false)) {
-                    pref.edit().putBoolean(Constants.KINDLE_NAVIGATION, false).apply();
-                    item.setTitle(R.string.kindle_navigation);
-                } else {
-                    pref.edit().putBoolean(Constants.KINDLE_NAVIGATION, true).apply();
-                    item.setTitle(R.string.ipad_navigation);
+                origBmpFile.deleteOnExit();
+                Log.v(getClass().getName(), "Original bitmap stored in tmp file " + origBmpFile.getPath());
+
+                reflowedBmpFile = File.createTempFile(book.getId() + "_reflow", null);
+                try (FileOutputStream reflowOut = new FileOutputStream(reflowedBmpFile)) {
+                    reflowOut.write(osReflowed.toByteArray());
                 }
+                reflowedBmpFile.deleteOnExit();
+                Log.v(getClass().getName(), "Reflowed bitmap stored in tmp file " + reflowedBmpFile.getPath());
+
+                mapper.writeValue(baos, booksCollection.getPageGlyphs(book.getId(), currentPage, true));
+            } catch (Exception e) {
+                Log.e(getClass().getName(), "Failed to convert Glyphs to JSON", e);
             }
-            case R.id.scrollbars: {
-                if (pref.getBoolean(Constants.SHOW_SCROLLBARS, false)) {
-                    pref.edit().putBoolean(Constants.SHOW_SCROLLBARS, false).apply();
-                    scroll.setScrollBarSize(0);
-                    item.setTitle(R.string.show_scrollbars);
-                } else {
-                    pref.edit().putBoolean(Constants.SHOW_SCROLLBARS, true).apply();
-                    scroll.setScrollBarSize(50);
-                    item.setTitle(R.string.hide_scrollbars);
-                }
-            }
+
+            ReportRecord reportRecord = new ReportRecord(
+                    baos.toByteArray(),
+                    origBmpFile.getPath().getBytes(),
+                    reflowedBmpFile.getPath().getBytes());
+            reportRecord.setBookId(book.getId());
+            reportRecord.setPosition(currentPage);
+
+            ReportCollectorTask reportCollectorTask = new ReportCollectorTask();
+            reportCollectorTask.execute(reportRecord);
+
+        } else if (id == R.id.print) {
+            Intent printIntent = new Intent(PageActivity.this, PrintActivity.class);
+            printIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            printIntent.putExtra(BOOK_ID, book.getId());
+            printIntent.putExtra(BOOK_CONTEXT, context);
+            startActivity(printIntent);
+
+        } else if (id == R.id.preprocess) {
+            context.setPreprocessing(!context.isPreprocessing());
+            book.setPreprocessing(!book.getPreprocessing());
+            context.setInvalidateCache(true);
+            item.setIcon(book.getPreprocessing() ? R.drawable.ic_unenhance : R.drawable.ic_enhance);
+            item.setTitle(book.getPreprocessing() ? R.string.unenhance : R.string.enhance);
+
+        } else if (id == R.id.navigation) {
+            boolean kindle = pref.getBoolean(Constants.KINDLE_NAVIGATION, false);
+            pref.edit().putBoolean(Constants.KINDLE_NAVIGATION, !kindle).apply();
+            item.setTitle(kindle ? R.string.kindle_navigation : R.string.ipad_navigation);
+
+        } else if (id == R.id.scrollbars) {
+            boolean showScrollbars = pref.getBoolean(Constants.SHOW_SCROLLBARS, false);
+            pref.edit().putBoolean(Constants.SHOW_SCROLLBARS, !showScrollbars).apply();
+            scroll.setScrollBarSize(showScrollbars ? 0 : 50);
+            item.setTitle(showScrollbars ? R.string.show_scrollbars : R.string.hide_scrollbars);
         }
+
         setPageNumber(currentPage);
         return true;
-
     }
+
 
     public void setPageNumber(int pageNumber) {
         pager.setText(getString(R.string.ui_page_count, pageNumber + 1, book.getPagesCount()));
@@ -712,9 +700,9 @@ public class PageActivity extends BaseActivity {
                 viewMode = VIEW_MODE_PHONE;
                 book.setMode(VIEW_MODE_PHONE);
                 Drawable res = getApplicationContext().getResources().getDrawable(R.drawable.ic_to_book);
-                Log.d(getClass().getName(), "resource state is " + res.getConstantState().hashCode());
+                Log.d(getClass().getName(), String.format("resource state is %s", res.getConstantState().hashCode()));
                 show.setImageDrawable(res);
-                Log.d(getClass().getName(),"button resource state is now " + show.getDrawable().getConstantState().hashCode());
+                Log.d(getClass().getName(),String.format("button resource state is now %s", show.getDrawable().getConstantState().hashCode()));
                 Snackbar.make(view, getString(R.string.ui_reflow_page), Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 Log.d(getClass().getName(), String.format("Setting page #%d for modified page", currentPage));
             } else if (viewMode == VIEW_MODE_PHONE) {
@@ -732,49 +720,39 @@ public class PageActivity extends BaseActivity {
 
         @Override
         public void onClick(View v) {
+            int id = v.getId();
+
             if (viewMode == VIEW_MODE_PHONE) {
-                switch (v.getId()) {
-                    case R.id.smaller_text: {
-                        if (context.getZoom() <= Constants.ZOOM_MIN)
-                            break;
-                        context.setZoom(-1 * Constants.ZOOM_STEP + context.getZoom());
+                if (id == R.id.smaller_text) {
+                    if (context.getZoom() > Constants.ZOOM_MIN) {
+                        context.setZoom(context.getZoom() - Constants.ZOOM_STEP);
                         book.setZoom(context.getZoom());
-                        break;
                     }
-                    case R.id.larger_text: {
-                        if (context.getZoom() > Constants.ZOOM_MAX)
-                            break;
-                        context.setZoom(Constants.ZOOM_STEP + context.getZoom());
+                } else if (id == R.id.larger_text) {
+                    if (context.getZoom() <= Constants.ZOOM_MAX) {
+                        context.setZoom(context.getZoom() + Constants.ZOOM_STEP);
                         book.setZoom(context.getZoom());
-                        break;
                     }
                 }
             } else {
-                switch (v.getId()) {
-                    case R.id.smaller_text: {
-                        if (book.getZoomOriginal() <= Constants.ZOOM_MIN)
-                            break;
-                        context.setZoomOriginal(-1 * Constants.ZOOM_STEP + book.getZoomOriginal());
+                if (id == R.id.smaller_text) {
+                    if (book.getZoomOriginal() > Constants.ZOOM_MIN) {
+                        context.setZoomOriginal(book.getZoomOriginal() - Constants.ZOOM_STEP);
                         book.setZoomOriginal(context.getZoomOriginal());
-                        break;
                     }
-                    case R.id.larger_text: {
-                        if (book.getZoomOriginal() > Constants.ZOOM_MAX)
-                            break;
-                        context.setZoomOriginal(Constants.ZOOM_STEP + book.getZoomOriginal());
+                } else if (id == R.id.larger_text) {
+                    if (book.getZoomOriginal() <= Constants.ZOOM_MAX) {
+                        context.setZoomOriginal(book.getZoomOriginal() + Constants.ZOOM_STEP);
                         book.setZoomOriginal(context.getZoomOriginal());
-                        break;
                     }
                 }
             }
-
             pageActivity.setPageNumber(currentPage);
-
         }
 
     }
 
-//////////////////////////   ASYNC TASKS   /////////////////////////////////////////////////
+    //////////////////////////   ASYNC TASKS   /////////////////////////////////////////////////
 
     class ConnectionCheckerTask extends AsyncTask<Void, Void, Boolean> {
 
@@ -850,7 +828,7 @@ public class PageActivity extends BaseActivity {
 //
                 List<View> pageViews = new ArrayList<>();// UI code goes here
                 for (Bitmap bitmap : bitmaps) {
-                    Log.d("FLOW-READER", "bitmaps " + bitmaps.size());
+                    Log.d("FLOW-READER", String.format("bitmaps %s", bitmaps.size()));
                     int bitmapHeight = bitmap.getHeight();
                     if (bitmap.getByteCount() > MAX_BITMAP_SIZE) {
                         Snackbar.make(topLayout, getString(R.string.could_not_zoom_more),
@@ -897,7 +875,7 @@ public class PageActivity extends BaseActivity {
                             pageActivity.page.removeAllViewsInLayout();
                             HorizontalScrollView horizontalScrollView = new HorizontalScrollView(getApplicationContext());
                             ImageView imageView = new ImageView(getApplicationContext());
-                            Log.v(getClass().getName(), "Bitmap size is " + bitmap.getWidth() + "x" + bitmap.getHeight());
+                            Log.v(getClass().getName(), String.format("Bitmap size is %d x %d", bitmap.getWidth(), bitmap.getHeight()));
                             ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(bitmap.getWidth(), bitmap.getHeight());
                             imageView.setLayoutParams(layoutParams);
                             imageView.setScaleType(ImageView.ScaleType.FIT_START);
