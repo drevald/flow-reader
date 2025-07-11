@@ -42,31 +42,30 @@ ifeq ($(TARGET_ARCH_ABI),x86)
 endif
 
 LOCAL_ALLOW_UNDEFINED_SYMBOLS=true
-LOCAL_CPPFLAGS += -std=c++14
+
 LOCAL_CFLAGS += -DHAVE_CONFIG_H -frtti -fexceptions -fopenmp -w -Ofast -DNDEBUG
 LOCAL_LDLIBS += -llog -lz -lm -L$(SYSROOT)/usr/lib
-LOCAL_LDFLAGS += -ldl -landroid -fopenmp
-LOCAL_LDFLAGS += -ldl -landroid -static-openmp
+LOCAL_LDFLAGS += -ldl -landroid -fopenmp -static-openmp
 
-LOCAL_C_INCLUDES += common.h fastcluster.h interval_tree.hpp interval_types.hpp IntervalJoin.h mylib.h LineSpacing.h RectJoin.h PageSegmenter.h Enclosure.h pdf-lib.h segmentation.h ImageNode.h Xycut.h
+LOCAL_C_INCLUDES += common.h mylib.h LineSpacing.h Reflow.cpp PageSegmenter.h Enclosure.h pdf-lib.h  ImageNode.h Xycut.h
 
 ifeq ($(TARGET_ARCH_ABI),x86)
 LOCAL_SRC_FILES := \
-	common.cpp fastcluster_dm.cpp fastcluster.cpp IntervalJoin.cpp LineSpacing.cpp Reflow.cpp  RectJoin.cpp PageSegmenter.cpp Enclosure.cpp djvu-lib.cpp pdf-lib.cpp ImageNode.cpp segmentation.cpp Xycut.cpp
+	common.cpp LineSpacing.cpp Reflow.cpp  PageSegmenter.cpp Enclosure.cpp djvu-lib.cpp pdf-lib.cpp ImageNode.cpp Xycut.cpp
 endif
 
 ifeq ($(TARGET_ARCH_ABI),x86_64)
 LOCAL_SRC_FILES := \
-	common.cpp fastcluster_dm.cpp fastcluster.cpp IntervalJoin.cpp LineSpacing.cpp Reflow.cpp RectJoin.cpp  PageSegmenter.cpp Enclosure.cpp djvu-lib.cpp pdf-lib.cpp ImageNode.cpp segmentation.cpp Xycut.cpp
+	common.cpp LineSpacing.cpp Reflow.cpp  PageSegmenter.cpp Enclosure.cpp djvu-lib.cpp pdf-lib.cpp ImageNode.cpp Xycut.cpp
 endif
 
 ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
 LOCAL_SRC_FILES := \
-	common.cpp fastcluster_dm.cpp fastcluster.cpp IntervalJoin.cpp LineSpacing.cpp Reflow.cpp RectJoin.cpp  PageSegmenter.cpp Enclosure.cpp djvu-lib.cpp pdf-lib.cpp ImageNode.cpp segmentation.cpp Xycut.cpp
+	common.cpp LineSpacing.cpp Reflow.cpp  PageSegmenter.cpp Enclosure.cpp djvu-lib.cpp pdf-lib.cpp ImageNode.cpp Xycut.cpp
 endif
 ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
 LOCAL_SRC_FILES := \
-	common.cpp fastcluster_dm.cpp fastcluster.cpp IntervalJoin.cpp LineSpacing.cpp Reflow.cpp  RectJoin.cpp PageSegmenter.cpp Enclosure.cpp djvu-lib.cpp pdf-lib.cpp ImageNode.cpp segmentation.cpp Xycut.cpp
+	common.cpp LineSpacing.cpp Reflow.cpp  PageSegmenter.cpp Enclosure.cpp djvu-lib.cpp pdf-lib.cpp ImageNode.cpp Xycut.cpp
 endif
 
 
