@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
-apply plugin: 'cpp'
 
-def getGitHash = { ->
+def getGitHash = {
     def stdout = new ByteArrayOutputStream()
     exec {
         commandLine 'git', 'rev-parse', '--short', 'HEAD'
@@ -11,89 +10,94 @@ def getGitHash = { ->
 }
 
 android {
-    compileSdkVersion 29
+    namespace 'com.veve.flowreader'
+    compileSdkVersion 34
+
     defaultConfig {
         applicationId "com.veve.flowreader"
-        minSdkVersion 23
-        targetSdkVersion 29
+        minSdkVersion 17
+        targetSdkVersion 34
         versionCode 20
         versionName "1.0"
         buildConfigField "String", "GitHash", "\"${getGitHash()}\""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables.useSupportLibrary = "true"
+        vectorDrawables.useSupportLibrary = true
+
+        // keep your old NDK
+//        ndkVersion "18.1.5063045"
+        ndkVersion "25.2.9519653"
+
         ndk {
-            // Tells Gradle to build outputs for the following ABIs and package
-            // them into your APK.
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
-            //abiFilters 'armeabi-v7a'
         }
     }
 
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
+    // if you have prebuilt .so under jniLibs
     sourceSets.main {
-        jniLibs.srcDir 'jni/reflowlib'
+        jniLibs.srcDir 'src/main/jniLibs'
     }
-
 
     externalNativeBuild {
         ndkBuild {
             path 'jni/Android.mk'
+
         }
     }
 
-    preBuild {
-        doFirst {
-            JavaCompile jc = android.applicationVariants.find {
-                it.name == 'debug' || it.name == 'release'
-            }.javaCompileProvider.get() 
-            jc.options.compilerArgs = ["-Xlint:unchecked"]
-        }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    adbOptions {
-        timeOutInMs 60 * 1000 * 10 
-    }
-
-    lintOptions {
-        abortOnError false        // true by default
-        checkAllWarnings false
+    lint {
+        abortOnError false
         checkReleaseBuilds false
-        ignoreWarnings true       // false by default
         quiet true
     }
-    compileOptions {
-        sourceCompatibility '1.8'
-        targetCompatibility '1.8'
-    }
-    buildToolsVersion '28.0.3'
+
+    buildToolsVersion '34.0.0'
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'com.google.android.material:material:1.0.0'
-    implementation 'com.jsibbold:zoomage:1.1.0'
-    testImplementation 'junit:junit:4.12'
-    testImplementation 'org.hamcrest:hamcrest-library:1.3'
-    implementation 'org.apache.commons:commons-lang3:3.7'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    implementation group: 'androidx.test', name: 'rules', version: '1.2.0'
-    implementation 'androidx.room:room-runtime:2.2.2'
-    annotationProcessor 'androidx.room:room-compiler:2.2.2'
-    implementation 'com.android.volley:volley:1.1.1'
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.0'
-    androidTestImplementation ('androidx.test.espresso:espresso-contrib:3.1.0') {
-        exclude group: 'com.android.support', module: 'appcompat'
-        exclude group: 'com.android.support', module: 'support-v4'
-        exclude module: 'recyclerview-v7'
-    }
-}
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    // AndroidX UI
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'com.google.android.material:material:1.11.0'
+
+    // Zoomage PDF viewer
+    implementation 'com.jsibbold:zoomage:1.3.1'
+
+    // Room
+    implementation 'androidx.room:room-runtime:2.6.1'
+    annotationProcessor 'androidx.room:room-compiler:2.6.1'
+
+    // Jackson (Java 8‑compatible)
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.13.4'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.4'
+
+    // Volley
+    implementation 'com.android.volley:volley:1.2.1'
+
+    // Apache Commons (Java 8‑compatible)
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+
+    // Unit tests
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.hamcrest:hamcrest-library:2.2'
+
+    // Instrumented Android tests
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation 'androidx.appcompat:appcompat:1.6.1'
+    androidTestImplementation 'com.google.android.material:material:1.11.0'
+    androidTestImplementation 'androidx.test:rules:1.5.0'
+}
