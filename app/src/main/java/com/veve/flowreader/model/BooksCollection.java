@@ -172,7 +172,7 @@ public class BooksCollection {
         }
 
         @Override
-        protected Void doInBackground(List<PageGlyphRecord>... lists) {
+        protected final Void doInBackground(List<PageGlyphRecord>[] lists) {
             daoAccess.insertGlyphs(lists[0]);
             return null;
         }
