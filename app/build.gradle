@@ -12,16 +12,15 @@ def getGitHash = { ->
 
 android {
 
-
-
     buildFeatures {
         buildConfig true
     }
+
     defaultConfig {
         multiDexEnabled true
         applicationId "com.veve.flowreader"
         minSdkVersion 19
-        targetSdkVersion 33
+        targetSdkVersion 35
         versionCode 25
         versionName "0.8"
         buildConfigField "String", "GitHash", "\"${getGitHash()}\""
@@ -51,24 +50,15 @@ android {
         }
     }
 
-//    preBuild {
-//        doFirst {
-//            JavaCompile jc = android.applicationVariants.find {
-//                it.name == 'debug' || it.name == 'release'
-//            }.javaCompileProvider.get()
-//            jc.options.compilerArgs = ["-Xlint:unchecked"]
-//        }
-//    }
-
     adbOptions {
         timeOutInMs 60 * 1000 * 10 
     }
 
     lintOptions {
-        abortOnError false        // true by default
+        abortOnError false
         checkAllWarnings false
         checkReleaseBuilds false
-        ignoreWarnings true       // false by default
+        ignoreWarnings true
         quiet true
     }
     compileOptions {

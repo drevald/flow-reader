@@ -57,7 +57,9 @@
             android:id="@android:id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:headerDividersEnabled="false" />
+            android:headerDividersEnabled="false"
+            tools:layout_editor_absoluteX="-16dp"
+            tools:layout_editor_absoluteY="73dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
