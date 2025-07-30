@@ -59,5 +59,4 @@ public class PageGlyphInfo {
     }
 
     public boolean isLast() {return last;}
-
 }
