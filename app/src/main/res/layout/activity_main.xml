@@ -5,6 +5,7 @@
     android:id="@+id/topLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context="com.veve.flowreader.views.MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -18,12 +19,19 @@
             android:layout_height="?android:attr/actionBarSize"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:orientation="horizontal">
+
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/theme"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
+                android:gravity="end"
                 android:contentDescription="@string/list_view"
                 android:labelFor="@string/list_view"
                 android:onClick="changeTheme"
@@ -33,7 +41,7 @@
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
+                android:gravity="end"
                 android:contentDescription="@string/list_view"
                 android:labelFor="@string/list_view"
                 app:srcCompat="@drawable/ic_baseline_view_list_24" />
@@ -43,10 +51,12 @@
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
+                android:gravity="end"
                 android:contentDescription="@string/grid_view"
                 android:labelFor="@string/grid_view"
                 app:srcCompat="@drawable/ic_baseline_view_module_24" />
+
+            </LinearLayout>
 
         </androidx.appcompat.widget.Toolbar>
 

@@ -234,7 +234,18 @@ public class PageActivity extends BaseActivity {
         public boolean onSingleTapConfirmed(MotionEvent e) {
             float x = e.getX();
             float y = e.getY();
-            if (y < getWindow().getDecorView().getHeight()/6) {
+
+            int screenWidth = getWindow().getDecorView().getWidth();
+            int screenHeight = getWindow().getDecorView().getHeight();
+
+            float cellWidth = screenWidth / 3f;
+            float cellHeight = screenHeight / 3f;
+
+            int col = (int)(x / cellWidth);   // 0..2
+            int row = (int)(y / cellHeight);  // 0..2
+
+            // --- CENTER cell (row=1, col=1) ---
+            if (row == 1 && col == 1) {
                 if (barsVisible) {
                     bottomBar.setVisibility(INVISIBLE);
                     bar.setVisibility(GONE);
@@ -245,18 +256,21 @@ public class PageActivity extends BaseActivity {
                     barsVisible = true;
                 }
             } else {
-                if (x > getWindow().getDecorView().getWidth() / 3) {
+                // --- Navigation ---
+                if (col == 2) {  // right column
                     if (book.getCurrentPage() < book.getPagesCount() - 1) {
                         setPageNumber(book.getCurrentPage() + 1);
                         scroll.scrollTo(0, 0);
                     }
-                } else {
+                } else if (col == 0) {  // left column
                     if (book.getCurrentPage() > 0) {
                         setPageNumber(book.getCurrentPage() - 1);
                         scroll.scrollTo(0, 0);
                     }
                 }
+                // col == 1 but row != 1 → do nothing (middle-top or middle-bottom zones)
             }
+
             return true;
         }
 
@@ -451,17 +465,17 @@ public class PageActivity extends BaseActivity {
 //        item.setIcon(pref.getBoolean(SHOW_SCROLLBARS, false) ? R.drawable.ic_noscrollbars : R.drawable.ic_scrollbars);
 //        item.setTitle(pref.getBoolean(SHOW_SCROLLBARS, false) ? R.string.hide_scrollbars : R.string.show_scrollbars );
         if (viewMode == VIEW_MODE_PHONE) {
-            menu.findItem(R.id.no_margins).setEnabled(true);
-            menu.findItem(R.id.normal_margins).setEnabled(true);
-            menu.findItem(R.id.wide_margins).setEnabled(true);
+//            menu.findItem(R.id.no_margins).setEnabled(true);
+//            menu.findItem(R.id.normal_margins).setEnabled(true);
+//            menu.findItem(R.id.wide_margins).setEnabled(true);
 //            menu.findItem(R.id.preprocess).setEnabled(true);
 //            menu.findItem(R.id.page_unreadable).setEnabled(true);
 //            menu.findItem(R.id.print).setEnabled(true);
         }
         if (viewMode == VIEW_MODE_ORIGINAL) {
-            menu.findItem(R.id.no_margins).setEnabled(false);
-            menu.findItem(R.id.normal_margins).setEnabled(false);
-            menu.findItem(R.id.wide_margins).setEnabled(false);
+//            menu.findItem(R.id.no_margins).setEnabled(false);
+//            menu.findItem(R.id.normal_margins).setEnabled(false);
+//            menu.findItem(R.id.wide_margins).setEnabled(false);
 //            menu.findItem(R.id.preprocess).setEnabled(false);
 //            menu.findItem(R.id.page_unreadable).setEnabled(false);
 //            menu.findItem(R.id.print).setEnabled(false);
@@ -474,20 +488,20 @@ public class PageActivity extends BaseActivity {
         context.setInvalidateCache(false);
         int id = item.getItemId();
 
-        if (id == R.id.no_margins) {
-            context.setMargin(0.2f);
-            Log.v(getClass().getName(), "Margin set to " + context.getMargin());
-            book.setMargin(context.getMargin());
-
-        } else if (id == R.id.normal_margins) {
-            context.setMargin(1.0f);
-            Log.v(getClass().getName(), "Margin set to " + context.getMargin());
-            book.setMargin(context.getMargin());
-
-        } else if (id == R.id.wide_margins) {
-            context.setMargin(1.5f);
-            Log.v(getClass().getName(), "Margin set to " + context.getMargin());
-            book.setMargin(context.getMargin());
+//        if (id == R.id.no_margins) {
+//            context.setMargin(0.2f);
+//            Log.v(getClass().getName(), "Margin set to " + context.getMargin());
+//            book.setMargin(context.getMargin());
+//
+//        } else if (id == R.id.normal_margins) {
+//            context.setMargin(1.0f);
+//            Log.v(getClass().getName(), "Margin set to " + context.getMargin());
+//            book.setMargin(context.getMargin());
+//
+//        } else if (id == R.id.wide_margins) {
+//            context.setMargin(1.5f);
+//            Log.v(getClass().getName(), "Margin set to " + context.getMargin());
+//            book.setMargin(context.getMargin());
 
 //        } else if (id == R.id.page_unreadable) {
 //            ConnectionCheckerTask connectionCheckerTask = new ConnectionCheckerTask();
@@ -568,7 +582,10 @@ public class PageActivity extends BaseActivity {
 //            item.setIcon(book.getPreprocessing() ? R.drawable.ic_unenhance : R.drawable.ic_enhance);
 //            item.setTitle(book.getPreprocessing() ? R.string.unenhance : R.string.enhance);
 
-        } else if (id == R.id.navigation) {
+//        } else if (id == R.id.navigation) {
+
+        if (id == R.id.navigation) {
+
             boolean kindle = pref.getBoolean(Constants.KINDLE_NAVIGATION, false);
             pref.edit().putBoolean(Constants.KINDLE_NAVIGATION, !kindle).apply();
             item.setTitle(kindle ? R.string.kindle_navigation : R.string.ipad_navigation);

@@ -5,7 +5,7 @@
     android:id="@+id/topLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ff0000"
+    android:fitsSystemWindows="true"
     tools:context="com.veve.flowreader.views.PageActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -24,14 +24,14 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
+                android:gravity="end"
                 android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/larger_text"
                 android:layout_width="64dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
+                android:gravity="end"
                 app:srcCompat="@drawable/ic_larger_text"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_weight="0"/>
@@ -40,7 +40,7 @@
                 android:id="@+id/smaller_text"
                 android:layout_width="64dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
+                android:gravity="end"
                 app:srcCompat="@drawable/ic_smaller_text"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_weight="0"/>
