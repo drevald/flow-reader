@@ -44,7 +44,7 @@ endif
 LOCAL_ALLOW_UNDEFINED_SYMBOLS=true
 
 LOCAL_CFLAGS += -DHAVE_CONFIG_H -frtti -fexceptions -fopenmp -w -Ofast -DNDEBUG
-LOCAL_LDLIBS += -llog -lz -lm -L$(SYSROOT)/usr/lib
+LOCAL_LDLIBS += -llog -lz -lm -lc -L$(SYSROOT)/usr/lib
 LOCAL_LDFLAGS += -ldl -landroid -fopenmp
 LOCAL_LDFLAGS += -ldl -landroid -static-openmp
 
@@ -66,7 +66,7 @@ LOCAL_SRC_FILES := \
 endif
 ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
 LOCAL_SRC_FILES := \
-	common.cpp LineSpacing.cpp Reflow.cpp  PageSegmenter.cpp Enclosure.cpp djvu-lib.cpp pdf-lib.cpp ImageNode.cpp Xycut.cpp
+	common.cpp atof_wrapper.cpp LineSpacing.cpp Reflow.cpp  PageSegmenter.cpp Enclosure.cpp djvu-lib.cpp pdf-lib.cpp ImageNode.cpp Xycut.cpp
 endif
 
 

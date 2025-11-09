@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.WindowManager;
 
 import static com.veve.flowreader.BookContentResolver.contentToFile;
 
@@ -24,6 +25,10 @@ public class GetBookActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_book);
+        getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
+        );
         Uri uri = getIntent().getData();
         Log.v("TEST", String.format("Uri arrived %s", uri));
         try {
