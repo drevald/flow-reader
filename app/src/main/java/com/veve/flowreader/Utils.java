@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.test.platform.app.InstrumentationRegistry;
 
 import java.io.ByteArrayOutputStream;
@@ -15,6 +16,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class Utils extends Application {
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        // Enable vector drawable support for Android API < 21
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
 
     public static int calculateInSampleSize(
             BitmapFactory.Options options, int reqWidth, int reqHeight) {

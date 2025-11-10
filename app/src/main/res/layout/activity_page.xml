@@ -13,6 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        android:fitsSystemWindows="false"
+        app:elevation="0dp"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <androidx.appcompat.widget.Toolbar
@@ -89,6 +91,7 @@
         android:paddingTop="0sp"
         android:scrollbarSize="50sp"
         android:id="@+id/scroll"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         style="@style/background">
 
         <LinearLayout

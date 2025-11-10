@@ -52,6 +52,7 @@ import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -711,7 +712,7 @@ public class PageActivity extends BaseActivity {
             if (viewMode == VIEW_MODE_ORIGINAL) {
                 viewMode = VIEW_MODE_PHONE;
                 book.setMode(VIEW_MODE_PHONE);
-                Drawable res = getApplicationContext().getResources().getDrawable(R.drawable.ic_to_book);
+                Drawable res = AppCompatResources.getDrawable(getApplicationContext(), R.drawable.ic_to_book);
                 Log.d(getClass().getName(), "resource state is " + res.getConstantState().hashCode());
                 show.setImageDrawable(res);
                 Log.d(getClass().getName(),"button resource state is now " + show.getDrawable().getConstantState().hashCode());
@@ -720,7 +721,8 @@ public class PageActivity extends BaseActivity {
             } else if (viewMode == VIEW_MODE_PHONE) {
                 viewMode = VIEW_MODE_ORIGINAL;
                 book.setMode(VIEW_MODE_ORIGINAL);
-                show.setImageResource(R.drawable.ic_to_phone);
+                Drawable res = AppCompatResources.getDrawable(getApplicationContext(), R.drawable.ic_to_phone);
+                show.setImageDrawable(res);
                 Snackbar.make(view, getString(R.string.ui_original_page), Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 Log.d(getClass().getName(), String.format("Setting page #%d for original page", currentPage));
             }
@@ -733,19 +735,21 @@ public class PageActivity extends BaseActivity {
         @Override
         public void onClick(View v) {
             int id = v.getId();
+            boolean zoomChanged = false;
+
             if (viewMode == VIEW_MODE_PHONE) {
                 if (id == R.id.smaller_text) {
                     if (context.getZoom() <= Constants.ZOOM_MIN)
                         return;
                     context.setZoom(context.getZoom() - Constants.ZOOM_STEP);
                     book.setZoom(context.getZoom());
-                    return;
+                    zoomChanged = true;
                 } else if (id == R.id.larger_text) {
                     if (context.getZoom() > Constants.ZOOM_MAX)
                         return;
                     context.setZoom(context.getZoom() + Constants.ZOOM_STEP);
                     book.setZoom(context.getZoom());
-                    return;
+                    zoomChanged = true;
                 }
             } else {
                 if (id == R.id.smaller_text) {
@@ -753,16 +757,19 @@ public class PageActivity extends BaseActivity {
                         return;
                     context.setZoomOriginal(book.getZoomOriginal() - Constants.ZOOM_STEP);
                     book.setZoomOriginal(context.getZoomOriginal());
-                    return;
+                    zoomChanged = true;
                 } else if (id == R.id.larger_text) {
                     if (book.getZoomOriginal() > Constants.ZOOM_MAX)
                         return;
                     context.setZoomOriginal(book.getZoomOriginal() + Constants.ZOOM_STEP);
                     book.setZoomOriginal(context.getZoomOriginal());
-                    return;
+                    zoomChanged = true;
                 }
             }
-            pageActivity.setPageNumber(currentPage);
+
+            if (zoomChanged) {
+                pageActivity.setPageNumber(currentPage);
+            }
         }
 
     }
