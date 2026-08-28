@@ -35,8 +35,8 @@ public interface Constants {
 
     public final String REPORT_URL = "https://glyph-report.herokuapp.com/loader";
 
-    float ZOOM_STEP = 0.25F;
-    float ZOOM_MIN = 0.25F;
+    float ZOOM_STEP = 0.5F;
+    float ZOOM_MIN = 1.5F;
     float ZOOM_MAX = 5F;
 
     float MM_IN_MILS = 0.0254f;

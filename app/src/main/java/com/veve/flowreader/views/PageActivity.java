@@ -202,6 +202,8 @@ public class PageActivity extends BaseActivity {
                         scroll.scrollTo(0, 0);
                     }
                 }
+            } else {
+                scroll.fling(-(int) velocityY);
             }
             return true;
         }
@@ -227,6 +229,12 @@ public class PageActivity extends BaseActivity {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2,float distanceX, float distanceY) {
             scroll.smoothScrollBy((int)distanceX, (int)distanceY);
+            return true;
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            scroll.fling(-(int) velocityY);
             return true;
         }
 
@@ -406,8 +414,10 @@ public class PageActivity extends BaseActivity {
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         context.setResolution((int)displayMetrics.xdpi);
 
-        context.setZoom(book.getZoom());
-        context.setZoomOriginal(book.getZoomOriginal());
+        context.setZoom(Math.max(book.getZoom(), Constants.ZOOM_MIN));
+        book.setZoom(context.getZoom());
+        context.setZoomOriginal(Math.max(book.getZoomOriginal(), Constants.ZOOM_MIN));
+        book.setZoomOriginal(context.getZoomOriginal());
         context.setKerning(book.getKerning());
         context.setLeading(book.getLeading());
         context.setMargin(book.getMargin());
