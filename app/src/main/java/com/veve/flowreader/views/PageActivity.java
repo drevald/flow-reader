@@ -99,12 +99,13 @@ public class PageActivity extends BaseActivity {
 
     Set<AsyncTask> runningTasks;
     TextView pager;
+    TextView progressPercent;
     AppBarLayout bar;
     CoordinatorLayout topLayout;
     PageRenderer pageRenderer;
     BookRecord book;
     SeekBar seekBar;
-    ProgressBar progressBar;
+    com.google.android.material.progressindicator.CircularProgressIndicator progressBar;
     FloatingActionButton home;
     FloatingActionButton show;
     LinearLayout page;
@@ -376,6 +377,7 @@ public class PageActivity extends BaseActivity {
         bar = findViewById(R.id.bar);
         topLayout = findViewById(R.id.topLayout);
         pager = findViewById(R.id.pager);
+        progressPercent = findViewById(R.id.progress_percent);
         seekBar = findViewById(R.id.slider);
         home = findViewById(R.id.home);
         progressBar = findViewById(R.id.progress);
@@ -614,6 +616,14 @@ public class PageActivity extends BaseActivity {
             context.setJustify(false);
             book.setJustify(false);
             booksCollection.updateBook(book);
+        } else if (id == R.id.night_mode) {
+            changeTheme();
+            return true;
+        } else if (id == R.id.settings) {
+            Intent i = new Intent(PageActivity.this, MainActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(i);
+            return true;
         }
 
         setPageNumber(currentPage);
@@ -731,7 +741,6 @@ public class PageActivity extends BaseActivity {
     class ShowListener implements OnClickListener {
         @Override
         public void onClick(View view) {
-            ImageView show = (ImageView)view;
             if (viewMode == VIEW_MODE_ORIGINAL) {
                 viewMode = VIEW_MODE_PHONE;
                 book.setMode(VIEW_MODE_PHONE);
@@ -843,7 +852,7 @@ public class PageActivity extends BaseActivity {
 
             runOnUiThread(()-> {
                     pageActivity.scroll.setVisibility(INVISIBLE);
-                    pageActivity.progressBar.setVisibility(View.VISIBLE);
+                    findViewById(R.id.progress_container).setVisibility(View.VISIBLE);
                 }
             );
 //
@@ -930,7 +939,7 @@ public class PageActivity extends BaseActivity {
                     }
                 }
                 pageActivity.scroll.setVisibility(VISIBLE);
-                pageActivity.progressBar.setVisibility(INVISIBLE);
+                findViewById(R.id.progress_container).setVisibility(INVISIBLE);
                 pageActivity.scroll.scrollTo(0, 0);
 
             });

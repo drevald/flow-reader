@@ -32,10 +32,23 @@ android {
         ndkVersion "21.4.7075529"
     }
 
+    signingConfigs {
+        release {
+            def keystorePath = System.getenv("KEYSTORE_PATH")
+            if (keystorePath) {
+                storeFile file(keystorePath)
+                storePassword System.getenv("STORE_PASSWORD")
+                keyAlias System.getenv("KEY_ALIAS")
+                keyPassword System.getenv("KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 
@@ -70,8 +83,8 @@ android {
             force 'androidx.test:monitor:1.4.0'
         }
     }
-    buildToolsVersion '34.0.0'
-    compileSdkVersion 34
+    buildToolsVersion '35.0.0'
+    compileSdkVersion 35
     namespace 'com.veve.flowreader'
 }
 

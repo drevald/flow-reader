@@ -95,6 +95,8 @@ Third party copyrights are property of their respective owners.</string>
     <string name="ipad_navigation">Switch to iPad navigation</string>
     <string name="justify_text">Justify text</string>
     <string name="align_left_text">Align left</string>
+    <string name="night_mode">Night mode</string>
+    <string name="settings">Settings</string>
     <string name="show_scrollbars">Show scrollbars</string>
     <string name="hide_scrollbars">Hide scrollbars</string>
 </resources>
