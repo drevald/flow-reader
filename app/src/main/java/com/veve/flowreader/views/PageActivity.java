@@ -418,6 +418,7 @@ public class PageActivity extends BaseActivity {
         book.setZoom(context.getZoom());
         context.setZoomOriginal(Math.max(book.getZoomOriginal(), Constants.ZOOM_MIN));
         book.setZoomOriginal(context.getZoomOriginal());
+        context.setJustify(book.isJustify());
         context.setKerning(book.getKerning());
         context.setLeading(book.getLeading());
         context.setMargin(book.getMargin());
@@ -605,6 +606,14 @@ public class PageActivity extends BaseActivity {
 //            pref.edit().putBoolean(Constants.SHOW_SCROLLBARS, !showScrollbars).apply();
 //            scroll.setScrollBarSize(showScrollbars ? 0 : 50);
 //            item.setTitle(showScrollbars ? R.string.show_scrollbars : R.string.hide_scrollbars);
+        } else if (id == R.id.justify_text) {
+            context.setJustify(true);
+            book.setJustify(true);
+            booksCollection.updateBook(book);
+        } else if (id == R.id.align_left_text) {
+            context.setJustify(false);
+            book.setJustify(false);
+            booksCollection.updateBook(book);
         }
 
         setPageNumber(currentPage);
@@ -913,11 +922,9 @@ public class PageActivity extends BaseActivity {
                             pageActivity.page.addView(imageView);
                             horizontalScrollView.addView(pageActivity.page);
                             pageActivity.scroll.addView(horizontalScrollView);
-                            horizontalScrollView.setOnTouchListener(new View.OnTouchListener() {
-                                @Override
-                                public boolean onTouch(View v, MotionEvent event) {
-                                    return PageActivity.this.onTouchEvent(event);
-                                }
+                            horizontalScrollView.setOnTouchListener((v, event) -> {
+                                PageActivity.this.onTouchEvent(event);
+                                return false; // let HorizontalScrollView also handle scrolling
                             });
                         }
                     }

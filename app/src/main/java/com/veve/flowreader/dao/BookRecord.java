@@ -35,6 +35,7 @@ public class BookRecord {
     private byte[] preview;
     private String md5;
     private boolean preprocessing = false;
+    private boolean justify = true;
 
     private int format;
 
@@ -163,6 +164,14 @@ public class BookRecord {
 
     public boolean getPreprocessing() {
         return this.preprocessing;
+    }
+
+    public boolean isJustify() {
+        return justify;
+    }
+
+    public void setJustify(boolean justify) {
+        this.justify = justify;
     }
     public float getZoomOriginal() { return zoomOriginal; }
 

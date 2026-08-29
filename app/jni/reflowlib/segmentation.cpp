@@ -790,7 +790,7 @@ std::vector<std::vector<std::tuple<Word, double>>> split_paragraph(std::vector<s
 
 }
 cv::Mat find_reflowed_image(
-    std::vector<cv::Rect>& joined_rects,std::vector<cv::Rect>& pictures, float factor, float zoom_factor, cv::Mat& mat) {
+    std::vector<cv::Rect>& joined_rects,std::vector<cv::Rect>& pictures, float factor, float zoom_factor, cv::Mat& mat, bool justify) {
 
     std::sort(pictures.begin(), pictures.end(),
               less_than_picture());
@@ -997,6 +997,21 @@ cv::Mat find_reflowed_image(
         int left = margin;
         std::vector<std::tuple<Word, double>> p = stps[i];
 
+        // Calculate per-gap extra space for justified layout
+        int justify_gap = -1;
+        if (justify && (int)p.size() > 1) {
+            int total_word_width = 0;
+            for (auto& e : p) {
+                total_word_width += get<0>(e).bounding_rect.width;
+            }
+            int available_width = mat_width - 2 * margin;
+            // Only justify lines that are at least 60% full (skip short last lines of paragraphs)
+            if (total_word_width > 0.6 * available_width) {
+                justify_gap = (available_width - total_word_width) / ((int)p.size() - 1);
+                if (justify_gap < 0) justify_gap = 0;
+            }
+        }
+
         if (current_picture >= 0 && current_picture <= pictures.size()-1) {
             cv::Rect pic = pictures[current_picture];
             Word w_ = get<0>(p[0]);
@@ -1035,7 +1050,7 @@ cv::Mat find_reflowed_image(
                 cv::Mat dstRoi = new_image(cv::Rect(left, ypos, w_.bounding_rect.width, w_.bounding_rect.height));
                 srcRoi.copyTo(dstRoi);
             }
-            left += (int)g_ + w_.bounding_rect.width;
+            left += (justify_gap >= 0 ? justify_gap : (int)g_) + w_.bounding_rect.width;
         }
         current_height += h_;
 

@@ -689,7 +689,7 @@ void put_glyphs(JNIEnv* env, vector<glyph>& glyphs, jobject& list) {
 void reflow(cv::Mat& cvMat, cv::Mat& new_image, float scale, int page_width,
             JNIEnv* env, std::vector<glyph> savedGlyphs, jobject list,
             std::vector<glyph> pic_glyphs, cv::Mat rotated_with_pictures,
-            bool preprocessing, float margin) {
+            bool preprocessing, float margin, bool justify) {
     // const cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT,
     // cv::Size(2, 2)); cv::dilate(cvMat, cvMat, kernel, cv::Point(-1, -1), 1);
 
@@ -713,7 +713,7 @@ void reflow(cv::Mat& cvMat, cv::Mat& new_image, float scale, int page_width,
     if (glyphs.size() > 0) {
         try {
             Reflow reflower(cvMat, rotated_with_pictures, glyphs);
-            new_image = reflower.reflow(scale, page_width, margin);
+            new_image = reflower.reflow(scale, page_width, margin, justify);
         } catch (...) {
             __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "%s\n",
                                 "exception occurred");

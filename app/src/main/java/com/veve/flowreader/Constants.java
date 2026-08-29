@@ -54,6 +54,7 @@ public interface Constants {
 
     String KINDLE_NAVIGATION = "KINDLE_NAVIGATION";
     String SHOW_SCROLLBARS = "SHOW_SCROLLBARS";
+    String JUSTIFY_TEXT = "JUSTIFY_TEXT";
 
 
 }
