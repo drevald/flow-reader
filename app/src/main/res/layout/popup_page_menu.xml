@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/colorBackground"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
+        <!-- Swipe row -->
+        <LinearLayout
+            android:id="@+id/option_swipe"
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="16dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                app:srcCompat="@drawable/ic_swipe"
+                android:tint="?android:attr/textColorSecondary"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Swap to flip"
+                android:textSize="19sp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:paddingStart="16dp"/>
+
+            <ImageView
+                android:id="@+id/check_swipe"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                app:srcCompat="@drawable/ic_check"
+                android:tint="@color/colorPrimary"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+        <!-- Tap row -->
+        <LinearLayout
+            android:id="@+id/option_tap"
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="16dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                app:srcCompat="@drawable/ic_tap"
+                android:tint="?android:attr/textColorSecondary"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Tap to flip"
+                android:textSize="19sp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:paddingStart="16dp"/>
+
+            <ImageView
+                android:id="@+id/check_tap"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                app:srcCompat="@drawable/ic_check"
+                android:tint="@color/colorPrimary"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider"/>
+
+        <!-- Pinch to zoom row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="16dp">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                app:srcCompat="@drawable/ic_pinch_on"
+                android:tint="?android:attr/textColorSecondary"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Pinch to zoom"
+                android:textSize="19sp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:paddingStart="16dp"/>
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_pinch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider"/>
+
+        <!-- Left row -->
+        <LinearLayout
+            android:id="@+id/option_left"
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="16dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                app:srcCompat="@drawable/ic_align_left"
+                android:tint="?android:attr/textColorSecondary"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Align left"
+                android:textSize="19sp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:paddingStart="16dp"/>
+
+            <ImageView
+                android:id="@+id/check_left"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                app:srcCompat="@drawable/ic_check"
+                android:tint="@color/colorPrimary"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+        <!-- Justify row -->
+        <LinearLayout
+            android:id="@+id/option_justify"
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="16dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                app:srcCompat="@drawable/ic_align_justify"
+                android:tint="?android:attr/textColorSecondary"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Justify"
+                android:textSize="19sp"
+                android:textColor="?android:attr/textColorPrimary"
+                android:paddingStart="16dp"/>
+
+            <ImageView
+                android:id="@+id/check_justify"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                app:srcCompat="@drawable/ic_check"
+                android:tint="@color/colorPrimary"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

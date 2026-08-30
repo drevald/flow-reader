@@ -208,6 +208,8 @@ public class MainActivity extends BaseActivity {
         });
 
         final GridView gridView = findViewById(R.id.grid);
+        int hPad = getResources().getDisplayMetrics().widthPixels / 8;
+        gridView.setPaddingRelative(hPad, gridView.getPaddingTop(), hPad, gridView.getPaddingBottom());
 
         if (!preferences.contains(Constants.VIEW_TYPE)) {
             Log.d(getClass().getName(), "View type preference missing. Setting list as default");

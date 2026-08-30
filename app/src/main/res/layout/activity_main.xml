@@ -23,26 +23,28 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
-                android:gravity="end|center_vertical"
                 android:layout_gravity="center_vertical"
                 android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/theme"
                 style="?android:attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="80dp"
-                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="center"
                 android:contentDescription="@string/list_view"
                 android:labelFor="@string/list_view"
                 android:onClick="changeTheme"
                 app:srcCompat="@drawable/ic_baseline_brightness_3_24" />
+
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/books_list"
                 style="?android:attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="80dp"
-                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="center"
                 android:contentDescription="@string/list_view"
                 android:labelFor="@string/list_view"
                 app:srcCompat="@drawable/ic_baseline_view_list_24" />
@@ -50,9 +52,10 @@
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/books_grid"
                 style="?android:attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="80dp"
-                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="center"
                 android:contentDescription="@string/grid_view"
                 android:labelFor="@string/grid_view"
                 app:srcCompat="@drawable/ic_baseline_view_module_24" />
@@ -60,9 +63,10 @@
             <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/about_btn"
                 style="?android:attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="80dp"
-                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="center"
                 android:contentDescription="@string/about_program"
                 app:srcCompat="@drawable/ic_more_vert" />
 
@@ -88,7 +92,8 @@
             android:id="@+id/grid"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="40dp"
+            android:paddingTop="40dp"
+            android:paddingBottom="40dp"
             android:horizontalSpacing="20dp"
             android:verticalSpacing="20dp"
             android:scrollbars="none"
