@@ -37,6 +37,10 @@ public class BaseActivity  extends AppCompatActivity {
 //        setTheme(darkTheme ? R.style.AppThemeNight : R.style.AppTheme);
     }
 
+    public void changeTheme(View v) {
+        changeTheme();
+    }
+
     protected void changeTheme() {
 //        darkTheme = !darkTheme;
 //        recreate();

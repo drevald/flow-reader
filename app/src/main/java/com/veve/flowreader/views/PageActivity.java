@@ -23,11 +23,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.widget.PopupWindow;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -43,6 +48,7 @@ import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -145,20 +151,9 @@ public class PageActivity extends BaseActivity {
         finish();
     }
 
-    @SuppressLint("RestrictedApi")
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        Log.d(getClass().getName(), "onCreateOptionsMenu");
-        getMenuInflater().inflate(R.menu.page_menu, menu);
-        if (menu instanceof MenuBuilder) {
-            MenuBuilder m = (MenuBuilder) menu;
-            m.setOptionalIconsVisible(true);
-//            m.getItem(4).setIcon(book.getPreprocessing()
-//                    ? R.drawable.ic_unenhance : R.drawable.ic_enhance);
-//            m.getItem(4).setTitle(book.getPreprocessing()
-//                    ? R.string.unenhance : R.string.enhance);
-        }
-        return true;
+        return false;
     }
 
     @Override
@@ -332,7 +327,10 @@ public class PageActivity extends BaseActivity {
             return true;
         } else {
             boolean flingProcessed = gestureDetectorCompat.onTouchEvent(event);
-            boolean pinchProcessed = scaleGestureDetector.onTouchEvent(event);
+            boolean pinchProcessed = false;
+            if (pref.getBoolean(Constants.PINCH_ZOOM, true)) {
+                pinchProcessed = scaleGestureDetector.onTouchEvent(event);
+            }
             return flingProcessed || pinchProcessed;
         }
     }
@@ -631,6 +629,63 @@ public class PageActivity extends BaseActivity {
     }
 
 
+    private void showSettingsPopup(View anchor) {
+        View popupView = LayoutInflater.from(this).inflate(R.layout.popup_page_menu, null);
+
+        boolean kindleNav = pref.getBoolean(Constants.KINDLE_NAVIGATION, false);
+        boolean pinchZoom = pref.getBoolean(Constants.PINCH_ZOOM, true);
+        boolean justify   = book.isJustify();
+
+        // Checkmarks
+        popupView.findViewById(R.id.check_swipe).setVisibility(kindleNav ? GONE : VISIBLE);
+        popupView.findViewById(R.id.check_tap).setVisibility(kindleNav ? VISIBLE : GONE);
+        popupView.findViewById(R.id.check_left).setVisibility(justify ? GONE : VISIBLE);
+        popupView.findViewById(R.id.check_justify).setVisibility(justify ? VISIBLE : GONE);
+
+        // Toggle
+        CompoundButton switchPinch = popupView.findViewById(R.id.switch_pinch);
+        switchPinch.setChecked(pinchZoom);
+        switchPinch.setOnCheckedChangeListener((btn, checked) ->
+                pref.edit().putBoolean(Constants.PINCH_ZOOM, checked).apply());
+
+        android.app.Dialog dialog = new android.app.Dialog(this);
+        dialog.setContentView(popupView);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.getWindow().setDimAmount(0.3f);
+        dialog.getWindow().setLayout(
+                (int) (300 * getResources().getDisplayMetrics().density),
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        View optionSwipe   = popupView.findViewById(R.id.option_swipe);
+        View optionTap     = popupView.findViewById(R.id.option_tap);
+        View optionLeft    = popupView.findViewById(R.id.option_left);
+        View optionJustify = popupView.findViewById(R.id.option_justify);
+
+        optionSwipe.setOnClickListener(v -> {
+            pref.edit().putBoolean(Constants.KINDLE_NAVIGATION, false).apply();
+            dialog.dismiss();
+        });
+        optionTap.setOnClickListener(v -> {
+            pref.edit().putBoolean(Constants.KINDLE_NAVIGATION, true).apply();
+            dialog.dismiss();
+        });
+        optionLeft.setOnClickListener(v -> {
+            context.setJustify(false);
+            book.setJustify(false);
+            booksCollection.updateBook(book);
+            setPageNumber(currentPage);
+            dialog.dismiss();
+        });
+        optionJustify.setOnClickListener(v -> {
+            context.setJustify(true);
+            book.setJustify(true);
+            booksCollection.updateBook(book);
+            setPageNumber(currentPage);
+            dialog.dismiss();
+        });
+        dialog.show();
+    }
+
     public void setPageNumber(int pageNumber) {
         pager.setText(getString(R.string.ui_page_count, pageNumber + 1, book.getPagesCount()));
         seekBar.setProgress(pageNumber + 1);
@@ -733,6 +788,7 @@ public class PageActivity extends BaseActivity {
             PageMenuListener pageMenuListener = new PageMenuListener();
             findViewById(R.id.smaller_text).setOnClickListener(pageMenuListener);
             findViewById(R.id.larger_text).setOnClickListener(pageMenuListener);
+            findViewById(R.id.page_settings).setOnClickListener(btn -> showSettingsPopup(btn));
             scroll.scrollTo(0, book.getScrollOffset());
         }
 
