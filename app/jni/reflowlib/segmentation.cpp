@@ -1018,14 +1018,16 @@ cv::Mat find_reflowed_image(
             if (w_.bounding_rect.y > pic.y) {
                 std::tuple<int,int,int,int> key = std::make_tuple(pic.x,pic.y,pic.width, pic.height);
                 cv::Rect r = picture_transform[key];
-                cv::Mat srcRoi = mat(cv::Rect(pic.x, pic.y, pic.width, pic.height)).clone();
-                cv::Mat resized;
-                cv::resize(srcRoi, resized, cv::Size(r.width, r.height), cv::INTER_LINEAR);
-
+                cv::Rect srcPicRect = cv::Rect(pic.x, pic.y, pic.width, pic.height) & cv::Rect(0, 0, mat.cols, mat.rows);
                 int left_x = (int)(mat_width - r.width)/2;
-
-                cv::Mat dstRoi = new_image(cv::Rect(left_x, current_height, r.width, r.height));
-                resized.copyTo(dstRoi);
+                cv::Rect dstPicRect = cv::Rect(left_x, current_height, r.width, r.height) & cv::Rect(0, 0, new_image.cols, new_image.rows);
+                if (!srcPicRect.empty() && !dstPicRect.empty()) {
+                    cv::Mat srcRoi = mat(srcPicRect).clone();
+                    cv::Mat resized;
+                    cv::resize(srcRoi, resized, cv::Size(dstPicRect.width, dstPicRect.height), cv::INTER_LINEAR);
+                    cv::Mat dstRoi = new_image(dstPicRect);
+                    resized.copyTo(dstRoi);
+                }
                 current_height += average_height + r.height;
                 current_picture++;
             }
@@ -1045,9 +1047,12 @@ cv::Mat find_reflowed_image(
             cv::Size s = new_image.size();
             int ypos = current_height + (int)(0.2 * h_) - w_.bounding_rect.height - bs;
 
-            if (left + w_.bounding_rect.width <= s.width && ypos  + w_.bounding_rect.height <= s.height) {
-                cv::Mat srcRoi = img(cv::Rect(w_.bounding_rect.x, w_.bounding_rect.y, w_.bounding_rect.width, w_.bounding_rect.height));
-                cv::Mat dstRoi = new_image(cv::Rect(left, ypos, w_.bounding_rect.width, w_.bounding_rect.height));
+            cv::Rect srcGlyphRect = cv::Rect(w_.bounding_rect.x, w_.bounding_rect.y, w_.bounding_rect.width, w_.bounding_rect.height) & cv::Rect(0, 0, img.cols, img.rows);
+            if (left >= 0 && ypos >= 0 &&
+                left + w_.bounding_rect.width <= s.width && ypos + w_.bounding_rect.height <= s.height &&
+                !srcGlyphRect.empty()) {
+                cv::Mat srcRoi = img(srcGlyphRect);
+                cv::Mat dstRoi = new_image(cv::Rect(left, ypos, srcGlyphRect.width, srcGlyphRect.height));
                 srcRoi.copyTo(dstRoi);
             }
             left += (justify_gap >= 0 ? justify_gap : (int)g_) + w_.bounding_rect.width;

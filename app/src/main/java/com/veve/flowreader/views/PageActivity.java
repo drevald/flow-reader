@@ -835,22 +835,50 @@ public class PageActivity extends BaseActivity {
                         book.setZoom(context.getZoom());
                     }
                 }
+                pageActivity.setPageNumber(currentPage);
             } else {
+                boolean changed = false;
                 if (id == R.id.smaller_text) {
-                    if (book.getZoomOriginal() > Constants.ZOOM_MIN) {
-                        context.setZoomOriginal(book.getZoomOriginal() - Constants.ZOOM_STEP);
+                    if (context.getZoomOriginal() > Constants.ZOOM_MIN) {
+                        context.setZoomOriginal(context.getZoomOriginal() - Constants.ZOOM_STEP);
                         book.setZoomOriginal(context.getZoomOriginal());
+                        changed = true;
                     }
                 } else if (id == R.id.larger_text) {
-                    if (book.getZoomOriginal() <= Constants.ZOOM_MAX) {
-                        context.setZoomOriginal(book.getZoomOriginal() + Constants.ZOOM_STEP);
+                    if (context.getZoomOriginal() < Constants.ZOOM_MAX) {
+                        context.setZoomOriginal(context.getZoomOriginal() + Constants.ZOOM_STEP);
                         book.setZoomOriginal(context.getZoomOriginal());
+                        changed = true;
                     }
                 }
+                if (changed) {
+                    booksCollection.updateBook(book);
+                    pageActivity.rescaleOriginalPage();
+                }
             }
-            pageActivity.setPageNumber(currentPage);
         }
 
+    }
+
+    void rescaleOriginalPage() {
+        new AsyncTask<Void, Void, Bitmap>() {
+            @Override
+            protected Bitmap doInBackground(Void... voids) {
+                return pageRenderer.renderOriginalPage(context, currentPage);
+            }
+            @Override
+            protected void onPostExecute(Bitmap bitmap) {
+                if (bitmap == null || page.getChildCount() == 0) return;
+                View child = page.getChildAt(0);
+                if (!(child instanceof ImageView)) return;
+                ImageView iv = (ImageView) child;
+                ViewGroup.LayoutParams lp = iv.getLayoutParams();
+                lp.width = bitmap.getWidth();
+                lp.height = bitmap.getHeight();
+                iv.setLayoutParams(lp);
+                iv.setImageBitmap(bitmap);
+            }
+        }.execute();
     }
 
     //////////////////////////   ASYNC TASKS   /////////////////////////////////////////////////
@@ -1008,19 +1036,17 @@ public class PageActivity extends BaseActivity {
             if (bitmap.getWidth() <= context.getWidth()) {
                 return;
             }
-            if(pref.contains(Constants.SHOW_TRY_REFLOW) && !pref.getBoolean(Constants.SHOW_TRY_REFLOW, false)) {
+            if(pref.contains(Constants.SHOW_TRY_REFLOW)) {
                 return;
             }
+            pref.edit().putBoolean(Constants.SHOW_TRY_REFLOW, false).apply();
             AlertDialog.Builder builder = new AlertDialog.Builder(PageActivity.this);
             builder.setTitle(getResources().getString(R.string.try_reflow))
                     .setMessage(R.string.try_reflow_explained)
                     .setCancelable(true)
                     .setIcon(R.drawable.ic_to_phone_large)
                     .setPositiveButton(R.string.ok, (dialog, which) -> {dialog.cancel();})
-                    .setNegativeButton(R.string.ok_not_anymore, (dialog, which) -> {
-                        pref.edit().putBoolean(Constants.SHOW_TRY_REFLOW, false).apply();
-                        dialog.cancel();
-                    });
+                    .setNegativeButton(R.string.ok_not_anymore, (dialog, which) -> {dialog.cancel();});
             AlertDialog alert = builder.create();
             alert.show();
         }

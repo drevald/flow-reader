@@ -61,6 +61,7 @@ private:
         sort(points.begin(), points.end(), CustomLessThan(3));
         float med = 0.0;
         size_t size = points.size();
+        if (size == 0) return 0.0;
         unsigned long ind = size / 2;
         if (size % 2 == 0)
         {
