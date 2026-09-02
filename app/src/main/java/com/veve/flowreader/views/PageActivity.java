@@ -648,7 +648,7 @@ public class PageActivity extends BaseActivity {
         switchPinch.setOnCheckedChangeListener((btn, checked) ->
                 pref.edit().putBoolean(Constants.PINCH_ZOOM, checked).apply());
 
-        android.app.Dialog dialog = new android.app.Dialog(this);
+        androidx.appcompat.app.AppCompatDialog dialog = new androidx.appcompat.app.AppCompatDialog(this);
         dialog.setContentView(popupView);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.getWindow().setDimAmount(0.3f);

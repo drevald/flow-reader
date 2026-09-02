@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.StrictMode;
 import androidx.test.platform.app.InstrumentationRegistry;
 import android.util.Log;
 
@@ -15,6 +16,7 @@ import com.veve.flowreader.model.BooksCollection;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -23,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class IntentTest {
 
@@ -41,6 +44,7 @@ public class IntentTest {
 
     @Before
     public void preparePdfSample() throws Exception {
+        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().build());
         appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         booksCollection = BooksCollection.getInstance(appContext);
         File parentDirectory = new File(appContext.getExternalFilesDir(null), sampleDirectory);
@@ -59,7 +63,7 @@ public class IntentTest {
         appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         booksCollection = BooksCollection.getInstance(appContext);
         djvuBookFile = new File(appContext.getExternalFilesDir(null), djvuFileName);
-        if (djvuBookFile.createNewFile());
+        if (!djvuBookFile.exists()) assertTrue(djvuBookFile.createNewFile());
         BookRecord oldBookRecord = booksCollection.getBook(djvuBookFile.getPath());
         if (oldBookRecord != null) {
             booksCollection.deleteBook(oldBookRecord.getId());
@@ -77,8 +81,7 @@ public class IntentTest {
     @Test
     public void testPdfFileOpen() throws Exception {
         Intent intent = new Intent("android.intent.action.VIEW", Uri.fromFile(pdfBookFile));
-        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intent.setComponent(ComponentName.unflattenFromString("com.veve.flowreader/.views.GetBookActivity"));
         appContext.startActivity(intent);
         Thread.sleep(5000);
@@ -90,8 +93,7 @@ public class IntentTest {
     @Test
     public void testDjvuFileOpen() throws Exception {
         Intent intent = new Intent("android.intent.action.VIEW", Uri.fromFile(djvuBookFile));
-        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intent.setComponent(ComponentName.unflattenFromString("com.veve.flowreader/.views.GetBookActivity"));
         appContext.startActivity(intent);
         Thread.sleep(5000);
@@ -101,13 +103,13 @@ public class IntentTest {
 //        assertEquals(bookRecord.getTitle(), djvuFileName);
     }
 
+    @Ignore("Xiaomi-specific content URI — will fail on other devices")
     @Test
     public void testDjvuContentOpen() throws Exception {
         Intent intent = new Intent("android.intent.action.VIEW",
                 Uri.parse("content://com.mi.android.globalFileexplorer.myprovider/external_files" +
                         "/Android/data/com.veve.flowreader/files/djvu_sample.djvu"));
-        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intent.setComponent(ComponentName.unflattenFromString("com.veve.flowreader/.views.GetBookActivity"));
         appContext.startActivity(intent);
         Thread.sleep(5000);
@@ -117,13 +119,13 @@ public class IntentTest {
 //        assertEquals(bookRecord.getTitle(), djvuFileName);
     }
 
+    @Ignore("Xiaomi-specific content URI — will fail on other devices")
     @Test
     public void testPdfContentOpen() throws Exception {
         Intent intent = new Intent("android.intent.action.VIEW",
                 Uri.parse("content://com.mi.android.globalFileexplorer.myprovider/external_files" +
                         pdfBookFile.getPath().substring("/storage/emulated/0".length())));
-        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_GRANT_READ_URI_PERMISSION);
         intent.setComponent(ComponentName.unflattenFromString("com.veve.flowreader/.views.GetBookActivity"));
         appContext.startActivity(intent);
         Thread.sleep(5000);

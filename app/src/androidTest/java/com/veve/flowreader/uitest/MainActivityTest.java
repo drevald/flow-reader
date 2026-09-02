@@ -1,6 +1,7 @@
 package com.veve.flowreader.uitest;
 
 import android.content.Intent;
+import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 import android.view.View;
 import android.widget.GridView;
@@ -39,7 +40,8 @@ public class MainActivityTest extends BookTest {
         assertNotNull(grid);
         assertTrue(grid.getVisibility() == VISIBLE);
         View bookView = grid.getChildAt(0);
-        bookView.callOnClick();
+        assertNotNull("Grid has no items", bookView);
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> bookView.callOnClick());
     }
 
 }

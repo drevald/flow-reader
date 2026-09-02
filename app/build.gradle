@@ -21,7 +21,9 @@ android {
         applicationId "com.veve.flowreader"
         minSdkVersion 19
         targetSdkVersion 35
-        versionCode 25
+        def offset = System.getenv("VERSION_CODE_OFFSET") ? System.getenv("VERSION_CODE_OFFSET").toInteger() : 0
+        def buildNum = System.getenv("BUILD_NUMBER") ? System.getenv("BUILD_NUMBER").toInteger() : 0
+        versionCode (buildNum > 0 ? offset + buildNum : 25)
         versionName "0.8"
         buildConfigField "String", "GitHash", "\"${getGitHash()}\""
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

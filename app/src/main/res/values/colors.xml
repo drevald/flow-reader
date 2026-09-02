@@ -6,4 +6,6 @@
     <color name="colorBackground">#FFFFFF</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="itemBackground">#FFFFFF</color>
+    <color name="colorText">#000000</color>
+    <color name="colorDivider">#22000000</color>
 </resources>

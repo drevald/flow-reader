@@ -37,6 +37,8 @@ jobs:
           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          VERSION_CODE_OFFSET: ${{ vars.VERSION_CODE_OFFSET }}
+          BUILD_NUMBER: ${{ github.run_number }}
         run: ./gradlew bundleRelease
 
       - name: Upload AAB artifact
@@ -45,3 +47,11 @@ jobs:
           name: release-aab
           path: app/build/outputs/bundle/release/app-release.aab
           retention-days: 30
+
+      - name: Publish to Google Play internal track
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.veve.flowreader
+          releaseFiles: app/build/outputs/bundle/release/app-release.aab
+          track: internal

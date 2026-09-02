@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertNotNull;
 
 public class NameTest {
@@ -38,7 +39,7 @@ public class NameTest {
         File parentDirectory = new File(appContext.getExternalFilesDir(null), dirName);
         parentDirectory.mkdirs();
         bookFile = new File(parentDirectory, fileName);
-        if (bookFile.createNewFile());
+        if (!bookFile.exists()) assertTrue(bookFile.createNewFile());
         InputStream is = appContext.getResources().openRawResource(resourceId);
         OutputStream os = new FileOutputStream(bookFile);
         Utils.copy(is, os);

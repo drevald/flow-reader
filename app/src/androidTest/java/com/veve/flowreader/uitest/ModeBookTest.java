@@ -3,6 +3,7 @@ package com.veve.flowreader.uitest;
 import android.content.Intent;
 import android.graphics.drawable.VectorDrawable;
 
+import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 
 import android.util.Log;
@@ -62,7 +63,7 @@ public class ModeBookTest extends BookTest {
         iconDrawable = (VectorDrawable)(showButton.getDrawable());
         assertTrue(pageActivity.findViewById(R.id.bottomBar).getVisibility() == INVISIBLE);
         assertTrue(areDrawablesIdentical(iconDrawable, iconDrawableToPhone));
-        showButton.callOnClick();
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> showButton.callOnClick());
         iconDrawable = (VectorDrawable)(showButton.getDrawable());
         assertTrue(areDrawablesIdentical(iconDrawable, iconDrawableToBook));
     }
@@ -77,10 +78,11 @@ public class ModeBookTest extends BookTest {
 
         //make panel visible
         LinearLayout page = pageActivity.findViewById(R.id.page);
-        page.callOnClick();
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> page.callOnClick());
+        InstrumentationRegistry.getInstrumentation().waitForIdleSync();
 
         //changing mode to "reflowed page"
-        showButton.callOnClick();
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> showButton.callOnClick());
         iconDrawable = (VectorDrawable)(showButton.getDrawable());
         assertTrue(areDrawablesIdentical(iconDrawable, iconDrawableToBook));
         assertTrue(pageActivity.getBook().getMode()==Constants.VIEW_MODE_PHONE);
@@ -92,21 +94,21 @@ public class ModeBookTest extends BookTest {
     public void testZoom() throws InterruptedException {
         assertEquals(pageActivity.getBook().getZoomOriginal(), 1.0F);
         ImageButton zoomInButton = pageActivity.findViewById(R.id.larger_text);
-        zoomInButton.callOnClick();
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> zoomInButton.callOnClick());
         assertEquals(pageActivity.getBook().getZoomOriginal(), 1.25F);
         ImageButton zoomOutButton = pageActivity.findViewById(R.id.smaller_text);
-        zoomOutButton.callOnClick();
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> zoomOutButton.callOnClick());
         assertEquals(pageActivity.getBook().getZoomOriginal(), 1.0F);
 
         for (int i = 0; i < 16; i++) {
-            zoomOutButton.callOnClick();
+            InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> zoomOutButton.callOnClick());
             Thread.currentThread().sleep(1000);
             Log.v(getClass().getName(),
                     "Zooming out with ratio " + pageActivity.getBook().getZoomOriginal());
         }
 
         for (int i = 0; i < 16; i++) {
-            zoomInButton.callOnClick();
+            InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> zoomInButton.callOnClick());
             Thread.currentThread().sleep(1000);
             Log.v(getClass().getName(),
                     "Zooming in with ratio " + pageActivity.getBook().getZoomOriginal());

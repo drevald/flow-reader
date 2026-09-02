@@ -6,4 +6,6 @@
     <color name="colorBackground">#1E1E1E</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="itemBackground">#2C2C2C</color>
+    <color name="colorText">#FFFFFF</color>
+    <color name="colorDivider">#44FFFFFF</color>
 </resources>

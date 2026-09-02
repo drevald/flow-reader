@@ -52,7 +52,7 @@ public class FlippingTest {
                     false);   // launchActivity. False to customize the intent
 
     @Before
-    public void createBook() throws Exception {
+    public void setup() throws Exception {
         appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         booksCollection = BooksCollection.getInstance(appContext);
         bookFile = new File(appContext.getExternalFilesDir(null), "cyberiada.pdf");
@@ -62,10 +62,6 @@ public class FlippingTest {
         Utils.copy(is, os);
         bookRecord = BookFactory.getInstance().createBook(bookFile);
         bookRecordId = booksCollection.addBook(bookRecord);
-    }
-
-    @Before
-    public void getActivity() {
         Intent intent = new Intent("com.veve.flowreader.views.PageActivity");
         intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(Constants.BOOK_ID, bookRecordId);
@@ -76,9 +72,10 @@ public class FlippingTest {
     @Test
     public void testFlipping() throws Exception {
         for (int i = 1; i < bookRecord.getPagesCount(); i++) {
-            pageActivity.setPageNumber(i);
+            final int page = i;
+            InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> pageActivity.setPageNumber(page));
             while (pageActivity.findViewById(R.id.progress).getVisibility() == VISIBLE) {
-                Thread.currentThread().sleep(10);
+                Thread.sleep(10);
             }
         }
     }

@@ -2,6 +2,8 @@ package com.veve.flowreader.uitest;
 
 import android.content.Intent;
 import android.graphics.drawable.VectorDrawable;
+
+import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
 import android.widget.ImageButton;
 
@@ -52,7 +54,7 @@ public class ModePhoneTest extends BookTest {
         VectorDrawable iconDrawable;
         iconDrawable = (VectorDrawable)(showButton.getDrawable());
         assertTrue(areDrawablesIdentical(iconDrawable, iconDrawableToBook));
-        showButton.callOnClick();
+        InstrumentationRegistry.getInstrumentation().runOnMainSync(() -> showButton.callOnClick());
         iconDrawable = (VectorDrawable)(showButton.getDrawable());
         assertTrue(areDrawablesIdentical(iconDrawable, iconDrawableToPhone));
     }

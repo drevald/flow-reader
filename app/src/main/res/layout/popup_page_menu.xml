@@ -32,7 +32,7 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 app:srcCompat="@drawable/ic_swipe"
-                android:tint="?android:attr/textColorSecondary"/>
+                android:tint="@color/colorText"/>
 
             <TextView
                 android:layout_width="0dp"
@@ -40,7 +40,7 @@
                 android:layout_weight="1"
                 android:text="Swap to flip"
                 android:textSize="19sp"
-                android:textColor="?android:attr/textColorPrimary"
+                android:textColor="@color/colorText"
                 android:paddingStart="16dp"/>
 
             <ImageView
@@ -70,7 +70,7 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 app:srcCompat="@drawable/ic_tap"
-                android:tint="?android:attr/textColorSecondary"/>
+                android:tint="@color/colorText"/>
 
             <TextView
                 android:layout_width="0dp"
@@ -78,7 +78,7 @@
                 android:layout_weight="1"
                 android:text="Tap to flip"
                 android:textSize="19sp"
-                android:textColor="?android:attr/textColorPrimary"
+                android:textColor="@color/colorText"
                 android:paddingStart="16dp"/>
 
             <ImageView
@@ -94,7 +94,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="?android:attr/listDivider"/>
+            android:background="@color/colorDivider"/>
 
         <!-- Pinch to zoom row -->
         <LinearLayout
@@ -109,7 +109,7 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 app:srcCompat="@drawable/ic_pinch_on"
-                android:tint="?android:attr/textColorSecondary"/>
+                android:tint="@color/colorText"/>
 
             <TextView
                 android:layout_width="0dp"
@@ -117,7 +117,7 @@
                 android:layout_weight="1"
                 android:text="Pinch to zoom"
                 android:textSize="19sp"
-                android:textColor="?android:attr/textColorPrimary"
+                android:textColor="@color/colorText"
                 android:paddingStart="16dp"/>
 
             <androidx.appcompat.widget.SwitchCompat
@@ -130,7 +130,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="?android:attr/listDivider"/>
+            android:background="@color/colorDivider"/>
 
         <!-- Left row -->
         <LinearLayout
@@ -149,7 +149,7 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 app:srcCompat="@drawable/ic_align_left"
-                android:tint="?android:attr/textColorSecondary"/>
+                android:tint="@color/colorText"/>
 
             <TextView
                 android:layout_width="0dp"
@@ -157,7 +157,7 @@
                 android:layout_weight="1"
                 android:text="Align left"
                 android:textSize="19sp"
-                android:textColor="?android:attr/textColorPrimary"
+                android:textColor="@color/colorText"
                 android:paddingStart="16dp"/>
 
             <ImageView
@@ -187,7 +187,7 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 app:srcCompat="@drawable/ic_align_justify"
-                android:tint="?android:attr/textColorSecondary"/>
+                android:tint="@color/colorText"/>
 
             <TextView
                 android:layout_width="0dp"
@@ -195,7 +195,7 @@
                 android:layout_weight="1"
                 android:text="Justify"
                 android:textSize="19sp"
-                android:textColor="?android:attr/textColorPrimary"
+                android:textColor="@color/colorText"
                 android:paddingStart="16dp"/>
 
             <ImageView

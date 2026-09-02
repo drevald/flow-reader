@@ -15,6 +15,7 @@ import com.veve.flowreader.model.BooksCollection;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -23,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertNotNull;
 
 public class WeirdNameTest {
@@ -43,7 +45,7 @@ public class WeirdNameTest {
         File parentDirectory = new File(appContext.getExternalFilesDir(null), sampleDirName);
         parentDirectory.mkdirs();
         djvuBookFile = new File(parentDirectory, djvuFileName);
-        if (djvuBookFile.createNewFile());
+        if (!djvuBookFile.exists()) assertTrue(djvuBookFile.createNewFile());
         InputStream is = appContext.getResources().openRawResource(djvuFileRes);
         OutputStream os = new FileOutputStream(djvuBookFile);
         Utils.copy(is, os);
@@ -68,6 +70,7 @@ public class WeirdNameTest {
 //        assertEquals(bookRecord.getTitle(), djvuFileName);
     }
 
+    @Ignore("Xiaomi-specific content URI — will fail on other devices")
     @Test
     public void testDjvuContentOpen() throws Exception {
         Intent intent = new Intent("android.intent.action.VIEW",

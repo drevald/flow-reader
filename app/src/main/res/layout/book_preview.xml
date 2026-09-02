@@ -9,7 +9,9 @@
         android:layout_width="100dp"
         android:layout_height="150dp"
         android:id="@+id/thumbnail"
-        android:background="@drawable/thumbnail"/>
+        android:background="@drawable/thumbnail"
+        android:elevation="6dp"
+        android:scaleType="fitXY"/>
 
     <TextView
         android:id="@+id/caption"
@@ -17,6 +19,7 @@
         android:layout_height="70dp"
         android:textSize="12sp"
         android:textAlignment="center"
+        android:gravity="top|center_horizontal"
         style="@style/caption"/>
 
 </LinearLayout>

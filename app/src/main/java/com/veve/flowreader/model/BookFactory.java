@@ -1,6 +1,10 @@
 package com.veve.flowreader.model;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
 import android.util.Log;
 
 import com.veve.flowreader.dao.BookRecord;
@@ -66,8 +70,22 @@ public class BookFactory {
         //Generating and setting preview
         Bitmap bitmap = book.getPage(0).getAsBitmap(new DevicePageContext(100));
         Bitmap thumbnail = Bitmap.createScaledBitmap(bitmap, 100, 150, true);
+        Bitmap grayThumbnail = Bitmap.createBitmap(thumbnail.getWidth(), thumbnail.getHeight(), Bitmap.Config.ARGB_8888);
+        float contrast = 1.3f;
+        float translate = (1f - contrast) / 2f * 255f;
+        ColorMatrix cm = new ColorMatrix();
+        cm.setSaturation(0f);
+        cm.postConcat(new ColorMatrix(new float[]{
+            contrast, 0, 0, 0, translate,
+            0, contrast, 0, 0, translate,
+            0, 0, contrast, 0, translate,
+            0, 0, 0, 1, 0
+        }));
+        Paint paint = new Paint();
+        paint.setColorFilter(new ColorMatrixColorFilter(cm));
+        new Canvas(grayThumbnail).drawBitmap(thumbnail, 0, 0, paint);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        thumbnail.compress(Bitmap.CompressFormat.JPEG,100, byteArrayOutputStream);
+        grayThumbnail.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
         bookRecord.setPreview(byteArrayOutputStream.toByteArray());
 
         String bookName = "";

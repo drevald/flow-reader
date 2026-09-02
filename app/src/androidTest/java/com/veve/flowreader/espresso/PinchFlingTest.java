@@ -119,17 +119,22 @@ public class PinchFlingTest extends BookTest {
                     int xStep = (view.getWidth()/(4 * stepsNum));
                     int yStep = (view.getHeight()/(4 * stepsNum));
 
-                    int x0start = (3 * view.getWidth()/8);
-                    int y0start = (3 * view.getHeight()/8);
+                    int[] location = new int[2];
+                    view.getLocationOnScreen(location);
+                    int viewX = location[0];
+                    int viewY = location[1];
 
-                    int x1start = (5 * view.getWidth()/8);
-                    int y1start = (5 * view.getHeight()/8);
+                    int x0start = viewX + (3 * view.getWidth()/8);
+                    int y0start = viewY + (3 * view.getHeight()/8);
 
-                    int x0end = (view.getWidth()/8);
-                    int y0end = (view.getHeight()/8);
+                    int x1start = viewX + (5 * view.getWidth()/8);
+                    int y1start = viewY + (5 * view.getHeight()/8);
 
-                    int x1end = (7 *view.getWidth()/8);
-                    int y1end = (7 * view.getHeight()/8);
+                    int x0end = viewX + (view.getWidth()/8);
+                    int y0end = viewY + (view.getHeight()/8);
+
+                    int x1end = viewX + (7 * view.getWidth()/8);
+                    int y1end = viewY + (7 * view.getHeight()/8);
 
                     long start = SystemClock.uptimeMillis();
                     long tick = 10;
@@ -205,17 +210,22 @@ public class PinchFlingTest extends BookTest {
                     int xStep = (view.getWidth()/(4 * stepsNum));
                     int yStep = (view.getHeight()/(4 * stepsNum));
 
-                    int x0end = (3 * view.getWidth()/8);
-                    int y0end = (3 * view.getHeight()/8);
+                    int[] location = new int[2];
+                    view.getLocationOnScreen(location);
+                    int viewX = location[0];
+                    int viewY = location[1];
 
-                    int x1end = (5 * view.getWidth()/8);
-                    int y1end = (5 * view.getHeight()/8);
+                    int x0end = viewX + (3 * view.getWidth()/8);
+                    int y0end = viewY + (3 * view.getHeight()/8);
 
-                    int x0start = (view.getWidth()/8);
-                    int y0start = (view.getHeight()/8);
+                    int x1end = viewX + (5 * view.getWidth()/8);
+                    int y1end = viewY + (5 * view.getHeight()/8);
 
-                    int x1start = (7 *view.getWidth()/8);
-                    int y1start = (7 * view.getHeight()/8);
+                    int x0start = viewX + (view.getWidth()/8);
+                    int y0start = viewY + (view.getHeight()/8);
+
+                    int x1start = viewX + (7 * view.getWidth()/8);
+                    int y1start = viewY + (7 * view.getHeight()/8);
 
                     long start = SystemClock.uptimeMillis();
                     long tick = 10;

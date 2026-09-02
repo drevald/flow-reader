@@ -188,6 +188,10 @@ public class MainActivity extends BaseActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        ((ImageButton) findViewById(R.id.theme)).setImageResource(
+                isNightMode() ? R.drawable.ic_baseline_brightness_5_24
+                              : R.drawable.ic_baseline_brightness_3_24);
+
         ////////////    ADD BOOKS BUTTON     /////////////////////////////////////////////////////
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
@@ -384,8 +388,7 @@ public class MainActivity extends BaseActivity {
             }
             ImageView imageView = convertView.findViewById(R.id.thumbnail);
             byte[] bytes = booksList.get(position).getPreview();
-            Bitmap thumbnailBitmap = Bitmap
-                    .createScaledBitmap(BitmapFactory.decodeByteArray(bytes, 0, bytes.length), 60, 90, false);
+            Bitmap thumbnailBitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
             if (darkTheme) {
                 thumbnailBitmap = createInvertedBitmap(thumbnailBitmap);
             }

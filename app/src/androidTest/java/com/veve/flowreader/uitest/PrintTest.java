@@ -41,7 +41,7 @@ public class PrintTest extends BookTest {
     public void getActivity() {
         bookRecord.setMode(Constants.VIEW_MODE_ORIGINAL);
         booksCollection.updateBook(bookRecord);
-        Intent intent = new Intent("com.veve.flowreader.views.PageActivity");
+        Intent intent = new Intent("com.veve.flowreader.views.PrintActivity");
         intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(Constants.BOOK_ID, testBookId);
         intent.putExtra(Constants.POSITION, 1);

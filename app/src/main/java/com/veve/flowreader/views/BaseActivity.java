@@ -1,7 +1,6 @@
 package com.veve.flowreader.views;
 
-import android.app.UiModeManager;
-import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
@@ -10,7 +9,6 @@ import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -42,23 +40,26 @@ public class BaseActivity  extends AppCompatActivity {
     }
 
     protected void changeTheme() {
-//        darkTheme = !darkTheme;
-//        recreate();
+        darkTheme = !darkTheme;
+        AppCompatDelegate.setDefaultNightMode(darkTheme
+                ? AppCompatDelegate.MODE_NIGHT_YES
+                : AppCompatDelegate.MODE_NIGHT_NO);
+        // AppCompatDelegate recreates the foreground activity automatically
+    }
 
-        UiModeManager uiManager = (UiModeManager) getApplicationContext().getSystemService(Context.UI_MODE_SERVICE);
+    protected boolean isNightMode() {
+        return (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK)
+                == Configuration.UI_MODE_NIGHT_YES;
+    }
 
-        if (!darkTheme) {
-            //uiManager.enableCarMode(0);
-//            uiManager.setNightMode(UiModeManager.MODE_NIGHT_YES);
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-            darkTheme = true;
-        } else {
-            // uiManager.disableCarMode(0);
-            //uiManager.setNightMode(UiModeManager.MODE_NIGHT_NO);
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            darkTheme = false;
+    @Override
+    protected void onResume() {
+        super.onResume();
+        boolean shouldBeNight = AppCompatDelegate.getDefaultNightMode()
+                == AppCompatDelegate.MODE_NIGHT_YES;
+        if (shouldBeNight != isNightMode()) {
+            recreate();
         }
-        recreate();
     }
 
     protected Bitmap createInvertedBitmap(Bitmap src) {
