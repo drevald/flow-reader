@@ -20,7 +20,7 @@ android {
         multiDexEnabled true
         applicationId "com.veve.flowreader"
         minSdkVersion 19
-        targetSdkVersion 35
+        targetSdkVersion 38
         def offset = System.getenv("VERSION_CODE_OFFSET") ? System.getenv("VERSION_CODE_OFFSET").toInteger() : 0
         def buildNum = System.getenv("BUILD_NUMBER") ? System.getenv("BUILD_NUMBER").toInteger() : 0
         println "DEBUG: VERSION_CODE_OFFSET=${System.getenv('VERSION_CODE_OFFSET')}, BUILD_NUMBER=${System.getenv('BUILD_NUMBER')}, offset=$offset, buildNum=$buildNum"
@@ -87,7 +87,7 @@ android {
         }
     }
     buildToolsVersion '35.0.0'
-    compileSdkVersion 35
+    compileSdkVersion 38
     namespace 'com.veve.flowreader'
 }
 
