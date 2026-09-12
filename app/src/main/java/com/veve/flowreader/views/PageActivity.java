@@ -418,7 +418,6 @@ public class PageActivity extends BaseActivity {
         book.setZoom(context.getZoom());
         context.setZoomOriginal(Math.max(book.getZoomOriginal(), Constants.ZOOM_MIN));
         book.setZoomOriginal(context.getZoomOriginal());
-        context.setJustify(book.isJustify());
         context.setKerning(book.getKerning());
         context.setLeading(book.getLeading());
         context.setMargin(book.getMargin());
@@ -606,14 +605,6 @@ public class PageActivity extends BaseActivity {
 //            pref.edit().putBoolean(Constants.SHOW_SCROLLBARS, !showScrollbars).apply();
 //            scroll.setScrollBarSize(showScrollbars ? 0 : 50);
 //            item.setTitle(showScrollbars ? R.string.show_scrollbars : R.string.hide_scrollbars);
-        } else if (id == R.id.justify_text) {
-            context.setJustify(true);
-            book.setJustify(true);
-            booksCollection.updateBook(book);
-        } else if (id == R.id.align_left_text) {
-            context.setJustify(false);
-            book.setJustify(false);
-            booksCollection.updateBook(book);
         } else if (id == R.id.night_mode) {
             changeTheme();
             return true;
@@ -634,13 +625,10 @@ public class PageActivity extends BaseActivity {
 
         boolean kindleNav = pref.getBoolean(Constants.KINDLE_NAVIGATION, false);
         boolean pinchZoom = pref.getBoolean(Constants.PINCH_ZOOM, true);
-        boolean justify   = book.isJustify();
 
         // Checkmarks
         popupView.findViewById(R.id.check_swipe).setVisibility(kindleNav ? GONE : VISIBLE);
         popupView.findViewById(R.id.check_tap).setVisibility(kindleNav ? VISIBLE : GONE);
-        popupView.findViewById(R.id.check_left).setVisibility(justify ? GONE : VISIBLE);
-        popupView.findViewById(R.id.check_justify).setVisibility(justify ? VISIBLE : GONE);
 
         // Toggle
         CompoundButton switchPinch = popupView.findViewById(R.id.switch_pinch);
@@ -658,29 +646,12 @@ public class PageActivity extends BaseActivity {
 
         View optionSwipe   = popupView.findViewById(R.id.option_swipe);
         View optionTap     = popupView.findViewById(R.id.option_tap);
-        View optionLeft    = popupView.findViewById(R.id.option_left);
-        View optionJustify = popupView.findViewById(R.id.option_justify);
-
         optionSwipe.setOnClickListener(v -> {
             pref.edit().putBoolean(Constants.KINDLE_NAVIGATION, false).apply();
             dialog.dismiss();
         });
         optionTap.setOnClickListener(v -> {
             pref.edit().putBoolean(Constants.KINDLE_NAVIGATION, true).apply();
-            dialog.dismiss();
-        });
-        optionLeft.setOnClickListener(v -> {
-            context.setJustify(false);
-            book.setJustify(false);
-            booksCollection.updateBook(book);
-            setPageNumber(currentPage);
-            dialog.dismiss();
-        });
-        optionJustify.setOnClickListener(v -> {
-            context.setJustify(true);
-            book.setJustify(true);
-            booksCollection.updateBook(book);
-            setPageNumber(currentPage);
             dialog.dismiss();
         });
         dialog.show();

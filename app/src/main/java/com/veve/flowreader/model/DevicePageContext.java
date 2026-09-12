@@ -63,8 +63,6 @@ public class DevicePageContext implements Serializable {
 
     private boolean willusSegmentation;
 
-    private boolean justify;
-
     public DevicePageContext(int width) {
         this.zoom = DEFAULT_ZOOM;
         this.zoomOriginal = DEFAULT_ZOOM;
@@ -220,11 +218,4 @@ public class DevicePageContext implements Serializable {
         this.willusSegmentation = willusSegmentation;
     }
 
-    public boolean isJustify() {
-        return justify;
-    }
-
-    public void setJustify(boolean justify) {
-        this.justify = justify;
-    }
 }
