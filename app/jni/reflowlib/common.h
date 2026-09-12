@@ -11,8 +11,6 @@
 #include <math.h>
 #include <limits>
 #include <stdlib.h>
-#include <pthread.h>
-#include <unistd.h>
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -82,9 +80,6 @@ struct SortSegments {
     }
 };
 
-
-long long current_timestamp();
-
 Pix *mat8ToPix(cv::Mat *mat8);
 
 cv::Mat pix8ToMat(Pix *pix8);
@@ -97,11 +92,9 @@ double deviation(vector<int> v, double ave);
 
 std::vector<glyph> preprocess(cv::Mat& image, cv::Mat& rotated_with_pictures);
 
-std::vector<glyph> detect_images(cv::Mat& image);
-
 std::vector<glyph> convert_java_glyphs(JNIEnv *env, jobject list);
 
-void reflow(cv::Mat& cvMat, cv::Mat& new_image, float scale, int page_width, JNIEnv* env, std::vector<glyph> glyphs, jobject list, std::vector<glyph> pic_glyphs, cv::Mat rotated_with_pictures, bool preprocessing, float margin, bool justify);
+void reflow(cv::Mat& cvMat, cv::Mat& new_image, float scale, int page_width, JNIEnv* env, std::vector<glyph> glyphs, jobject list, std::vector<glyph> pic_glyphs, cv::Mat rotated_with_pictures, bool preprocessing, float margin);
 
 void put_glyphs(JNIEnv *env, vector<glyph>& glyphs, jobject& list);
 
@@ -117,21 +110,7 @@ int max_ind(std::vector<std::tuple<int,int>> zr);
 
 int strlen16(char16_t* strarg);
 
-std::vector<glyph> get_glyphs(cv::Mat mat, std::vector<glyph> pictures);
+std::vector<glyph> get_glyphs(cv::Mat mat);
 
-
-template<typename T>
-std::vector<std::pair<T, T>> all_pairs(
-    std::vector<T> intervals) {
-    int size = intervals.size();
-    std::vector<std::pair<T, T>> return_value;
-    for (int i = 0; i < size; i++) {
-        for (int j = i + 1; j < size; j++) {
-            return_value.push_back(
-                std::make_pair(intervals.at(i), intervals.at(j)));
-        }
-    }
-    return return_value;
-}
 
 #endif

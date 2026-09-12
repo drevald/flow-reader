@@ -8,7 +8,6 @@
 
 #include "Reflow.h"
 #include "LineSpacing.h"
-#include <set>
 
 std::vector<int> Reflow::calculate_line_heights(std::vector<int> line_heights) {
 
@@ -26,7 +25,7 @@ std::vector<int> Reflow::calculate_line_heights(std::vector<int> line_heights) {
 }
 
 
-cv::Mat Reflow::reflow(float scale, int page_width, float margin, bool justify) {
+cv::Mat Reflow::reflow(float scale, int page_width, float margin) {
 
     int new_width = page_width;
     //scale = portrait ? scale : scale * screen_ratio;
@@ -48,7 +47,6 @@ cv::Mat Reflow::reflow(float scale, int page_width, float margin, bool justify) 
     int line_number = 0;
     std::vector<glyph> line;
     bool last = false;
-    std::set<int> last_para_lines;
 
     for (int i=0; i<glyphs.size(); i++) {
         glyph g = glyphs.at(i);
@@ -116,9 +114,6 @@ cv::Mat Reflow::reflow(float scale, int page_width, float margin, bool justify) 
             }
         }
 
-        if (g.is_last) {
-            last_para_lines.insert(line_number);
-        }
         last = g.is_last;
 
     }
@@ -173,36 +168,14 @@ cv::Mat Reflow::reflow(float scale, int page_width, float margin, bool justify) 
 
 
     for (int i=0; i<=line_number; i++) {
-        std::vector<glyph> line_glyphs = lines.at(i);
+        std::vector<glyph> glyphs = lines.at(i);
         int line_height = line_heights.at(i);
-        line_sum = left_margin;
+        //cv::line(new_image, cv::Point(0,current_vert_pos), cv::Point(new_width, current_vert_pos), cv::Scalar(255), 5);
+        line_sum = left_margin ;
         last = false;
-
-        // Calculate justification extra space per gap for this line
-        int extra_per_gap = 0;
-        bool is_last_para = last_para_lines.count(i) > 0;
-        if (justify && !is_last_para) {
-            int total_glyph_width = 0;
-            int num_glyphs = 0;
-            bool first_skipped = false;
-            for (int j = 0; j < (int)line_glyphs.size(); j++) {
-                glyph g = line_glyphs.at(j);
-                if (j == 0 && g.is_space) { first_skipped = true; continue; }
-                if (!g.is_space) {
-                    total_glyph_width += (int)ceil(g.width * scale);
-                    num_glyphs++;
-                }
-            }
-            int available = new_width - 2 * left_margin;
-            if (num_glyphs > 1 && total_glyph_width < available) {
-                extra_per_gap = (available - total_glyph_width) / (num_glyphs - 1);
-            }
-        }
-
-        int drawn_count = 0;
-        for (int j=0;j<(int)line_glyphs.size(); j++) {
-            glyph g = line_glyphs.at(j);
-
+        for (int j=0;j<glyphs.size(); j++) {
+            glyph g = glyphs.at(j);
+            
             if (j==0 && g.is_space) {
                 continue;
             }
@@ -228,6 +201,9 @@ cv::Mat Reflow::reflow(float scale, int page_width, float margin, bool justify) 
             } else {
                 int scaled_symbol_width = (new_width - left_margin) - x_pos;
                 if (scaled_symbol_width > 0) {
+
+                    // calucalte new symbol height
+
                     float scale_coef = scaled_symbol_width/(float)new_symbol_width;
                     int y_pos = (current_vert_pos + line_height) + (g.baseline_shift - g.height)*scale*scale_coef;
                     int scaled_symbol_height = scale_coef * new_symbol_height;
@@ -238,14 +214,14 @@ cv::Mat Reflow::reflow(float scale, int page_width, float margin, bool justify) 
                         dst.copyTo(new_image(dstRect));
                     }
                 }
+
             }
-            if (!g.is_space) {
-                drawn_count++;
-                line_sum += new_symbol_width + extra_per_gap;
-            }
+            line_sum += new_symbol_width;
             last = g.is_last;
         }
         current_vert_pos += line_height;
+
+
     }
 
     //cv::imwrite(std::string("/data/local/tmp/im.png"), new_image);
