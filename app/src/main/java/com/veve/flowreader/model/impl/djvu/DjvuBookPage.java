@@ -65,10 +65,6 @@ public class DjvuBookPage extends AbstractBookPage implements BookPage  {
         }
         bytes = null;
 
-        if (context.isWillusSegmentation()) {
-             return getWillusBitmap(retVal, context.getWidth(), bitmapWidth, totalHeight);
-        }
-
         return retVal;
 
     }

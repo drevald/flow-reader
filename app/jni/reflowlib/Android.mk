@@ -71,6 +71,8 @@ endif
 
 
 
+LOCAL_LDFLAGS += -Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384
+
 include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)

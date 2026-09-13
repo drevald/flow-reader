@@ -7,7 +7,6 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.util.Log;
 
-import com.github.axet.k2pdfopt.K2PdfOpt;
 import com.veve.flowreader.model.BookPage;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyphInfo;
@@ -102,11 +101,6 @@ public class PdfBookPage extends AbstractBookPage implements BookPage {
             bytes.set(i, null);
         }
         bytes = null;
-
-        if (context.isWillusSegmentation()) {
-            return getWillusBitmap(retVal, context.getWidth(), bitmapWidth, totalHeight);
-        }
-
 
         return retVal;
 
