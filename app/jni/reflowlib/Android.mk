@@ -26,24 +26,24 @@ LOCAL_C_INCLUDES := \
 
 
 ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
-	LOCAL_STATIC_LIBRARIES := myview djvu jpeg9 lz4 libopencv_photo libopencv_imgproc libopencv_imgcodecs libopencv_core libleptonica libtiff libpng libjpeg-turbo libjasper libwebp libIlmImf flann cpufeatures ittnotify tbb tegra_hal libboost_system libboost_graph libm c++_static
+	LOCAL_STATIC_LIBRARIES := myview djvu jpeg9 lz4 libopencv_photo libopencv_imgproc libopencv_imgcodecs libopencv_core libleptonica libtiff libpng libjpeg-turbo libjasper libwebp libIlmImf flann cpufeatures ittnotify tbb tegra_hal libboost_system libboost_graph libm
 endif
 
 ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
-	LOCAL_STATIC_LIBRARIES := myview djvu lz4 libopencv_photo libopencv_imgproc libopencv_imgcodecs libopencv_core libleptonica libtiff libpng libjpeg-turbo libjasper libwebp libIlmImf flann cpufeatures ittnotify tbb tegra_hal libboost_system libboost_graph libm c++_static
+	LOCAL_STATIC_LIBRARIES := myview djvu lz4 libopencv_photo libopencv_imgproc libopencv_imgcodecs libopencv_core libleptonica libtiff libpng libjpeg-turbo libjasper libwebp libIlmImf flann cpufeatures ittnotify tbb tegra_hal libboost_system libboost_graph libm
 endif
 
 ifeq ($(TARGET_ARCH_ABI),x86_64)
-	LOCAL_STATIC_LIBRARIES := myview djvu lz4 libopencv_photo libopencv_imgproc libopencv_imgcodecs libopencv_core libleptonica libtiff libpng libjpeg-turbo libjasper libwebp libIlmImf flann cpufeatures ittnotify tbb libboost_system ippiw ippicv libboost_graph c++_static
+	LOCAL_STATIC_LIBRARIES := myview djvu lz4 libopencv_photo libopencv_imgproc libopencv_imgcodecs libopencv_core libleptonica libtiff libpng libjpeg-turbo libjasper libwebp libIlmImf flann cpufeatures ittnotify tbb libboost_system ippiw ippicv libboost_graph
 endif
 
 ifeq ($(TARGET_ARCH_ABI),x86)
-	LOCAL_STATIC_LIBRARIES := myview djvu lz4 libopencv_photo libopencv_imgproc libopencv_imgcodecs libopencv_core libleptonica libtiff libpng libjpeg-turbo libjasper libwebp libIlmImf libprotobuf flann cpufeatures ittnotify tbb libboost_system ippiw ippicv libboost_graph c++_static
+	LOCAL_STATIC_LIBRARIES := myview djvu lz4 libopencv_photo libopencv_imgproc libopencv_imgcodecs libopencv_core libleptonica libtiff libpng libjpeg-turbo libjasper libwebp libIlmImf libprotobuf flann cpufeatures ittnotify tbb libboost_system ippiw ippicv libboost_graph
 endif
 
 LOCAL_ALLOW_UNDEFINED_SYMBOLS=true
 
-LOCAL_CFLAGS += -DHAVE_CONFIG_H -frtti -fexceptions -fopenmp -w -Ofast -DNDEBUG
+LOCAL_CFLAGS += -DHAVE_CONFIG_H -frtti -fexceptions -fopenmp -w -O3 -ffast-math -DNDEBUG -D_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION
 LOCAL_LDLIBS += -llog -lz -lm -L$(SYSROOT)/usr/lib
 LOCAL_LDFLAGS += -ldl -landroid -fopenmp
 LOCAL_LDFLAGS += -ldl -landroid -static-openmp
