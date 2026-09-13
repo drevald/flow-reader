@@ -10,3 +10,4 @@ APP_OPTIM := release
 #APP_STL := c++_shared
 #NDK_TOOLCHAIN_VERSION := 4.9
 APP_PLATFORM := android-21
+APP_SUPPORT_FLEXIBLE_PAGE_SIZES := true
