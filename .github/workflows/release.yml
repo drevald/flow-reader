@@ -22,7 +22,7 @@ jobs:
 
       - name: Install SDK and NDK
         run: |
-          echo "y" | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "ndk;25.2.9519653"
+          echo "y" | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "ndk;30.0.16248370"
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
