@@ -13,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        android:background="@color/colorPanel"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <androidx.appcompat.widget.Toolbar
@@ -34,6 +35,7 @@
                     android:text="A+"
                     android:textSize="26sp"
                     android:textStyle="bold"
+                    android:textColor="@color/colorToolbarIcon"
                     style="?android:attr/borderlessButtonStyle"
                     android:layout_weight="0"/>
 
@@ -44,6 +46,7 @@
                     android:text="A-"
                     android:textSize="26sp"
                     android:textStyle="bold"
+                    android:textColor="@color/colorToolbarIcon"
                     style="?android:attr/borderlessButtonStyle"
                     android:layout_weight="0"/>
 
@@ -57,6 +60,7 @@
                     android:layout_width="72dp"
                     android:layout_height="72dp"
                     app:srcCompat="@drawable/ic_more_vert"
+                    android:tint="@color/colorToolbarIcon"
                     style="?android:attr/borderlessButtonStyle"
                     android:layout_weight="0"/>
 

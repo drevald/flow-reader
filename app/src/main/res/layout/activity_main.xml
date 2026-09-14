@@ -5,12 +5,14 @@
     android:id="@+id/topLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorBackground"
     android:fitsSystemWindows="true"
     tools:context="com.veve.flowreader.views.MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/colorPanel"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <androidx.appcompat.widget.Toolbar
@@ -36,6 +38,7 @@
                 android:contentDescription="@string/list_view"
                 android:labelFor="@string/list_view"
                 android:onClick="changeTheme"
+                android:tint="@color/colorToolbarIcon"
                 app:srcCompat="@drawable/ic_baseline_brightness_3_24" />
 
             <androidx.appcompat.widget.AppCompatImageButton
@@ -47,6 +50,7 @@
                 android:gravity="center"
                 android:contentDescription="@string/list_view"
                 android:labelFor="@string/list_view"
+                android:tint="@color/colorToolbarIcon"
                 app:srcCompat="@drawable/ic_baseline_view_list_24" />
 
             <androidx.appcompat.widget.AppCompatImageButton
@@ -58,6 +62,7 @@
                 android:gravity="center"
                 android:contentDescription="@string/grid_view"
                 android:labelFor="@string/grid_view"
+                android:tint="@color/colorToolbarIcon"
                 app:srcCompat="@drawable/ic_baseline_view_module_24" />
 
             <androidx.appcompat.widget.AppCompatImageButton
@@ -68,6 +73,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:contentDescription="@string/about_program"
+                android:tint="@color/colorToolbarIcon"
                 app:srcCompat="@drawable/ic_more_vert" />
 
             </LinearLayout>

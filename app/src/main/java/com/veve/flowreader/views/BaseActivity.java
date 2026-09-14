@@ -31,8 +31,10 @@ public class BaseActivity  extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getDelegate().setLocalNightMode(darkTheme
+                ? AppCompatDelegate.MODE_NIGHT_YES
+                : AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
-//        setTheme(darkTheme ? R.style.AppThemeNight : R.style.AppTheme);
     }
 
     public void changeTheme(View v) {
@@ -41,10 +43,10 @@ public class BaseActivity  extends AppCompatActivity {
 
     protected void changeTheme() {
         darkTheme = !darkTheme;
-        AppCompatDelegate.setDefaultNightMode(darkTheme
+        getDelegate().setLocalNightMode(darkTheme
                 ? AppCompatDelegate.MODE_NIGHT_YES
                 : AppCompatDelegate.MODE_NIGHT_NO);
-        // AppCompatDelegate recreates the foreground activity automatically
+        recreate();
     }
 
     protected boolean isNightMode() {
@@ -55,11 +57,6 @@ public class BaseActivity  extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        boolean shouldBeNight = AppCompatDelegate.getDefaultNightMode()
-                == AppCompatDelegate.MODE_NIGHT_YES;
-        if (shouldBeNight != isNightMode()) {
-            recreate();
-        }
     }
 
     protected Bitmap createInvertedBitmap(Bitmap src) {

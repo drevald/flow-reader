@@ -3,9 +3,13 @@
     <color name="colorPrimary">#03DAC6</color>
     <color name="colorPrimaryDark">#018786</color>
     <color name="colorAccent">#03DAC6</color>
-    <color name="colorBackground">#1E1E1E</color>
+    <color name="colorBackground">#6B6B6B</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="itemBackground">#2C2C2C</color>
     <color name="colorText">#FFFFFF</color>
     <color name="colorDivider">#44FFFFFF</color>
+    <color name="colorToolbarIcon">#03DAC6</color>
+    <color name="colorPanel">#2C2C2C</color>
+    <color name="colorPopup">#2C2C2C</color>
+    <color name="colorPopupContent">#03DAC6</color>
 </resources>

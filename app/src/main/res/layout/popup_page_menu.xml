@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardBackgroundColor="@color/colorBackground"
+    app:cardBackgroundColor="@color/colorPopup"
     app:cardCornerRadius="12dp"
     app:cardElevation="8dp">
 
@@ -32,7 +32,7 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 app:srcCompat="@drawable/ic_swipe"
-                android:tint="@color/colorText"/>
+                android:tint="@color/colorPopupContent"/>
 
             <TextView
                 android:layout_width="0dp"
@@ -40,7 +40,7 @@
                 android:layout_weight="1"
                 android:text="Swap to flip"
                 android:textSize="19sp"
-                android:textColor="@color/colorText"
+                android:textColor="@color/colorPopupContent"
                 android:paddingStart="16dp"/>
 
             <ImageView
@@ -70,7 +70,7 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 app:srcCompat="@drawable/ic_tap"
-                android:tint="@color/colorText"/>
+                android:tint="@color/colorPopupContent"/>
 
             <TextView
                 android:layout_width="0dp"
@@ -78,7 +78,7 @@
                 android:layout_weight="1"
                 android:text="Tap to flip"
                 android:textSize="19sp"
-                android:textColor="@color/colorText"
+                android:textColor="@color/colorPopupContent"
                 android:paddingStart="16dp"/>
 
             <ImageView
@@ -109,7 +109,7 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 app:srcCompat="@drawable/ic_pinch_on"
-                android:tint="@color/colorText"/>
+                android:tint="@color/colorPopupContent"/>
 
             <TextView
                 android:layout_width="0dp"
@@ -117,7 +117,7 @@
                 android:layout_weight="1"
                 android:text="Pinch to zoom"
                 android:textSize="19sp"
-                android:textColor="@color/colorText"
+                android:textColor="@color/colorPopupContent"
                 android:paddingStart="16dp"/>
 
             <androidx.appcompat.widget.SwitchCompat

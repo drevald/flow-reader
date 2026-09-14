@@ -4,30 +4,27 @@
     android:viewportWidth="24"
     android:viewportHeight="24">
 
-    <!-- Page outline -->
+    <!-- Phone outline -->
     <path
-        android:pathData="M3,2 L3,20 L13,20 L13,2 Z"
+        android:pathData="M8,2 L16,2 Q18,2 18,4 L18,20 Q18,22 16,22 L8,22 Q6,22 6,20 L6,4 Q6,2 8,2 Z"
         android:strokeColor="#FF000000"
-        android:strokeWidth="2"
+        android:strokeWidth="1.5"
         android:strokeLineCap="round"
         android:strokeLineJoin="round"
         android:fillColor="#00000000"/>
 
-    <!-- Arrow shaft -->
+    <!-- Arrow shaft crossing through phone -->
     <path
-        android:pathData="M15,11 L21,11"
+        android:pathData="M5,12 L22,12"
         android:strokeColor="#FF000000"
         android:strokeWidth="2"
         android:strokeLineCap="round"
         android:fillColor="#00000000"/>
 
-    <!-- Arrow head -->
+    <!-- Arrow head (filled triangle) -->
     <path
-        android:pathData="M18,8 L21,11 L18,14"
-        android:strokeColor="#FF000000"
-        android:strokeWidth="2"
-        android:strokeLineCap="round"
-        android:strokeLineJoin="round"
-        android:fillColor="#00000000"/>
+        android:pathData="M19,9.5 L22,12 L19,14.5 Z"
+        android:fillColor="#FF000000"
+        android:strokeColor="#00000000"/>
 
 </vector>

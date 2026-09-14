@@ -8,4 +8,8 @@
     <color name="itemBackground">#FFFFFF</color>
     <color name="colorText">#000000</color>
     <color name="colorDivider">#22000000</color>
+    <color name="colorToolbarIcon">#FFFFFF</color>
+    <color name="colorPanel">#03DAC6</color>
+    <color name="colorPopup">#FFFFFF</color>
+    <color name="colorPopupContent">#000000</color>
 </resources>
