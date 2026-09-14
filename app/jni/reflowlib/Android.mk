@@ -71,7 +71,7 @@ endif
 
 
 
-LOCAL_LDFLAGS += -Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384
+LOCAL_LDFLAGS += -Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384 -Wl,-z,separate-loadable-segments
 
 include $(BUILD_SHARED_LIBRARY)
 
