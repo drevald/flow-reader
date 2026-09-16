@@ -8,6 +8,8 @@
 
 #include "Reflow.h"
 #include "LineSpacing.h"
+#include "common.h"
+#include <android/log.h>
 
 std::vector<int> Reflow::calculate_line_heights(std::vector<int> line_heights) {
 
@@ -25,7 +27,24 @@ std::vector<int> Reflow::calculate_line_heights(std::vector<int> line_heights) {
 }
 
 
-cv::Mat Reflow::reflow(float scale, int page_width, float margin) {
+cv::Mat Reflow::reflow(float scale, int page_width, float margin, bool break_on_space) {
+
+    int space_count = 0;
+    for (int i = 0; i < (int)glyphs.size(); i++) {
+        if (glyphs.at(i).is_space) space_count++;
+    }
+    __android_log_print(ANDROID_LOG_DEBUG, APPNAME,
+        "reflow: break_on_space=%d total_glyphs=%d space_glyphs=%d",
+        (int)break_on_space, (int)glyphs.size(), space_count);
+
+    int log_limit = glyphs.size() < 80 ? (int)glyphs.size() : 80;
+    for (int i = 0; i < log_limit; i++) {
+        glyph& gl = glyphs.at(i);
+        __android_log_print(ANDROID_LOG_DEBUG, APPNAME,
+            "glyph[%d] x=%d y=%d w=%d h=%d baseline_shift=%d is_space=%d is_last=%d indented=%d",
+            i, gl.x, gl.y, gl.width, gl.height, gl.baseline_shift,
+            gl.is_space, gl.is_last, gl.indented);
+    }
 
     int new_width = page_width;
     //scale = portrait ? scale : scale * screen_ratio;
@@ -73,6 +92,44 @@ cv::Mat Reflow::reflow(float scale, int page_width, float margin) {
             glyph_number_to_line_number.insert(std::make_pair(i, line_number));
 
         } else {
+
+            if (break_on_space && line.size() > 0) {
+                int trim_to = -1;
+                int overflow_start = -1;
+                for (int j = (int)line.size() - 1; j >= 0; j--) {
+                    glyph& sg = line.at(j);
+                    // Only treat as a real word space if wide enough (width > height/5).
+                    // PageSegmenter also flags tiny intra-character gaps as spaces; skip those.
+                    if (sg.is_space && sg.width * 5 > sg.height) {
+                        trim_to = j;
+                        overflow_start = j + 1;
+                        break;
+                    }
+                }
+                if (trim_to > 0 && overflow_start >= 0 && overflow_start <= (int)line.size()) {
+                    std::vector<glyph> overflow;
+                    for (int j = overflow_start; j < (int)line.size(); j++) {
+                        overflow.push_back(line.at(j));
+                    }
+                    overflow.push_back(g);
+
+                    line.resize(trim_to);
+                    if (line.size() > 0) {
+                        lines.insert(std::make_pair(line_number, line));
+                        line_number++;
+                    }
+
+                    line = std::vector<glyph>();
+                    line_sum = left_margin;
+                    for (int j = 0; j < (int)overflow.size(); j++) {
+                        glyph_number_to_line_number.insert(std::make_pair(i - ((int)overflow.size() - 1 - j), line_number));
+                        line.push_back(overflow.at(j));
+                        line_sum += ceil(overflow.at(j).width * scale);
+                    }
+                    last = g.is_last;
+                    continue;
+                }
+            }
 
             if (line.size() > 0) {
                 lines.insert(std::make_pair(line_number, line));

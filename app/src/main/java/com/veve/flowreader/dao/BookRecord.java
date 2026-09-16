@@ -1,5 +1,6 @@
 package com.veve.flowreader.dao;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -35,6 +36,9 @@ public class BookRecord {
     private byte[] preview;
     private String md5;
     private boolean preprocessing = false;
+
+    @ColumnInfo(name = "breakOnSpace", defaultValue = "0")
+    private boolean breakWords = false;
 
     private int format;
 
@@ -163,6 +167,14 @@ public class BookRecord {
 
     public boolean getPreprocessing() {
         return this.preprocessing;
+    }
+
+    public boolean getBreakWords() {
+        return breakWords;
+    }
+
+    public void setBreakWords(boolean breakWords) {
+        this.breakWords = breakWords;
     }
 
     public float getZoomOriginal() { return zoomOriginal; }

@@ -127,6 +127,37 @@
 
         </LinearLayout>
 
+        <!-- Break words row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="16dp">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                app:srcCompat="@drawable/ic_break_on_space"
+                android:tint="@color/colorPopupContent"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Break words"
+                android:textSize="19sp"
+                android:textColor="@color/colorPopupContent"
+                android:paddingStart="16dp"/>
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_break_on_space"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
 
     </LinearLayout>
 

@@ -421,6 +421,7 @@ public class PageActivity extends BaseActivity {
         context.setKerning(book.getKerning());
         context.setLeading(book.getLeading());
         context.setMargin(book.getMargin());
+        context.setBreakWords(book.getBreakWords());
         if (book.getPreprocessing()) {
             context.setPreprocessing(true);
             context.setInvalidateCache(true);
@@ -625,6 +626,7 @@ public class PageActivity extends BaseActivity {
 
         boolean kindleNav = pref.getBoolean(Constants.KINDLE_NAVIGATION, false);
         boolean pinchZoom = pref.getBoolean(Constants.PINCH_ZOOM, true);
+        boolean breakWords = book.getBreakWords();
 
         // Checkmarks
         popupView.findViewById(R.id.check_swipe).setVisibility(kindleNav ? GONE : VISIBLE);
@@ -636,6 +638,9 @@ public class PageActivity extends BaseActivity {
         switchPinch.setOnCheckedChangeListener((btn, checked) ->
                 pref.edit().putBoolean(Constants.PINCH_ZOOM, checked).apply());
 
+        CompoundButton switchBreakOnSpace = popupView.findViewById(R.id.switch_break_on_space);
+        switchBreakOnSpace.setChecked(breakWords);
+
         androidx.appcompat.app.AppCompatDialog dialog = new androidx.appcompat.app.AppCompatDialog(this);
         dialog.setContentView(popupView);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -643,6 +648,15 @@ public class PageActivity extends BaseActivity {
         dialog.getWindow().setLayout(
                 (int) (300 * getResources().getDisplayMetrics().density),
                 ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        switchBreakOnSpace.setOnCheckedChangeListener((btn, checked) -> {
+            book.setBreakWords(checked);
+            context.setBreakWords(checked);
+            booksCollection.updateBook(book);
+            context.setInvalidateCache(true);
+            dialog.dismiss();
+            setPageNumber(currentPage);
+        });
 
         View optionSwipe   = popupView.findViewById(R.id.option_swipe);
         View optionTap     = popupView.findViewById(R.id.option_tap);

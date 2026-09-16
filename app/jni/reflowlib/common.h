@@ -94,7 +94,7 @@ std::vector<glyph> preprocess(cv::Mat& image, cv::Mat& rotated_with_pictures);
 
 std::vector<glyph> convert_java_glyphs(JNIEnv *env, jobject list);
 
-void reflow(cv::Mat& cvMat, cv::Mat& new_image, float scale, int page_width, JNIEnv* env, std::vector<glyph> glyphs, jobject list, std::vector<glyph> pic_glyphs, cv::Mat rotated_with_pictures, bool preprocessing, float margin);
+void reflow(cv::Mat& cvMat, cv::Mat& new_image, float scale, int page_width, JNIEnv* env, std::vector<glyph> glyphs, jobject list, std::vector<glyph> pic_glyphs, cv::Mat rotated_with_pictures, bool preprocessing, float margin, bool break_on_space);
 
 void put_glyphs(JNIEnv *env, vector<glyph>& glyphs, jobject& list);
 

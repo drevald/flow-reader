@@ -51,6 +51,8 @@ public class DevicePageContext implements Serializable {
 
     private boolean invalidateCache;
 
+    private boolean breakWords;
+
     private boolean portrait;
 
     private float screenRatio;
@@ -193,6 +195,14 @@ public class DevicePageContext implements Serializable {
 
     public void setInvalidateCache(boolean invalidateCache) {
         this.invalidateCache = invalidateCache;
+    }
+
+    public boolean isBreakWords() {
+        return breakWords;
+    }
+
+    public void setBreakWords(boolean breakWords) {
+        this.breakWords = breakWords;
     }
 
     public float getScreenRatio() {
