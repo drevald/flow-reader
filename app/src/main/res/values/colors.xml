@@ -3,9 +3,9 @@
     <color name="colorPrimary">#03DAC6</color>
     <color name="colorPrimaryDark">#00A896</color>
     <color name="colorAccent">#03DAC6</color>
-    <color name="colorBackground">#FFFFFF</color>
+    <color name="colorBackground">#F3F3F3</color>
     <color name="transparent">#00FFFFFF</color>
-    <color name="itemBackground">#FFFFFF</color>
+    <color name="itemBackground">#F3F3F3</color>
     <color name="colorText">#000000</color>
     <color name="colorDivider">#22000000</color>
     <color name="colorToolbarIcon">#FFFFFF</color>

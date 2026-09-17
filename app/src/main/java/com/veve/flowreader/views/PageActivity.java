@@ -955,6 +955,12 @@ public class PageActivity extends BaseActivity {
                         ((ViewGroup)pageActivity.page.getParent()).removeView(pageActivity.page);
                         pageActivity.scroll.removeAllViews();
                         if (viewMode == VIEW_MODE_PHONE) {
+                            ColorFilter lightFilter = darkTheme ? null : new ColorMatrixColorFilter(new ColorMatrix(new float[]{
+                                243f/255f, 0, 0, 0, 0,
+                                0, 243f/255f, 0, 0, 0,
+                                0, 0, 243f/255f, 0, 0,
+                                0, 0, 0, 1, 0
+                            }));
                             for (int offset = 0; offset < bitmapHeight; offset += Constants.IMAGE_VIEW_HEIGHT_LIMIT) {
                                 Log.d(getClass().getName(), "Before image creation");
                                 int height = Math.min(bitmapHeight, offset + Constants.IMAGE_VIEW_HEIGHT_LIMIT);
@@ -974,6 +980,7 @@ public class PageActivity extends BaseActivity {
                                 imageView.setScaleType(ImageView.ScaleType.FIT_START);
                                 imageView.setMaxHeight(Integer.MAX_VALUE);
                                 imageView.setImageBitmap(limitedBitmap);
+                                imageView.setColorFilter(lightFilter);
                                 pageViews.add(imageView);
                                 Log.d(getClass().getName(), "Image creation");
                                 Log.d(getClass().getName(), "After image creation");
@@ -996,6 +1003,14 @@ public class PageActivity extends BaseActivity {
                             //if (!bitmap.isRecycled()) {
                                 imageView.setImageBitmap(bitmap);
                             //}
+                            if (!darkTheme) {
+                                imageView.setColorFilter(new ColorMatrixColorFilter(new ColorMatrix(new float[]{
+                                    243f/255f, 0, 0, 0, 0,
+                                    0, 243f/255f, 0, 0, 0,
+                                    0, 0, 243f/255f, 0, 0,
+                                    0, 0, 0, 1, 0
+                                })));
+                            }
 
                             pageActivity.page.addView(imageView);
                             horizontalScrollView.addView(pageActivity.page);
