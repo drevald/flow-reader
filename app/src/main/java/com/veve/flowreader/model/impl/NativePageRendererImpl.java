@@ -39,10 +39,12 @@ public class NativePageRendererImpl implements PageRenderer {
         return Collections.emptyList();
     }
 
-    private void updateZoomLimitsFromGlyphs(List<PageGlyphInfo> glyphs, float renderZoom, DevicePageContext context) {
+    private void updateZoomLimitsFromGlyphs(List<PageGlyphInfo> glyphs, DevicePageContext context) {
         List<Float> heights = new ArrayList<>();
         for (PageGlyphInfo g : glyphs) {
-            if (g.getAverageHeight() > 0) heights.add((float) g.getAverageHeight() / renderZoom);
+            // averageHeight is from PageSegmenter which runs on the source image (300 DPI),
+            // so it is a source-pixel value independent of render zoom. No division needed.
+            if (g.getAverageHeight() > 0) heights.add((float) g.getAverageHeight());
         }
         if (heights.isEmpty()) return;
         Collections.sort(heights);
@@ -112,7 +114,7 @@ public class NativePageRendererImpl implements PageRenderer {
             }
             booksCollection.addGlyphs(glyphsToStore, false);
             if (bookRecord.getMedianGlyphBaseHeight() == 0) {
-                updateZoomLimitsFromGlyphs(glyphs, context.getZoom(), context);
+                updateZoomLimitsFromGlyphs(glyphs, context);
             }
             Log.v("PERF", String.format("\tbookSource.getReflownPageBytes(%d, ...) took %d ms", position, System.currentTimeMillis() - start));
             Log.v(getClass().getName(), String.format("new reflownPageBytes.size()=%d for page %d", reflownPageBytes.size(), position));
@@ -133,7 +135,7 @@ public class NativePageRendererImpl implements PageRenderer {
                 ));
             }
             if (bookRecord.getMedianGlyphBaseHeight() == 0) {
-                updateZoomLimitsFromGlyphs(glyphs, context.getZoom(), context);
+                updateZoomLimitsFromGlyphs(glyphs, context);
             }
             List<Bitmap> reflownPageBytes = bookSource.getReflownPageBytes(position, context, glyphs);
             Log.v("PERF", String.format("\tbookSource.getReflownPageBytes(%d, ...) took %d ms", position, System.currentTimeMillis() - start));

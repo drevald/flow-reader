@@ -5,7 +5,6 @@
 #include "pdf-lib.h"
 
 #include "common.h"
-#define RESOLUTION_MULTIPLIER  4;
 
 
 
@@ -33,10 +32,9 @@ JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNa
     int pageno = (int)pageNumber;
     FPDF_PAGE page = FPDF_LoadPage(doc, pageno);
 
-    int width = static_cast<int>(FPDF_GetPageWidth(page))*4;
+    int width = static_cast<int>(FPDF_GetPageWidth(page) / 72.0f * TARGET_DPI);
 
     return (jint)width;
-
 
 }
 
@@ -48,7 +46,7 @@ JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNa
     int pageno = (int)pageNumber;
     FPDF_PAGE page = FPDF_LoadPage(doc, pageno);
 
-    int height = static_cast<int>(FPDF_GetPageHeight(page))*RESOLUTION_MULTIPLIER;
+    int height = static_cast<int>(FPDF_GetPageHeight(page) / 72.0f * TARGET_DPI);
 
     return (jint)height;
 
@@ -81,10 +79,10 @@ image_format get_pdf_pixels(JNIEnv* env, jlong bookId, jint pageNumber, char** p
 
     int pageno = (int)pageNumber;
     FPDF_PAGE page = FPDF_LoadPage(doc, pageno);
-    int width = static_cast<int>(FPDF_GetPageWidth(page))*RESOLUTION_MULTIPLIER;
-    int height = static_cast<int>(FPDF_GetPageHeight(page))*RESOLUTION_MULTIPLIER;
+    int width  = static_cast<int>(FPDF_GetPageWidth(page)  / 72.0f * TARGET_DPI);
+    int height = static_cast<int>(FPDF_GetPageHeight(page) / 72.0f * TARGET_DPI);
 
-    int size = width * height * RESOLUTION_MULTIPLIER;
+    int size = width * height * 4;
 
     FPDF_BITMAP bitmap = FPDFBitmap_Create(width, height, 0);
     FPDFBitmap_FillRect(bitmap, 0, 0, width, height, 0xFFFFFFFF);
@@ -97,7 +95,7 @@ image_format get_pdf_pixels(JNIEnv* env, jlong bookId, jint pageNumber, char** p
 }
 
 JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_getNativeReflowedBytes
-        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jfloat scale, jint pageWidth, jobject pageSize, jobject list, jboolean preprocessing, jfloat margin, jboolean breakOnSpace) {
+        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jfloat scale, jint pageWidth, jobject pageSize, jobject list, jboolean preprocessing, jfloat margin, jboolean breakOnSpace, jboolean showGlyphBorders) {
 
 
     // get glyphs from java
@@ -133,11 +131,11 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
         threshold(m, m, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
         cv::Mat rotated_with_pictures;
         std::vector<glyph> pic_glyphs = preprocess(m, rotated_with_pictures);
-        reflow(m, new_image, scale, pageWidth, env, glyphs, list, pic_glyphs, rotated_with_pictures, true, margin, (bool)breakOnSpace);
+        reflow(m, new_image, scale, pageWidth, env, glyphs, list, pic_glyphs, rotated_with_pictures, true, margin, (bool)breakOnSpace, (bool)showGlyphBorders);
         pixDestroy(&r);
     } else {
         threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
-        reflow(mat, new_image, scale, pageWidth, env, glyphs, list, std::vector<glyph>(), mat, false, margin, (bool)breakOnSpace);
+        reflow(mat, new_image, scale, pageWidth, env, glyphs, list, std::vector<glyph>(), mat, false, margin, (bool)breakOnSpace, (bool)showGlyphBorders);
     }
 
     jclass clz = env->GetObjectClass(pageSize);

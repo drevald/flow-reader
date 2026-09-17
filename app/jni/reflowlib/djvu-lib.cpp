@@ -104,7 +104,8 @@ JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_get
     while ((r = ddjvu_document_get_pageinfo(doc, pageno, &info)) < DDJVU_JOB_OK) {
 
     }
-    return (jint) info.width;
+    int src_dpi = info.dpi > 0 ? info.dpi : 300;
+    return (jint) static_cast<int>(info.width * TARGET_DPI / src_dpi);
 
 }
 
@@ -121,7 +122,8 @@ JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_get
     while ((r = ddjvu_document_get_pageinfo(doc, pageno, &info)) < DDJVU_JOB_OK) {
 
     }
-    return (jint) info.height;
+    int src_dpi = info.dpi > 0 ? info.dpi : 300;
+    return (jint) static_cast<int>(info.height * TARGET_DPI / src_dpi);
 
 }
 
@@ -182,17 +184,22 @@ image_format get_djvu_pixels(JNIEnv *env, jlong bookId, jint page_number, jboole
     while ((r = ddjvu_document_get_pageinfo(doc, pageno, &info)) < DDJVU_JOB_OK) {
     }
 
-    int w = info.width;
-    int h = info.height;
+    int src_dpi = info.dpi > 0 ? info.dpi : 300;
+    float scale = TARGET_DPI / (float)src_dpi;
+    int w = static_cast<int>(info.width  * scale);
+    int h = static_cast<int>(info.height * scale);
 
-    ddjvu_rect_t rrect;
     ddjvu_rect_t prect;
-
     prect.x = 0;
     prect.y = 0;
-    prect.w = w;
-    prect.h = h;
-    rrect = prect;
+    prect.w = info.width;
+    prect.h = info.height;
+
+    ddjvu_rect_t rrect;
+    rrect.x = 0;
+    rrect.y = 0;
+    rrect.w = w;
+    rrect.h = h;
 
     unsigned int masks[] = {0x000000FF, 0x0000FF00, 0x00FF0000, 0xFF000000};
     ddjvu_format_t *pixelFormat = colored ? ddjvu_format_create(DDJVU_FORMAT_RGBMASK32, 4, masks) : ddjvu_format_create(DDJVU_FORMAT_GREY8, 0, NULL);
@@ -216,12 +223,12 @@ image_format get_djvu_pixels(JNIEnv *env, jlong bookId, jint page_number, jboole
                                       *pixels);
 
     ddjvu_format_release(pixelFormat);
-    return image_format(w,h,size, info.dpi);
+    return image_format(w, h, size, (int)TARGET_DPI);
 
 }
 
 JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_getNativeReflowedBytes
-        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jfloat scale, jint pageWidth, jobject pageSize, jobject list, jboolean preprocessing, jfloat margin, jboolean breakOnSpace) {
+        (JNIEnv *env, jclass cls, jlong bookId, jint pageNumber, jfloat scale, jint pageWidth, jobject pageSize, jobject list, jboolean preprocessing, jfloat margin, jboolean breakOnSpace, jboolean showGlyphBorders) {
 
     std::vector<glyph> glyphs = convert_java_glyphs(env, list);
 
@@ -248,11 +255,11 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBookPage_
         threshold(m, m, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
         cv::Mat rotated_with_pictures;
         std::vector<glyph> pic_glyphs = preprocess(m, rotated_with_pictures);
-        reflow(m, new_image, scale, pageWidth, env, glyphs, list, pic_glyphs, rotated_with_pictures, true, margin, (bool)breakOnSpace);
+        reflow(m, new_image, scale, pageWidth, env, glyphs, list, pic_glyphs, rotated_with_pictures, true, margin, (bool)breakOnSpace, (bool)showGlyphBorders);
         pixDestroy(&r);
     } else {
         threshold(mat, mat, 0, 255, cv::THRESH_BINARY_INV | cv::THRESH_OTSU);
-        reflow(mat, new_image, scale, pageWidth, env, glyphs, list, std::vector<glyph>(), mat, false, margin, (bool)breakOnSpace);
+        reflow(mat, new_image, scale, pageWidth, env, glyphs, list, std::vector<glyph>(), mat, false, margin, (bool)breakOnSpace, (bool)showGlyphBorders);
     }
 
     jclass clz = env->GetObjectClass(pageSize);

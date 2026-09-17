@@ -27,7 +27,7 @@ std::vector<int> Reflow::calculate_line_heights(std::vector<int> line_heights) {
 }
 
 
-cv::Mat Reflow::reflow(float scale, int page_width, float margin, bool break_on_space) {
+cv::Mat Reflow::reflow(float scale, int page_width, float margin, bool break_on_space, bool show_glyph_borders) {
 
     int space_count = 0;
     for (int i = 0; i < (int)glyphs.size(); i++) {
@@ -194,7 +194,7 @@ cv::Mat Reflow::reflow(float scale, int page_width, float margin, bool break_on_
         int m = 0;
         for (int l=0;l<glyphs.size(); l++) {
             glyph g = glyphs.at(l);
-             if (l==0 && g.is_space) {
+             if (g.is_space) {
                  g_counter++;
                  continue;
              }
@@ -217,8 +217,9 @@ cv::Mat Reflow::reflow(float scale, int page_width, float margin, bool break_on_
     int current_vert_pos = top_margin;
 
     // new image to copy pixels to
-
-    cv::Mat new_image(new_height + 2*top_margin, new_width, image.type());
+    // When glyph borders are shown we need a 3-channel (BGR) image for colored rectangles.
+    int output_type = show_glyph_borders ? CV_8UC3 : image.type();
+    cv::Mat new_image(new_height + 2*top_margin, new_width, output_type);
     new_image.setTo(cv::Scalar(0));
 
     current_vert_pos = top_margin;
@@ -247,7 +248,20 @@ cv::Mat Reflow::reflow(float scale, int page_width, float margin, bool break_on_
 
             cv::Mat dst(new_symbol_height, new_symbol_width, symbol_mat.type());
             cv::resize(symbol_mat, dst, dst.size(), 0,0, cv::INTER_CUBIC);
+            if (show_glyph_borders) {
+                cv::cvtColor(dst, dst, cv::COLOR_GRAY2BGR);
+            }
             int x_pos = line_sum;
+
+            // Colors pre-compensated for cv::bitwise_not applied by the caller.
+            // After inversion + BGR→RGB in PNG, these appear as intended on Android.
+            auto borderColor = [&](const glyph& gl) -> cv::Scalar {
+                if (gl.is_picture) return cv::Scalar(255, 75,  255); // appears green
+                if (gl.is_space)   return cv::Scalar(75,  255, 255); // appears blue
+                if (gl.indented)   return cv::Scalar(255, 75,  75);  // appears yellow
+                if (gl.is_last)    return cv::Scalar(75,  255, 75);  // appears magenta
+                return             cv::Scalar(255, 255, 75);          // appears red
+            };
 
             int y_pos = (current_vert_pos + line_height) + (g.baseline_shift - g.height)*scale;
             if (x_pos + new_symbol_width < new_width - left_margin) {
@@ -255,20 +269,29 @@ cv::Mat Reflow::reflow(float scale, int page_width, float margin, bool break_on_
                 if (!g.is_space) {
                     dst.copyTo(new_image(dstRect));
                 }
+                if (show_glyph_borders) {
+                    cv::rectangle(new_image, dstRect, borderColor(g), 1);
+                }
             } else {
                 int scaled_symbol_width = (new_width - left_margin) - x_pos;
                 if (scaled_symbol_width > 0) {
 
-                    // calucalte new symbol height
+                    // calculate new symbol height
 
                     float scale_coef = scaled_symbol_width/(float)new_symbol_width;
                     int y_pos = (current_vert_pos + line_height) + (g.baseline_shift - g.height)*scale*scale_coef;
                     int scaled_symbol_height = scale_coef * new_symbol_height;
-                    cv::Mat dst(scaled_symbol_height, scaled_symbol_width, symbol_mat.type());
-                    cv::resize(symbol_mat, dst, dst.size(), 0,0, cv::INTER_CUBIC);
+                    cv::Mat dst2(scaled_symbol_height, scaled_symbol_width, show_glyph_borders ? CV_8UC3 : symbol_mat.type());
+                    cv::resize(symbol_mat, dst2, dst2.size(), 0,0, cv::INTER_CUBIC);
+                    if (show_glyph_borders) {
+                        cv::cvtColor(dst2, dst2, cv::COLOR_GRAY2BGR);
+                    }
                     cv::Rect dstRect(x_pos, y_pos, scaled_symbol_width, scaled_symbol_height);
                     if (!g.is_space) {
-                        dst.copyTo(new_image(dstRect));
+                        dst2.copyTo(new_image(dstRect));
+                    }
+                    if (show_glyph_borders) {
+                        cv::rectangle(new_image, dstRect, borderColor(g), 1);
                     }
                 }
 

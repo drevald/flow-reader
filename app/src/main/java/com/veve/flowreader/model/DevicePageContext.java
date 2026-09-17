@@ -59,6 +59,8 @@ public class DevicePageContext implements Serializable {
 
     private boolean breakWords;
 
+    private boolean showGlyphBorders;
+
     private boolean portrait;
 
     private float screenRatio;
@@ -111,9 +113,9 @@ public class DevicePageContext implements Serializable {
     public void setZoomLimits(float medianGlyphBaseHeight, float xdpi) {
         if (medianGlyphBaseHeight <= 0) return;
         float dpi = xdpi > 0 ? xdpi : DEFAULT_DISPLAY_DPI;
-        zoomMin = 5f * dpi / (72f * medianGlyphBaseHeight);
+        zoomMin = 4f * dpi / (72f * medianGlyphBaseHeight);
         zoomMax = 16f * dpi / (72f * medianGlyphBaseHeight);
-        zoomStep = (zoomMax - zoomMin) / 8f;
+        zoomStep = 1f * dpi / (72f * medianGlyphBaseHeight);  // exactly 1 pt per step
     }
 
     public DevicePageContext() {
@@ -223,6 +225,14 @@ public class DevicePageContext implements Serializable {
 
     public void setBreakWords(boolean breakWords) {
         this.breakWords = breakWords;
+    }
+
+    public boolean isShowGlyphBorders() {
+        return showGlyphBorders;
+    }
+
+    public void setShowGlyphBorders(boolean showGlyphBorders) {
+        this.showGlyphBorders = showGlyphBorders;
     }
 
     public float getScreenRatio() {

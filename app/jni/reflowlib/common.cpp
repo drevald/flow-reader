@@ -514,7 +514,7 @@ void put_glyphs(JNIEnv *env, vector<glyph>& glyphs, jobject& list) {
 
 }
 
-void  reflow(cv::Mat& cvMat, cv::Mat& new_image, float scale, int page_width,  JNIEnv* env, std::vector<glyph> savedGlyphs, jobject list, std::vector<glyph> pic_glyphs, cv::Mat rotated_with_pictures, bool preprocessing, float margin, bool break_on_space) {
+void  reflow(cv::Mat& cvMat, cv::Mat& new_image, float scale, int page_width,  JNIEnv* env, std::vector<glyph> savedGlyphs, jobject list, std::vector<glyph> pic_glyphs, cv::Mat rotated_with_pictures, bool preprocessing, float margin, bool break_on_space, bool show_glyph_borders) {
     //const cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(2, 2));
     //cv::dilate(cvMat, cvMat, kernel, cv::Point(-1, -1), 1);
 
@@ -538,7 +538,7 @@ void  reflow(cv::Mat& cvMat, cv::Mat& new_image, float scale, int page_width,  J
 
         try {
             Reflow reflower(cvMat, rotated_with_pictures, glyphs);
-            new_image = reflower.reflow(scale, page_width, margin, break_on_space);
+            new_image = reflower.reflow(scale, page_width, margin, break_on_space, show_glyph_borders);
         } catch (...) {
             __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "%s\n", "exception occurred");
             //cv::bitwise_not(rotated_with_pictures, rotated_with_pictures);

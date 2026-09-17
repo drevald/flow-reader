@@ -82,6 +82,15 @@ public class BooksCollection {
         new BookDeleteTask(daoAccess).execute(bookId);
     }
 
+    public void deleteAllGlyphs(long bookId) {
+        new AsyncTask<Long, Void, Void>() {
+            @Override protected Void doInBackground(Long... ids) {
+                daoAccess.deleteBookGlyphs(ids[0]);
+                return null;
+            }
+        }.execute(bookId);
+    }
+
 //    public boolean hasBook (Uri uri) {
 //        BookCheckerTask bookCheckerTask = new BookCheckerTask(daoAccess);
 //        bookCheckerTask.execute(uri.toString());

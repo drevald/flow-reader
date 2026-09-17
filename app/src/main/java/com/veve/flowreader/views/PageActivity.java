@@ -15,6 +15,7 @@ import static com.veve.flowreader.Constants.SHOW_SCROLLBARS;
 import static com.veve.flowreader.Constants.VIEW_MODE_ORIGINAL;
 import static com.veve.flowreader.Constants.VIEW_MODE_PHONE;
 
+import com.veve.flowreader.BuildConfig;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -378,7 +379,7 @@ public class PageActivity extends BaseActivity {
         topLayout = findViewById(R.id.topLayout);
         pager = findViewById(R.id.pager);
         progressPercent = findViewById(R.id.progress_percent);
-        glyphSizeLabel = findViewById(R.id.glyph_size_label);
+        glyphSizeLabel = BuildConfig.DEBUG ? findViewById(R.id.glyph_size_label) : null;
         seekBar = findViewById(R.id.slider);
         home = findViewById(R.id.home);
         progressBar = findViewById(R.id.progress);
@@ -418,9 +419,19 @@ public class PageActivity extends BaseActivity {
         context.setResolution((int)displayMetrics.xdpi);
 
         context.setZoomLimits(book.getMedianGlyphBaseHeight(), displayMetrics.xdpi);
-        context.setZoom(Math.max(book.getZoom(), context.getZoomMin()));
+        float storedZoom = book.getZoom();
+        if (storedZoom < context.getZoomMin() || storedZoom > context.getZoomMax()) {
+            // Stored zoom is outside valid range — cached glyph data is stale (e.g. render DPI changed).
+            // Reset so glyphs are re-extracted at the current resolution.
+            book.setMedianGlyphBaseHeight(0);
+            booksCollection.deleteAllGlyphs(book.getId());
+            booksCollection.updateBook(book);
+            context.setZoomLimits(0, displayMetrics.xdpi); // resets to constant defaults
+            storedZoom = context.getZoomMin();
+        }
+        context.setZoom(storedZoom);
         book.setZoom(context.getZoom());
-        context.setZoomOriginal(Math.max(book.getZoomOriginal(), context.getZoomMin()));
+        context.setZoomOriginal(Math.min(Math.max(book.getZoomOriginal(), context.getZoomMin()), context.getZoomMax()));
         book.setZoomOriginal(context.getZoomOriginal());
         context.setKerning(book.getKerning());
         context.setLeading(book.getLeading());
@@ -662,6 +673,18 @@ public class PageActivity extends BaseActivity {
             setPageNumber(currentPage);
         });
 
+        if (BuildConfig.DEBUG) {
+            View rowGlyphBorders = popupView.findViewById(R.id.row_glyph_borders);
+            rowGlyphBorders.setVisibility(View.VISIBLE);
+            CompoundButton switchGlyphBorders = popupView.findViewById(R.id.switch_glyph_borders);
+            switchGlyphBorders.setChecked(context.isShowGlyphBorders());
+            switchGlyphBorders.setOnCheckedChangeListener((btn, checked) -> {
+                context.setShowGlyphBorders(checked);
+                dialog.dismiss();
+                setPageNumber(currentPage);
+            });
+        }
+
         View optionSwipe   = popupView.findViewById(R.id.option_swipe);
         View optionTap     = popupView.findViewById(R.id.option_tap);
         optionSwipe.setOnClickListener(v -> {
@@ -856,8 +879,8 @@ public class PageActivity extends BaseActivity {
         if (baseHeight > 0) {
             int px = Math.round(baseHeight * context.getZoom());
             float dpi = context.getResolution() > 0 ? context.getResolution() : 72f;
-            float pt = baseHeight * context.getZoom() * 72f / dpi;
-            glyphSizeLabel.setText(String.format("%dpx / %.1fpt", px, pt));
+            int pt = Math.round(baseHeight * context.getZoom() * 72f / dpi);
+            glyphSizeLabel.setText(String.format("%dpx / %dpt", px, pt));
         } else {
             glyphSizeLabel.setText("");
         }
@@ -965,7 +988,7 @@ public class PageActivity extends BaseActivity {
                     if (bitmap.getByteCount() > MAX_BITMAP_SIZE) {
                         Snackbar.make(topLayout, getString(R.string.could_not_zoom_more),
                                 Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                        context.setZoom(context.getZoom() - 0.5f);
+                        context.setZoom(context.getZoom() - context.getZoomStep());
                         pageActivity.book.setZoom(pageActivity.context.getZoom());
                         pageActivity.booksCollection.updateBook(pageActivity.book);
                         //} else if (bitmap.getWidth() >= pageActivity.context.getWidth()) {

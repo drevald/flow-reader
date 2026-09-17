@@ -158,6 +158,32 @@
 
         </LinearLayout>
 
+        <!-- Debug: glyph borders row (shown only in debug builds) -->
+        <LinearLayout
+            android:id="@+id/row_glyph_borders"
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="16dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="[DEBUG] Glyph borders"
+                android:textSize="19sp"
+                android:textColor="@color/colorPopupContent"
+                android:paddingStart="48dp"/>
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_glyph_borders"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 

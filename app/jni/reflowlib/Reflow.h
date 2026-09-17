@@ -18,7 +18,7 @@ class Reflow {
 public:
     Reflow(cv::Mat image, cv::Mat& rotated_with_pictures, std::vector<glyph> glyphs) : image(image), rotated_with_pictures(rotated_with_pictures), glyphs(glyphs) {
     }
-    cv::Mat reflow(float scale, int page_width, float margin, bool break_on_space);
+    cv::Mat reflow(float scale, int page_width, float margin, bool break_on_space, bool show_glyph_borders);
 private:
     cv::Mat image;
     cv::Mat rotated_with_pictures;
