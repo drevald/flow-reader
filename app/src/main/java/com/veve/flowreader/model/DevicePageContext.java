@@ -31,6 +31,12 @@ public class DevicePageContext implements Serializable {
 
     private float zoomOriginal;
 
+    private float zoomMin = com.veve.flowreader.Constants.ZOOM_MIN;
+
+    private float zoomMax = com.veve.flowreader.Constants.ZOOM_MAX;
+
+    private float zoomStep = com.veve.flowreader.Constants.ZOOM_STEP;
+
     private int width;
 
     private int lineHeight;
@@ -95,6 +101,20 @@ public class DevicePageContext implements Serializable {
     public float getZoomOriginal() {return zoomOriginal;}
 
     public void setZoomOriginal(float originalZoom) {this.zoomOriginal = originalZoom;}
+
+    public float getZoomMin() { return zoomMin; }
+
+    public float getZoomMax() { return zoomMax; }
+
+    public float getZoomStep() { return zoomStep; }
+
+    public void setZoomLimits(float medianGlyphBaseHeight, float xdpi) {
+        if (medianGlyphBaseHeight <= 0) return;
+        float dpi = xdpi > 0 ? xdpi : DEFAULT_DISPLAY_DPI;
+        zoomMin = 5f * dpi / (72f * medianGlyphBaseHeight);
+        zoomMax = 16f * dpi / (72f * medianGlyphBaseHeight);
+        zoomStep = (zoomMax - zoomMin) / 8f;
+    }
 
     public DevicePageContext() {
         newline = true;

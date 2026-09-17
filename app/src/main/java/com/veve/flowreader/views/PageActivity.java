@@ -106,6 +106,7 @@ public class PageActivity extends BaseActivity {
     Set<AsyncTask> runningTasks;
     TextView pager;
     TextView progressPercent;
+    TextView glyphSizeLabel;
     AppBarLayout bar;
     CoordinatorLayout topLayout;
     PageRenderer pageRenderer;
@@ -304,12 +305,13 @@ public class PageActivity extends BaseActivity {
 //            super.onScaleEnd(detector);
 
             zoomFactor = Math.abs(factor * context.getZoom());
-            zoomFactor = Math.min(zoomFactor, Constants.ZOOM_MAX);
-            zoomFactor = Math.max(zoomFactor, Constants.ZOOM_MIN);
+            zoomFactor = Math.min(zoomFactor, context.getZoomMax());
+            zoomFactor = Math.max(zoomFactor, context.getZoomMin());
             Log.d(getClass().getName(),
                     String.format("Scaling %f zoom %f\n", factor, zoomFactor));
             context.setZoom(zoomFactor);
             book.setZoom(zoomFactor);
+            updateGlyphSizeLabel();
             Log.d(getClass().getName(),
                     String.format("Scaling factor is %f original is %f",
                             book.getZoom(), book.getZoomOriginal()));
@@ -376,6 +378,7 @@ public class PageActivity extends BaseActivity {
         topLayout = findViewById(R.id.topLayout);
         pager = findViewById(R.id.pager);
         progressPercent = findViewById(R.id.progress_percent);
+        glyphSizeLabel = findViewById(R.id.glyph_size_label);
         seekBar = findViewById(R.id.slider);
         home = findViewById(R.id.home);
         progressBar = findViewById(R.id.progress);
@@ -414,9 +417,10 @@ public class PageActivity extends BaseActivity {
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         context.setResolution((int)displayMetrics.xdpi);
 
-        context.setZoom(Math.max(book.getZoom(), Constants.ZOOM_MIN));
+        context.setZoomLimits(book.getMedianGlyphBaseHeight(), displayMetrics.xdpi);
+        context.setZoom(Math.max(book.getZoom(), context.getZoomMin()));
         book.setZoom(context.getZoom());
-        context.setZoomOriginal(Math.max(book.getZoomOriginal(), Constants.ZOOM_MIN));
+        context.setZoomOriginal(Math.max(book.getZoomOriginal(), context.getZoomMin()));
         book.setZoomOriginal(context.getZoomOriginal());
         context.setKerning(book.getKerning());
         context.setLeading(book.getLeading());
@@ -810,28 +814,29 @@ public class PageActivity extends BaseActivity {
 
             if (viewMode == VIEW_MODE_PHONE) {
                 if (id == R.id.smaller_text) {
-                    if (context.getZoom() > Constants.ZOOM_MIN) {
-                        context.setZoom(context.getZoom() - Constants.ZOOM_STEP);
+                    if (context.getZoom() > context.getZoomMin()) {
+                        context.setZoom(Math.max(context.getZoom() - context.getZoomStep(), context.getZoomMin()));
                         book.setZoom(context.getZoom());
                     }
                 } else if (id == R.id.larger_text) {
-                    if (context.getZoom() <= Constants.ZOOM_MAX) {
-                        context.setZoom(context.getZoom() + Constants.ZOOM_STEP);
+                    if (context.getZoom() < context.getZoomMax()) {
+                        context.setZoom(Math.min(context.getZoom() + context.getZoomStep(), context.getZoomMax()));
                         book.setZoom(context.getZoom());
                     }
                 }
+                updateGlyphSizeLabel();
                 pageActivity.setPageNumber(currentPage);
             } else {
                 boolean changed = false;
                 if (id == R.id.smaller_text) {
-                    if (context.getZoomOriginal() > Constants.ZOOM_MIN) {
-                        context.setZoomOriginal(context.getZoomOriginal() - Constants.ZOOM_STEP);
+                    if (context.getZoomOriginal() > context.getZoomMin()) {
+                        context.setZoomOriginal(Math.max(context.getZoomOriginal() - context.getZoomStep(), context.getZoomMin()));
                         book.setZoomOriginal(context.getZoomOriginal());
                         changed = true;
                     }
                 } else if (id == R.id.larger_text) {
-                    if (context.getZoomOriginal() < Constants.ZOOM_MAX) {
-                        context.setZoomOriginal(context.getZoomOriginal() + Constants.ZOOM_STEP);
+                    if (context.getZoomOriginal() < context.getZoomMax()) {
+                        context.setZoomOriginal(Math.min(context.getZoomOriginal() + context.getZoomStep(), context.getZoomMax()));
                         book.setZoomOriginal(context.getZoomOriginal());
                         changed = true;
                     }
@@ -843,6 +848,19 @@ public class PageActivity extends BaseActivity {
             }
         }
 
+    }
+
+    void updateGlyphSizeLabel() {
+        if (glyphSizeLabel == null) return;
+        float baseHeight = book.getMedianGlyphBaseHeight();
+        if (baseHeight > 0) {
+            int px = Math.round(baseHeight * context.getZoom());
+            float dpi = context.getResolution() > 0 ? context.getResolution() : 72f;
+            float pt = baseHeight * context.getZoom() * 72f / dpi;
+            glyphSizeLabel.setText(String.format("%dpx / %.1fpt", px, pt));
+        } else {
+            glyphSizeLabel.setText("");
+        }
     }
 
     void rescaleOriginalPage() {
@@ -1025,6 +1043,7 @@ public class PageActivity extends BaseActivity {
                 pageActivity.scroll.setVisibility(VISIBLE);
                 findViewById(R.id.progress_container).setVisibility(INVISIBLE);
                 pageActivity.scroll.scrollTo(0, 0);
+                pageActivity.updateGlyphSizeLabel();
 
             });
 

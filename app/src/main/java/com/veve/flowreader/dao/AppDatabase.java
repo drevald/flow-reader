@@ -22,7 +22,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 
 @androidx.room.Database(entities =
-        {BookRecord.class, PageGlyphRecord.class, ReportRecord.class, Settings.class}, version = 3, exportSchema = false)
+        {BookRecord.class, PageGlyphRecord.class, ReportRecord.class, Settings.class}, version = 4, exportSchema = false)
 
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -42,6 +42,13 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
+    static final Migration MIGRATION_3_4 = new Migration(3, 4) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE BookRecord ADD COLUMN medianGlyphBaseHeight REAL NOT NULL DEFAULT 0");
+        }
+    };
+
     public abstract DaoAccess daoAccess();
 
     private static AppDatabase appDatabase;
@@ -50,7 +57,7 @@ public abstract class AppDatabase extends RoomDatabase {
         if (appDatabase == null) {
             RoomDatabase.Builder<AppDatabase> builder =
                     Room.databaseBuilder(context, AppDatabase.class, DATABASE_NAME)
-                        .addMigrations(MIGRATION_1_2, MIGRATION_2_3);
+                        .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4);
             appDatabase = builder.build();
             InitDatabaseTask initDatabaseTask = new InitDatabaseTask(appDatabase.daoAccess());
             initDatabaseTask.execute(context);

@@ -51,6 +51,15 @@
                     style="?android:attr/borderlessButtonStyle"
                     android:layout_weight="0"/>
 
+                <TextView
+                    android:id="@+id/glyph_size_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textSize="14sp"
+                    android:textColor="@color/colorToolbarIcon"
+                    android:layout_weight="0"/>
+
                 <Space
                     android:layout_width="0dp"
                     android:layout_height="0dp"

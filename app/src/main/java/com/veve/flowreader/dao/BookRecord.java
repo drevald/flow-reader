@@ -40,6 +40,9 @@ public class BookRecord {
     @ColumnInfo(name = "breakOnSpace", defaultValue = "0")
     private boolean breakWords = false;
 
+    @ColumnInfo(name = "medianGlyphBaseHeight", defaultValue = "0")
+    private float medianGlyphBaseHeight = 0f;
+
     private int format;
 
     public String getMd5() {
@@ -202,5 +205,11 @@ public class BookRecord {
     public int getFormat() { return format; }
 
     public void setFormat(int format) { this.format = format; }
+
+    public float getMedianGlyphBaseHeight() { return medianGlyphBaseHeight; }
+
+    public void setMedianGlyphBaseHeight(float medianGlyphBaseHeight) {
+        this.medianGlyphBaseHeight = medianGlyphBaseHeight;
+    }
 
 }

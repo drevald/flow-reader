@@ -39,6 +39,21 @@ public class NativePageRendererImpl implements PageRenderer {
         return Collections.emptyList();
     }
 
+    private void updateZoomLimitsFromGlyphs(List<PageGlyphInfo> glyphs, float renderZoom, DevicePageContext context) {
+        List<Float> heights = new ArrayList<>();
+        for (PageGlyphInfo g : glyphs) {
+            if (g.getAverageHeight() > 0) heights.add((float) g.getAverageHeight() / renderZoom);
+        }
+        if (heights.isEmpty()) return;
+        Collections.sort(heights);
+        float medianBaseHeight = heights.get(heights.size() / 2);
+        bookRecord.setMedianGlyphBaseHeight(medianBaseHeight);
+        booksCollection.updateBook(bookRecord);
+        context.setZoomLimits(medianBaseHeight, context.getResolution());
+        Log.d("ZOOM_LIMITS", String.format("medianBaseHeight=%.2f zoomMin=%.2f zoomMax=%.2f",
+                medianBaseHeight, context.getZoomMin(), context.getZoomMax()));
+    }
+
     private Bitmap getOriginalPageBitmap(int position) {
         Log.v("NULLBOOK", "Getting natively the original page " + position);
         if (position != currentOriginalPage || originalBitmap == null) {
@@ -96,6 +111,9 @@ public class NativePageRendererImpl implements PageRenderer {
                 ));
             }
             booksCollection.addGlyphs(glyphsToStore, false);
+            if (bookRecord.getMedianGlyphBaseHeight() == 0) {
+                updateZoomLimitsFromGlyphs(glyphs, context.getZoom(), context);
+            }
             Log.v("PERF", String.format("\tbookSource.getReflownPageBytes(%d, ...) took %d ms", position, System.currentTimeMillis() - start));
             Log.v(getClass().getName(), String.format("new reflownPageBytes.size()=%d for page %d", reflownPageBytes.size(), position));
             return reflownPageBytes;
@@ -113,6 +131,9 @@ public class NativePageRendererImpl implements PageRenderer {
                         record.isSpace(),
                         record.isLast()
                 ));
+            }
+            if (bookRecord.getMedianGlyphBaseHeight() == 0) {
+                updateZoomLimitsFromGlyphs(glyphs, context.getZoom(), context);
             }
             List<Bitmap> reflownPageBytes = bookSource.getReflownPageBytes(position, context, glyphs);
             Log.v("PERF", String.format("\tbookSource.getReflownPageBytes(%d, ...) took %d ms", position, System.currentTimeMillis() - start));
