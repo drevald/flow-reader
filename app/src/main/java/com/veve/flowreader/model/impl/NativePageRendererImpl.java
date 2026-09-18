@@ -50,10 +50,13 @@ public class NativePageRendererImpl implements PageRenderer {
         Collections.sort(heights);
         float medianBaseHeight = heights.get(heights.size() / 2);
         bookRecord.setMedianGlyphBaseHeight(medianBaseHeight);
-        booksCollection.updateBook(bookRecord);
         context.setZoomLimits(medianBaseHeight, context.getResolution());
-        Log.d("ZOOM_LIMITS", String.format("medianBaseHeight=%.2f zoomMin=%.2f zoomMax=%.2f",
-                medianBaseHeight, context.getZoomMin(), context.getZoomMax()));
+        float initialZoom = 10f * context.getZoomStep();
+        context.setZoom(initialZoom);
+        bookRecord.setZoom(initialZoom);
+        booksCollection.updateBook(bookRecord);
+        Log.d("ZOOM_LIMITS", String.format("medianBaseHeight=%.2f zoomMin=%.2f zoomMax=%.2f initialZoom=%.2f",
+                medianBaseHeight, context.getZoomMin(), context.getZoomMax(), initialZoom));
     }
 
     private Bitmap getOriginalPageBitmap(int position) {
@@ -115,6 +118,12 @@ public class NativePageRendererImpl implements PageRenderer {
             booksCollection.addGlyphs(glyphsToStore, false);
             if (bookRecord.getMedianGlyphBaseHeight() == 0) {
                 updateZoomLimitsFromGlyphs(glyphs, context);
+                // First render used the uncalibrated default zoom; re-render with the correct initial zoom.
+                for (Bitmap b : reflownPageBytes) {
+                    if (!b.isRecycled()) b.recycle();
+                }
+                glyphs.clear();
+                reflownPageBytes = bookSource.getReflownPageBytes(position, context, glyphs);
             }
             Log.v("PERF", String.format("\tbookSource.getReflownPageBytes(%d, ...) took %d ms", position, System.currentTimeMillis() - start));
             Log.v(getClass().getName(), String.format("new reflownPageBytes.size()=%d for page %d", reflownPageBytes.size(), position));

@@ -33,7 +33,7 @@ std::vector<int> LineSpacing::get_line_heights() {
         std::pair<int,int> p = blocks.at(i);
         int f = std::get<0>(p);
         int s = std::get<1>(p);
-        auto maxIter = std::max_element(heights.begin()+f, heights.begin()+s);
+        auto maxIter = std::max_element(heights.begin()+f, heights.begin()+s+1);
         int l = s - f + 1;
         for (int j=0;j<l;j++) {
             h.push_back(*maxIter);

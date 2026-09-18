@@ -1019,6 +1019,7 @@ public class PageActivity extends BaseActivity {
                                 }
                                 ImageView imageView = new ImageView(getApplicationContext());
                                 imageView.setScaleType(ImageView.ScaleType.FIT_START);
+                                imageView.setAdjustViewBounds(true);
                                 imageView.setMaxHeight(Integer.MAX_VALUE);
                                 imageView.setImageBitmap(limitedBitmap);
                                 imageView.setColorFilter(lightFilter);

@@ -64,35 +64,20 @@ std::pair<std::vector<int>,std::vector<float>> make_hist(std::vector<int>& v, in
 }
 
 jobject splitMat(cv::Mat& mat, JNIEnv *env) {
-    int w = mat.size().width;
-    int h = mat.size().height;
-    cv::Mat upper = mat(cv::Rect(0,0,w, h/2));
-    cv::Mat lower = mat(cv::Rect(0,h/2,w, h - h/2));
+    std::vector<uchar> buff;
+    cv::imencode(".png", mat, buff);
 
-    std::vector<uchar> buff_upper;//buffer for coding
-    cv::imencode(".png", upper, buff_upper);
-
-    std::vector<uchar> buff_lower;//buffer for coding
-    cv::imencode(".png", lower, buff_lower);
-
-    size_t sizeInBytesUpper = buff_upper.size();
-    jbyteArray array_upper = env->NewByteArray(sizeInBytesUpper);
-    env->SetByteArrayRegion(array_upper, 0, sizeInBytesUpper, (jbyte *) &buff_upper[0]);
-    size_t sizeInBytesLower = buff_lower.size(); //new_image.total() * new_image.elemSize();
-    jbyteArray array_lower = env->NewByteArray(sizeInBytesLower);
-    env->SetByteArrayRegion(array_lower, 0, sizeInBytesLower, (jbyte *) &buff_lower[0]);
-
+    jbyteArray array = env->NewByteArray(buff.size());
+    env->SetByteArrayRegion(array, 0, buff.size(), (jbyte *) &buff[0]);
 
     static jclass java_util_ArrayList      = static_cast<jclass>(env->NewGlobalRef(env->FindClass("java/util/ArrayList")));
     static jmethodID java_util_ArrayList_     = env->GetMethodID(java_util_ArrayList, "<init>", "(I)V");
     static jmethodID java_util_ArrayList_add  = env->GetMethodID(java_util_ArrayList, "add", "(Ljava/lang/Object;)Z");
 
     jobject arrayList = env->NewObject(java_util_ArrayList, java_util_ArrayList_, 1);
-    env->CallBooleanMethod(arrayList, java_util_ArrayList_add, array_upper);
-    env->CallBooleanMethod(arrayList, java_util_ArrayList_add, array_lower);
+    env->CallBooleanMethod(arrayList, java_util_ArrayList_add, array);
 
     return arrayList;
-
 }
 
 double deviation(vector<int> v, double ave) {
