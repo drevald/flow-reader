@@ -147,6 +147,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             app:srcCompat="@drawable/ic_to_phone"
+            app:backgroundTint="#F45EAC"
             app:fabCustomSize="70dp"
             app:maxImageSize="30dp"
             android:layout_weight="0"/>

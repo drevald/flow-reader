@@ -48,7 +48,7 @@ LOCAL_LDLIBS += -llog -lz -lm -L$(SYSROOT)/usr/lib
 LOCAL_LDFLAGS += -ldl -landroid -fopenmp
 LOCAL_LDFLAGS += -ldl -landroid -static-openmp
 
-LOCAL_C_INCLUDES += common.h mylib.h LineSpacing.h Reflow.cpp PageSegmenter.h Enclosure.h pdf-lib.h  ImageNode.h Xycut.h
+LOCAL_C_INCLUDES += common.h LineSpacing.h PageSegmenter.h Enclosure.h pdf-lib.h ImageNode.h Xycut.h
 
 ifeq ($(TARGET_ARCH_ABI),x86)
 LOCAL_SRC_FILES := \
