@@ -6,7 +6,6 @@ import static android.view.View.VISIBLE;
 import static com.veve.flowreader.Constants.BOOK_CONTEXT;
 import static com.veve.flowreader.Constants.BOOK_ID;
 import static com.veve.flowreader.Constants.KINDLE_NAVIGATION;
-import static com.veve.flowreader.Constants.MAX_BITMAP_SIZE;
 import static com.veve.flowreader.Constants.POSITION;
 import static com.veve.flowreader.Constants.PREFERENCES;
 import static com.veve.flowreader.Constants.SHOW_SCROLLBARS;
@@ -30,7 +29,6 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -405,7 +403,7 @@ public class PageActivity extends BaseActivity {
         }
         context.setZoom(storedZoom);
         book.setZoom(context.getZoom());
-        context.setZoomOriginal(Math.min(Math.max(book.getZoomOriginal(), context.getZoomMin()), context.getZoomMax()));
+        context.setZoomOriginal(Math.min(Math.max(book.getZoomOriginal(), context.getZoomMin()), 1.0f));
         book.setZoomOriginal(context.getZoomOriginal());
         context.setKerning(book.getKerning());
         context.setLeading(book.getLeading());
@@ -671,8 +669,8 @@ public class PageActivity extends BaseActivity {
                         changed = true;
                     }
                 } else if (id == R.id.larger_text) {
-                    if (context.getZoomOriginal() < context.getZoomMax()) {
-                        context.setZoomOriginal(Math.min(context.getZoomOriginal() + context.getZoomStep(), context.getZoomMax()));
+                    if (context.getZoomOriginal() < 1.0f) {
+                        context.setZoomOriginal(Math.min(context.getZoomOriginal() + context.getZoomStep(), 1.0f));
                         book.setZoomOriginal(context.getZoomOriginal());
                         changed = true;
                     }
@@ -700,24 +698,7 @@ public class PageActivity extends BaseActivity {
     }
 
     void rescaleOriginalPage() {
-        new AsyncTask<Void, Void, Bitmap>() {
-            @Override
-            protected Bitmap doInBackground(Void... voids) {
-                return pageRenderer.renderOriginalPage(context, currentPage);
-            }
-            @Override
-            protected void onPostExecute(Bitmap bitmap) {
-                if (bitmap == null || page.getChildCount() == 0) return;
-                View child = page.getChildAt(0);
-                if (!(child instanceof ImageView)) return;
-                ImageView iv = (ImageView) child;
-                ViewGroup.LayoutParams lp = iv.getLayoutParams();
-                lp.width = bitmap.getWidth();
-                lp.height = bitmap.getHeight();
-                iv.setLayoutParams(lp);
-                iv.setImageBitmap(bitmap);
-            }
-        }.execute();
+        setPageNumber(currentPage);
     }
 
     //////////////////////////   ASYNC TASKS   /////////////////////////////////////////////////
@@ -760,80 +741,97 @@ public class PageActivity extends BaseActivity {
                 bitmaps = new CopyOnWriteArrayList<>(pageActivity.pageRenderer.renderPage(context, pageNumber));
                 Log.v(getClass().getName(), String.format("Get %d bitmaps for page %d", bitmaps.size(), pageNumber));
             } else {
-                bitmaps = Arrays.asList(pageActivity.pageRenderer.renderOriginalPage(pageActivity.context, pageNumber));
+                bitmaps = Arrays.asList(pageActivity.pageRenderer.renderOriginalPage(pageNumber));
             }
             runOnUiThread(() -> {
                 List<View> pageViews = new ArrayList<>();// UI code goes here
                 for (Bitmap bitmap : bitmaps) {
-                    Log.d("FLOW-READER", String.format("bitmaps %s", bitmaps.size()));
-                    int bitmapHeight = bitmap.getHeight();
-                    if (bitmap.getByteCount() > MAX_BITMAP_SIZE) {
-                        Snackbar.make(topLayout, getString(R.string.could_not_zoom_more),
-                                Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                        context.setZoom(context.getZoom() - context.getZoomStep());
-                        pageActivity.book.setZoom(pageActivity.context.getZoom());
-                        pageActivity.booksCollection.updateBook(pageActivity.book);
+                    ((ViewGroup)pageActivity.page.getParent()).removeView(pageActivity.page);
+                    pageActivity.scroll.removeAllViews();
+                    if (viewMode == VIEW_MODE_PHONE) {
+                        int srcWidth = bitmap.getWidth();
+                        int srcHeight = bitmap.getHeight();
+                        int dstWidth = context.getWidth();
+                        float scale = (float) dstWidth / srcWidth;
+                        int dstHeight = (int)(srcHeight * scale);
+                        ColorFilter lightFilter = darkTheme ? null : new ColorMatrixColorFilter(new ColorMatrix(new float[]{
+                            243f/255f, 0, 0, 0, 0,
+                            0, 243f/255f, 0, 0, 0,
+                            0, 0, 243f/255f, 0, 0,
+                            0, 0, 0, 1, 0
+                        }));
+                        for (int dstOffset = 0; dstOffset < dstHeight; dstOffset += Constants.IMAGE_VIEW_HEIGHT_LIMIT) {
+                            int dstChunkHeight = Math.min(Constants.IMAGE_VIEW_HEIGHT_LIMIT, dstHeight - dstOffset);
+                            int srcOffset = (int)(dstOffset / scale);
+                            int srcEnd = Math.min((int) Math.ceil((dstOffset + dstChunkHeight) / scale), srcHeight);
+                            int srcChunkHeight = srcEnd - srcOffset;
+                            if (srcChunkHeight <= 0) break;
+                            Bitmap srcChunk = Bitmap.createBitmap(bitmap, 0, srcOffset, srcWidth, srcChunkHeight);
+                            Bitmap scaledChunk = Bitmap.createScaledBitmap(srcChunk, dstWidth, dstChunkHeight, true);
+                            srcChunk.recycle();
+                            if (darkTheme) {
+                                Bitmap inverted = createInvertedBitmap(scaledChunk);
+                                scaledChunk.recycle();
+                                scaledChunk = inverted;
+                            }
+                            ImageView imageView = new ImageView(getApplicationContext());
+                            imageView.setScaleType(ImageView.ScaleType.FIT_START);
+                            imageView.setAdjustViewBounds(true);
+                            imageView.setMaxHeight(Integer.MAX_VALUE);
+                            imageView.setImageBitmap(scaledChunk);
+                            imageView.setColorFilter(lightFilter);
+                            pageViews.add(imageView);
+                        }
+                        if (!bitmap.isRecycled()) bitmap.recycle();
+                        pageActivity.page.removeAllViews();
+                        for (View view : pageViews) {
+                            pageActivity.page.addView(view);
+                        }
+                        pageActivity.scroll.addView(pageActivity.page);
                     } else {
-                        ((ViewGroup)pageActivity.page.getParent()).removeView(pageActivity.page);
-                        pageActivity.scroll.removeAllViews();
-                        if (viewMode == VIEW_MODE_PHONE) {
-                            ColorFilter lightFilter = darkTheme ? null : new ColorMatrixColorFilter(new ColorMatrix(new float[]{
+                            inviteToTryReflow(bitmap);
+                            int srcWidth = bitmap.getWidth();
+                            int srcHeight = bitmap.getHeight();
+                            int dstWidth = (int)(context.getZoomOriginal() * context.getWidth());
+                            float scale = (float)dstWidth / srcWidth;
+                            int dstHeight = (int)(srcHeight * scale);
+                            ColorFilter lightFilterOrig = darkTheme ? null : new ColorMatrixColorFilter(new ColorMatrix(new float[]{
                                 243f/255f, 0, 0, 0, 0,
                                 0, 243f/255f, 0, 0, 0,
                                 0, 0, 243f/255f, 0, 0,
                                 0, 0, 0, 1, 0
                             }));
-                            for (int offset = 0; offset < bitmapHeight; offset += Constants.IMAGE_VIEW_HEIGHT_LIMIT) {
-                                Log.d(getClass().getName(), "Before image creation");
-                                int height = Math.min(bitmapHeight, offset + Constants.IMAGE_VIEW_HEIGHT_LIMIT);
-                                Log.v(getClass().getName(),
-                                        String.format(" Bitmap.createBitmap(bitmap, 0, %d, %d, %d)",
-                                                offset, context.getWidth(), height - offset));
-                                Log.v(getClass().getName(),
-                                        String.format("bitmap size is width : %d height :%d",
-                                                bitmap.getWidth(), bitmap.getHeight()));
-
-                                Bitmap limitedBitmap = Bitmap.createBitmap(bitmap, 0, offset, context.getWidth(),
-                                        height - offset);
-                                if(darkTheme) {
-                                    limitedBitmap = createInvertedBitmap(limitedBitmap);
+                            int origChunkLimit = Math.min(Constants.IMAGE_VIEW_HEIGHT_LIMIT,
+                                    Constants.MAX_BITMAP_SIZE / (dstWidth * 4));
+                            Log.v(getClass().getName(), String.format("Original page: src=%dx%d dst=%dx%d chunkLimit=%d", srcWidth, srcHeight, dstWidth, dstHeight, origChunkLimit));
+                            pageActivity.page.removeAllViewsInLayout();
+                            HorizontalScrollView horizontalScrollView = new HorizontalScrollView(getApplicationContext());
+                            for (int dstOffset = 0; dstOffset < dstHeight; dstOffset += origChunkLimit) {
+                                int dstChunkHeight = Math.min(origChunkLimit, dstHeight - dstOffset);
+                                int srcOffset = (int)(dstOffset / scale);
+                                int srcEnd = Math.min((int)Math.ceil((dstOffset + dstChunkHeight) / scale), srcHeight);
+                                int srcChunkHeight = srcEnd - srcOffset;
+                                if (srcChunkHeight <= 0) break;
+                                Bitmap srcChunk = Bitmap.createBitmap(bitmap, 0, srcOffset, srcWidth, srcChunkHeight);
+                                Bitmap scaledChunk = Bitmap.createScaledBitmap(srcChunk, dstWidth, dstChunkHeight, true);
+                                srcChunk.recycle();
+                                if (darkTheme) {
+                                    Bitmap inverted = createInvertedBitmap(scaledChunk);
+                                    scaledChunk.recycle();
+                                    scaledChunk = inverted;
                                 }
                                 ImageView imageView = new ImageView(getApplicationContext());
                                 imageView.setScaleType(ImageView.ScaleType.FIT_START);
                                 imageView.setAdjustViewBounds(true);
                                 imageView.setMaxHeight(Integer.MAX_VALUE);
-                                imageView.setImageBitmap(limitedBitmap);
-                                imageView.setColorFilter(lightFilter);
+                                imageView.setImageBitmap(scaledChunk);
+                                imageView.setColorFilter(lightFilterOrig);
                                 pageViews.add(imageView);
-                                Log.d(getClass().getName(), "Image creation");
-                                Log.d(getClass().getName(), "After image creation");
                             }
-                            pageActivity.page.removeAllViews();
+                            if (!bitmap.isRecycled()) bitmap.recycle();
                             for (View view : pageViews) {
                                 pageActivity.page.addView(view);
                             }
-                            pageActivity.scroll.addView(pageActivity.page);
-                            Log.v(getClass().getName(), "End setting bitmap");
-                        } else {
-                            inviteToTryReflow(bitmap);
-                            pageActivity.page.removeAllViewsInLayout();
-                            HorizontalScrollView horizontalScrollView = new HorizontalScrollView(getApplicationContext());
-                            ImageView imageView = new ImageView(getApplicationContext());
-                            Log.v(getClass().getName(), String.format("Bitmap size is %d x %d", bitmap.getWidth(), bitmap.getHeight()));
-                            ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(bitmap.getWidth(), bitmap.getHeight());
-                            imageView.setLayoutParams(layoutParams);
-                            imageView.setScaleType(ImageView.ScaleType.FIT_START);
-                            imageView.setImageBitmap(bitmap);
-                            if (!darkTheme) {
-                                imageView.setColorFilter(new ColorMatrixColorFilter(new ColorMatrix(new float[]{
-                                    243f/255f, 0, 0, 0, 0,
-                                    0, 243f/255f, 0, 0, 0,
-                                    0, 0, 243f/255f, 0, 0,
-                                    0, 0, 0, 1, 0
-                                })));
-                            }
-
-                            pageActivity.page.addView(imageView);
                             horizontalScrollView.addView(pageActivity.page);
                             pageActivity.scroll.addView(horizontalScrollView);
                             horizontalScrollView.setOnTouchListener((v, event) -> {
@@ -841,7 +839,6 @@ public class PageActivity extends BaseActivity {
                                 return false; // let HorizontalScrollView also handle scrolling
                             });
                         }
-                    }
                 }
                 pageActivity.scroll.setVisibility(VISIBLE);
                 findViewById(R.id.progress_container).setVisibility(INVISIBLE);

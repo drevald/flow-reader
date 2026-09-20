@@ -1,6 +1,7 @@
 
 #include "djvu-lib.h"
 #include "common.h"
+#include <unistd.h>
 
 #define PIXELS 4
 
@@ -37,6 +38,7 @@ jstring get_annotation(JNIEnv *env, jlong bookId, const char* key) {
 JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_getNumberOfPages
 (JNIEnv *env, jobject obj, jlong bookId) {
 
+    if (!bookId) return 0;
     Document *document = (Document *) bookId;
     ddjvu_document_t *doc = document->doc;
     ddjvu_context_t *ctx = document->ctx;
@@ -48,7 +50,7 @@ JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_getNumb
         }
         ddjvu_message_pop(ctx);
     }
-   return ddjvu_document_get_pagenum(doc);
+    return ddjvu_document_get_pagenum(doc);
 }
 
 JNIEXPORT jstring JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_getNativeTitle
@@ -79,7 +81,23 @@ JNIEXPORT jlong JNICALL Java_com_veve_flowreader_model_impl_djvu_DjvuBook_openBo
     Document *d = (Document *) malloc(sizeof(struct Document));
     const char *nativePath = env->GetStringUTFChars(path, 0);
     ddjvu_context_t *ctx = ddjvu_context_create("djvu");
+    if (access(nativePath, F_OK) != 0) {
+        ddjvu_context_release(ctx);
+        free(d);
+        return -1; // file not found
+    }
+    if (access(nativePath, R_OK) != 0) {
+        ddjvu_context_release(ctx);
+        free(d);
+        return -2; // no read permission
+    }
+
     ddjvu_document_t *doc = ddjvu_document_create_by_filename(ctx, nativePath, TRUE);
+    if (!doc) {
+        ddjvu_context_release(ctx);
+        free(d);
+        return -3; // invalid or corrupted
+    }
     d->ctx = ctx;
     d->doc = doc;
     return (jlong) d;

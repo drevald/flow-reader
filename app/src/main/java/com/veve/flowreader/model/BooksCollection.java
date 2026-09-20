@@ -91,17 +91,6 @@ public class BooksCollection {
         }.execute(bookId);
     }
 
-//    public boolean hasBook (Uri uri) {
-//        BookCheckerTask bookCheckerTask = new BookCheckerTask(daoAccess);
-//        bookCheckerTask.execute(uri.toString());
-//        try {
-//            return bookCheckerTask.get();
-//        } catch (Exception e) {
-//            Log.e(getClass().getTitle(), e.getLocalizedMessage());
-//            return false;
-//        }
-//    }
-
     public BookRecord getBookByChecksum (String checksum) {
         BookGetChecksumTask bookGetChecksumTask = new BookGetChecksumTask(daoAccess);
         bookGetChecksumTask.execute(checksum);
@@ -199,7 +188,6 @@ public class BooksCollection {
         @Override
         protected List<PageGlyphRecord> doInBackground(Object... objects) {
             return daoAccess.getPageGlyphs((Long)objects[0], (Integer)objects[1]);
-            //return daoAccess.getPageGlyphs();
         }
 
     }

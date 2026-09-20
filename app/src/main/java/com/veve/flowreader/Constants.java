@@ -1,7 +1,6 @@
 package com.veve.flowreader;
 
 import android.graphics.Color;
-import android.print.PrintAttributes;
 
 /**
  * Created by ddreval on 15.01.2018.
@@ -26,31 +25,19 @@ public interface Constants {
 
     String BOOK_CONTEXT = "BOOK_CONTEXT";
     String BOOK_ID = "BOOK_ID";
-    String REPORT_ID = "REPORT_ID";
     String POSITION = "POSITION";
     String FILE_NAME = "FILENAME";
 
     int MARGIN_STEP = 50;
     int MARGIN_MAX = 250;
 
-    public final String REPORT_URL = "https://glyph-report.herokuapp.com/loader";
-
     float ZOOM_STEP = 0.5F;
     float ZOOM_MIN = 1.5F;
     float ZOOM_MAX = 5F;
 
-    float MM_IN_MILS = 0.0254f;
-    float MM_IN_INCH = 25.4f;
-    float INCH_IN_MILS = 0.001f;
-    float MILS_IN_MM = 39.3701f;
-    float INCH_IN_MM = 0.0393701f;
-
     String PREFERENCES = "PREFERENCES";
     String FLOW_BOOK_PREFERENCES = "FLOW_BOOK_PREFERENCES";
     String SHOW_TRY_REFLOW = "SHOW_TRY_REFLOW";
-
-    PrintAttributes.MediaSize DEFAULT_MEDIA_SIZE = PrintAttributes.MediaSize.ISO_A4;
-    //PrintAttributes.MediaSize DEFAULT_MEDIA_SIZE = PrintAttributes.MediaSize.ISO_A6;
 
     String KINDLE_NAVIGATION = "KINDLE_NAVIGATION";
     String PINCH_ZOOM = "PINCH_ZOOM";

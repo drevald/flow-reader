@@ -120,10 +120,8 @@ public class MainActivity extends BaseActivity {
             BookRecord bookRecord = (BookRecord)bookListAdapter.getItem(info.position);
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             EditText titleEditView = new EditText(getApplicationContext());
-            //EditText titleEditView = (EditText)getLayoutInflater().inflate(R.layout.book_edit, null);
             titleEditView.setText(bookRecord.getTitle());
             titleEditView.setTextColor(getResources().getColor(R.color.colorPrimaryDark));
-            //titleEditView.setPadding(20, 5, 20, 5 );
             builder.setTitle(getResources().getString(R.string.rename_this_book))
                     .setMessage(R.string.new_title)
                     .setCancelable(false)
@@ -195,12 +193,6 @@ public class MainActivity extends BaseActivity {
         ////////////    ADD BOOKS BUTTON     /////////////////////////////////////////////////////
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
-//            boolean condition = android.os.Build.VERSION.SDK_INT < Build.VERSION_CODES.Q;
-//            if (condition) {
-//                Intent intentOne = new Intent(MainActivity.this, BrowseFilesActivity.class);
-//                intentOne.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-//                startActivity(intentOne);
-//            } else {
                 Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 i.setType("*/*");
                 i.addCategory(Intent.CATEGORY_OPENABLE);
@@ -208,7 +200,6 @@ public class MainActivity extends BaseActivity {
                 i.putExtra(Intent.EXTRA_MIME_TYPES, new String[] {"application/pdf", "image/vnd.djvu"});
                 Intent chooser = Intent.createChooser(i, "Choose the file to read..");
                 startActivityForResult(chooser, FILE_OPEN_REQUEST);
-//            }
         });
 
         final GridView gridView = findViewById(R.id.grid);

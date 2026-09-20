@@ -1,7 +1,5 @@
 package com.veve.flowreader.model.impl.djvu;
 
-import android.util.Log;
-
 import com.veve.flowreader.model.Book;
 import com.veve.flowreader.model.BookPage;
 
@@ -25,12 +23,22 @@ public class DjvuBook implements Book {
 
     private boolean preprocessing;
 
-    public DjvuBook(String path) {
-       this.bookId = openBook(path);
-       this.path = path;
-       this.name = path;
+    public DjvuBook(String path) throws Exception {
+        long id = openBook(path);
+        if (id < 0) throw new Exception(errorMessage((int) -id));
+        this.bookId = id;
+        this.path = path;
+        this.name = path;
     }
 
+    private static String errorMessage(int code) {
+        switch (code) {
+            case 1: return "File not found or cannot be opened";
+            case 2: return "No permission to read this file";
+            case 3: return "Invalid or corrupted DjVu file";
+            default: return "Failed to open DjVu file (error " + code + ")";
+        }
+    }
     private native long openBook(String path);
     private native String openStringBook(String path);
     private native int getNumberOfPages(long bookId);
@@ -43,13 +51,7 @@ public class DjvuBook implements Book {
 
     @Override
     public int getPagesCount() {
-        int numberOfPages = 1;
-        try {
-            numberOfPages = getNumberOfPages(bookId);
-        } catch (Throwable t) {
-            Log.d("ERROR", t.getMessage());
-        }
-        return numberOfPages;
+        return getNumberOfPages(bookId);
     }
 
     @Override
@@ -97,8 +99,5 @@ public class DjvuBook implements Book {
     private static native String getNativeAuthor(long bookId);
 
     private static native int close(long bookId);
-
-
-
 
 }

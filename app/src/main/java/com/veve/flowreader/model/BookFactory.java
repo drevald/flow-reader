@@ -34,7 +34,7 @@ public class BookFactory {
 
     }
 
-    public BookRecord createBook(File file) {
+    public BookRecord createBook(File file) throws Exception {
 
         Log.v("TEST", String.format("Making book from file %s",
                 file.getAbsolutePath()));
@@ -63,12 +63,17 @@ public class BookFactory {
             }
         }
 
+        if (book == null) throw new Exception("Unsupported file format");
+
         //Filling native book data
-        bookRecord.setPagesCount(book.getPagesCount());
+        int pagesCount = book.getPagesCount();
+        if (pagesCount == 0) throw new Exception("PDF has no readable pages");
+        bookRecord.setPagesCount(pagesCount);
         bookRecord.setTitle(book.getName());
 
         //Generating and setting preview
         Bitmap bitmap = book.getPage(0).getAsBitmap(new DevicePageContext(100));
+        if (bitmap == null) throw new Exception("Failed to render page — file may be corrupted");
         Bitmap thumbnail = Bitmap.createScaledBitmap(bitmap, 100, 150, true);
         Bitmap grayThumbnail = Bitmap.createBitmap(thumbnail.getWidth(), thumbnail.getHeight(), Bitmap.Config.ARGB_8888);
         float contrast = 1.3f;

@@ -15,10 +15,23 @@ public class PdfBook implements Book {
 
     private boolean preprocessing;
 
-    public PdfBook(String path){
-        this.bookId = openBook(path);
+    public PdfBook(String path) throws Exception {
+        long id = openBook(path);
+        if (id < 0) throw new Exception(errorMessage((int) -id));
+        this.bookId = id;
         this.path = path;
         this.name = path;
+    }
+
+    private static String errorMessage(int code) {
+        switch (code) {
+            case 2: return "File not found or cannot be opened";
+            case 3: return "Invalid or corrupted PDF file";
+            case 4: return "Password-protected PDF is not supported";
+            case 5: return "Unsupported PDF security scheme";
+            case 6: return "PDF content error";
+            default: return "Failed to open PDF (error " + code + ")";
+        }
     }
 
     static {
@@ -43,7 +56,6 @@ public class PdfBook implements Book {
 
     @Override
     public String getName() {
-        //return getNativeTitle(bookId);
         return path;
     }
 

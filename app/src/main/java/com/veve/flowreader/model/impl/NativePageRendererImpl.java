@@ -161,36 +161,7 @@ public class NativePageRendererImpl implements PageRenderer {
         List<Bitmap> bitmaps = getReflownPageBitmap(position, context);
         Log.v("PERF", String.format("getReflownPageBitmap(%d, context) took %d ms", position, System.currentTimeMillis() - start));
 
-        /*
-        Bitmap bmp = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), ARGB_8888);
-
-        Canvas canvas = new Canvas(bmp);
-        Paint paint = new Paint();
-        paint.setStyle(Paint.Style.FILL);
-
-        Rect srcRect = new Rect(0,0,bitmap.getWidth(), bitmap.getHeight());
-        Rect dstRect = new Rect(0,0,bitmap.getWidth(), bitmap.getHeight());
-
-        Paint fillPaint = new Paint();
-        fillPaint.setStyle(Paint.Style.FILL);
-        fillPaint.setColor(Color.WHITE);
-
-        canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), fillPaint);
-        canvas.drawBitmap(bitmap, srcRect,dstRect, paint);
-         */
-        List<Bitmap> retVal = new ArrayList<>();
-        Bitmap bm;
-        for (Bitmap b : bitmaps) {
-            bm = Bitmap.createScaledBitmap(b, (context.getWidth()),
-                    ((context.getWidth() * b.getHeight()) / b.getWidth()),
-                    false);
-            if (!b.isRecycled()) {
-                b.recycle();
-            }
-
-            retVal.add(bm);
-        }
-        return retVal;
+        return new ArrayList<>(bitmaps);
     }
 
     @Override

@@ -137,7 +137,6 @@ public class BrowseFilesActivity extends BaseActivity {
                 Log.d("FLOW-READER", "" + currentFiles);
 
             } catch (Exception e) {
-//                Log.e(this.getClass().getTitle(), e.getMessage());
                 e.printStackTrace();
             }
         }

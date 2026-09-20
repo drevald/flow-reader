@@ -15,7 +15,7 @@ public class PdfBookSource implements BookSource {
 
     private PdfBook pdfBook;
 
-    public PdfBookSource(String path) {
+    public PdfBookSource(String path) throws Exception {
         pdfBook = new PdfBook(path);
     }
 

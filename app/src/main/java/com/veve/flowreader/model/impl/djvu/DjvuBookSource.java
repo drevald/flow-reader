@@ -14,7 +14,7 @@ public class DjvuBookSource implements BookSource {
 
     private DjvuBook djvuBook;
 
-    public DjvuBookSource(String path) {
+    public DjvuBookSource(String path) throws Exception {
         djvuBook = new DjvuBook(path);
     }
 
@@ -39,7 +39,6 @@ public class DjvuBookSource implements BookSource {
     public Bitmap getPageGrayscaleBytes(int pageNumber) {
         DjvuBookPage djvuBookPage = (DjvuBookPage)djvuBook.getPage(pageNumber);
         return djvuBookPage.getAsGrayscaleBitmap();
-
     }
 
     @Override

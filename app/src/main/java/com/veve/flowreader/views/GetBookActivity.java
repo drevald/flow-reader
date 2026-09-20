@@ -1,5 +1,6 @@
 package com.veve.flowreader.views;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -54,22 +55,36 @@ public class GetBookActivity extends BaseActivity {
     class BookCreatorTask extends AsyncTask<File, Void, Void> {
 
         private BookRecord newBook;
-
         private long bookId;
+        private String errorMessage;
 
         @Override
         protected Void doInBackground(File... files){
             File bookFile = files[0];
             Log.v(getClass().getName(), "Start parsing new book at " + bookFile.getPath());
-            newBook = BookFactory.getInstance().createBook(bookFile);
-            bookId = BooksCollection.getInstance(getApplicationContext()).addBook(newBook);
-            Log.v("BOOK", "Inserted with URL " + newBook.getUrl());
+            try {
+                newBook = BookFactory.getInstance().createBook(bookFile);
+                bookId = BooksCollection.getInstance(getApplicationContext()).addBook(newBook);
+                Log.v("BOOK", "Inserted with URL " + newBook.getUrl());
+            } catch (Exception e) {
+                errorMessage = e.getMessage() != null ? e.getMessage() : "Failed to open file";
+                Log.e(getClass().getName(), "Failed to open book: " + errorMessage);
+            }
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            if (errorMessage != null) {
+                new AlertDialog.Builder(GetBookActivity.this)
+                        .setTitle("Cannot open file")
+                        .setMessage(errorMessage)
+                        .setPositiveButton(R.string.ok, (d, w) -> finish())
+                        .setOnCancelListener(d -> finish())
+                        .show();
+                return;
+            }
             Intent ii = new Intent(GetBookActivity.this, PageActivity.class);
             ii.putExtra(Constants.BOOK_ID, bookId);
             ii.putExtra(Constants.FILE_NAME, newBook.getUrl());

@@ -24,16 +24,12 @@ public class PdfBookPage extends AbstractBookPage implements BookPage {
     }
 
     public Bitmap getAsBitmap() {
-        Log.v("NULLBOOK", "Getting page as bitmap");
-        byte[] imageBytes= getBytes(getBookId(), getPageNumber());
-        Log.v("NULLBOOK", "page bytes " + imageBytes);
+        byte[] imageBytes = getBytes(getBookId(), getPageNumber());
+        if (imageBytes == null) return null;
         BitmapFactory.Options opts = new BitmapFactory.Options();
         opts.inPreferredConfig = Bitmap.Config.ARGB_8888;
-        opts.inJustDecodeBounds= false;
-        Log.v("NULLBOOK", "Decoding " + imageBytes.length + " bytes");
-        Bitmap bm = BitmapFactory.decodeByteArray(imageBytes,0, imageBytes.length, opts);
-        Log.v("NULLBOOK", "Bitmap ready");
-        return bm;
+        opts.inJustDecodeBounds = false;
+        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length, opts);
     }
 
     @Override
@@ -83,7 +79,6 @@ public class PdfBookPage extends AbstractBookPage implements BookPage {
         for (int i=0;i<bytes.size(); i++) {
             byte[] b = bytes.get(i);
             BitmapFactory.Options opts = new BitmapFactory.Options();
-            //opts.inPreferredConfig = Bitmap.Config.ARGB_8887;
             opts.inJustDecodeBounds= true;
 
             BitmapFactory.decodeByteArray(b,0, b.length, opts);

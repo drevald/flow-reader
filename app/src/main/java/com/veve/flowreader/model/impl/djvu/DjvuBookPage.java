@@ -51,7 +51,6 @@ public class DjvuBookPage extends AbstractBookPage implements BookPage  {
         for (int i=0;i<bytes.size(); i++) {
             byte[] b = bytes.get(i);
             BitmapFactory.Options opts = new BitmapFactory.Options();
-            //opts.inPreferredConfig = Bitmap.Config.ARGB_8887;
             opts.inJustDecodeBounds= true;
             BitmapFactory.decodeByteArray(b,0, b.length, opts);
             opts.inSampleSize = Utils.calculateInSampleSize(opts, context.getWidth(), context.getWidth()*(opts.outHeight/opts.outWidth));

@@ -93,8 +93,6 @@ public class PageGlyphImpl implements PageGlyph {
     @Override
     public void draw(DevicePageContext context, boolean show) {
 
-        //Log.v(getClass().getTitle(), "Baseline shift is " + baseLineShift);
-
         if (isSpace && context.isNewline()) {
             context.setNewline(false);
             return;
@@ -149,8 +147,6 @@ public class PageGlyphImpl implements PageGlyph {
         context.getRemotestPoint().set(startPoint.x + __dstRect.width()
                 + (int)(context.getKerning()* context.getZoom()), __dstRect.bottom);
         context.setCurrentBaseLine(currentBaseline);
-
-        //bitmap = null;
 
     }
 

@@ -23,25 +23,6 @@
     <string name="leading_minus">Smaller leading</string>
     <string name="kerning_plus">Bigger kerning</string>
     <string name="kerning_minus">Smaller kerning</string>
-    <string name="title_activity_help">Hint</string>
-    <string name="double_tap_left">Double tap the left half of screen to navigate to the previous page</string>
-    <string name="double_tap_right">Double tap the right half of screen to navigate to the next page</string>
-    <string name="single_tap">Single tap on screen - to show/hide navigation and settings</string>
-    <string name="help">Help</string>
-    <string name="show_overturned">Click to view the overturned page</string>
-    <string name="show_original">Click to view the original page</string>
-    <string name="title_activity_report">Report unreadable page</string>
-    <string name="page_unreadable">Page unreadable</string>
-    <string name="notify_send_size">You are going to sent %d bytes over internet</string>
-    <string name="preprocess">Toggle preprocessing</string>
-    <string name="enhance">Turn on enhancement</string>
-    <string name="unenhance">Turn off enhancement</string>
-    <string name="getting_report">Gathering information</string>
-    <string name="sending_original">Sending original page</string>
-    <string name="sending_reflowed">Sending re-flowed page</string>
-    <string name="sending_glyphs">Sending glyphs info</string>
-    <string name="report_response">Getting response</string>
-    <string name="report_sent">Report sent</string>
     <string name="confirm_delete">Are you  sure to delete %s ?</string>
     <string name="book_deletion">Book Deletion</string>
     <string name="yes">Yes</string>
@@ -60,17 +41,6 @@
     <string name="try_reflow_explained">Zoomed page is wider than the screen width. To avoid scrolling you could click on "Fit to Phone" button to recompose the text for the screen width</string>
     <string name="ok">OK</string>
     <string name="ok_not_anymore">OK and do not notify</string>
-    <string name="print">Print</string>
-    <string name="title_activity_print">Print</string>
-    <string name="pages_to_print">Pages to print</string>
-    <string name="current_page">Current page</string>
-    <string name="all_pages">All pages</string>
-    <string name="pages_range">Pages range</string>
-    <string name="columns_layout">Columns layout</string>
-    <string name="use_device_width">Use device width, mm</string>
-    <string name="columns_width">Columns width, mm</string>
-    <string name="columns_number">Columns number</string>
-    <string name="gap">Gap, mm</string>
     <string name="add_book">Add Book</string>
     <string name="grid_view">Grid View</string>
     <string name="list_view">List View</string>
@@ -81,10 +51,6 @@ Copyright &#169; 2010-2013, Advanced Micro Devices, Inc., all rights reserved.
 Copyright &#169; 2015-2016, OpenCV Foundation, all rights reserved.
 Copyright &#169; 2015-2016, Itseez Inc., all rights reserved.
 Third party copyrights are property of their respective owners.</string>
-    <string name="preprocess_explained">Removes page edges. Unwraps and straighten text lines.</string>
-    <string name="report_explained">Sends the image of badly rendered page for the technical analysis</string>
-    <string name="no_connection">No connection</string>
-    <string name="no_connection_explained">Could not connect to report server. Please check your internet connection.</string>
     <string name="font_size">Font size</string>
     <string name="font_size_original">original</string>
     <string name="font_size_three_quarters">¾</string>

@@ -74,7 +74,7 @@
                 android:gravity="center"
                 android:contentDescription="@string/about_program"
                 android:tint="@color/colorToolbarIcon"
-                app:srcCompat="@drawable/ic_more_vert" />
+                app:srcCompat="@drawable/ic_info" />
 
             </LinearLayout>
 

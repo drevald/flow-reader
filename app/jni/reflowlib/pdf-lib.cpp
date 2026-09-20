@@ -64,9 +64,9 @@ JNIEXPORT jlong JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBook_openBook
     const char *nativePath = env->GetStringUTFChars(path, 0);
     FPDF_DOCUMENT doc = FPDF_LoadDocument(nativePath, NULL);
     if (!doc) {
-        return 1;
+        unsigned long err = FPDF_GetLastError();
+        return -(jlong)(err ? err : 1);
     }
-    //FPDF_CloseDocument(doc);
 
     return (jlong)doc;
 
@@ -79,6 +79,10 @@ image_format get_pdf_pixels(JNIEnv* env, jlong bookId, jint pageNumber, char** p
 
     int pageno = (int)pageNumber;
     FPDF_PAGE page = FPDF_LoadPage(doc, pageno);
+    if (!page) {
+        *pixels = NULL;
+        return image_format(0, 0, 0, 0);
+    }
     int width  = static_cast<int>(FPDF_GetPageWidth(page)  / 72.0f * TARGET_DPI);
     int height = static_cast<int>(FPDF_GetPageHeight(page) / 72.0f * TARGET_DPI);
 
@@ -90,6 +94,7 @@ image_format get_pdf_pixels(JNIEnv* env, jlong bookId, jint pageNumber, char** p
     FPDF_RenderPageBitmap(bitmap, page, 0, 0, width, height, 0, 0);
     *pixels = (char*)reinterpret_cast<const char*>(FPDFBitmap_GetBuffer(bitmap));
 
+    FPDF_ClosePage(page);
     return image_format(width, height, size, 300);
 
 }
@@ -208,14 +213,15 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
     char* buffer;
 
     image_format format = get_pdf_pixels(env, bookId, pageNumber, &buffer);
+    if (!buffer) return NULL;
+
     int w = format.w;
     int h = format.h;
 
     Mat mat(h,w,CV_8UC4,&((char*)buffer)[0]);
-    std::vector<uchar> buff;//buffer for coding
+    std::vector<uchar> buff;
     cv::imencode(".png", mat, buff);
     int size = buff.size();
-
 
     jbyteArray array = env->NewByteArray(size);
     env->SetByteArrayRegion(array, 0, size, (jbyte *) &buff[0]);
@@ -253,9 +259,9 @@ JNIEXPORT jobject JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBookPage_ge
 JNIEXPORT jint JNICALL Java_com_veve_flowreader_model_impl_pdf_PdfBook_getNumberOfPages
 (JNIEnv *env, jobject obj, jlong bookId) {
 
+    if (!bookId) return 0;
     FPDF_DOCUMENT doc = (FPDF_DOCUMENT)bookId;
-    int page_count = FPDF_GetPageCount(doc);
-    return page_count;
+    return FPDF_GetPageCount(doc);
 
 }
 
