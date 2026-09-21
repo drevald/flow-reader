@@ -184,6 +184,9 @@ cv::Mat Reflow::reflow(float scale, int page_width, float margin, bool break_on_
         line_numbers.push_back(element.first);
     }
 
+    if (line_numbers.empty()) {
+        return cv::Mat(page_width, page_width, image.type());
+    }
     auto it = std::max_element(line_numbers.begin(), line_numbers.end());
     line_number = (*it);
 
