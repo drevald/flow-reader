@@ -38,7 +38,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Swap to flip"
+                android:text="@string/swipe_to_flip"
                 android:textSize="19sp"
                 android:textColor="@color/colorPopupContent"
                 android:paddingStart="16dp"/>
@@ -76,7 +76,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Tap to flip"
+                android:text="@string/tap_to_flip"
                 android:textSize="19sp"
                 android:textColor="@color/colorPopupContent"
                 android:paddingStart="16dp"/>
@@ -115,7 +115,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Pinch to zoom"
+                android:text="@string/pinch_to_zoom"
                 android:textSize="19sp"
                 android:textColor="@color/colorPopupContent"
                 android:paddingStart="16dp"/>
@@ -146,7 +146,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Break words"
+                android:text="@string/break_words"
                 android:textSize="19sp"
                 android:textColor="@color/colorPopupContent"
                 android:paddingStart="16dp"/>

@@ -531,7 +531,7 @@ std::vector<glyph> PageSegmenter::get_glyphs() {
             
             glyph g;
             
-            if (k == 0 &&  (left - left_indent) > 0.02 * w) {
+            if (k == 0 &&  (left - left_indent) > 0.05 * w) {
                 g.indented = 1;
             }
             else {

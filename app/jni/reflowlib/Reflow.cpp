@@ -82,11 +82,11 @@ cv::Mat Reflow::reflow(float scale, int page_width, float margin, bool break_on_
             continue;
         }
 
-        if (last || g.indented) {
+        if ((last || g.indented) && line.empty()) {
             line_sum += paragraph_indent;
         }
 
-        if (line_sum + new_symbol_width < new_width - left_margin && !indented) {
+        if (line_sum + new_symbol_width < new_width - left_margin && (!indented || !line.empty())) {
             line.push_back(g);
             line_sum += new_symbol_width;
             glyph_number_to_line_number.insert(std::make_pair(i, line_number));
@@ -238,7 +238,7 @@ cv::Mat Reflow::reflow(float scale, int page_width, float margin, bool break_on_
                 continue;
             }
 
-            if (last || g.indented) {
+            if (j == 0 && (last || g.indented)) {
                 line_sum += paragraph_indent;
             }
 

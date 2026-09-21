@@ -42,9 +42,13 @@ public class NativePageRendererImpl implements PageRenderer {
     private void updateZoomLimitsFromGlyphs(List<PageGlyphInfo> glyphs, DevicePageContext context) {
         List<Float> heights = new ArrayList<>();
         for (PageGlyphInfo g : glyphs) {
-            // averageHeight is from PageSegmenter which runs on the source image (300 DPI),
-            // so it is a source-pixel value independent of render zoom. No division needed.
-            if (g.getAverageHeight() > 0) heights.add((float) g.getAverageHeight());
+            // averageHeight is line_height from PageSegmenter (300 DPI source pixels).
+            // Skip spaces (unreliable height) and anything > 200 px — that threshold
+            // corresponds to ~48 pt at 300 DPI, well above any real text size; values
+            // above it are embedded images whose giant height would skew the median.
+            if (g.isSpace()) continue;
+            if (g.getAverageHeight() <= 0 || g.getAverageHeight() > 200) continue;
+            heights.add((float) g.getAverageHeight());
         }
         if (heights.isEmpty()) return;
         Collections.sort(heights);
