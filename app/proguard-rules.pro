@@ -1,21 +1,33 @@
 # Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# ---- Android entry points (Activities, Application) ----
+# R8 keeps these automatically via the manifest, but explicit rules are safer.
+-keep public class com.veve.flowreader.FlowReader
+-keep public class com.veve.flowreader.views.MainActivity
+-keep public class com.veve.flowreader.views.BrowseFilesActivity
+-keep public class com.veve.flowreader.views.PageActivity
+-keep public class com.veve.flowreader.views.GetBookActivity
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# ---- Room: database, entities, DAOs ----
+# Room generates code at compile time that references these by name at runtime.
+-keep class com.veve.flowreader.dao.AppDatabase { *; }
+-keep class com.veve.flowreader.dao.BookRecord { *; }
+-keep class com.veve.flowreader.dao.PageGlyphRecord { *; }
+-keep class com.veve.flowreader.dao.ReportRecord { *; }
+-keep class com.veve.flowreader.dao.Settings { *; }
+-keep interface com.veve.flowreader.dao.DaoAccess { *; }
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# ---- JNI: native methods ----
+# The C++ side calls Java methods by their exact names; renaming breaks the bridge.
+-keep class com.veve.flowreader.model.impl.djvu.DjvuBook {
+    native <methods>;
+}
+-keep class com.veve.flowreader.model.impl.djvu.DjvuBookPage {
+    native <methods>;
+}
+-keep class com.veve.flowreader.model.impl.pdf.PdfBook {
+    native <methods>;
+}
+-keep class com.veve.flowreader.model.impl.pdf.PdfBookPage {
+    native <methods>;
+}

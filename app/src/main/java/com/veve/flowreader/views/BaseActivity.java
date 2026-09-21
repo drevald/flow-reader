@@ -10,6 +10,7 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
@@ -35,6 +36,7 @@ public class BaseActivity  extends AppCompatActivity {
                 ? AppCompatDelegate.MODE_NIGHT_YES
                 : AppCompatDelegate.MODE_NIGHT_NO);
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
     }
 
     public void changeTheme(View v) {
