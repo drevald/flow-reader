@@ -17,7 +17,10 @@ public class PdfBook implements Book {
 
     public PdfBook(String path) throws Exception {
         long id = openBook(path);
-        if (id < 0) throw new Exception(errorMessage((int) -id));
+        // On 64-bit Android, allocator pointer-tagging sets the high byte of the handle,
+        // making valid FPDF_DOCUMENT pointers negative as jlong. Real FPDF error codes
+        // are 1-6 (negated: -1 to -6). Tagged valid pointers are << -100.
+        if (id < 0 && id >= -100) throw new Exception(errorMessage((int) -id));
         this.bookId = id;
         this.path = path;
         this.name = path;

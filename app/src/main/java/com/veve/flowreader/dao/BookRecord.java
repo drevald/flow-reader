@@ -37,6 +37,9 @@ public class BookRecord {
     private String md5;
     private boolean preprocessing = false;
 
+    @ColumnInfo(name = "justify", defaultValue = "1")
+    private boolean justify = true;
+
     @ColumnInfo(name = "breakOnSpace", defaultValue = "0")
     private boolean breakWords = false;
 
@@ -211,5 +214,9 @@ public class BookRecord {
     public void setMedianGlyphBaseHeight(float medianGlyphBaseHeight) {
         this.medianGlyphBaseHeight = medianGlyphBaseHeight;
     }
+
+    public boolean getJustify() { return justify; }
+
+    public void setJustify(boolean justify) { this.justify = justify; }
 
 }
