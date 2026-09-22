@@ -31,3 +31,8 @@
 -keep class com.veve.flowreader.model.impl.pdf.PdfBookPage {
     native <methods>;
 }
+
+# ---- JNI: classes constructed by native code via FindClass/NewObject ----
+# put_glyphs() in libnative-lib.so calls FindClass("com/veve/flowreader/model/PageGlyphInfo")
+# and NewObject() to build glyph data — R8 must not remove or rename these.
+-keep class com.veve.flowreader.model.PageGlyphInfo { *; }
