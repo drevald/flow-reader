@@ -32,7 +32,9 @@
     native <methods>;
 }
 
-# ---- JNI: classes constructed by native code via FindClass/NewObject ----
-# put_glyphs() in libnative-lib.so calls FindClass("com/veve/flowreader/model/PageGlyphInfo")
-# and NewObject() to build glyph data — R8 must not remove or rename these.
+# ---- JNI: classes accessed by native code via FindClass/GetMethodID ----
+# put_glyphs() calls FindClass + NewObject for PageGlyphInfo.
+# pdf-lib.cpp and djvu-lib.cpp call GetObjectClass(pageSize) + GetMethodID for setPageWidth/setPageHeight.
+# R8 must not remove or rename any of these.
 -keep class com.veve.flowreader.model.PageGlyphInfo { *; }
+-keep class com.veve.flowreader.model.PageSize { *; }
