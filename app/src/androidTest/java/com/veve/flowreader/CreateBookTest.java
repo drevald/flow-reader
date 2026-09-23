@@ -51,7 +51,7 @@ public class CreateBookTest {
     }
 
     @Test
-    public void createPdfBook() {
+    public void createPdfBook() throws Exception {
         BookRecord bookRecord = BookFactory.getInstance().createBook(pdfBookFile);
         pdfBookFileId = booksCollection.addBook(bookRecord);
         assertEquals(BOOK_SIZE, bookRecord.getSize());

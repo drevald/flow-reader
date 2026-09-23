@@ -17,7 +17,7 @@ import static junit.framework.TestCase.assertNotNull;
 public class RendererTest extends BookTest {
 
     @Test
-    public void testNativeRenderer() {
+    public void testNativeRenderer() throws Exception {
         BookSource bookSource = new PdfBookSource(bookRecord.getUrl());
         PageRenderer pageRenderer = new NativePageRendererImpl(booksCollection, bookRecord, bookSource);
         List<Bitmap> bitmaps = pageRenderer.renderPage(new DevicePageContext(50), 1);
@@ -25,7 +25,7 @@ public class RendererTest extends BookTest {
     }
 
     @Test
-    public void testNativeOriginalPageRenderer() {
+    public void testNativeOriginalPageRenderer() throws Exception {
         BookSource bookSource = new PdfBookSource(bookRecord.getUrl());
         PageRenderer pageRenderer = new NativePageRendererImpl(booksCollection, bookRecord, bookSource);
         Bitmap bitmap = pageRenderer.renderOriginalPage(1);

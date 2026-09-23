@@ -35,7 +35,7 @@ public class PdfBookTest {
     }
 
     @Test
-    public void testGlyphCount() {
+    public void testGlyphCount() throws Exception {
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         PdfBookSource source = new PdfBookSource(filePath);
         List<PageGlyph> pageGlyphs = source.getPageGlyphs(0);
@@ -44,7 +44,7 @@ public class PdfBookTest {
     }
 
     @Test
-    public void testMetaData() {
+    public void testMetaData() throws Exception {
         Book book = new PdfBook(filePath);
         Assert.assertEquals("", book.getAuthor() );
         Assert.assertEquals("Sample Document", book.getTitle() );

@@ -1,22 +1,44 @@
-name: Emulator Tests
-# Disabled - no instrumented tests currently set up
+name: Smoke Tests
+
 on:
+  push:
+    branches: [master]
+    tags:
+      - 'v*'
   workflow_dispatch:
 
 jobs:
-  test:
-    runs-on: macos-latest
+  smoke:
+    runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: gradle
 
-      - name: Run instrumented tests
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Install NDK
+        run: echo "y" | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "ndk;30.0.16248370"
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Run smoke tests on minified build
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
-          script: ./gradlew connectedCheck
+          arch: x86_64
+          profile: Nexus 6
+          script: >
+            TEST_BUILD_TYPE=release ./gradlew connectedAndroidTest
+            -Pandroid.testInstrumentationRunnerArguments.class=com.veve.flowreader.uitest.FlippingTest,com.veve.flowreader.uitest.MainActivityTest
