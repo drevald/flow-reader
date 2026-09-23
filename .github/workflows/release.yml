@@ -41,9 +41,10 @@ jobs:
           arch: x86_64
           profile: Nexus 6
           script: >
-            ./gradlew connectedReleaseAndroidTest
+            ./gradlew connectedAndroidTest
             -Pandroid.testInstrumentationRunnerArguments.class=com.veve.flowreader.uitest.FlippingTest,com.veve.flowreader.uitest.MainActivityTest
         env:
+          TEST_BUILD_TYPE: release
           KEYSTORE_PATH: ${{ github.workspace }}/keystore.jks
           STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
