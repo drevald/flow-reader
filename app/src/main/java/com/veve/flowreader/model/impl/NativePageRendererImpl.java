@@ -46,8 +46,10 @@ public class NativePageRendererImpl implements PageRenderer {
             // Skip spaces (unreliable height) and anything > 200 px — that threshold
             // corresponds to ~48 pt at 300 DPI, well above any real text size; values
             // above it are embedded images whose giant height would skew the median.
+            // Also skip values < 8: hairline/rule glyphs from thin separator lines have
+            // line_height ≈ 2 and would corrupt the median if included.
             if (g.isSpace()) continue;
-            if (g.getAverageHeight() <= 0 || g.getAverageHeight() > 200) continue;
+            if (g.getAverageHeight() < 8 || g.getAverageHeight() > 200) continue;
             heights.add((float) g.getAverageHeight());
         }
         if (heights.isEmpty()) return;

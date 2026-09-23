@@ -523,10 +523,15 @@ void  reflow(cv::Mat& cvMat, cv::Mat& new_image, float scale, int page_width,  J
 
         try {
             Reflow reflower(cvMat, rotated_with_pictures, glyphs);
-            new_image = reflower.reflow(scale, page_width, margin, break_on_space, show_glyph_borders);
+            cv::Mat result = reflower.reflow(scale, page_width, margin, break_on_space, show_glyph_borders);
+            if (result.empty()) {
+                __android_log_print(ANDROID_LOG_DEBUG, APPNAME, "reflow returned empty mat, using fallback");
+                new_image = rotated_with_pictures;
+            } else {
+                new_image = result;
+            }
         } catch (...) {
             __android_log_print(ANDROID_LOG_VERBOSE, APPNAME, "%s\n", "exception occurred");
-            //cv::bitwise_not(rotated_with_pictures, rotated_with_pictures);
             new_image = rotated_with_pictures;
         }
     } else {

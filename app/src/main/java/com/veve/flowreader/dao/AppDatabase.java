@@ -22,7 +22,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 
 @androidx.room.Database(entities =
-        {BookRecord.class, PageGlyphRecord.class, ReportRecord.class, Settings.class}, version = 4, exportSchema = false)
+        {BookRecord.class, PageGlyphRecord.class, ReportRecord.class, Settings.class}, version = 5, exportSchema = false)
 
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -49,6 +49,17 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
+    // averageHeight was incorrectly divided by renderZoom before being stored, producing
+    // medianGlyphBaseHeight values near 2 px instead of the correct ~48 px.  Reset all
+    // calibration data so each book recalibrates from freshly extracted glyphs on next open.
+    static final Migration MIGRATION_4_5 = new Migration(4, 5) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("UPDATE BookRecord SET medianGlyphBaseHeight = 0");
+            database.execSQL("DELETE FROM PageGlyphRecord");
+        }
+    };
+
     public abstract DaoAccess daoAccess();
 
     private static AppDatabase appDatabase;
@@ -57,7 +68,7 @@ public abstract class AppDatabase extends RoomDatabase {
         if (appDatabase == null) {
             RoomDatabase.Builder<AppDatabase> builder =
                     Room.databaseBuilder(context, AppDatabase.class, DATABASE_NAME)
-                        .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4);
+                        .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5);
             appDatabase = builder.build();
             InitDatabaseTask initDatabaseTask = new InitDatabaseTask(appDatabase.daoAccess());
             initDatabaseTask.execute(context);

@@ -10,10 +10,20 @@
 
 std::vector<int> LineSpacing::get_line_heights() {
     std::vector<int> positions;
-    for (int i=0;i<heights.size()-1;i++ ){
+    // Track the minimum height seen so far in the current block.
+    // If the next height exceeds 2× the block minimum (not just the previous
+    // element), split the block.  This prevents a staircase of slowly-growing
+    // heights (e.g. 155→200→280→400→560→864, each ratio <2) from merging into
+    // one block and promoting every line to the tallest height.
+    int block_min = heights.empty() ? 1 : heights.at(0);
+    for (int i=0;i<(int)heights.size()-1;i++ ){
         float r =  heights.at(i+1)/(float)heights.at(i);
-        if (r > 2 || r < 0.5) {
+        float r_min = (block_min > 0) ? heights.at(i+1)/(float)block_min : r;
+        if (r > 2 || r < 0.5 || r_min > 2 || r_min < 0.5) {
             positions.push_back(i);
+            block_min = heights.at(i+1);
+        } else {
+            if (heights.at(i+1) < block_min) block_min = heights.at(i+1);
         }
     }
 

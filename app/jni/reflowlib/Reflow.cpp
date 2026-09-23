@@ -34,8 +34,8 @@ cv::Mat Reflow::reflow(float scale, int page_width, float margin, bool break_on_
         if (glyphs.at(i).is_space) space_count++;
     }
     __android_log_print(ANDROID_LOG_DEBUG, APPNAME,
-        "reflow: break_on_space=%d total_glyphs=%d space_glyphs=%d",
-        (int)break_on_space, (int)glyphs.size(), space_count);
+        "reflow: break_on_space=%d total_glyphs=%d space_glyphs=%d scale=%.3f page_width=%d",
+        (int)break_on_space, (int)glyphs.size(), space_count, scale, page_width);
 
     int log_limit = glyphs.size() < 80 ? (int)glyphs.size() : 80;
     for (int i = 0; i < log_limit; i++) {
@@ -190,9 +190,12 @@ cv::Mat Reflow::reflow(float scale, int page_width, float margin, bool break_on_
     auto it = std::max_element(line_numbers.begin(), line_numbers.end());
     line_number = (*it);
 
-    line_heights = std::vector<int>();
+    // Build heights only for lines that exist (gaps from big-glyph code path are skipped).
+    // Using a map avoids 0-height entries that cause LineSpacing division-by-zero.
+    std::map<int, int> heights_map;
     int g_counter = 0;
     for (int k=0; k<=line_number; k++) {
+        if (lines.find(k) == lines.end()) continue;
         std::vector<glyph> glyphs = lines.at(k);
         int m = 0;
         for (int l=0;l<glyphs.size(); l++) {
@@ -205,16 +208,69 @@ cv::Mat Reflow::reflow(float scale, int page_width, float margin, bool break_on_
             if (scaled_glyphs.find(g_counter) != scaled_glyphs.end()) {
                 new_symbol_height = scaled_glyphs.at(g_counter);
             }
+            // Cap to output width: a line taller than the page width is useless
+            // and causes OOM when LineSpacing propagates it to all nearby lines.
+            new_symbol_height = std::min(new_symbol_height, new_width);
             if (new_symbol_height > m) {
                 m = new_symbol_height;
             }
             g_counter++;
         }
-        line_heights.push_back(m);
+        heights_map[k] = m;
     }
 
-    line_heights = calculate_line_heights(line_heights);
-    int new_height = std::accumulate(line_heights.begin(), line_heights.end(), 0);
+    {
+        std::vector<int> lh_vec;
+        lh_vec.reserve(heights_map.size());
+        for (auto& kv : heights_map) lh_vec.push_back(kv.second);
+
+        int raw_min = *std::min_element(lh_vec.begin(), lh_vec.end());
+        int raw_max = *std::max_element(lh_vec.begin(), lh_vec.end());
+        int zeros = (int)std::count(lh_vec.begin(), lh_vec.end(), 0);
+        __android_log_print(ANDROID_LOG_DEBUG, APPNAME,
+            "heights before: count=%zu min=%d max=%d zeros=%d",
+            lh_vec.size(), raw_min, raw_max, zeros);
+
+        // Remove zero-height lines: LineSpacing groups them with tall neighbours
+        // and replaces the whole block with the max, exploding new_height.
+        lh_vec.erase(std::remove(lh_vec.begin(), lh_vec.end(), 0), lh_vec.end());
+
+        lh_vec = calculate_line_heights(lh_vec);
+        int j = 0;
+        for (auto& kv : heights_map) {
+            if (kv.second != 0) kv.second = lh_vec[j++];
+        }
+    }
+    int new_height = 0;
+    for (auto& kv : heights_map) new_height += kv.second;
+
+    __android_log_print(ANDROID_LOG_DEBUG, APPNAME,
+        "reflow layout: lines=%d line_number=%d heights_map=%zu new_height=%d new_width=%d",
+        (int)lines.size(), line_number, heights_map.size(), new_height, new_width);
+
+    if (new_height <= 0 || new_width <= 0) {
+        __android_log_print(ANDROID_LOG_DEBUG, APPNAME, "reflow: degenerate image, returning source");
+        return image;
+    }
+
+    // Safety limit: a reflowed image taller than 600× the page width cannot be
+    // PNG-encoded without OOM and is not usable anyway.  Return the source image
+    // so the caller's fallback path handles it without crashing.
+    const int MAX_REFLOW_HEIGHT = new_width * 600;
+    if (new_height > MAX_REFLOW_HEIGHT) {
+        __android_log_print(ANDROID_LOG_DEBUG, APPNAME,
+            "reflow: new_height=%d exceeds limit %d (scale=%.3f), returning source",
+            new_height, MAX_REFLOW_HEIGHT, scale);
+        // Draw a narrow stripe on the right edge to signal that this page was
+        // not reflowed.  The image is inverted (text=255, bg=0); value 55 here
+        // becomes 200 (light gray) after the caller's bitwise_not, visible
+        // against the white background without obscuring text.
+        cv::Mat fallback = image.clone();
+        int stripe_w = std::max(3, fallback.cols / 50);
+        fallback(cv::Rect(fallback.cols - stripe_w, 0, stripe_w, fallback.rows)).setTo(cv::Scalar(55));
+        return fallback;
+    }
+
     line_sum = left_margin;
     int top_margin = std::min(ceil(new_height * 0.075), left_margin * 1.25);
     int current_vert_pos = top_margin;
@@ -229,8 +285,9 @@ cv::Mat Reflow::reflow(float scale, int page_width, float margin, bool break_on_
 
 
     for (int i=0; i<=line_number; i++) {
+        if (lines.find(i) == lines.end()) continue;
         std::vector<glyph> glyphs = lines.at(i);
-        int line_height = line_heights.at(i);
+        int line_height = heights_map.at(i);
         //cv::line(new_image, cv::Point(0,current_vert_pos), cv::Point(new_width, current_vert_pos), cv::Scalar(255), 5);
         line_sum = left_margin ;
         last = false;
@@ -268,12 +325,21 @@ cv::Mat Reflow::reflow(float scale, int page_width, float margin, bool break_on_
 
             int y_pos = (current_vert_pos + line_height) + (g.baseline_shift - g.height)*scale;
             if (x_pos + new_symbol_width < new_width - left_margin) {
-                cv::Rect dstRect(x_pos, y_pos, new_symbol_width, new_symbol_height);
-                if (!g.is_space) {
-                    dst.copyTo(new_image(dstRect));
-                }
-                if (show_glyph_borders) {
-                    cv::rectangle(new_image, dstRect, borderColor(g), 1);
+                // Clamp y_pos and height to image bounds.
+                // Large glyphs at high scale can produce y_pos < 0 when the line
+                // height is smaller than the scaled glyph (e.g. after LineSpacing
+                // capped or inflated the line height).
+                if (y_pos < 0) y_pos = 0;
+                int draw_h = std::min(new_symbol_height, new_image.rows - y_pos);
+                if (draw_h > 0) {
+                    cv::Mat draw_src = (draw_h < new_symbol_height) ? dst(cv::Rect(0, 0, new_symbol_width, draw_h)) : dst;
+                    cv::Rect dstRect(x_pos, y_pos, new_symbol_width, draw_h);
+                    if (!g.is_space) {
+                        draw_src.copyTo(new_image(dstRect));
+                    }
+                    if (show_glyph_borders) {
+                        cv::rectangle(new_image, dstRect, borderColor(g), 1);
+                    }
                 }
             } else {
                 int scaled_symbol_width = (new_width - left_margin) - x_pos;
@@ -282,19 +348,24 @@ cv::Mat Reflow::reflow(float scale, int page_width, float margin, bool break_on_
                     // calculate new symbol height
 
                     float scale_coef = scaled_symbol_width/(float)new_symbol_width;
-                    int y_pos = (current_vert_pos + line_height) + (g.baseline_shift - g.height)*scale*scale_coef;
+                    int y_pos2 = (current_vert_pos + line_height) + (g.baseline_shift - g.height)*scale*scale_coef;
                     int scaled_symbol_height = scale_coef * new_symbol_height;
-                    cv::Mat dst2(scaled_symbol_height, scaled_symbol_width, show_glyph_borders ? CV_8UC3 : symbol_mat.type());
-                    cv::resize(symbol_mat, dst2, dst2.size(), 0,0, cv::INTER_CUBIC);
-                    if (show_glyph_borders) {
-                        cv::cvtColor(dst2, dst2, cv::COLOR_GRAY2BGR);
-                    }
-                    cv::Rect dstRect(x_pos, y_pos, scaled_symbol_width, scaled_symbol_height);
-                    if (!g.is_space) {
-                        dst2.copyTo(new_image(dstRect));
-                    }
-                    if (show_glyph_borders) {
-                        cv::rectangle(new_image, dstRect, borderColor(g), 1);
+                    if (y_pos2 < 0) y_pos2 = 0;
+                    int draw_h2 = std::min(scaled_symbol_height, new_image.rows - y_pos2);
+                    if (draw_h2 > 0) {
+                        cv::Mat dst2(scaled_symbol_height, scaled_symbol_width, show_glyph_borders ? CV_8UC3 : symbol_mat.type());
+                        cv::resize(symbol_mat, dst2, dst2.size(), 0,0, cv::INTER_CUBIC);
+                        if (show_glyph_borders) {
+                            cv::cvtColor(dst2, dst2, cv::COLOR_GRAY2BGR);
+                        }
+                        cv::Mat draw_src2 = (draw_h2 < scaled_symbol_height) ? dst2(cv::Rect(0, 0, scaled_symbol_width, draw_h2)) : dst2;
+                        cv::Rect dstRect(x_pos, y_pos2, scaled_symbol_width, draw_h2);
+                        if (!g.is_space) {
+                            draw_src2.copyTo(new_image(dstRect));
+                        }
+                        if (show_glyph_borders) {
+                            cv::rectangle(new_image, dstRect, borderColor(g), 1);
+                        }
                     }
                 }
 
