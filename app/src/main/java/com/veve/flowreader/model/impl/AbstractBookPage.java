@@ -19,7 +19,7 @@ public abstract class AbstractBookPage implements BookPage {
 
     protected double magicMultiplier = 0.8;
 
-    public AbstractBookPage(long  bookId, int pageNumber) {
+    protected AbstractBookPage(long  bookId, int pageNumber) {
         this.bookId = bookId;
         this.pageNumber = pageNumber;
     }
@@ -106,10 +106,10 @@ public abstract class AbstractBookPage implements BookPage {
         return bookId;
     }
 
-    abstract public byte[] getBytes(long bookId, int pageNumber);
+    public abstract byte[] getBytes(long bookId, int pageNumber);
 
-    abstract public byte[] getGrayscaleBytes(long bookId, int pageNumber);
+    public abstract byte[] getGrayscaleBytes(long bookId, int pageNumber);
 
-    abstract public byte[] getPageGlyphs(long bookId, int pageNumber, List<PageGlyphInfo> pageGlyphs);
+    public abstract byte[] getPageGlyphs(long bookId, int pageNumber, List<PageGlyphInfo> pageGlyphs);
 
 }

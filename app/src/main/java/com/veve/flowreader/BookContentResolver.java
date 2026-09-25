@@ -15,7 +15,6 @@ import java.text.MessageFormat;
 
 import static android.content.ContentResolver.SCHEME_CONTENT;
 import static android.content.ContentResolver.SCHEME_FILE;
-import static android.drm.DrmStore.DrmObjectType.CONTENT;
 
 public interface BookContentResolver {
 
@@ -39,15 +38,14 @@ public interface BookContentResolver {
             path = URLDecoder.decode(path, "UTF-8");
         } catch (Exception e) {
             Log.v(BookContentResolver.class.getName(), "Opening " + uri.toString());
-            InputStream is = context.getContentResolver().openInputStream(uri);
             String uriString = URLDecoder.decode(uri.toString(), "UTF-8");
-            File file;
             String fileName = uriString.substring(1 + uriString.lastIndexOf('/'));
+            File file;
             if (uriString.toLowerCase().endsWith(".pdf")
-                    ||uriString.toLowerCase().endsWith(".djvu")) {
+                    || uriString.toLowerCase().endsWith(".djvu")) {
                 file = new File(context.getExternalFilesDir(null), fileName);
             } else {
-                ContentResolver cR =  context.getContentResolver();
+                ContentResolver cR = context.getContentResolver();
                 MimeTypeMap mime = MimeTypeMap.getSingleton();
                 String type = mime.getExtensionFromMimeType(cR.getType(uri));
                 if ("djvu".equals(type)) {
@@ -55,12 +53,13 @@ public interface BookContentResolver {
                 } else if ("pdf".equals(type)) {
                     file = new File(context.getExternalFilesDir(null), fileName + ".pdf");
                 } else {
-                    file = File.createTempFile(
-                            "flow.", null, context.getExternalFilesDir(null));
+                    file = File.createTempFile("flow.", null, context.getExternalFilesDir(null));
                 }
             }
-            OutputStream os = new FileOutputStream(file);
-            Utils.copy(is, os);
+            try (InputStream is = context.getContentResolver().openInputStream(uri);
+                 OutputStream os = new FileOutputStream(file)) {
+                Utils.copy(is, os);
+            }
             path = file.getPath();
         }
         return path;

@@ -14,6 +14,7 @@ import com.veve.flowreader.model.impl.pdf.PdfBook;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.nio.charset.StandardCharsets;
 
 import static com.veve.flowreader.MD5.fileToMD5;
 
@@ -54,10 +55,10 @@ public class BookFactory {
             bookRecord.setFormat(BookRecord.PDF_FORMAT);
         } else {
             String header = getHeader(file);
-            if (header.startsWith("%PDF")) {
+            if (header != null && header.startsWith("%PDF")) {
                 book = new PdfBook(file.getPath());
                 bookRecord.setFormat(BookRecord.PDF_FORMAT);
-            } else if (header.startsWith("AT&T")) {
+            } else if (header != null && header.startsWith("AT&T")) {
                 book = new DjvuBook(file.getPath());
                 bookRecord.setFormat(BookRecord.DJVU_FORMAT);
             }
@@ -120,22 +121,12 @@ public class BookFactory {
     }
 
     private String getHeader(File file) {
-        FileInputStream fis = null;
-        String result = null;
-        try {
-            fis = new FileInputStream(file);
-            byte[] buffer = new byte[16];
-            fis.read(buffer);
-            result = new String(buffer);
+        try (FileInputStream fis = new FileInputStream(file)) {
+            byte[] header = fis.readNBytes(16);
+            return new String(header, StandardCharsets.US_ASCII);
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            try {
-                fis.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return result;
+            return null;
         }
     }
 

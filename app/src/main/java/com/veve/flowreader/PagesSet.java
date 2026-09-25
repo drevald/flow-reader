@@ -37,7 +37,7 @@ public class PagesSet {
             return sets;
         String[] parts = str.split("[\\s\\,\\;\\:]+");
         for (String part : parts) {
-            if (part.trim() != "") {
+            if (!part.trim().isEmpty()) {
                 sets.add(new PagesSet(part.trim()));
             };
         }

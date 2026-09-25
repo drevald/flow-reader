@@ -2,8 +2,6 @@ package com.veve.flowreader.model;
 
 import android.graphics.Bitmap;
 
-import com.veve.flowreader.dao.BookRecord;
-
 import java.util.List;
 
 /**

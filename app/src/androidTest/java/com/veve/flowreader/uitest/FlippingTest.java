@@ -77,7 +77,6 @@ public class FlippingTest {
             scenario.onActivity(a ->
                     loading[0] = a.findViewById(R.id.progress).getVisibility() == VISIBLE);
             if (!loading[0]) return;
-            Thread.sleep(50);
         }
     }
 

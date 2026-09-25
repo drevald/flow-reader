@@ -1,7 +1,6 @@
 package com.veve.flowreader.model;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 

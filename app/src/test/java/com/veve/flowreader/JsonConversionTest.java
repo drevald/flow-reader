@@ -3,14 +3,10 @@ package com.veve.flowreader;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.veve.flowreader.dao.PageGlyphRecord;
-import com.veve.flowreader.model.impl.PageGlyphImpl;
 
 import org.hamcrest.Matchers;
-import org.hamcrest.beans.*;
-
 
 import org.junit.Test;
-import org.junit.Ignore;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;

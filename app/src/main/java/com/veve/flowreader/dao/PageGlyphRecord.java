@@ -140,16 +140,20 @@ public class PageGlyphRecord implements Serializable {
         isLast = last;
     }
 
-    public boolean equals(PageGlyphRecord record) {
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof PageGlyphRecord)) return false;
+        PageGlyphRecord record = (PageGlyphRecord) obj;
         return this.indented == record.indented
-                &&this.x == record.x
-                &&this.y == record.y
-                &&this.width == record.width
-                &&this.height == record.height
-                &&this.baselineShift == record.baselineShift
-                &&this.averageHeight == record.averageHeight
-                &&this.isSpace == record.isSpace
-                &&this.isLast == record.isLast;
+                && this.x == record.x
+                && this.y == record.y
+                && this.width == record.width
+                && this.height == record.height
+                && this.baselineShift == record.baselineShift
+                && this.averageHeight == record.averageHeight
+                && this.isSpace == record.isSpace
+                && this.isLast == record.isLast;
     }
 
     public int hashCode() {

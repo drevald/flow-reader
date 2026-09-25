@@ -6,15 +6,10 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.util.Log;
-
 import com.veve.flowreader.Constants;
 import com.veve.flowreader.model.DevicePageContext;
 import com.veve.flowreader.model.PageGlyph;
 import com.veve.flowreader.model.PageGlyphInfo;
-
-import java.util.List;
-
 
 /**
  * Created by ddreval on 19.04.2018.

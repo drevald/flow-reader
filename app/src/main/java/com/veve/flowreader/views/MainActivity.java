@@ -347,9 +347,9 @@ public class MainActivity extends BaseActivity {
 
         void removeBook(long bookId) {
             BookRecord recordToRemove = null;
-            for (BookRecord record : booksList) {
-                if (record.getId() == bookId) {
-                    recordToRemove = record;
+            for (BookRecord bookRecord : booksList) {
+                if (bookRecord.getId() == bookId) {
+                    recordToRemove = bookRecord;
                     break;
                 }
             }
@@ -416,17 +416,17 @@ public class MainActivity extends BaseActivity {
         private BookGridAdapter() {
             Log.i(this.getClass().getName(), "Constructing BookListAdapter");
             booksList = BooksCollection.getInstance(getApplicationContext()).getBooks();
-            for (BookRecord record : booksList)
+            for (BookRecord bookRecord : booksList)
                 Log.v(getClass().getName(), String.format("BOOK ID:%d PATH:%s MD5:%s",
-                        record.getId(), record.getUrl(), record.getMd5()));
+                        bookRecord.getId(), bookRecord.getUrl(), bookRecord.getMd5()));
             notifyDataSetChanged();
         }
 
         void removeBook(long bookId) {
             BookRecord recordToDelete = null;
-            for (BookRecord record : booksList) {
-                if (record.getId() == bookId) {
-                    recordToDelete = record;
+            for (BookRecord bookRecord : booksList) {
+                if (bookRecord.getId() == bookId) {
+                    recordToDelete = bookRecord;
                     break;
                 }
             }

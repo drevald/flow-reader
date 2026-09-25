@@ -6,7 +6,6 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.veve.flowreader.Constants;
-import com.veve.flowreader.model.Book;
 
 /**
  * Created by ddreval on 4/3/2018.

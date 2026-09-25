@@ -1,15 +1,8 @@
 package com.veve.flowreader;
 
 import android.app.Application;
-import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -37,7 +30,7 @@ public class Utils extends Application {
         return inSampleSize;
     }
 
-    public synchronized static void copy(InputStream is, OutputStream os) throws Exception {
+    public static synchronized void copy(InputStream is, OutputStream os) throws Exception {
         byte[] buffer = new byte[1000];
         int len;
         while ((len = is.read(buffer)) != -1) {
