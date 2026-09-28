@@ -40,7 +40,7 @@ class NativePageRendererImpl(
 
     private fun getOriginalPageBitmap(position: Int): Bitmap {
         Log.v("NULLBOOK", "Getting natively the original page $position")
-        if (position != currentOriginalPage || originalBitmap == null) {
+        if (position != currentOriginalPage || originalBitmap == null || originalBitmap!!.isRecycled) {
             Log.d("NULLBOOK", "Page not cached current = $currentOriginalPage requested = $position")
             currentOriginalPage = position
             val start = System.currentTimeMillis()

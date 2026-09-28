@@ -28,20 +28,26 @@ class DjvuBookPage internal constructor(bookId: Long, pageNumber: Int) :
 
     override fun getAsReflowedBitmap(context: DevicePageContext, pageGlyphs: List<PageGlyphInfo>): List<Bitmap> {
         val pageSize = PageSize()
+        val requestedWidth = (context.width * magicMultiplier).toInt()
+        android.util.Log.v("DJVU_REFLOW", "page=$pageNumber zoom=${context.zoom} requestedWidth=$requestedWidth screenW=${context.width}")
         val bytes = getNativeReflowedBytes(
             bookId, pageNumber, context.zoom,
-            (context.width * magicMultiplier).toInt(),
+            requestedWidth,
             pageSize, pageGlyphs, context.isPreprocessing(),
             context.margin, !context.isBreakWords(), context.isShowGlyphBorders()
         )
+        android.util.Log.v("DJVU_REFLOW", "  → ${bytes.size} chunk(s) returned")
         val retVal = mutableListOf<Bitmap>()
         for (i in bytes.indices) {
             val b = bytes[i]
             val opts = BitmapFactory.Options().apply { inJustDecodeBounds = true }
             BitmapFactory.decodeByteArray(b, 0, b.size, opts)
+            android.util.Log.v("DJVU_REFLOW", "  chunk[$i] raw=${opts.outWidth}x${opts.outHeight}")
             opts.inSampleSize = Utils.calculateInSampleSize(opts, context.width, context.width * (opts.outHeight / opts.outWidth))
             opts.inJustDecodeBounds = false
-            retVal.add(BitmapFactory.decodeByteArray(b, 0, b.size, opts))
+            val bm = BitmapFactory.decodeByteArray(b, 0, b.size, opts)
+            android.util.Log.v("DJVU_REFLOW", "  chunk[$i] decoded=${bm.width}x${bm.height} inSampleSize=${opts.inSampleSize}")
+            retVal.add(bm)
         }
         return retVal
     }

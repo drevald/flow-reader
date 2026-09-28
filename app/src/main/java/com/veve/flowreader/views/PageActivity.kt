@@ -683,7 +683,7 @@ class PageActivity : BaseActivity() {
                         )))
                         val origChunkLimit = Math.min(Constants.IMAGE_VIEW_HEIGHT_LIMIT,
                             Constants.MAX_BITMAP_SIZE / (dstWidth * 4))
-                        Log.v(javaClass.name, "Original page: src=${srcWidth}x${srcHeight} dst=${dstWidth}x${dstHeight} chunkLimit=$origChunkLimit")
+                        Log.v(javaClass.name, "Original page: src=${srcWidth}x${srcHeight} dst=${dstWidth}x${dstHeight} chunkLimit=$origChunkLimit zoomOriginal=${context.zoomOriginal} screenW=${context.width}")
                         pageActivity.page.removeAllViewsInLayout()
                         val horizontalScrollView = HorizontalScrollView(applicationContext)
                         var dstOffset = 0
@@ -703,14 +703,13 @@ class PageActivity : BaseActivity() {
                                 scaledChunk = inverted
                             }
                             val imageView = ImageView(applicationContext).apply {
-                                scaleType = ImageView.ScaleType.FIT_START
-                                adjustViewBounds = true
-                                maxHeight = Int.MAX_VALUE
+                                layoutParams = LinearLayout.LayoutParams(dstWidth, dstChunkHeight)
+                                scaleType = ImageView.ScaleType.FIT_XY
                                 setImageBitmap(scaledChunk)
                                 colorFilter = lightFilterOrig
                             }
                             pageViews.add(imageView)
-                            dstOffset += origChunkLimit
+                            dstOffset += dstChunkHeight
                         }
                         if (!bitmap.isRecycled) bitmap.recycle()
                         for (view in pageViews) pageActivity.page.addView(view)

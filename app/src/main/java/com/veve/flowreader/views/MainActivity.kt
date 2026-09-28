@@ -83,7 +83,7 @@ class MainActivity : BaseActivity() {
                     .setMessage(String.format(resources.getString(R.string.confirm_delete), bookRecord.title))
                     .setCancelable(false)
                     .setPositiveButton(R.string.yes) { _, _ ->
-                        BooksCollection.getInstance(parent).deleteBook(bookRecord.id!!)
+                        BooksCollection.getInstance(applicationContext).deleteBook(bookRecord.id!!)
                         bookListAdapter.refresh()
                         bookGridAdapter.refresh()
                     }
@@ -103,7 +103,7 @@ class MainActivity : BaseActivity() {
                     .setView(titleEditView)
                     .setPositiveButton(R.string.save) { _, _ ->
                         bookRecord.title = titleEditView.text.toString()
-                        BooksCollection.getInstance(parent).updateBook(bookRecord)
+                        BooksCollection.getInstance(applicationContext).updateBook(bookRecord)
                         bookListAdapter.refresh()
                         bookGridAdapter.refresh()
                     }

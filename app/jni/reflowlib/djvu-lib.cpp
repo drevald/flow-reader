@@ -210,8 +210,8 @@ image_format get_djvu_pixels(JNIEnv *env, jlong bookId, jint page_number, jboole
     ddjvu_rect_t prect;
     prect.x = 0;
     prect.y = 0;
-    prect.w = info.width;
-    prect.h = info.height;
+    prect.w = w;
+    prect.h = h;
 
     ddjvu_rect_t rrect;
     rrect.x = 0;
